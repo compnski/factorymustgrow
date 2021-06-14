@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/factorymustgrow/static/css/main.959f8ee1.chunk.css",
+    "main.js": "/factorymustgrow/static/js/main.fea59997.chunk.js",
+    "main.js.map": "/factorymustgrow/static/js/main.fea59997.chunk.js.map",
+    "runtime-main.js": "/factorymustgrow/static/js/runtime-main.f640e089.js",
+    "runtime-main.js.map": "/factorymustgrow/static/js/runtime-main.f640e089.js.map",
+    "static/js/2.333c4b4e.chunk.js": "/factorymustgrow/static/js/2.333c4b4e.chunk.js",
+    "static/js/2.333c4b4e.chunk.js.map": "/factorymustgrow/static/js/2.333c4b4e.chunk.js.map",
+    "static/js/3.654d76e1.chunk.js": "/factorymustgrow/static/js/3.654d76e1.chunk.js",
+    "static/js/3.654d76e1.chunk.js.map": "/factorymustgrow/static/js/3.654d76e1.chunk.js.map",
+    "index.html": "/factorymustgrow/index.html",
+    "static/css/main.959f8ee1.chunk.css.map": "/factorymustgrow/static/css/main.959f8ee1.chunk.css.map",
+    "static/js/2.333c4b4e.chunk.js.LICENSE.txt": "/factorymustgrow/static/js/2.333c4b4e.chunk.js.LICENSE.txt",
+    "static/media/icons.scss": "/factorymustgrow/static/media/icon_sprite.19a9b9f8.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.f640e089.js",
+    "static/js/2.333c4b4e.chunk.js",
+    "static/css/main.959f8ee1.chunk.css",
+    "static/js/main.fea59997.chunk.js"
+  ]
+}
