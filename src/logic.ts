@@ -1,8 +1,7 @@
 import { Map } from "immutable";
 import * as entities from "./entities";
 import { Entity, EntityStack, ProducingEntity, ProducerType } from "./types";
-import {GetRecipe} from "./data"
-
+import { GetRecipe } from "./data";
 
 export type Action = {
   type:
@@ -11,7 +10,7 @@ export type Action = {
     | "RemoveProducer"
     | "AddProducerCapacity"
     | "RemoveProducerCapacity"
-  | "UpgradeStorage"
+    | "UpgradeStorage"
     | "UpgradeResearch";
   producerName: string;
 };
@@ -132,6 +131,19 @@ export function ProducerTypeCapacityUpgradeCost(
   }
 }
 
+export function StorageUpgradeCost(
+  type: string,
+  _upgradeLevel: number
+): EntityStack[] {
+  switch (type) {
+    case "Solid":
+      return [{ Entity: entities.IronChest, Count: 1 }];
+    case "Liquid":
+      return [];
+  }
+  return [];
+}
+
 export function entityCountReducer(state: State, action: Action): State {
   //console.log("Got ", action, " for ", state);
   const { type, producerName } = action;
@@ -140,7 +152,7 @@ export function entityCountReducer(state: State, action: Action): State {
     console.log(`Cannot find producer with name ${producerName}`);
     return state;
   }
-  const recipe = GetRecipe(producer.RecipeName)
+  const recipe = GetRecipe(producer.RecipeName);
   let ec = state.EntityCounts;
   let es = state.EntityStorageCapacityUpgrades;
   let ep = state.EntityProducers;
@@ -148,8 +160,7 @@ export function entityCountReducer(state: State, action: Action): State {
   switch (type) {
     case "Produce":
       [ec, ok] = checkAndConsumeEntities(ec, recipe.Input);
-      if (ok)
-        [ec, ok] = checkAndProduceEntities(ec, es, recipe.Output);
+      if (ok) [ec, ok] = checkAndProduceEntities(ec, es, recipe.Output);
       if (!ok) return state;
       return {
         ...state,
@@ -160,10 +171,7 @@ export function entityCountReducer(state: State, action: Action): State {
         return state;
       [ec, ok] = checkAndConsumeEntities(
         ec,
-        ProducerTypeUpgradeCost(
-          recipe.ProducerType,
-          producer.ProducerCount
-        )
+        ProducerTypeUpgradeCost(recipe.ProducerType, producer.ProducerCount)
       );
       if (!ok) return state;
       ep = ep.set(producerName, {
@@ -176,10 +184,7 @@ export function entityCountReducer(state: State, action: Action): State {
       [ec, ok] = checkAndProduceEntities(
         ec,
         es,
-        ProducerTypeUpgradeCost(
-          recipe.ProducerType,
-          producer.ProducerCount
-        )
+        ProducerTypeUpgradeCost(recipe.ProducerType, producer.ProducerCount)
       );
       if (!ok) return state;
       ep = ep.set(producerName, {
@@ -188,6 +193,17 @@ export function entityCountReducer(state: State, action: Action): State {
       });
       return { ...state, EntityCounts: ec, EntityProducers: ep };
     case "UpgradeStorage":
+      [ec, ok] = checkAndConsumeEntities(
+        ec,
+        StorageUpgradeCost(
+          recipe.Output[0].Entity.StorageUpgradeType,
+          ec.get(recipe.Output[0].Entity.Name) || 0
+        )
+      );
+      if (!ok) return state;
+      es = es.update(recipe.Output[0].Entity.Name, (v) => (v || 0) + 1);
+      return { ...state, EntityCounts: ec, EntityStorageCapacityUpgrades: es };
+
     case "AddProducerCapacity":
     case "RemoveProducerCapacity":
     case "UpgradeResearch":
