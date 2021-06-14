@@ -9,7 +9,7 @@ export type Action = {
     | "AddProducerCapacity"
     | "RemoveProducerCapacity"
     | "ResearchUpgrade";
-  producer: ProducingEntity;
+  producerName: string;
 };
 
 export type State = {
@@ -18,14 +18,14 @@ export type State = {
   EntityProducers: Map<string, ProducingEntity>;
 };
 
-const globalEntityCount = function (
+export const globalEntityCount = function (
   ec: Map<string, number>,
   e: Entity
 ): number {
   return ec.get(e.Name) || 0;
 };
 
-const entityStorageCapacity = function (
+export const entityStorageCapacity = function (
   es: Map<string, number>,
   e: Entity
 ): number {
@@ -38,7 +38,6 @@ const ensureSufficientEntitiesExists = function (
 ): boolean {
   let ok = true;
   stacks.forEach(({ Entity, Count }) => {
-    console.log(Entity.Name, globalEntityCount(ec, Entity), Count);
     if (globalEntityCount(ec, Entity) < Count) ok = false;
   });
   return ok;
@@ -87,18 +86,6 @@ const checkAndProduceEntities = function (
   return [returnMap, true];
 };
 
-const checkAndRefundEntities = function (
-  ec: Map<string, number>,
-  es: Map<string, number>,
-  stacks: EntityStack[]
-): boolean {
-  if (!ensureSufficientStorageExists(ec, es, stacks)) return false;
-  stacks.forEach(({ Entity, Count }) => {
-    //updateGlobalEntityCount(Entity, Count)
-  });
-  return true;
-};
-
 export const CurrentMaxProducerCount = function (p: ProducingEntity): number {
   return 50;
 };
@@ -142,10 +129,16 @@ export function ProducerTypeCapacityUpgradeCost(
 }
 
 export function entityCountReducer(state: State, action: Action): State {
-  console.log("Got ", action, " for ", state);
-  const { type, producer } = action;
+  //console.log("Got ", action, " for ", state);
+  const { type, producerName } = action;
+  const producer = state.EntityProducers.get(producerName);
+  if (!producer) {
+    console.log(`Cannot find producer with name ${producerName}`);
+    return state;
+  }
   let ec = state.EntityCounts;
   let es = state.EntityStorageCapacityUpgrades;
+  let ep = state.EntityProducers;
   let ok: boolean;
   switch (type) {
     case "Produce":
@@ -160,59 +153,38 @@ export function entityCountReducer(state: State, action: Action): State {
     case "AddProducer":
       if (producer.ProducerCount > CurrentMaxProducerCount(producer))
         return state;
-      if (
-        checkAndConsumeEntities(
-          ec,
-          ProducerTypeUpgradeCost(
-            producer.Recipe.ProducerType,
-            producer.ProducerCount
-          )
+      [ec, ok] = checkAndConsumeEntities(
+        ec,
+        ProducerTypeUpgradeCost(
+          producer.Recipe.ProducerType,
+          producer.ProducerCount
         )
-      )
-        producer.ProducerCount++;
-      return { ...state };
+      );
+      if (!ok) return state;
+      ep = ep.set(producerName, {
+        ...producer,
+        ProducerCount: (producer.ProducerCount || 0) + 1,
+      });
+      return { ...state, EntityCounts: ec, EntityProducers: ep };
     case "RemoveProducer":
       if (producer.ProducerCount <= 0) return state;
-      if (
-        checkAndRefundEntities(
-          ec,
-          es,
-          ProducerTypeUpgradeCost(
-            producer.Recipe.ProducerType,
-            producer.ProducerCount
-          )
+      [ec, ok] = checkAndProduceEntities(
+        ec,
+        es,
+        ProducerTypeUpgradeCost(
+          producer.Recipe.ProducerType,
+          producer.ProducerCount
         )
-      )
-        producer.ProducerCount--;
-      return { ...state };
+      );
+      if (!ok) return state;
+      ep = ep.set(producerName, {
+        ...producer,
+        ProducerCount: (producer.ProducerCount || 0) - 1,
+      });
+      return { ...state, EntityCounts: ec, EntityProducers: ep };
     case "AddProducerCapacity":
-      if (
-        checkAndConsumeEntities(
-          ec,
-          ProducerTypeCapacityUpgradeCost(
-            producer.Recipe.ProducerType,
-            producer.ProducerCapacityUpgradeCount
-          )
-        )
-      )
-        producer.ProducerCapacityUpgradeCount++;
-      return { ...state };
     case "RemoveProducerCapacity":
-      if (producer.ProducerCapacityUpgradeCount++ <= 0) return state;
-      if (
-        checkAndRefundEntities(
-          ec,
-          es,
-          ProducerTypeCapacityUpgradeCost(
-            producer.Recipe.ProducerType,
-            producer.ProducerCapacityUpgradeCount
-          )
-        )
-      )
-        producer.ProducerCapacityUpgradeCount--;
-      return { ...state };
     case "ResearchUpgrade":
-      return state;
     default:
       return state;
   }
