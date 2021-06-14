@@ -26,13 +26,15 @@ const Producer = function (recipeName: string): ProducingEntity {
 function loadInitialStateFromLocalStorage(): State {
   return {
     EntityCounts: Map(
-      JSON.parse(localStorage.getItem("EntityCounts") || "") || { Miner: 3 }
+      JSON.parse(localStorage.getItem("EntityCounts") || "false") || {
+        Miner: 3,
+      }
     ),
     EntityStorageCapacityUpgrades: Map(
-      JSON.parse(localStorage.getItem("EntityStorageUpgrades") || "") || {}
+      JSON.parse(localStorage.getItem("EntityStorageUpgrades") || "false") || {}
     ),
     EntityProducers: Map(
-      JSON.parse(localStorage.getItem("EntityProducers") || "") ||
+      JSON.parse(localStorage.getItem("EntityProducers") || "false") ||
         Recipies.map((r) => [r.Name, Producer(r.Name)])
     ),
   };
