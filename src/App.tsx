@@ -87,7 +87,12 @@ function App() {
     />
   ));
 
-  return <div className="App">{cards}</div>;
+  return (
+    <div className="App">
+      {cards}
+      <a href="https://github.com/compnski/factorymustgrow">Github</a>
+    </div>
+  );
 }
 
 export default App;
