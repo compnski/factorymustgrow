@@ -1,7 +1,8 @@
-import React, {ReactElement, MouseEvent, useRef, useEffect, useState, Dispatch, SetStateAction} from 'react';
+import React, { ReactElement, MouseEvent, useRef, useEffect, useState, Dispatch, SetStateAction, useReducer} from 'react';
 import sprite from './icon_sprite.png';
 import './icons.scss';
 import './App.scss';
+import { Map } from 'immutable';
 
 
 type EntityStack = {
@@ -29,6 +30,41 @@ const ProducerTypeIconMap: {[key: string]:string} = {
     'Pumpjack':'',
 }
 
+
+function ProducerTypeUpgradeCost(type:ProducerType, _upgradeLevel:number):EntityStack[] {
+    switch(type) {
+        case 'Assembler':
+            return [{Entity:Assembler, Count:1}]
+        case 'Smelter' : 
+            return [{Entity:StoneFurnace, Count:1}]
+        case 'Miner' :
+            return [{Entity:Miner, Count:1}]         
+        case 'ChemFactory':
+            return []
+        case 'Refinery':
+            return []
+        case 'Pumpjack':
+            return []
+    }
+}
+
+function ProducerTypeCapacityUpgradeCost(type:ProducerType, _upgradeLevel:number):EntityStack[] {
+    switch(type) {
+        case 'Assembler':
+        case 'Smelter':
+        case 'Miner':
+            return [{Entity:YellowBelt, Count:1}]
+        case 'ChemFactory':
+            return []
+        case 'Refinery':
+            return []
+        case 'Pumpjack':
+            return []
+    }
+}
+
+
+
 type ProducerType = 'Assembler'| 'Smelter'| 'Miner'| 'ChemFactory'| 'Refinery'| 'Pumpjack';
 
 type Entity = {
@@ -36,14 +72,7 @@ type Entity = {
     Icon: string,
     StackSize: number, 
     StorageUpgradeType: 'Liquid' | 'Solid',
-    CapacityUpgradeItems: EntityStack[],
     ResearchUpgradeItems: EntityStack[],
-}
-
-type OwnedEntity = {
-    Entity: Entity,
-    CurrentQuantity: number,
-    StorageUpgradeCount: number,    
 }
 
 const Assembler: Entity = {
@@ -51,11 +80,17 @@ const Assembler: Entity = {
     Icon: 'assembling-machine-1',
     StackSize: 50,
     StorageUpgradeType: 'Solid',
-    CapacityUpgradeItems: [],
     ResearchUpgradeItems: [],
 }
 
-//Assembler.CapacityUpgradeItems.push({Entity: Assembler as Entity, Count: 1})
+
+const YellowBelt: Entity = {
+    Name: 'Yellow Belt',
+    Icon: 'transport-belt',
+    StackSize: 100,
+    StorageUpgradeType: 'Solid',
+    ResearchUpgradeItems: [],
+}
 
 
 const Miner: Entity = {
@@ -63,7 +98,6 @@ const Miner: Entity = {
     Icon: 'electric-mining-drill',
     StackSize: 50,
     StorageUpgradeType: 'Solid',
-    CapacityUpgradeItems: [{Entity: Assembler, Count: 1}],
     ResearchUpgradeItems: [],
 }
 
@@ -72,7 +106,6 @@ const IronOre: Entity = {
     Icon: 'iron-ore',
     StackSize: 50,
     StorageUpgradeType: 'Solid',
-    CapacityUpgradeItems: [{Entity: Miner, Count: 1}],
     ResearchUpgradeItems: [],
 }
 
@@ -81,7 +114,6 @@ const StoneFurnace: Entity = {
     Icon: 'stone-furnace',
     StackSize: 50,
     StorageUpgradeType: 'Solid',
-    CapacityUpgradeItems: [{Entity: Assembler, Count: 1}],
     ResearchUpgradeItems: [],
 }
 
@@ -90,7 +122,6 @@ const IronPlate: Entity = {
     Icon: 'iron-plate',
     StackSize: 50,
     StorageUpgradeType: 'Solid',
-    CapacityUpgradeItems: [{Entity: StoneFurnace, Count: 1}],
     ResearchUpgradeItems: [],
 }
 
@@ -181,151 +212,174 @@ var IronPlateProducer : ProducingEntity =  {
     ResearchUpgradeCount: 0,
 }
 
-const GlobalEntities: {[name: string]: number} = {
-    'Iron Ore': 100,
-};
-
-
 type Action = {
     type: 'Produce' | 'AddProducer' | 'RemoveProducer' | 'AddProducerCapacity' | 'RemoveProducerCapacity' | 'ResearchUpgrade'
-    payload: number
+    producer: ProducingEntity
 }
 
 
 
 type State = {
-    EntityCounts: {[name: string]: number}
-    EntityProducers: {[name: string]: ProducingEntity} 
-    
+    EntityCounts: Map<string, number>
+    EntityStorageCapacityUpgrades: Map<string, number>
+    EntityProducers: Map<string, ProducingEntity>
 }
 
-/* function entityCountReducer(state: State, action: Action): State {
- * 
- *     const globalEntityCount = function(e:Entity):number {
- *         return state.EntityCounts[e.Name] || 0
- *     }
- * 
- *     const updateGlobalEntityCount = function(e:Entity, delta:number):void {
- *         state.EntityCounts[e.Name] = globalEntityCount(e) + delta
- *     }
- * 
- * 
- *     const {type, payload} = action
- *     switch(type) {
- *         case 'Produce':
- *             return {
- *                 ..state
- *             }
- *         case 'AddProducer':
- *         case 'RemoveProducer':
- *         case 'AddProducerCapacity':
- *         case 'RemoveProduceCapacity':
- *         case 'ReserachUpgrade':
- *         default:
- *             return state
- *     }
- * } */
+const initialState:State = {
+    EntityCounts:Map(),
+    EntityStorageCapacityUpgrades: Map(),
+    EntityProducers: Map({
+        'Iron Ore': IronOreProducer,
+        'Iron Plate': IronPlateProducer, 
+    }),
+}
 
-class Actions {
-    producer: ProducingEntity;
-    setProducer: (p:ProducingEntity)=>void
 
-    globalEntityList: {[key:string]:number};
-    setGlobalEntityList: (p:{[key:string]:number})=>void
-
-    globalEntityCount(e:Entity):number {
-        return this.globalEntityList[e.Name] || 0
-    }
-
-    updateGlobalEntityCount(e:Entity, delta:number):void {
-        this.globalEntityList[e.Name] = this.globalEntityCount(e) + delta
-        this.setGlobalEntityList({...this.globalEntityList})
-    }
+function entityCountReducer(state: State, action: Action): State {
+    console.log('Got ',action,' for ', state)
 
     
-    constructor(p:ProducingEntity, setProducer:Dispatch<SetStateAction<ProducingEntity>>,
-                globalEntityList:{[key:string]:number}, setGlobalEntityList:Dispatch<SetStateAction<{[key:string]:number}>>) {
-        this.producer = p
-        this.setProducer = setProducer
-        this.globalEntityList = globalEntityList
-        this.setGlobalEntityList = setGlobalEntityList
+    const globalEntityCount = function(ec:Map<string, number>, e:Entity):number {
+        return ec.get(e.Name) || 0
     }
+    
 
-    produce(_event:MouseEvent):void {
-        // check Input
-        this.producer.Recipe.Input.forEach(({Entity, Count})=>{
-            if (this.globalEntityCount(Entity) < Count) 
-                return
+    const entityStorageCapacity = function(es:Map<string, number>, e:Entity):number {
+        return e.StackSize * (1+(es.get(e.Name)||0))
+    }
+    
+    const ensureSufficientEntitiesExists = function(ec:Map<string,number>, stacks:EntityStack[]):boolean {
+        let ok = true
+        stacks.forEach(({Entity, Count})=>{
+            console.log(Entity.Name, globalEntityCount(ec, Entity), Count)
+            if (globalEntityCount(ec, Entity) < Count) 
+               ok = false
         })
-        this.producer.Recipe.Input.forEach(({Entity, Count})=>{
-            this.updateGlobalEntityCount(Entity, -Count)
+        return ok
+    }
+
+    const ensureSufficientStorageExists = function(ec:Map<string,number>, es:Map<string, number>, stacks:EntityStack[]):boolean {
+        stacks.forEach(({Entity, Count})=>{
+            if (globalEntityCount(ec, Entity) + Count >= entityStorageCapacity(es, Entity)) 
+                return false
         })
-        this.producer.Recipe.Output.forEach(({Entity, Count})=>{
-            this.updateGlobalEntityCount(Entity, Count)
+        return true
+    }
+    
+    const checkAndConsumeEntities = function(ec:Map<string, number>, stacks:EntityStack[]):[Map<string, number>, boolean] {
+        if (!ensureSufficientEntitiesExists(ec, stacks))
+            return [ec, false]
+        const returnMap = ec.withMutations((ec:Map<string,number>) => {
+            stacks.forEach(({Entity, Count})=>{
+                ec.update(Entity.Name, v => (v || 0) - Count)
+            })
         })
-        console.log(GlobalEntities)
+        return [returnMap, true]
     }
 
-    addProducer(_event:MouseEvent):void{
-        if (this.producer.ProducerCount >= CurrentMaxProducerCount(this.producer)) 
-            return
-        this.producer.ProducerCount++;
-        this.setProducer({...this.producer})
-        console.log(this.producer)
+    const checkAndProduceEntities = function(ec:Map<string, number>, es:Map<string, number>, stacks:EntityStack[]):[Map<string, number>, boolean] {
+        if (!ensureSufficientStorageExists(ec, es, stacks))
+            return [ec, false]
+        const returnMap = ec.withMutations((ec:Map<string,number>) => {
+            stacks.forEach(({Entity, Count})=>{
+                ec.update(Entity.Name, v => (v || 0)  + Count)
+            })
+        })
+        return [returnMap, true]
     }
 
-    removeProducer(_event:MouseEvent):void{
-        if (this.producer.ProducerCount <= 0)
-            return
-        this.producer.ProducerCount--;
-        this.setProducer({...this.producer})
-    }
+    const checkAndRefundEntities = function(ec:Map<string, number>, es:Map<string, number>, stacks:EntityStack[]):boolean {
+        if (!ensureSufficientStorageExists(ec, es, stacks))
+            return false
+        stacks.forEach(({Entity, Count})=>{
+            //updateGlobalEntityCount(Entity, Count)
+        })
+        return true
 
-    addProducerCapacity(_event:MouseEvent):void {
-        
     }
-    removeProducerCapacity(_event:MouseEvent):void {
+    const {type, producer} = action
+    let ec = state.EntityCounts
+    let es = state.EntityStorageCapacityUpgrades
+    let ok:boolean
+    switch(type) {
+        case 'Produce':
+            [ec, ok] = checkAndConsumeEntities(ec, producer.Recipe.Input)
+            if (ok)
+                [ec, ok] = checkAndProduceEntities(ec, es, producer.Recipe.Output)
+            console.log(ec)
+            if (ok)
+                return {
+                    ...state,
+                    EntityCounts: ec,
+                }
+            else
+                return state
+        case 'AddProducer':
+            if (producer.ProducerCount > CurrentMaxProducerCount(producer) )
+                return state
+            if (checkAndConsumeEntities(ec, ProducerTypeUpgradeCost(producer.Recipe.ProducerType, producer.ProducerCount)))
+                producer.ProducerCount++;
+            return { ...state}
+        case 'RemoveProducer':
+            if (producer.ProducerCount <= 0) 
+                return state
+            if (checkAndRefundEntities(ec, es, ProducerTypeUpgradeCost(producer.Recipe.ProducerType, producer.ProducerCount)))
+                producer.ProducerCount--;
+            return { ...state}
+        case 'AddProducerCapacity':
+            if (checkAndConsumeEntities(ec, ProducerTypeCapacityUpgradeCost(producer.Recipe.ProducerType, producer.ProducerCapacityUpgradeCount)))
+                producer.ProducerCapacityUpgradeCount++
+            return {...state}
+        case 'RemoveProducerCapacity':
+            if (producer.ProducerCapacityUpgradeCount++ <= 0)
+                return state
+            if (checkAndRefundEntities(ec, es, ProducerTypeCapacityUpgradeCost(producer.Recipe.ProducerType, producer.ProducerCapacityUpgradeCount)))
+                producer.ProducerCapacityUpgradeCount--
+                return {...state}
+        case 'ResearchUpgrade':
+            return state
+        default:
+            return state
     }
-
 }
 
 type CardProps = {
-    producer: ProducingEntity,
-    globalEntities: {[key:string]:number}
-    setGlobalEntities:Dispatch<SetStateAction<{[key:string]:number}>>
+    producer?: ProducingEntity,
+    dispatch(a:Action):void
+    globalEntityCount:(e:Entity)=>number
 }
 
-export const Card = ({ producer, globalEntities, setGlobalEntities }: CardProps) =>{
-    let [producerState, setProducer] = useState(producer)
-    let actions = new Actions(producerState, setProducer, globalEntities, setGlobalEntities)
+export const Card = ({ producer, dispatch, globalEntityCount }: CardProps) =>{
+    if (!producer)
+        return <div className="NoProducer"/>
     return <div className="Producer">
-<div className="title"><span >{producer.Recipe.Name} </span></div>
-<div className="infoRow">
-<div onClick={actions.produce.bind(actions)} className={producer.Recipe.Icon + ' icon clickable'}/>
-<div className="rate">{rateToTime(CurrentProducerRate(producer))}</div>
-<div className="plusMinus">
-<span onClick={actions.addProducer.bind(actions)} className="clickable">+</span>
-<span onClick={actions.removeProducer.bind(actions)} className="clickable">-</span>
-</div>
-<span className={`icon producerTypeIcon ${ProducerIcon(producer)}`}/>
-<div className="producerCount">
-<span className="currentCapacity">{producerState.ProducerCount}</span>
-<span>/</span>
+        <div className="title"><span >{producer.Recipe.Name} </span></div>
+        <div className="infoRow">
+            <div onClick={()=>{dispatch({producer: producer, type:'Produce'}); console.log(globalEntityCount(IronOre))}} className={producer.Recipe.Icon + ' icon clickable'}/>
+            <div className="rate">{rateToTime(CurrentProducerRate(producer))}</div>
+            <div className="plusMinus">
+                <span onClick={()=>dispatch({producer: producer, type:'AddProducer'})} className="clickable">+</span>
+                <span onClick={()=>dispatch({producer: producer, type:'RemoveProducer'})} className="clickable">-</span>
+            </div>
+            <span className={`icon producerTypeIcon ${ProducerIcon(producer)}`}/>
+            <div className="producerCount">
+                <span className="currentCapacity">{producer.ProducerCount}</span>
+                <span>/</span>
 
-<span className="maxCapacity">{CurrentMaxProducerCount(producer)}</span>
-</div>
-<div className="plusMinus maxCapacity">
-<span onClick={actions.addProducerCapacity.bind(actions)} className="clickable">+</span>
-<span onClick={actions.removeProducerCapacity.bind(actions)} className="clickable">-</span>
-</div>
-<div className="filler"/>
-<div className="icon space-science-pack clickable"/>
-</div>
-<div className="infoRow">
-<div className="count">{actions.globalEntityCount(producer.Recipe.Output[0].Entity)}</div>
-{producer.Recipe.Input.length > 0 ? <RecipeDisplay recipe={producer.Recipe}/>:<div/>}
-</div>
-</div>
+                <span className="maxCapacity">{CurrentMaxProducerCount(producer)}</span>
+            </div>
+            <div className="plusMinus maxCapacity">
+                <span onClick={()=>dispatch({producer: producer, type:'AddProducerCapacity'})} className="clickable">+</span>
+                <span onClick={()=>dispatch({producer: producer, type:'RemoveProducerCapacity'})} className="clickable">-</span>
+            </div>
+            <div className="filler"/>
+            <div className="icon space-science-pack clickable"/>
+        </div>
+        <div className="infoRow">
+            <div className="count">{globalEntityCount(producer.Recipe.Output[0].Entity)}</div>
+            {producer.Recipe.Input.length > 0 ? <RecipeDisplay recipe={producer.Recipe}/>:<div/>}
+        </div>
+    </div>
 }
 /* Thanks Dan Abramov  for useInterval hook
    https://overreacted.io/making-setinterval-declarative-with-react-hooks/
@@ -349,13 +403,15 @@ function useInterval(callback: ()=>void, delay:number) {
 
 
 function App() {
-    const [globalEntities, setGlobalEntities] = useState<{[key:string]:number}>({})
-    return (
-        <div className="App">
-            return <Card producer={IronOreProducer} globalEntities={globalEntities} setGlobalEntities={setGlobalEntities}/>
-            return <Card producer={IronPlateProducer} globalEntities={globalEntities} setGlobalEntities={setGlobalEntities}/>
-        </div>
-    );
+    const [state, dispatch] = useReducer(entityCountReducer, initialState)
+    const globalEntityCount = (e:Entity):number =>
+        state.EntityCounts.get(e.Name) || 0
+        return (
+            <div className="App">
+                return <Card producer={state.EntityProducers.get('Iron Ore')} dispatch={dispatch} globalEntityCount={globalEntityCount}/>
+                return <Card producer={state.EntityProducers.get('Iron Plate')} dispatch={dispatch} globalEntityCount={globalEntityCount}/>
+            </div>
+        );
 }
 
 export default App;
