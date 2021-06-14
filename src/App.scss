@@ -1,0 +1,107 @@
+div {
+  border: 0px red solid;
+  box-sizing: content-box;
+}
+
+span {
+  border: 0px blue solid;
+}
+.App {
+  text-align: left;
+}
+
+.title {
+  color: white;
+  font-size: 0.5em;
+}
+
+.infoRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 5px;
+  div {
+	height: 100%;
+  }
+
+  .clickable {
+	box-shadow: 4px 6px #060708;
+	border: #121515 inset;
+	cursor: pointer;
+	user-select: none;
+  }
+
+  .producerTypeIcon {
+	transform: scale(0.5);
+	margin-right: -24px;
+	margin-left: -4px;
+	margin-top: 4px;
+  }
+
+  .rate {
+	margin-left: 12px;
+	font-size: .8em;
+	line-height: 2em;
+  }
+
+  
+  .plusMinus {
+	margin-left: 10px;
+	display: flex;
+	flex-direction: column;
+	height: 64px;
+	justify-content: center;
+	align-items: center;
+	font-size: 0.75em;
+	line-height: 0.75em;
+	.clickable {
+	  width: 0.75em;
+	  height: 0.75em;
+	  text-align: center;
+	}
+  }
+
+  
+  .producerCount {
+	margin-left: 10px;
+	span {
+	  margin-left: 3px;
+	}
+  }
+
+  .maxCapacity {
+	color: grey;
+  }
+
+  .count {
+	margin-left: 10px;
+	font-size: .5em;
+  }
+
+  .filler {
+	flex: 1;
+  }
+  
+  .recipe {
+	margin-left: 2em;
+	.icon {
+	  height: 64px;
+	  margin-bottom: -64px;
+	  transform: scale(0.5) translateY(-100%);
+	}
+	font-size: 0.5em;
+  }
+}
+
+.Producer {
+  padding: .5em;
+  background-color: #282c34;
+  height: 150px;
+  width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
