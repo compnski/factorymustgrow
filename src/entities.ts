@@ -64,6 +64,14 @@ export const StoneFurnace: Entity = {
   ResearchUpgradeItems: [],
 };
 
+export const Stone: Entity = {
+  Name: "Stone",
+  Icon: "stone",
+  StackSize: 50,
+  StorageUpgradeType: "Solid",
+  ResearchUpgradeItems: [],
+};
+
 export const IronPlate: Entity = {
   Name: "Iron Plate",
   Icon: "iron-plate",
@@ -86,6 +94,39 @@ export const GreenChip: Entity = {
   StackSize: 100,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
+};
+
+export const StoneRecipe: Recipe = {
+  Name: "Stone",
+  Icon: "stone",
+  DurationSeconds: 1,
+  ProducerType: "Miner",
+  Input: [],
+  Output: [
+    {
+      Entity: Stone,
+      Count: 1,
+    },
+  ],
+};
+
+export const StoneFurnaceRecipe: Recipe = {
+  Name: "Stone Furnace",
+  Icon: "stone-furnace",
+  DurationSeconds: 1,
+  ProducerType: "Assembler",
+  Input: [
+    {
+      Entity: Stone,
+      Count: 5,
+    },
+  ],
+  Output: [
+    {
+      Entity: StoneFurnace,
+      Count: 1,
+    },
+  ],
 };
 
 export const IronOreRecipe: Recipe = {

@@ -25,8 +25,10 @@ const Producer = function (r: Recipe): ProducingEntity {
 
 const Recipies = [
   entities.IronOreRecipe,
-  entities.IronPlateRecipe,
   entities.CopperOreRecipe,
+  entities.StoneRecipe,
+  entities.StoneFurnaceRecipe,
+  entities.IronPlateRecipe,
   entities.CopperPlateRecipe,
   entities.CopperWireRecipe,
   entities.GearRecipe,
@@ -36,10 +38,11 @@ const Recipies = [
 ];
 
 const initialState: State = {
-  EntityCounts: Map(),
+  EntityCounts: Map({ Miner: 3 }),
   EntityStorageCapacityUpgrades: Map(),
   EntityProducers: Map(Recipies.map((r) => [r.Name, Producer(r)])),
 };
+
 /* Thanks Dan Abramov  for useInterval hook
    https://overreacted.io/making-setinterval-declarative-with-react-hooks/
  */
@@ -65,6 +68,15 @@ function App() {
     globalEntityCount(state.EntityCounts, e);
   const storageCapacity = (e: Entity): number =>
     entityStorageCapacity(state.EntityStorageCapacityUpgrades, e);
+  useInterval(() => {
+    // Your custom logic here
+    state.EntityProducers.forEach((p, k) => {
+      for (let i = 0; i < p.ProducerCount; i++) {
+        dispatch({ producerName: k, type: "Produce" });
+      }
+    });
+  }, 1000);
+
   let cards = Recipies.map((r) => (
     <Card
       key={r.Name}
