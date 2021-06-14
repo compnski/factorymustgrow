@@ -1,6 +1,9 @@
 import { Map } from "immutable";
 import * as entities from "./entities";
 import { Entity, EntityStack, ProducingEntity, ProducerType } from "./types";
+import {GetRecipe} from "./data"
+
+
 export type Action = {
   type:
     | "Produce"
@@ -8,7 +11,8 @@ export type Action = {
     | "RemoveProducer"
     | "AddProducerCapacity"
     | "RemoveProducerCapacity"
-    | "ResearchUpgrade";
+  | "UpgradeStorage"
+    | "UpgradeResearch";
   producerName: string;
 };
 
@@ -136,15 +140,16 @@ export function entityCountReducer(state: State, action: Action): State {
     console.log(`Cannot find producer with name ${producerName}`);
     return state;
   }
+  const recipe = GetRecipe(producer.RecipeName)
   let ec = state.EntityCounts;
   let es = state.EntityStorageCapacityUpgrades;
   let ep = state.EntityProducers;
   let ok: boolean;
   switch (type) {
     case "Produce":
-      [ec, ok] = checkAndConsumeEntities(ec, producer.Recipe.Input);
+      [ec, ok] = checkAndConsumeEntities(ec, recipe.Input);
       if (ok)
-        [ec, ok] = checkAndProduceEntities(ec, es, producer.Recipe.Output);
+        [ec, ok] = checkAndProduceEntities(ec, es, recipe.Output);
       if (!ok) return state;
       return {
         ...state,
@@ -156,7 +161,7 @@ export function entityCountReducer(state: State, action: Action): State {
       [ec, ok] = checkAndConsumeEntities(
         ec,
         ProducerTypeUpgradeCost(
-          producer.Recipe.ProducerType,
+          recipe.ProducerType,
           producer.ProducerCount
         )
       );
@@ -172,7 +177,7 @@ export function entityCountReducer(state: State, action: Action): State {
         ec,
         es,
         ProducerTypeUpgradeCost(
-          producer.Recipe.ProducerType,
+          recipe.ProducerType,
           producer.ProducerCount
         )
       );
@@ -182,9 +187,10 @@ export function entityCountReducer(state: State, action: Action): State {
         ProducerCount: (producer.ProducerCount || 0) - 1,
       });
       return { ...state, EntityCounts: ec, EntityProducers: ep };
+    case "UpgradeStorage":
     case "AddProducerCapacity":
     case "RemoveProducerCapacity":
-    case "ResearchUpgrade":
+    case "UpgradeResearch":
     default:
       return state;
   }

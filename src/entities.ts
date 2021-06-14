@@ -11,7 +11,7 @@ export const Assembler: Entity = {
 export const YellowBelt: Entity = {
   Name: "Yellow Belt",
   Icon: "transport-belt",
-  StackSize: 100,
+  StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
 };
@@ -35,7 +35,7 @@ export const IronOre: Entity = {
 export const CopperOre: Entity = {
   Name: "Copper Ore",
   Icon: "copper-ore",
-  StackSize: 100,
+  StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
 };
@@ -43,7 +43,7 @@ export const CopperOre: Entity = {
 export const CopperPlate: Entity = {
   Name: "Copper Plate",
   Icon: "copper-plate",
-  StackSize: 100,
+  StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
 };
@@ -51,7 +51,7 @@ export const CopperPlate: Entity = {
 export const CopperWire: Entity = {
   Name: "Copper Wire",
   Icon: "copper-cable",
-  StackSize: 100,
+  StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
 };
@@ -80,6 +80,14 @@ export const IronPlate: Entity = {
   ResearchUpgradeItems: [],
 };
 
+export const IronChest: Entity = {
+  Name: "Iron Chest",
+  Icon: "iron-chest",
+  StackSize: 50,
+  StorageUpgradeType: "Solid",
+  ResearchUpgradeItems: [],
+};
+
 export const Gear: Entity = {
   Name: "Gear",
   Icon: "iron-gear-wheel",
@@ -91,7 +99,7 @@ export const Gear: Entity = {
 export const GreenChip: Entity = {
   Name: "Green Chip",
   Icon: "electronic-circuit",
-  StackSize: 100,
+  StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
 };
@@ -209,6 +217,25 @@ export const GearRecipe: Recipe = {
   Output: [
     {
       Entity: Gear,
+      Count: 1,
+    },
+  ],
+};
+
+export const IronChestRecipe: Recipe = {
+  Name: "Iron Chest",
+  Icon: "iron-chest",
+  DurationSeconds: 1,
+  ProducerType: "Assembler",
+  Input: [
+    {
+      Entity: IronPlate,
+      Count: 8,
+    },
+  ],
+  Output: [
+    {
+      Entity: IronChest,
       Count: 1,
     },
   ],

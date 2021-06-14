@@ -9,13 +9,13 @@ import {
   globalEntityCount,
   entityStorageCapacity,
 } from "./logic";
-import * as entities from "./entities";
+import { Recipies } from "./data";
 
 import { Card } from "./Card";
 
-const Producer = function (r: Recipe): ProducingEntity {
+const Producer = function (recipeName: string): ProducingEntity {
   return {
-    Recipe: r,
+    RecipeName: recipeName,
     ProducerCount: 0,
     ProducerCapacityUpgradeCount: 0,
     ProducerMaxCapacityUpgradeCount: 0,
@@ -23,25 +23,36 @@ const Producer = function (r: Recipe): ProducingEntity {
   };
 };
 
-const Recipies = [
-  entities.IronOreRecipe,
-  entities.CopperOreRecipe,
-  entities.StoneRecipe,
-  entities.StoneFurnaceRecipe,
-  entities.IronPlateRecipe,
-  entities.CopperPlateRecipe,
-  entities.CopperWireRecipe,
-  entities.GearRecipe,
-  entities.GreenChipRecipe,
-  entities.MinerRecipe,
-  entities.AssemblerRecipe,
-];
+function loadInitialStateFromLocalStorage(): State {
+  return {
+    EntityCounts: Map(
+      JSON.parse(localStorage.getItem("EntityCounts") || "") || { Miner: 3 }
+    ),
+    EntityStorageCapacityUpgrades: Map(
+      JSON.parse(localStorage.getItem("EntityStorageUpgrades") || "") || {}
+    ),
+    EntityProducers: Map(
+      JSON.parse(localStorage.getItem("EntityProducers") || "") ||
+        Recipies.map((r) => [r.Name, Producer(r.Name)])
+    ),
+  };
+}
 
-const initialState: State = {
-  EntityCounts: Map({ Miner: 3 }),
-  EntityStorageCapacityUpgrades: Map(),
-  EntityProducers: Map(Recipies.map((r) => [r.Name, Producer(r)])),
-};
+function saveStateToLocalStorage(state: State) {
+  localStorage.setItem(
+    "EntityCounts",
+    JSON.stringify(state.EntityCounts.toJSON())
+  );
+  localStorage.setItem(
+    "EntityStorageUpgrades",
+    JSON.stringify(state.EntityStorageCapacityUpgrades.toJSON())
+  );
+  localStorage.setItem(
+    "EntityProducers",
+    JSON.stringify(state.EntityProducers.toJSON())
+  );
+}
+const initialState: State = loadInitialStateFromLocalStorage();
 
 /* Thanks Dan Abramov  for useInterval hook
    https://overreacted.io/making-setinterval-declarative-with-react-hooks/
@@ -76,6 +87,9 @@ function App() {
       }
     });
   }, 1000);
+  useEffect(() => {
+    saveStateToLocalStorage(state);
+  }, [state]);
 
   let cards = Recipies.map((r) => (
     <Card

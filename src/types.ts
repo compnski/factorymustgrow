@@ -1,5 +1,5 @@
 export interface ProducingEntity {
-  Recipe: Recipe;
+  RecipeName: string;
   ProducerCount: number;
   ProducerCapacityUpgradeCount: number;
   ProducerMaxCapacityUpgradeCount: number;
