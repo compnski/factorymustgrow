@@ -1,0 +1,29 @@
+#+TITLE: Todo
+* UI
+** Tabs
+** Card UI Rework
+*** Show resource consumption per-minute
+** Show blocked resource in recipe when unable to craft
+* Logic
+** Realtime clock
+Discrete event simulation? Or just keep track of last tick, and loop a buch on first load to catch up
+* Features
+** Storage Upgrades
+** Crafting Time
+** Power
+** Pollution
+** Research
+*** Unlocks
+*** Upgrades
+** Global Entity Limits
+** Max Capacity Upgrades
+*** 'Explore' with weapons to find new batches?
+* Game Tuning
+** Upgrades
+*** Costs
+*** Amount given
+*** Tiering
+* Code
+** Autogeneration of entities/recipes?
+* Questions
+** Burner vs. Electical
