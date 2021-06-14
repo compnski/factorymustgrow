@@ -91,7 +91,7 @@ export const IronChest: Entity = {
 export const Gear: Entity = {
   Name: "Gear",
   Icon: "iron-gear-wheel",
-  StackSize: 100,
+  StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
 };
