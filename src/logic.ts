@@ -103,7 +103,7 @@ export function ProducerTypeUpgradeCost(
     case "Smelter":
       return [{ Entity: "stone-furnace", Count: 1 }];
     case "Miner":
-      return [{ Entity: "eletric-mining-drill", Count: 1 }];
+      return [{ Entity: "electric-mining-drill", Count: 1 }];
     case "ChemFactory":
       return [];
     case "Refinery":
@@ -159,11 +159,8 @@ export function entityCountReducer(state: State, action: Action): State {
   switch (type) {
     case "Produce":
       [ec, ok] = checkAndConsumeEntities(ec, recipe.Input);
-      console.log(ok);
       if (ok) [ec, ok] = checkAndProduceEntities(ec, es, recipe.Output);
-      console.log(ok);
       if (!ok) return state;
-      console.log(state);
       return {
         ...state,
         EntityCounts: ec,

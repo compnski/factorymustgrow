@@ -31,17 +31,24 @@ func (r RecipeJSON) AsEntity() Entity {
 }
 
 func GuessProducerType(name string) string {
-	if strings.Contains(name, "ore") {
+	if strings.Contains(name, "ore") || name == "stone" {
 		return "Miner"
+	}
+	if strings.Contains(name, "plate") {
+		return "Smelter"
 	}
 	return "Assembler"
 }
 
 func (r RecipeJSON) AsRecipe() Recipe {
+	if r.Recipe.Time == 0 && r.Recipe.Yield == 0 {
+		r.Recipe.Yield = 1
+		r.Recipe.Time = 1
+	}
 	return Recipe{
 		Name:            r.Name,
 		ID:              r.ID,
-		ProducerType:    GuessProducerType(r.Name),
+		ProducerType:    GuessProducerType(r.ID),
 		DurationSeconds: r.Recipe.Time,
 		Input:           r.Recipe.Ingredients,
 		Output: []EntityStack{{
@@ -105,11 +112,11 @@ const recipeTplTxt = `{{define "EntityStack"}}{
 const headerTxt = `import {Recipe, Entity} from "../types"
 import { Map } from "immutable";
 
-export function entity(name:string):Entity {
+export function GetEntity(name:string):Entity {
   return Entities.get(name)!;
 }
 
-export function recipe(name:string):Recipe {
+export function GetRecipe(name:string):Recipe {
   return Recipes.get(name)!;
 }
 `

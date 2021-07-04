@@ -23,13 +23,27 @@ const Producer = function (recipeName: string): ProducingEntity {
   };
 };
 
-const Recipes = ["iron-ore", "iron-plate"];
+const Recipes = [
+  "iron-ore",
+  "copper-ore",
+  "stone",
+  "stone-furnace",
+  "iron-plate",
+  "copper-plate",
+  "copper-cable",
+  "iron-gear-wheel",
+  "electronic-circuit",
+  "electric-mining-drill",
+  "assembling-machine-1",
+  "iron-chest",
+];
+
 function loadInitialStateFromLocalStorage(): State {
   return {
     EntityCounts: Map(
       JSON.parse(localStorage.getItem("EntityCounts") || "false") || {
-        Miner: 3,
-        Assembler: 1,
+        "electric-mining-drill": 3,
+        "assembling-machine-1": 1,
       }
     ),
     EntityStorageCapacityUpgrades: Map(
