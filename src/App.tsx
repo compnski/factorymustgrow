@@ -9,7 +9,7 @@ import {
   globalEntityCount,
   entityStorageCapacity,
 } from "./logic";
-import { Recipies } from "./data";
+//import { Recipies } from "./data";
 
 import { Card } from "./Card";
 
@@ -23,11 +23,13 @@ const Producer = function (recipeName: string): ProducingEntity {
   };
 };
 
+const Recipes = ["iron-ore", "iron-plate"];
 function loadInitialStateFromLocalStorage(): State {
   return {
     EntityCounts: Map(
       JSON.parse(localStorage.getItem("EntityCounts") || "false") || {
         Miner: 3,
+        Assembler: 1,
       }
     ),
     EntityStorageCapacityUpgrades: Map(
@@ -35,7 +37,7 @@ function loadInitialStateFromLocalStorage(): State {
     ),
     EntityProducers: Map(
       JSON.parse(localStorage.getItem("EntityProducers") || "false") ||
-        Recipies.map((r) => [r.Name, Producer(r.Name)])
+        Recipes.map((r) => [r, Producer(r)])
     ),
   };
 }
@@ -75,11 +77,21 @@ function useInterval(callback: () => void, delay: number) {
   }, [delay]);
 }
 
+export type TabPaneProps = {
+  cardMap: Map<string, typeof Card[]>;
+};
+
+export const TabPane = ({ cardMap }: TabPaneProps) => (
+  <div>
+    <div>Ore</div>
+  </div>
+);
+
 function App() {
   const [state, dispatch] = useReducer(entityCountReducer, initialState);
-  const entityCount = (e: Entity): number =>
+  const entityCount = (e: string): number =>
     globalEntityCount(state.EntityCounts, e);
-  const storageCapacity = (e: Entity): number =>
+  const storageCapacity = (e: string): number =>
     entityStorageCapacity(state.EntityStorageCapacityUpgrades, e);
   useInterval(() => {
     // Your custom logic here
@@ -93,10 +105,10 @@ function App() {
     saveStateToLocalStorage(state);
   }, [state]);
 
-  let cards = Recipies.map((r) => (
+  let cards = Recipes.map((r) => (
     <Card
-      key={r.Name}
-      producer={state.EntityProducers.get(r.Name)}
+      key={r}
+      producer={state.EntityProducers.get(r)}
       dispatch={dispatch}
       globalEntityCount={entityCount}
       entityStorageCapacity={storageCapacity}

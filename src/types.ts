@@ -19,6 +19,7 @@ export type ProducerType =
 export type Recipe = {
   Name: string;
   Icon: string;
+  Id: string;
   ProducerType: ProducerType;
   DurationSeconds: number;
   Input: EntityStack[];
@@ -26,13 +27,14 @@ export type Recipe = {
 };
 
 export type EntityStack = {
-  Entity: Entity;
+  Entity: string;
   Count: number;
 };
 
 export type Entity = {
   Name: string;
   Icon: string;
+  Id: string;
   StackSize: number;
   StorageUpgradeType: "Liquid" | "Solid";
   ResearchUpgradeItems: EntityStack[];

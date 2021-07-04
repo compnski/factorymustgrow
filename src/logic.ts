@@ -1,7 +1,7 @@
 import { Map } from "immutable";
-import * as entities from "./entities";
+//import * as entities from "./entities";
+import { GetEntity, GetRecipe } from "./gen/entities";
 import { Entity, EntityStack, ProducingEntity, ProducerType } from "./types";
-import { GetRecipe } from "./data";
 
 export type Action = {
   type:
@@ -23,16 +23,16 @@ export type State = {
 
 export const globalEntityCount = function (
   ec: Map<string, number>,
-  e: Entity
+  e: string
 ): number {
-  return ec.get(e.Name) || 0;
+  return ec.get(e) || 0;
 };
 
 export const entityStorageCapacity = function (
   es: Map<string, number>,
-  e: Entity
+  e: string
 ): number {
-  return e.StackSize * (1 + (es.get(e.Name) || 0));
+  return GetEntity(e).StackSize * (1 + (es.get(e) || 0));
 };
 
 const ensureSufficientEntitiesExists = function (
@@ -69,7 +69,7 @@ const checkAndConsumeEntities = function (
   if (!ensureSufficientEntitiesExists(ec, stacks)) return [ec, false];
   const returnMap = ec.withMutations((ec: Map<string, number>) => {
     stacks.forEach(({ Entity, Count }) => {
-      ec.update(Entity.Name, (v) => (v || 0) - Count);
+      ec.update(Entity, (v) => (v || 0) - Count);
     });
   });
   return [returnMap, true];
@@ -83,7 +83,7 @@ const checkAndProduceEntities = function (
   if (!ensureSufficientStorageExists(ec, es, stacks)) return [ec, false];
   const returnMap = ec.withMutations((ec: Map<string, number>) => {
     stacks.forEach(({ Entity, Count }) => {
-      ec.update(Entity.Name, (v) => (v || 0) + Count);
+      ec.update(Entity, (v) => (v || 0) + Count);
     });
   });
   return [returnMap, true];
@@ -99,11 +99,11 @@ export function ProducerTypeUpgradeCost(
 ): EntityStack[] {
   switch (type) {
     case "Assembler":
-      return [{ Entity: entities.Assembler, Count: 1 }];
+      return [{ Entity: "assembling-machine-1", Count: 1 }];
     case "Smelter":
-      return [{ Entity: entities.StoneFurnace, Count: 1 }];
+      return [{ Entity: "stone-furnace", Count: 1 }];
     case "Miner":
-      return [{ Entity: entities.Miner, Count: 1 }];
+      return [{ Entity: "eletric-mining-drill", Count: 1 }];
     case "ChemFactory":
       return [];
     case "Refinery":
@@ -121,7 +121,7 @@ export function ProducerTypeCapacityUpgradeCost(
     case "Assembler":
     case "Smelter":
     case "Miner":
-      return [{ Entity: entities.YellowBelt, Count: 1 }];
+      return [{ Entity: "transport-belt", Count: 1 }];
     case "ChemFactory":
       return [];
     case "Refinery":
@@ -137,7 +137,7 @@ export function StorageUpgradeCost(
 ): EntityStack[] {
   switch (type) {
     case "Solid":
-      return [{ Entity: entities.IronChest, Count: 1 }];
+      return [{ Entity: "iron-chest", Count: 1 }];
     case "Liquid":
       return [];
   }
@@ -145,7 +145,6 @@ export function StorageUpgradeCost(
 }
 
 export function entityCountReducer(state: State, action: Action): State {
-  //console.log("Got ", action, " for ", state);
   const { type, producerName } = action;
   const producer = state.EntityProducers.get(producerName);
   if (!producer) {
@@ -160,8 +159,11 @@ export function entityCountReducer(state: State, action: Action): State {
   switch (type) {
     case "Produce":
       [ec, ok] = checkAndConsumeEntities(ec, recipe.Input);
+      console.log(ok);
       if (ok) [ec, ok] = checkAndProduceEntities(ec, es, recipe.Output);
+      console.log(ok);
       if (!ok) return state;
+      console.log(state);
       return {
         ...state,
         EntityCounts: ec,
@@ -196,12 +198,12 @@ export function entityCountReducer(state: State, action: Action): State {
       [ec, ok] = checkAndConsumeEntities(
         ec,
         StorageUpgradeCost(
-          recipe.Output[0].Entity.StorageUpgradeType,
-          ec.get(recipe.Output[0].Entity.Name) || 0
+          GetEntity(recipe.Output[0].Entity).StorageUpgradeType,
+          ec.get(recipe.Output[0].Entity) || 0
         )
       );
       if (!ok) return state;
-      es = es.update(recipe.Output[0].Entity.Name, (v) => (v || 0) + 1);
+      es = es.update(recipe.Output[0].Entity, (v) => (v || 0) + 1);
       return { ...state, EntityCounts: ec, EntityStorageCapacityUpgrades: es };
 
     case "AddProducerCapacity":

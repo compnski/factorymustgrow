@@ -27,3 +27,8 @@ Discrete event simulation? Or just keep track of last tick, and loop a buch on f
 ** Autogeneration of entities/recipes?
 * Questions
 ** Burner vs. Electical
+* Ideas
+** Tabs are 'areas'. Fixed cap of machines, fixed capacity of resources
+*** Can 'search' for new areas with a given resource combo
+*** Get back area of somewhat random space, set of resources based on search criteria.
+e.g. you might look for an area with copper + iron + stone to start, or water + oil for plastic
