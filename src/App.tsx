@@ -137,7 +137,7 @@ function App() {
       <div
         className="App"
         onClick={(evt) => {
-          console.log(evt);
+          if ((evt.target as Element).classList.contains("clickable")) return;
           dispatch({ type: "CloseDialog", evt });
         }}
       >
