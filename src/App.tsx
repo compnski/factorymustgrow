@@ -109,19 +109,6 @@ function App() {
     saveStateToLocalStorage(gameState);
   }, [gameState]);
 
-  let cards = gameState.EntityProducers.valueSeq().map((ep) => {
-    const r = ep.RecipeName;
-    return (
-      <Card
-        key={r}
-        producer={gameState.EntityProducers.get(r)}
-        dispatch={dispatch}
-        globalEntityCount={entityCount}
-        entityStorageCapacity={storageCapacity}
-      />
-    );
-  });
-
   const recipeSelector = uiState.dialogs.recipeSelectorOpen ? (
     <RecipeSelector
       recipes={[...UnlockedRecipes].filter(
@@ -131,44 +118,60 @@ function App() {
     />
   ) : null;
 
-  return (
-    <div
-      className="App"
-      onClick={(evt) => {
-        console.log(evt);
-        dispatch({ type: "CloseDialog", evt });
-      }}
-    >
-      {recipeSelector}
-      {cards}
+  let cards;
+  try {
+    cards = gameState.EntityProducers.valueSeq().map((ep) => {
+      const r = ep.RecipeName;
+      return (
+        <Card
+          key={r}
+          producer={gameState.EntityProducers.get(r)}
+          dispatch={dispatch}
+          globalEntityCount={entityCount}
+          entityStorageCapacity={storageCapacity}
+        />
+      );
+    });
+  } finally {
+    return (
       <div
-        className="addProducer clickable"
-        onClick={(evt) =>
-          dispatch({
-            type: "ShowRecipeSelector",
-            evt,
-          })
-        }
+        className="App"
+        onClick={(evt) => {
+          console.log(evt);
+          dispatch({ type: "CloseDialog", evt });
+        }}
       >
-        Add Recipe
-      </div>
-      <p
-        className="clickable resetButton"
-        onClick={() =>
-          dispatch({
-            producerName: "",
-            type: "Reset",
-          })
-        }
-      >
-        Reset
-      </p>
+        {recipeSelector}
+        {cards}
+        <div
+          className="addProducer clickable"
+          onClick={(evt) =>
+            dispatch({
+              type: "ShowRecipeSelector",
+              evt,
+            })
+          }
+        >
+          Add Recipe
+        </div>
+        <p
+          className="clickable resetButton"
+          onClick={() =>
+            dispatch({
+              producerName: "",
+              type: "Reset",
+            })
+          }
+        >
+          Reset
+        </p>
 
-      <p>
-        <a href="https://github.com/compnski/factorymustgrow">Github</a>
-      </p>
-    </div>
-  );
+        <p>
+          <a href="https://github.com/compnski/factorymustgrow">Github</a>
+        </p>
+      </div>
+    );
+  }
 }
 
 export default App;
