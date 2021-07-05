@@ -32,3 +32,4 @@ Discrete event simulation? Or just keep track of last tick, and loop a buch on f
 *** Can 'search' for new areas with a given resource combo
 *** Get back area of somewhat random space, set of resources based on search criteria.
 e.g. you might look for an area with copper + iron + stone to start, or water + oil for plastic
+*** Local Storage + Import / Export from global. Maybe takes 'train routes' to move

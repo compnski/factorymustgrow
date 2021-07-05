@@ -1,29 +1,20 @@
-import { useRef, useEffect, useReducer } from "react";
+import { useRef, useEffect } from "react";
 import "./icons.scss";
 import "./App.scss";
 import { Map } from "immutable";
-import { Entity, ProducingEntity, Recipe } from "./types";
 import {
-  State,
-  entityCountReducer,
+  GameAction,
+  useGameState,
   globalEntityCount,
   entityStorageCapacity,
+  saveStateToLocalStorage,
 } from "./logic";
-//import { Recipies } from "./data";
+
+import { UIAction, useUIState } from "./uiState";
 
 import { Card } from "./Card";
 
-const Producer = function (recipeName: string): ProducingEntity {
-  return {
-    RecipeName: recipeName,
-    ProducerCount: 0,
-    ProducerCapacityUpgradeCount: 0,
-    ProducerMaxCapacityUpgradeCount: 0,
-    ResearchUpgradeCount: 0,
-  };
-};
-
-const Recipes = [
+const UnlockedRecipes = new Set([
   "iron-ore",
   "copper-ore",
   "stone",
@@ -36,41 +27,7 @@ const Recipes = [
   "electric-mining-drill",
   "assembling-machine-1",
   "iron-chest",
-];
-
-function loadInitialStateFromLocalStorage(): State {
-  return {
-    EntityCounts: Map(
-      JSON.parse(localStorage.getItem("EntityCounts") || "false") || {
-        "electric-mining-drill": 3,
-        "assembling-machine-1": 1,
-      }
-    ),
-    EntityStorageCapacityUpgrades: Map(
-      JSON.parse(localStorage.getItem("EntityStorageUpgrades") || "false") || {}
-    ),
-    EntityProducers: Map(
-      JSON.parse(localStorage.getItem("EntityProducers") || "false") ||
-        Recipes.map((r) => [r, Producer(r)])
-    ),
-  };
-}
-
-function saveStateToLocalStorage(state: State) {
-  localStorage.setItem(
-    "EntityCounts",
-    JSON.stringify(state.EntityCounts.toJSON())
-  );
-  localStorage.setItem(
-    "EntityStorageUpgrades",
-    JSON.stringify(state.EntityStorageCapacityUpgrades.toJSON())
-  );
-  localStorage.setItem(
-    "EntityProducers",
-    JSON.stringify(state.EntityProducers.toJSON())
-  );
-}
-const initialState: State = loadInitialStateFromLocalStorage();
+]);
 
 /* Thanks Dan Abramov  for useInterval hook
    https://overreacted.io/making-setinterval-declarative-with-react-hooks/
@@ -101,38 +58,115 @@ export const TabPane = ({ cardMap }: TabPaneProps) => (
   </div>
 );
 
+export type RecipeSelectorProps = {
+  dispatch(a: UIAction | GameAction): void;
+  recipes: string[];
+};
+
+export const RecipeSelector = ({ recipes, dispatch }: RecipeSelectorProps) => {
+  const recipeIcons = recipes.map((r) => {
+    return (
+      <div
+        key={r}
+        className={`clickable icon ${r}`}
+        onClick={(evt) => {
+          dispatch({ type: "CloseDialog", evt });
+          dispatch({ type: "NewProducer", producerName: r });
+        }}
+      />
+    );
+  });
+  return (
+    <div className="recipeSelector modal">
+      <p>Select Recipe</p>
+      <div className="recipeList">{recipeIcons}</div>
+    </div>
+  );
+};
+
 function App() {
-  const [state, dispatch] = useReducer(entityCountReducer, initialState);
+  const [gameState, gameDispatch] = useGameState();
+  const [uiState, uiDispatch] = useUIState();
+
+  const dispatch = (action: UIAction | GameAction) =>
+    (action as GameAction).producerName == null
+      ? uiDispatch(action as UIAction)
+      : gameDispatch(action as GameAction);
+
   const entityCount = (e: string): number =>
-    globalEntityCount(state.EntityCounts, e);
+    globalEntityCount(gameState.EntityCounts, e);
   const storageCapacity = (e: string): number =>
-    entityStorageCapacity(state.EntityStorageCapacityUpgrades, e);
+    entityStorageCapacity(gameState.EntityStorageCapacityUpgrades, e);
   useInterval(() => {
     // Your custom logic here
-    state.EntityProducers.forEach((p, k) => {
+    gameState.EntityProducers.forEach((p, k) => {
       for (let i = 0; i < p.ProducerCount; i++) {
-        dispatch({ producerName: k, type: "Produce" });
+        gameDispatch({ producerName: k, type: "Produce" });
       }
     });
   }, 1000);
   useEffect(() => {
-    saveStateToLocalStorage(state);
-  }, [state]);
+    saveStateToLocalStorage(gameState);
+  }, [gameState]);
 
-  let cards = Recipes.map((r) => (
-    <Card
-      key={r}
-      producer={state.EntityProducers.get(r)}
+  let cards = gameState.EntityProducers.valueSeq().map((ep) => {
+    const r = ep.RecipeName;
+    return (
+      <Card
+        key={r}
+        producer={gameState.EntityProducers.get(r)}
+        dispatch={dispatch}
+        globalEntityCount={entityCount}
+        entityStorageCapacity={storageCapacity}
+      />
+    );
+  });
+
+  const recipeSelector = uiState.dialogs.recipeSelectorOpen ? (
+    <RecipeSelector
+      recipes={[...UnlockedRecipes].filter(
+        (r) => !gameState.EntityProducers.has(r)
+      )}
       dispatch={dispatch}
-      globalEntityCount={entityCount}
-      entityStorageCapacity={storageCapacity}
     />
-  ));
+  ) : null;
 
   return (
-    <div className="App">
+    <div
+      className="App"
+      onClick={(evt) => {
+        console.log(evt);
+        dispatch({ type: "CloseDialog", evt });
+      }}
+    >
+      {recipeSelector}
       {cards}
-      <a href="https://github.com/compnski/factorymustgrow">Github</a>
+      <div
+        className="addProducer clickable"
+        onClick={(evt) =>
+          dispatch({
+            type: "ShowRecipeSelector",
+            evt,
+          })
+        }
+      >
+        Add Recipe
+      </div>
+      <p
+        className="clickable resetButton"
+        onClick={() =>
+          dispatch({
+            producerName: "",
+            type: "Reset",
+          })
+        }
+      >
+        Reset
+      </p>
+
+      <p>
+        <a href="https://github.com/compnski/factorymustgrow">Github</a>
+      </p>
     </div>
   );
 }

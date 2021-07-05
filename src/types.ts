@@ -39,3 +39,8 @@ export type Entity = {
   StorageUpgradeType: "Liquid" | "Solid";
   ResearchUpgradeItems: EntityStack[];
 };
+
+export type Region = {
+  Ore: EntityStack[];
+  Capacity: number;
+};

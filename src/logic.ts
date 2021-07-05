@@ -1,17 +1,22 @@
 import { Map } from "immutable";
 //import * as entities from "./entities";
 import { GetEntity, GetRecipe } from "./gen/entities";
-import { Entity, EntityStack, ProducingEntity, ProducerType } from "./types";
+import { EntityStack, ProducingEntity, ProducerType } from "./types";
+import { useReducer } from "react";
 
-export type Action = {
+export const useGameState = () => useReducer(entityCountReducer, initialState);
+
+export type GameAction = {
   type:
     | "Produce"
+    | "NewProducer"
     | "AddProducer"
     | "RemoveProducer"
     | "AddProducerCapacity"
     | "RemoveProducerCapacity"
     | "UpgradeStorage"
-    | "UpgradeResearch";
+    | "UpgradeResearch"
+    | "Reset";
   producerName: string;
 };
 
@@ -20,6 +25,41 @@ export type State = {
   EntityStorageCapacityUpgrades: Map<string, number>;
   EntityProducers: Map<string, ProducingEntity>;
 };
+
+const InitialProducers: string[] = [];
+function loadInitialStateFromLocalStorage(): State {
+  return {
+    EntityCounts: Map(
+      JSON.parse(localStorage.getItem("EntityCounts") || "false") || {
+        "electric-mining-drill": 3,
+        "assembling-machine-1": 1,
+      }
+    ),
+    EntityStorageCapacityUpgrades: Map(
+      JSON.parse(localStorage.getItem("EntityStorageUpgrades") || "false") || {}
+    ),
+    EntityProducers: Map(
+      JSON.parse(localStorage.getItem("EntityProducers") || "false") ||
+        InitialProducers.map((r) => [r, Producer(r)])
+    ),
+  };
+}
+
+export function saveStateToLocalStorage(state: State) {
+  localStorage.setItem(
+    "EntityCounts",
+    JSON.stringify(state.EntityCounts.toJSON())
+  );
+  localStorage.setItem(
+    "EntityStorageUpgrades",
+    JSON.stringify(state.EntityStorageCapacityUpgrades.toJSON())
+  );
+  localStorage.setItem(
+    "EntityProducers",
+    JSON.stringify(state.EntityProducers.toJSON())
+  );
+}
+const initialState: State = loadInitialStateFromLocalStorage();
 
 export const globalEntityCount = function (
   ec: Map<string, number>,
@@ -144,17 +184,30 @@ export function StorageUpgradeCost(
   return [];
 }
 
-export function entityCountReducer(state: State, action: Action): State {
+export function entityCountReducer(state: State, action: GameAction): State {
   const { type, producerName } = action;
+  let ec = state.EntityCounts;
+  let es = state.EntityStorageCapacityUpgrades;
+  let ep = state.EntityProducers;
+
+  switch (type) {
+    case "Reset":
+      localStorage.clear();
+      return loadInitialStateFromLocalStorage();
+    case "NewProducer":
+      if (state.EntityProducers.get(producerName)) return { ...state };
+      ep = ep.withMutations((ep) =>
+        ep.set(producerName, Producer(producerName))
+      );
+      return { ...state, EntityProducers: ep };
+  }
+
   const producer = state.EntityProducers.get(producerName);
   if (!producer) {
     console.log(`Cannot find producer with name ${producerName}`);
     return state;
   }
   const recipe = GetRecipe(producer.RecipeName);
-  let ec = state.EntityCounts;
-  let es = state.EntityStorageCapacityUpgrades;
-  let ep = state.EntityProducers;
   let ok: boolean;
   switch (type) {
     case "Produce":
@@ -210,3 +263,13 @@ export function entityCountReducer(state: State, action: Action): State {
       return state;
   }
 }
+
+const Producer = function (recipeName: string): ProducingEntity {
+  return {
+    RecipeName: recipeName,
+    ProducerCount: 0,
+    ProducerCapacityUpgradeCount: 0,
+    ProducerMaxCapacityUpgradeCount: 0,
+    ResearchUpgradeCount: 0,
+  };
+};

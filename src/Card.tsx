@@ -1,6 +1,7 @@
-import { Entity, Recipe, ProducingEntity } from "./types";
-import { Action, CurrentMaxProducerCount } from "./logic";
+import { Recipe, ProducingEntity } from "./types";
+import { GameAction, CurrentMaxProducerCount } from "./logic";
 import { GetEntity, GetRecipe } from "./gen/entities";
+import { UIAction } from "./uiState";
 
 const rateToTime = (rate: number): string => `${rate}/m`;
 
@@ -44,7 +45,7 @@ const RecipeDisplay = ({ recipe }: RecipeProps) => (
 
 export type CardProps = {
   producer?: ProducingEntity;
-  dispatch(a: Action): void;
+  dispatch(a: GameAction | UIAction): void;
   globalEntityCount: (e: string) => number;
   entityStorageCapacity: (e: string) => number;
 };

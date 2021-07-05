@@ -19,6 +19,52 @@ span {
   font-size: 0.5em;
 }
 
+.recipeSelector {
+  width: 90%;
+  background: grey;
+  border: 2px black solid;
+  .recipeList {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: flex-start;
+    .icon {
+      box-sizing: border-box;
+      border: 1px red solid;
+      transform: scale(0.5);
+      margin-right: -24px;
+    }
+  }
+}
+
+.modal {
+  position: fixed;
+  top: 0%;
+  left: 5%;
+  transform: translate(0%, 5%);
+}
+
+.addProducer {
+  width: 90%;
+  height: 2em;
+  font-size: 2em;
+  margin: auto;
+  text-align: center;
+  line-height: 2em;
+}
+
+.resetButton {
+  width: 5%;
+  text-align: center;
+}
+
+.clickable {
+  box-shadow: 4px 6px #060708;
+  border: #121515 inset;
+  cursor: pointer;
+  user-select: none;
+}
+
 .infoRow {
   display: flex;
   flex-direction: row;
@@ -26,13 +72,6 @@ span {
   margin-top: 5px;
   div {
     height: 100%;
-  }
-
-  .clickable {
-    box-shadow: 4px 6px #060708;
-    border: #121515 inset;
-    cursor: pointer;
-    user-select: none;
   }
 
   .producerTypeIcon {
