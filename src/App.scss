@@ -19,6 +19,23 @@ span {
   font-size: 0.5em;
 }
 
+.infoCard {
+  .icon {
+    transform: scale(0.5);
+    margin: -16px;
+  }
+  .topInfo {
+    margin-right: 12px;
+  }
+  .oreText {
+    display: inline-block;
+  }
+  display: flex;
+  line-height: 1em;
+  font-size: 1em;
+  vertical-align: text-top;
+}
+
 .recipeSelector {
   width: 90%;
   background: grey;

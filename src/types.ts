@@ -4,7 +4,7 @@ export interface ProducingEntity {
   ProducerCapacityUpgradeCount: number;
   ProducerMaxCapacityUpgradeCount: number;
   ResearchUpgradeCount: number;
-  //    CurrentRate():number;
+  // CurrentRate(): number;
   //    CurrentMaxProducerCount():number;
 }
 

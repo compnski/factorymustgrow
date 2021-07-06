@@ -1,4 +1,4 @@
-import { Map } from "immutable";
+import { Map, List } from "immutable";
 //import * as entities from "./entities";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { EntityStack, ProducingEntity, ProducerType } from "./types";
@@ -24,6 +24,10 @@ export type State = {
   EntityCounts: Map<string, number>;
   EntityStorageCapacityUpgrades: Map<string, number>;
   EntityProducers: Map<string, ProducingEntity>;
+  RegionInfo: {
+    oreCapacity: List<[string, number]>;
+    landCapacity: number;
+  };
 };
 
 const InitialProducers: string[] = [];
@@ -42,6 +46,21 @@ function loadInitialStateFromLocalStorage(): State {
       JSON.parse(localStorage.getItem("EntityProducers") || "false") ||
         InitialProducers.map((r) => [r, Producer(r)])
     ),
+    RegionInfo: {
+      oreCapacity: List(
+        JSON.parse(
+          localStorage.getItem("RegionInfoOreCapacity") || "false"
+        ) || [
+          ["iron-ore", 100],
+          ["copper-ore", 100],
+          ["stone", 100],
+          ["coal", 100],
+        ]
+      ),
+      landCapacity: parseInt(
+        localStorage.getItem("RegionInfoLandCapacity") || "100"
+      ),
+    },
   };
 }
 
@@ -57,6 +76,14 @@ export function saveStateToLocalStorage(state: State) {
   localStorage.setItem(
     "EntityProducers",
     JSON.stringify(state.EntityProducers.toJSON())
+  );
+  localStorage.setItem(
+    "RegionInfoOreCapacity",
+    JSON.stringify(state.RegionInfo.oreCapacity.toJSON())
+  );
+  localStorage.setItem(
+    "RegionInfoLandCapacity",
+    `${state.RegionInfo.landCapacity}`
   );
 }
 const initialState: State = loadInitialStateFromLocalStorage();
@@ -219,6 +246,7 @@ export function entityCountReducer(state: State, action: GameAction): State {
         EntityCounts: ec,
       };
     case "AddProducer":
+      if (state.RegionInfo.landCapacity <= 0) return state;
       if (producer.ProducerCount > CurrentMaxProducerCount(producer))
         return state;
       [ec, ok] = checkAndConsumeEntities(
@@ -230,7 +258,15 @@ export function entityCountReducer(state: State, action: GameAction): State {
         ...producer,
         ProducerCount: (producer.ProducerCount || 0) + 1,
       });
-      return { ...state, EntityCounts: ec, EntityProducers: ep };
+      return {
+        ...state,
+        EntityCounts: ec,
+        EntityProducers: ep,
+        RegionInfo: {
+          ...state.RegionInfo,
+          landCapacity: state.RegionInfo.landCapacity - 1,
+        },
+      };
     case "RemoveProducer":
       if (producer.ProducerCount <= 0) return state;
       [ec, ok] = checkAndProduceEntities(
@@ -243,7 +279,15 @@ export function entityCountReducer(state: State, action: GameAction): State {
         ...producer,
         ProducerCount: (producer.ProducerCount || 0) - 1,
       });
-      return { ...state, EntityCounts: ec, EntityProducers: ep };
+      return {
+        ...state,
+        EntityCounts: ec,
+        EntityProducers: ep,
+        RegionInfo: {
+          ...state.RegionInfo,
+          landCapacity: state.RegionInfo.landCapacity + 1,
+        },
+      };
     case "UpgradeStorage":
       [ec, ok] = checkAndConsumeEntities(
         ec,

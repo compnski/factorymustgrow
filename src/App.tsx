@@ -4,6 +4,7 @@ import "./App.scss";
 import { Map } from "immutable";
 import {
   GameAction,
+  State,
   useGameState,
   globalEntityCount,
   entityStorageCapacity,
@@ -57,6 +58,28 @@ export const TabPane = ({ cardMap }: TabPaneProps) => (
     <div>Ore</div>
   </div>
 );
+
+export type InfoCardProps = { gameState: State };
+export const InfoCard = ({ gameState }: InfoCardProps) => {
+  const oreInfo = gameState.RegionInfo.oreCapacity;
+  const infoCards = oreInfo.map(([ore, count]) => (
+    <div key={ore} className="topInfo">
+      <div className={`icon ${ore}`} />
+      <div className="oreText">{count}</div>
+    </div>
+  ));
+
+  const remainingSpace = gameState.RegionInfo.landCapacity;
+  return (
+    <div className="infoCard">
+      {infoCards}
+      <div className="topInfo">
+        <div className={`icon landfill`} />
+        <div className="oreText">{remainingSpace}</div>
+      </div>
+    </div>
+  );
+};
 
 export type RecipeSelectorProps = {
   dispatch(a: UIAction | GameAction): void;
@@ -142,6 +165,7 @@ function App() {
         }}
       >
         {recipeSelector}
+        <InfoCard gameState={gameState} />
         {cards}
         <div
           className="addProducer clickable"
