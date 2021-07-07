@@ -19,6 +19,11 @@ span {
   font-size: 0.5em;
 }
 
+.scroller {
+  overflow: scroll;
+  height: 95vh;
+}
+
 .infoCard {
   .icon {
     transform: scale(0.5);
@@ -34,6 +39,7 @@ span {
   line-height: 1em;
   font-size: 1em;
   vertical-align: text-top;
+  background-color: grey;
 }
 
 .recipeSelector {

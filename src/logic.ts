@@ -1,4 +1,4 @@
-import { Map, List } from "immutable";
+import { Map } from "immutable";
 //import * as entities from "./entities";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { EntityStack, ProducingEntity, ProducerType } from "./types";
@@ -25,7 +25,7 @@ export type State = {
   EntityStorageCapacityUpgrades: Map<string, number>;
   EntityProducers: Map<string, ProducingEntity>;
   RegionInfo: {
-    oreCapacity: List<[string, number]>;
+    oreCapacity: Map<string, number>;
     landCapacity: number;
   };
 };
@@ -47,7 +47,7 @@ function loadInitialStateFromLocalStorage(): State {
         InitialProducers.map((r) => [r, Producer(r)])
     ),
     RegionInfo: {
-      oreCapacity: List(
+      oreCapacity: Map(
         JSON.parse(
           localStorage.getItem("RegionInfoOreCapacity") || "false"
         ) || [
@@ -216,6 +216,7 @@ export function entityCountReducer(state: State, action: GameAction): State {
   let ec = state.EntityCounts;
   let es = state.EntityStorageCapacityUpgrades;
   let ep = state.EntityProducers;
+  let oreCap = state.RegionInfo.oreCapacity;
 
   switch (type) {
     case "Reset":
@@ -235,15 +236,24 @@ export function entityCountReducer(state: State, action: GameAction): State {
     return state;
   }
   const recipe = GetRecipe(producer.RecipeName);
+  if (!recipe) {
+    console.log(`Cannot find recipe for ${producer.RecipeName}`);
+    return state;
+  }
   let ok: boolean;
   switch (type) {
     case "Produce":
-      [ec, ok] = checkAndConsumeEntities(ec, recipe.Input);
+      if (recipe.ProducerType === "Miner") {
+        [oreCap, ok] = checkAndConsumeEntities(oreCap, recipe.Output);
+      } else {
+        [ec, ok] = checkAndConsumeEntities(ec, recipe.Input);
+      }
       if (ok) [ec, ok] = checkAndProduceEntities(ec, es, recipe.Output);
       if (!ok) return state;
       return {
         ...state,
         EntityCounts: ec,
+        RegionInfo: { ...state.RegionInfo, oreCapacity: oreCap },
       };
     case "AddProducer":
       if (state.RegionInfo.landCapacity <= 0) return state;

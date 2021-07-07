@@ -62,7 +62,7 @@ export const TabPane = ({ cardMap }: TabPaneProps) => (
 export type InfoCardProps = { gameState: State };
 export const InfoCard = ({ gameState }: InfoCardProps) => {
   const oreInfo = gameState.RegionInfo.oreCapacity;
-  const infoCards = oreInfo.map(([ore, count]) => (
+  const infoCards = [...oreInfo.entries()].map(([ore, count]) => (
     <div key={ore} className="topInfo">
       <div className={`icon ${ore}`} />
       <div className="oreText">{count}</div>
@@ -142,30 +142,31 @@ function App() {
   ) : null;
 
   let cards;
-  try {
-    cards = gameState.EntityProducers.valueSeq().map((ep) => {
-      const r = ep.RecipeName;
-      return (
-        <Card
-          key={r}
-          producer={gameState.EntityProducers.get(r)}
-          dispatch={dispatch}
-          globalEntityCount={entityCount}
-          entityStorageCapacity={storageCapacity}
-        />
-      );
-    });
-  } finally {
+
+  cards = gameState.EntityProducers.valueSeq().map((ep) => {
+    const r = ep.RecipeName;
     return (
-      <div
-        className="App"
-        onClick={(evt) => {
-          if ((evt.target as Element).classList.contains("clickable")) return;
-          dispatch({ type: "CloseDialog", evt });
-        }}
-      >
-        {recipeSelector}
-        <InfoCard gameState={gameState} />
+      <Card
+        key={r}
+        producer={gameState.EntityProducers.get(r)}
+        dispatch={dispatch}
+        globalEntityCount={entityCount}
+        entityStorageCapacity={storageCapacity}
+      />
+    );
+  });
+
+  return (
+    <div
+      className="App"
+      onClick={(evt) => {
+        if ((evt.target as Element).classList.contains("clickable")) return;
+        dispatch({ type: "CloseDialog", evt });
+      }}
+    >
+      {recipeSelector}
+      <InfoCard gameState={gameState} />
+      <div className="scoller">
         {cards}
         <div
           className="addProducer clickable"
@@ -194,8 +195,8 @@ function App() {
           <a href="https://github.com/compnski/factorymustgrow">Github</a>
         </p>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default App;

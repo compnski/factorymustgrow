@@ -58,6 +58,9 @@ export const Card = ({
 }: CardProps) => {
   if (!producer) return <div className="NoProducer" />;
   const recipe = GetRecipe(producer.RecipeName);
+  if (!recipe) {
+    return <div />;
+  }
   return (
     <div className="Producer">
       <div className="title">
