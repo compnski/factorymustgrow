@@ -1,46 +1,48 @@
 import React, { useRef, useEffect, SyntheticEvent } from "react";
 
-import { Canvas } from "./canvas";
+import { ReactComponent as Turret } from "./svg/turret.opt.svg";
 
 export type ExploreBoardProps = {};
 
 export const ExploreBoard = (_: ExploreBoardProps) => {
   var [lastX, lastY] = [0, 0];
 
-  const draw = (ctx: CanvasRenderingContext2D, frameCount: number) => {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    // drawTerrain
-    // drawTurrets
-    // drawSpawners
-    // drawBiters
-    ctx.fillStyle = "#000000";
-    ctx.beginPath();
-    ctx.arc(
-      lastX,
-      lastY - 20,
-      20 * Math.sin(frameCount * 0.05) ** 2,
-      0,
-      2 * Math.PI
-    );
-    ctx.fill();
-  };
-
   const canvasMouseOver = (evt: any) => {
     lastX = evt.clientX;
     lastY = evt.clientY;
+    console.log(evt);
   };
 
   const canvasMouseUp = (evt: any) => {
     console.log(evt);
   };
 
+  const turrets = [
+    {
+      x: 0,
+      y: 0,
+      rotation: 10,
+    },
+    {
+      x: 100,
+      y: 0,
+      rotation: 350,
+    },
+  ];
+  var idx = 0;
   return (
-    <div className="exploreBoard">
-      <Canvas
-        draw={draw}
-        onMouseMove={canvasMouseOver}
-        onMouseUp={canvasMouseUp}
-      />
+    <div
+      onMouseOver={canvasMouseOver}
+      onMouseUp={canvasMouseUp}
+      className="exploreBoard"
+    >
+      <svg id="exploreCanvas" preserveAspectRatio="xMaxYMax none">
+        {turrets.map((t) => (
+          <g key={idx++} transform={`rotate(${t.rotation},0,0)`}>
+            <Turret width={100} height={100} x={t.x} y={t.y} />
+          </g>
+        ))}
+      </svg>
     </div>
   );
 };
