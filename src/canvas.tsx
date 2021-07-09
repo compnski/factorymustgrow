@@ -1,7 +1,10 @@
-import { useRef, useEffect, RefObject } from "react";
+import { useRef, useEffect, RefObject, SyntheticEvent } from "react";
 
 export type CanvasProps = {
   draw: (context: CanvasRenderingContext2D, frameCount: number) => void;
+  onMouseMove: (evt: SyntheticEvent) => void;
+  onMouseDown?: (evt: SyntheticEvent) => void;
+  onMouseUp?: (evt: SyntheticEvent) => void;
 };
 
 export const Canvas = ({ draw, ...rest }: CanvasProps) => {
