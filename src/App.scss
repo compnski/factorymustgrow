@@ -24,6 +24,14 @@ span {
   height: 95vh;
 }
 
+.exploreBoard {
+  canvas {
+    width: 100vw;
+    height: 50vh;
+  }
+  background-color: slategrey;
+}
+
 .infoCard {
   .icon {
     transform: scale(0.5);

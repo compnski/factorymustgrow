@@ -15,6 +15,8 @@ import { UIAction, useUIState } from "./uiState";
 
 import { Card } from "./Card";
 
+import { ExploreBoard } from "./ExploreBoard";
+
 const UnlockedRecipes = new Set([
   "iron-ore",
   "copper-ore",
@@ -166,6 +168,7 @@ function App() {
     >
       {recipeSelector}
       <InfoCard gameState={gameState} />
+      <ExploreBoard />
       <div className="scoller">
         {cards}
         <div
