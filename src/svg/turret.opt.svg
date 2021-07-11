@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg  width="100mm" height="100.14mm" version="1.1" viewBox="0 0 100 100.14" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="88mm" height="88mm" version="1.1" viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
  <defs>
   <clipPath id="clipPath3798">
    <path d="m-168.57-1267.6h1297.1v534.29h-1297.1z" color="#000000" fill="#ececec"/>
@@ -42,36 +42,41 @@
   <filter id="filter144969" x="-.01875" y="-.01875" width="1.0375" height="1.0375" color-interpolation-filters="sRGB">
    <feGaussianBlur stdDeviation="0.56159814"/>
   </filter>
+  <linearGradient id="linearGradient3078" x1="-168.57" x2="431.43" y1="-883.35" y2="-883.35" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3928"/>
+  <linearGradient id="linearGradient3080" x1="-168.57" x2="1128.6" y1="-1000.5" y2="-1000.5" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3900"/>
  </defs>
- <g transform="translate(17.3 6)">
+ <g transform="translate(11.3 -1.7441e-5)">
   <g filter="url(#filter144969)" opacity=".86429">
    <rect x="-2.3718" y="9.116" width="71.117" height="71.117" fill="#c6a077" fill-opacity=".94218" stroke="#a8754a" stroke-linejoin="bevel" stroke-opacity=".95294" stroke-width=".51214"/>
    <g transform="matrix(0 .119 -.23796 0 -177.16 29.176)" style="mix-blend-mode:multiply">
-    <path d="m-168.57-1033.4h600v300h-600z" color="#000000" fill="url(#linearGradient3928)" stroke-width="2.8301"/>
-    <path transform="matrix(.46256 0 0 .5615 -90.598 -321.58)" d="m1128.6-1267.6h-1297.1m1297.1 534.29h-1297.1" clip-path="url(#clipPath3798-62)" color="#000000" fill="url(#linearGradient3900)" stroke-width="5.5532"/>
+    <path d="m-168.57-1033.4h600v300h-600z" color="#000000" fill="url(#linearGradient3078)" stroke-width="2.8301"/>
+    <path transform="matrix(.46256 0 0 .5615 -90.598 -321.58)" d="m1128.6-1267.6h-1297.1m1297.1 534.29h-1297.1" clip-path="url(#clipPath3798-62)" color="#000000" fill="url(#linearGradient3080)" stroke-width="5.5532"/>
     <path d="m-170.61-735.39 2.0387 2.0387-2.0387 2.0387-2.0387-2.0387z" color="#000000" stroke-width="2.8301"/>
    </g>
   </g>
-  <rect id="tuerret_square" x="12.985" y="24.142" width="39.573" height="39.573" fill="#c6a077" fill-opacity=".94218" stroke="#a8754a" stroke-linejoin="bevel" stroke-opacity=".95294" stroke-width=".28498"/>
-  <g transform="matrix(.066217 0 0 .13241 24.132 160.98)" style="mix-blend-mode:multiply">
-   <path d="m-168.57-1033.4h600v300h-600z" color="#000000" fill="url(#linearGradient3928)" stroke-width="2.8301"/>
-   <path transform="matrix(.46256 0 0 .5615 -90.598 -321.58)" d="m1128.6-1267.6h-1297.1m1297.1 534.29h-1297.1" clip-path="url(#clipPath3798)" color="#000000" fill="url(#linearGradient3900)" stroke-width="5.5532"/>
-   <path d="m-170.61-735.39 2.0387 2.0387-2.0387 2.0387-2.0387-2.0387z" color="#000000" stroke-width="2.8301"/>
-  </g>
-  <g transform="matrix(.98723 0 0 .99868 -27.571 -35.318)">
-   <rect x="51.987" y="35.425" width="5.4687" height="39.714" fill="#c6a077" fill-opacity=".94218" stroke="#a8754a" stroke-linejoin="bevel" stroke-opacity=".95294" stroke-width=".10613"/>
-   <g transform="matrix(.0091182 0 0 .13241 53.522 172.25)" style="mix-blend-mode:multiply">
-    <path d="m-168.57-1033.4h600v300h-600z" color="#000000" fill="url(#linearGradient3928)" stroke-width="2.8301"/>
-    <path transform="matrix(.46256 0 0 .5615 -90.598 -321.58)" d="m1128.6-1267.6h-1297.1m1297.1 534.29h-1297.1" clip-path="url(#clipPath3798-6)" color="#000000" fill="url(#linearGradient3900)" stroke-width="5.5532"/>
+  <g id="rotateHandle">
+   <rect id="turret_square" x="12.985" y="24.142" width="39.573" height="39.573" fill="#c6a077" fill-opacity=".94218" stroke="#a8754a" stroke-linejoin="bevel" stroke-opacity=".95294" stroke-width=".28498"/>
+   <g transform="matrix(.066217 0 0 .13241 24.132 160.98)" style="mix-blend-mode:multiply">
+    <path d="m-168.57-1033.4h600v300h-600z" color="#000000" fill="url(#linearGradient3078)" stroke-width="2.8301"/>
+    <path transform="matrix(.46256 0 0 .5615 -90.598 -321.58)" d="m1128.6-1267.6h-1297.1m1297.1 534.29h-1297.1" clip-path="url(#clipPath3798)" color="#000000" fill="url(#linearGradient3080)" stroke-width="5.5532"/>
     <path d="m-170.61-735.39 2.0387 2.0387-2.0387 2.0387-2.0387-2.0387z" color="#000000" stroke-width="2.8301"/>
    </g>
-   <rect x="64.645" y="35.417" width="5.4687" height="39.714" fill="#c6a077" fill-opacity=".94218" stroke="#a8754a" stroke-linejoin="bevel" stroke-opacity=".95294" stroke-width=".10613"/>
-   <g transform="matrix(.0091182 0 0 .13241 66.18 172.25)" style="mix-blend-mode:multiply">
-    <path d="m-168.57-1033.4h600v300h-600z" color="#000000" fill="url(#linearGradient3928)" stroke-width="2.8301"/>
-    <path transform="matrix(.46256 0 0 .5615 -90.598 -321.58)" d="m1128.6-1267.6h-1297.1m1297.1 534.29h-1297.1" clip-path="url(#clipPath3798-6-9)" color="#000000" fill="url(#linearGradient3900)" stroke-width="5.5532"/>
-    <path d="m-170.61-735.39 2.0387 2.0387-2.0387 2.0387-2.0387-2.0387z" color="#000000" stroke-width="2.8301"/>
+   <g transform="matrix(.98723 0 0 .99868 -27.571 -35.318)">
+    <rect x="51.987" y="35.425" width="5.4687" height="39.714" fill="#c6a077" fill-opacity=".94218" stroke="#a8754a" stroke-linejoin="bevel" stroke-opacity=".95294" stroke-width=".10613"/>
+    <g transform="matrix(.0091182 0 0 .13241 53.522 172.25)" style="mix-blend-mode:multiply">
+     <path d="m-168.57-1033.4h600v300h-600z" color="#000000" fill="url(#linearGradient3078)" stroke-width="2.8301"/>
+     <path transform="matrix(.46256 0 0 .5615 -90.598 -321.58)" d="m1128.6-1267.6h-1297.1m1297.1 534.29h-1297.1" clip-path="url(#clipPath3798-6)" color="#000000" fill="url(#linearGradient3080)" stroke-width="5.5532"/>
+     <path d="m-170.61-735.39 2.0387 2.0387-2.0387 2.0387-2.0387-2.0387z" color="#000000" stroke-width="2.8301"/>
+    </g>
+    <rect x="64.645" y="35.417" width="5.4687" height="39.714" fill="#c6a077" fill-opacity=".94218" stroke="#a8754a" stroke-linejoin="bevel" stroke-opacity=".95294" stroke-width=".10613"/>
+    <g transform="matrix(.0091182 0 0 .13241 66.18 172.25)" style="mix-blend-mode:multiply">
+     <path d="m-168.57-1033.4h600v300h-600z" color="#000000" fill="url(#linearGradient3078)" stroke-width="2.8301"/>
+     <path transform="matrix(.46256 0 0 .5615 -90.598 -321.58)" d="m1128.6-1267.6h-1297.1m1297.1 534.29h-1297.1" clip-path="url(#clipPath3798-6-9)" color="#000000" fill="url(#linearGradient3080)" stroke-width="5.5532"/>
+     <path d="m-170.61-735.39 2.0387 2.0387-2.0387 2.0387-2.0387-2.0387z" color="#000000" stroke-width="2.8301"/>
+    </g>
    </g>
+   <rect x="-11.427" y="-.10146" width="88.106" height="88.106" fill="none" stroke="none" stroke-linejoin="bevel" />
+   <circle cx="32.7" cy="44" r="13.841" fill="url(#linearGradient144393)" stroke="#a8754a" stroke-linejoin="bevel" stroke-opacity=".95294" stroke-width=".31797"/>
   </g>
-  <circle cx="32.7" cy="44" r="13.841" fill="url(#linearGradient144393)" stroke="#a8754a" stroke-linejoin="bevel" stroke-opacity=".95294" stroke-width=".31797"/>
  </g>
 </svg>
