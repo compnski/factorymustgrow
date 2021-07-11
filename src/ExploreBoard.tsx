@@ -7,11 +7,11 @@ import poissonProcess from "poisson-process";
 export type ExploreBoardProps = {};
 
 const getEventPosition = (evt: SyntheticEvent): { x: number; y: number } => {
-  const targetClientRect = evt.target
-    .closest(".exploreBoard")
-    .getBoundingClientRect();
-  const x = evt.clientX - targetClientRect.x;
-  const y = evt.clientY - targetClientRect.y;
+  const targetClientRect = (evt.target as HTMLElement)
+    ?.closest(".exploreBoard")
+    ?.getBoundingClientRect() || { x: 0, y: 0 };
+  const x = Math.floor((evt as any).clientX - targetClientRect.x);
+  const y = Math.floor((evt as any).clientY - targetClientRect.y);
   return { x, y };
 };
 
@@ -19,7 +19,7 @@ var lastX: number = 0,
   lastY: number = 0,
   lastTick: number = 0;
 
-const BugSampleRate = 1500;
+const BugSampleRate = 2500;
 var nextSpawnAt: number = poissonProcess.sample(BugSampleRate);
 
 export const ExploreBoard = (_: ExploreBoardProps) => {
@@ -58,7 +58,6 @@ export const ExploreBoard = (_: ExploreBoardProps) => {
       nextSpawnAt = poissonProcess.sample(BugSampleRate);
       const x = Math.floor(Math.random() * 500);
       const y = Math.floor(Math.random() * 500);
-      console.log(nextSpawnAt, delta);
 
       dispatch({ type: "SpawnBug", position: { x, y } });
     }
@@ -72,9 +71,13 @@ export const ExploreBoard = (_: ExploreBoardProps) => {
       setGhostState({ x: lastX, y: lastY });
     }
     maybeSpawnBiters(dispatch, delta);
+    // TODO: Entity logic!
+    // Entities have some current state
+    // List of possible criteria that would transition to a new state
+    //e.g. target gone, enemy in range, etc.
+    dispatch({ type: "Tick" });
   }, 16);
 
-  var idx = 0;
   const ghostTurret = ghostState ? (
     <Turret key="ghost" rotation={0} x={ghostState.x} y={ghostState.y} />
   ) : null;
@@ -89,12 +92,12 @@ export const ExploreBoard = (_: ExploreBoardProps) => {
       <svg id="exploreCanvas" version="2.0" width="100%" height="100%">
         <rect x="0" y="0" fill="none" width="100%" height="100%" />
         {ghostTurret}
-        {state.turrets.map((t) => (
-          <Turret key={idx++} rotation={t.rotation} x={t.x} y={t.y} />
+        {state.turrets.valueSeq().map((t) => (
+          <Turret key={t.id} rotation={t.rotation} x={t.x} y={t.y} />
         ))}
 
-        {state.bugs.map((t) => (
-          <Bug key={idx++} rotation={t.rotation} x={t.x} y={t.y} />
+        {state.bugs.valueSeq().map((t) => (
+          <Bug key={t.id} rotation={t.rotation} x={t.x} y={t.y} />
         ))}
       </svg>
     </div>
