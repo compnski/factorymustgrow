@@ -52,6 +52,18 @@ export const ExploreBoard = (_: ExploreBoardProps) => {
     };
   };
 
+  const maybeSpawnBiters = (dispatch: ExploreDispatch, delta: number) => {
+    nextSpawnAt -= delta;
+    if (nextSpawnAt < 0) {
+      nextSpawnAt = poissonProcess.sample(BugSampleRate);
+      const x = Math.floor(Math.random() * 500);
+      const y = Math.floor(Math.random() * 500);
+      console.log(nextSpawnAt, delta);
+
+      dispatch({ type: "SpawnBug", position: { x, y } });
+    }
+  };
+
   useInterval(() => {
     const tick = new Date().getTime();
     const delta = tick - lastTick;
@@ -59,6 +71,7 @@ export const ExploreBoard = (_: ExploreBoardProps) => {
     if (ghostState) {
       setGhostState({ x: lastX, y: lastY });
     }
+    maybeSpawnBiters(dispatch, delta);
   }, 16);
 
   var idx = 0;
