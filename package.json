@@ -13,6 +13,7 @@
     "@types/react-dom": "^17.0.7",
     "immutable": "^4.0.0-rc.12",
     "node-sass": "^6.0.0",
+    "poisson-process": "^1.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
@@ -29,10 +30,17 @@
     "gen": "go run ./src/scripts/genEntities.go src/gen/entities.ts"
   },
   "eslintConfig": {
-    "extends": ["react-app", "react-app/jest"]
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
