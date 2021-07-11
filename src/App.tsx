@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useEffect } from "react";
 import "./icons.scss";
 import "./App.scss";
 import { Map } from "immutable";
@@ -10,6 +10,8 @@ import {
   entityStorageCapacity,
   saveStateToLocalStorage,
 } from "./logic";
+
+import { useInterval } from "./reactUtils";
 
 import { UIAction, useUIState } from "./uiState";
 
@@ -31,25 +33,6 @@ const UnlockedRecipes = new Set([
   "assembling-machine-1",
   "iron-chest",
 ]);
-
-/* Thanks Dan Abramov  for useInterval hook
-   https://overreacted.io/making-setinterval-declarative-with-react-hooks/
- */
-function useInterval(callback: () => void, delay: number) {
-  const savedCallback = useRef<() => void>();
-
-  useEffect(() => {
-    savedCallback.current = callback;
-  });
-
-  useEffect(() => {
-    function tick() {
-      if (savedCallback.current != null) savedCallback.current();
-    }
-    let id = setInterval(tick, delay);
-    return () => clearInterval(id);
-  }, [delay]);
-}
 
 export type TabPaneProps = {
   cardMap: Map<string, typeof Card[]>;
