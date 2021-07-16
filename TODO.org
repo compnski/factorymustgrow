@@ -33,3 +33,21 @@ Discrete event simulation? Or just keep track of last tick, and loop a buch on f
 *** Get back area of somewhat random space, set of resources based on search criteria.
 e.g. you might look for an area with copper + iron + stone to start, or water + oil for plastic
 *** Local Storage + Import / Export from global. Maybe takes 'train routes' to move
+** "Main Bus" and Resource Movement
+alex: Resources should have to be moved around.
+Try having each Factory feed into the one above/below it, or into a main bus on the right side.
+*** Each factory has input/output buffers
+Some stack size, maybe based on #factories, but maybe not
+*** Each factory has configurable outputs
+**** Can output up/down
+Puts resources into input buffer of other factories
+**** Can output onto belt
+Belt has many lanes, each configured for a given resource
+**** Can pull inputs from main bus
+*** Main bus
+**** Cost belts to add extend the bus
+***** Can add length to add more factories
+***** Can add width to add more lanes
+*** Ore Handling
+**** Comes from miners, works like other factories, but no import
+****
