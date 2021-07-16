@@ -13,5 +13,7 @@ const width = 32;
 export const Bug = ({ rotation, x, y }: BugProps) => {
   const svgRef = useRotation(rotation, rotateHandle);
 
-  return <BugSVG ref={svgRef} width={width} height={height} x={x} y={y} />;
+  return (
+    <BugSVG ref={svgRef} width={width} height={height} x={x - 16} y={y - 16} />
+  );
 };

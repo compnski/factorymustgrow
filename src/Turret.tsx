@@ -13,5 +13,13 @@ const width = 64;
 export const Turret = ({ rotation, x, y }: TurretProps) => {
   const svgRef = useRotation(rotation, rotateHandle);
 
-  return <TurretSVG ref={svgRef} width={width} height={height} x={x} y={y} />;
+  return (
+    <TurretSVG
+      ref={svgRef}
+      width={width}
+      height={height}
+      x={x - 32}
+      y={y - 32}
+    />
+  );
 };

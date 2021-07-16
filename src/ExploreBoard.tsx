@@ -89,7 +89,7 @@ export const ExploreBoard = (_: ExploreBoardProps) => {
       onMouseLeave={() => setGhostState(null)}
       className="exploreBoard"
     >
-      <svg id="exploreCanvas" version="2.0" width="100%" height="100%">
+      <svg id="exploreCanvas" version="2.0" width="600" height="600">
         <rect x="0" y="0" fill="none" width="100%" height="100%" />
         {ghostTurret}
         {state.turrets.valueSeq().map((t) => (

@@ -12,7 +12,7 @@ export const useRotation = (
       return;
     }
     const group: SVGElement | null = svg.querySelector(rotateHandle);
-    group?.setAttribute("transform", `rotate(${rotation}, 0 ,0)`);
+    group?.setAttribute("transform", `rotate(${rotation} 0 ,0)`);
   });
   return svgRef;
 };
