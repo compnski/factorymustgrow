@@ -1,5 +1,6 @@
 import { Map } from "immutable";
 import { useReducer } from "react";
+import { Point, PointToS, BestPath } from "./astar";
 
 export const useExploreState = () =>
   useReducer(exploreStateReducer, initialExploreState);
@@ -24,6 +25,7 @@ interface EntityDef {
   id: number;
   x: number;
   y: number;
+  hitRadius: number;
   rotation: number;
   topSpeed: number;
   currentTarget: EntityDef | null;
@@ -33,20 +35,25 @@ interface EntityDef {
   defense: Defense;
 }
 
+type EntityMap = Map<number, EntityDef>;
+
 const SpitterBugMaxHP = 600,
   SpitterBugDamage = 1,
   SpitterBugRange = 200,
-  SpitterBugArmor = 0;
+  SpitterBugArmor = 0,
+  SpitterBugRadius = 16;
 
 const MeleeBugMaxHP = 600,
   MeleeBugDamage = 5,
   MeleeBugRange = 50,
-  MeleeBugArmor = 3;
+  MeleeBugArmor = 3,
+  MeleeBugRadius = 16;
 
 const SpitterBug = (x: number, y: number): EntityDef => ({
   id: entityId(),
   x,
   y,
+  hitRadius: SpitterBugRadius,
   rotation: 0,
   topSpeed: 1,
   currentTarget: null,
@@ -60,6 +67,7 @@ const MeleeBug = (x: number, y: number): EntityDef => ({
   id: entityId(),
   x,
   y,
+  hitRadius: MeleeBugRadius,
   rotation: 0,
   topSpeed: 1,
   currentTarget: null,
@@ -72,12 +80,14 @@ const MeleeBug = (x: number, y: number): EntityDef => ({
 const TurretMaxHP = 1500,
   TurretDamage = 5,
   TurretRange = 300,
-  TurretArmor = 2;
+  TurretArmor = 2,
+  TurretRadius = 32;
 
 const Turret = (x: number, y: number): EntityDef => ({
   id: entityId(),
   x,
   y,
+  hitRadius: TurretRadius,
   topSpeed: 0,
   rotation: 0,
   currentTarget: null,
@@ -138,7 +148,7 @@ const pickAndFaceTarget = (
     t.currentTarget = null;
   if (!t.currentTarget && targets.count() > 0) {
     t.currentTarget = chooseNearestTarget(t, targets);
-    console.log("Focus on ", t.currentTarget);
+    //console.log("Focus on ", t.currentTarget);
   }
   if (t.currentTarget) {
     const deltaY = t.currentTarget.y - t.y;
@@ -183,8 +193,11 @@ const inRange = (attacker: EntityDef, defender: EntityDef): boolean =>
 
 const doMove = (
   entity: EntityDef,
-  { x, y }: { x: number; y: number }
+  { x, y }: { x: number; y: number },
+  score: (p: Point) => number
 ): EntityDef => {
+  console.log(BestPath({ x: entity.x, y: entity.y }, { x, y }, { score }));
+
   const rotationRad = Math.atan2(y - entity.y, x - entity.x);
   const deltaX = entity.topSpeed * Math.cos(rotationRad);
   const deltaY = entity.topSpeed * Math.sin(rotationRad);
@@ -193,7 +206,8 @@ const doMove = (
 
 const doMoveAndCombat = (
   bugs: Map<number, EntityDef>,
-  turrets: Map<number, EntityDef>
+  turrets: Map<number, EntityDef>,
+  score: (p: Point) => number
 ): [bugs: Map<number, EntityDef>, turrets: Map<number, EntityDef>] => {
   bugs = bugs.withMutations((bugs) => {
     turrets.forEach((turret) => {
@@ -215,10 +229,14 @@ const doMoveAndCombat = (
           } else {
             bugs.update(bug.id, (bug) => {
               if (!bug.currentTarget) return bug;
-              return doMove(bug, {
-                x: bug.currentTarget.x,
-                y: bug.currentTarget.y,
-              });
+              return doMove(
+                bug,
+                {
+                  x: bug.currentTarget.x,
+                  y: bug.currentTarget.y,
+                },
+                score
+              );
             });
           }
         }
@@ -231,6 +249,48 @@ const doMoveAndCombat = (
 
   return [bugs.filter(isAlive), turrets.filter(isAlive)];
 };
+
+var counter = 0;
+
+function scoreFunction(
+  bufferRadius: number,
+  friendlies: EntityMap,
+  enemies: EntityMap,
+  bottomRight: Point
+): (p: Point) => number {
+  const pointCache = Map<string, number>();
+  return (p: Point): number => {
+    //p = { x: p.x * scalingFactor, y: p.y * scalingFactor };
+    const pointS = PointToS(p);
+    var points = pointCache.get(pointS);
+    if (points != null) return points;
+    const score = ((): number => {
+      if (p.x < 0 || p.y < 0 || p.x > bottomRight.x || p.y > bottomRight.y)
+        return Infinity;
+      friendlies.forEach((ent) => {
+        if (targetDistance(p, ent) < bufferRadius + ent.hitRadius) {
+          return Infinity;
+        }
+      });
+
+      enemies.forEach((ent) => {
+        if (targetDistance(p, ent) < bufferRadius + ent.hitRadius) {
+          return Infinity;
+        }
+        if (
+          targetDistance(p, ent) <
+          bufferRadius + ent.hitRadius + ent.weapon.range
+        ) {
+          return 5;
+        }
+      });
+
+      return 1;
+    })();
+    pointCache.set(PointToS(p), score);
+    return score;
+  };
+}
 
 export function exploreStateReducer(
   state: ExploreState,
@@ -249,7 +309,16 @@ export function exploreStateReducer(
       let bugs = state.bugs.map(
         (b: EntityDef): EntityDef => pickAndFaceTarget(b, state.turrets)
       );
-      [bugs, turrets] = doMoveAndCombat(bugs, turrets);
+      // paintHitMap(10, hitContext, SpitterBugRadius, bugs, turrets);
+      // if (counter++ > 500) {
+      //   hitContext.fillStyle = "#000000";
+      //   hitContext.fillRect(0, 0, 60, 60);
+      //   console.log(JSON.stringify(hitContext.getImageData(0, 0, 60, 60).data));
+      //   counter = 0;
+      // }
+      const score = scoreFunction(16, bugs, turrets, { x: 600, y: 600 });
+
+      [bugs, turrets] = doMoveAndCombat(bugs, turrets, score);
       (window as any).state = state;
       return { ...state, turrets, bugs };
     case "PlaceTurret":
