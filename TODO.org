@@ -51,3 +51,7 @@ Belt has many lanes, each configured for a given resource
 *** Ore Handling
 **** Comes from miners, works like other factories, but no import
 ****
+* Performance Ideas
+** Keep bug/turret state in separate timer thread
+Currently state is in the main react thread. This is causing stuttering.
+Instead have a separate thread doing game logic, and have 'Tick' just copy that state into react on some timer.
