@@ -1,105 +1,35 @@
-import { Map } from "immutable";
+//import { Map } from "immutable";
 import { useReducer } from "react";
 import { Point, PointToS, BestPath, PrintPath, ScoreFunc } from "./astar";
+import {
+  EntityDef,
+  NewTurret,
+  NewMeleeBug,
+  NewSpitterBug,
+  GameState,
+} from "./defs";
 
 export const useExploreState = () =>
   useReducer(exploreStateReducer, initialExploreState);
+
 export type ExploreAction = {
   type: "PlaceTurret" | "SpawnBug" | "Tick";
   position?: { x: number; y: number };
 };
 
-const pathfindingScaleFactor = 10;
+export type ExploreDispatch = (action: ExploreAction) => void;
 
-var _entityIdx = 0;
-const entityId = (): number => _entityIdx++;
+export type ExploreState = {
+  bugs: Map<number, EntityDef>;
+  turrets: Map<number, EntityDef>;
+};
 
-interface Weapon {
-  damage: number;
-  range: number;
-}
-
-interface Defense {
-  armor: number;
-}
-
-interface EntityDef {
-  id: number;
-  x: number;
-  y: number;
-  hitRadius: number;
-  rotation: number;
-  topSpeed: number;
-  currentTarget: EntityDef | null;
-  currentHP: number;
-  maxHP: number;
-  weapon: Weapon;
-  defense: Defense;
-  currentPath?: Point[];
-}
+const initialExploreState: ExploreState = {
+  bugs: new Map(),
+  turrets: new Map(),
+};
 
 type EntityMap = Map<number, EntityDef>;
-
-const SpitterBugMaxHP = 600,
-  SpitterBugDamage = 1,
-  SpitterBugRange = 200,
-  SpitterBugArmor = 0,
-  SpitterBugRadius = 16;
-
-const MeleeBugMaxHP = 600,
-  MeleeBugDamage = 5,
-  MeleeBugRange = 50,
-  MeleeBugArmor = 3,
-  MeleeBugRadius = 16;
-
-const SpitterBug = (x: number, y: number): EntityDef => ({
-  id: entityId(),
-  x,
-  y,
-  hitRadius: SpitterBugRadius,
-  rotation: 0,
-  topSpeed: 1,
-  currentTarget: null,
-  currentHP: SpitterBugMaxHP,
-  maxHP: SpitterBugMaxHP,
-  weapon: { damage: SpitterBugDamage, range: SpitterBugRange },
-  defense: { armor: SpitterBugArmor },
-});
-
-const MeleeBug = (x: number, y: number): EntityDef => ({
-  id: entityId(),
-  x,
-  y,
-  hitRadius: MeleeBugRadius,
-  rotation: 0,
-  topSpeed: 1,
-  currentTarget: null,
-  currentHP: MeleeBugMaxHP,
-  maxHP: MeleeBugMaxHP,
-  weapon: { damage: MeleeBugDamage, range: MeleeBugRange },
-  defense: { armor: MeleeBugArmor },
-});
-
-const TurretMaxHP = 1500,
-  TurretDamage = 1,
-  TurretRange = 300,
-  TurretArmor = 2,
-  TurretRadius = 32;
-
-const Turret = (x: number, y: number): EntityDef => ({
-  id: entityId(),
-  x,
-  y,
-  hitRadius: TurretRadius,
-  topSpeed: 0,
-  rotation: 0,
-  currentTarget: null,
-  currentHP: TurretMaxHP,
-  maxHP: TurretMaxHP,
-  weapon: { damage: TurretDamage, range: TurretRange },
-  defense: { armor: TurretArmor },
-});
-
 // Spawn Spawners
 // Global Inputs:
 // - Pollution
@@ -115,6 +45,8 @@ interface iPoint {
   readonly x: number;
   readonly y: number;
 }
+
+const pathfindingScaleFactor = 10;
 
 const targetDistance = (t1: iPoint, t2: iPoint): number => {
   const a = t1.x - t2.x;
@@ -140,73 +72,56 @@ const chooseNearestTarget = (
 };
 
 const pickAndFaceTarget = (
-  t: EntityDef,
+  ent: EntityDef,
   targets: Map<number, EntityDef>,
   score: ScoreFunc
-): EntityDef => {
+) => {
   if (
-    !t.currentTarget ||
-    !targets.has(t.currentTarget.id) ||
-    (!inRange(t, t.currentTarget) && t.topSpeed === 0)
-  )
-    t.currentTarget = null;
-  if (!t.currentTarget && targets.count() > 0) {
-    t.currentTarget = chooseNearestTarget(t, targets);
-  }
-  if (
-    t.topSpeed > 0 &&
-    t.currentTarget != null &&
-    (!t.currentPath || !t.currentPath.length)
+    ent.currentTarget &&
+    (!targets.has(ent.currentTarget.id) ||
+      (ent.topSpeed === 0 && !inRange(ent, ent.currentTarget)))
   ) {
-    t.currentPath = BestPath(
-      pathfindingScaleFactor,
-      { x: t.x, y: t.y },
-      { x: t.currentTarget.x, y: t.currentTarget.y },
-      (p: Point) => (p.x === t.x && p.y === t.y ? 0 : score(p))
-    ).slice(0, 5);
-
-    //console.log(PrintPath(t.currentPath, pathfindingScaleFactor));
+    clearTarget(ent);
+    console.log(`Clear target for ${ent.id}`);
   }
-  //console.log("Focus on ", t.currentTarget);
+  if (!ent.currentTarget && targets.size > 0) {
+    ent.currentTarget = chooseNearestTarget(ent, targets);
+  }
+  if (
+    ent.topSpeed > 0 &&
+    !ent.isAttacking &&
+    ent.currentTarget != null &&
+    (!ent.currentPath || !ent.currentPath.length)
+  ) {
+    console.log(`New path for ${ent.id} ${ent.currentPath?.length}`);
+    ent.currentPath = BestPath(
+      pathfindingScaleFactor,
+      { x: ent.x, y: ent.y },
+      { x: ent.currentTarget.x, y: ent.currentTarget.y },
+      (p: Point) => (p.x === ent.x && p.y === ent.y ? 0 : score(p)),
+      (p: Point) =>
+        !ent.currentTarget ||
+        targetDistance(p, ent.currentTarget) < ent.weapon.range
+    ).slice(0, 20);
+  }
 
-  if (t.currentTarget) {
-    const rotationTarget = //t.currentTarget;
-      t.currentPath?.length && t.currentPath[0]
-        ? t.currentPath[0]
-        : t.currentTarget;
-    const deltaY = rotationTarget.y - t.y;
-    const deltaX = t.x - rotationTarget.x;
+  if (ent.currentTarget) {
+    const rotationTarget = //ent.currentTarget;
+      !ent.isAttacking && ent.currentPath?.length && ent.currentPath[0]
+        ? ent.currentPath[0]
+        : ent.currentTarget;
+    const deltaY = rotationTarget.y - ent.y;
+    const deltaX = ent.x - rotationTarget.x;
     let rotation = (Math.atan(deltaX / deltaY) * 180) / Math.PI;
     if (deltaY > 0) {
       rotation += 180;
     }
-    t.rotation = rotation;
+    ent.rotation = rotation;
   }
-  return { ...t };
-};
-
-export type ExploreDispatch = (action: ExploreAction) => void;
-
-export type ExploreState = {
-  bugs: Map<number, EntityDef>;
-  turrets: Map<number, EntityDef>;
-};
-
-const initialExploreState: ExploreState = {
-  bugs: Map(),
-  turrets: Map(),
 };
 
 const belowSpawnCap = (m: Map<number, EntityDef>): boolean => {
-  return m.count() < 20;
-};
-
-const doAttack = (attacker: EntityDef, defender: EntityDef): EntityDef => {
-  const currentHP =
-    defender.currentHP -
-    Math.max(0, attacker.weapon.damage - defender.defense.armor);
-  //  if (defender.currentHP < 0) console.log("killed ", defender);
-  return { ...defender, currentHP };
+  return m.size < 20;
 };
 
 const isAlive = (e: EntityDef): boolean => e?.currentHP > 0;
@@ -214,87 +129,107 @@ const isAlive = (e: EntityDef): boolean => e?.currentHP > 0;
 const inRange = (attacker: EntityDef, defender: EntityDef): boolean =>
   targetDistance(attacker, defender) < attacker.weapon.range;
 
-const doMove = (entity: EntityDef): EntityDef => {
-  if (!entity.currentPath || !entity.currentPath[0]) return entity;
+const doAttack = (attacker: EntityDef, defender: EntityDef) => {
+  attacker.isAttacking = true;
+  defender.currentHP -= Math.max(
+    0,
+    attacker.weapon.damage - defender.defense.armor
+  );
+};
+
+const doMove = (entity: EntityDef, bugs: EntityMap, turrets: EntityMap) => {
+  if (!entity.currentPath || !entity.currentPath[0]) {
+    if (entity.currentTarget) console.log("No path to target for ", entity.id);
+    return;
+  }
   const x = entity.currentPath[0].x,
     y = entity.currentPath[0].y;
   //  console.log(PointToS(entity.currentPath[0]));
-  if (targetDistance(entity, entity.currentPath[0]) <= pathfindingScaleFactor) {
+  if (targetDistance(entity, entity.currentPath[0]) <= 1) {
     entity.currentPath.shift();
   }
 
   const rotationRad = Math.atan2(y - entity.y, x - entity.x);
   const deltaX = entity.topSpeed * Math.cos(rotationRad);
   const deltaY = entity.topSpeed * Math.sin(rotationRad);
-  return {
-    ...entity,
-    currentPath: entity.currentPath,
-    x: entity.x + deltaX,
-    y: entity.y + deltaY,
-  };
+  const newX = entity.x + deltaX;
+  const newY = entity.y + deltaY;
+  const newPos = { x: newX, y: newY };
+  for (var [_, e] of bugs) {
+    if (e.id == entity.id) continue;
+    if (targetDistance(newPos, e) < entity.hitRadius) {
+      //console.log(`${entity.id} Would collide with bug ${e.id}`);
+      if (Date.now() - (entity?.lastMovedAt || 0) > 1000) {
+        clearTarget(entity);
+        //TODO Better collision fixing, maybe find angle between colliders and use that to unbounce
+        entity.x -= 2 * deltaX;
+        entity.y -= 2 * deltaY;
+        entity.lastMovedAt = Date.now();
+      }
+
+      return;
+    }
+  }
+
+  for (var [_, e] of turrets) {
+    if (e.id == entity.id) continue;
+    if (targetDistance(entity, e) < entity.hitRadius + e.hitRadius) {
+      console.log(`${entity.id} Would collide with turret ${e.id}`);
+      return;
+    }
+  }
+
+  entity.x = newX;
+  entity.y = newY;
+  entity.lastMovedAt = Date.now();
+};
+
+const clearTarget = (e: EntityDef) => {
+  e.currentTarget = null;
+  e.currentPath = [];
+  e.isAttacking = false;
 };
 
 const clearTargets = (
   bugs: Map<number, EntityDef>,
   turrets: Map<number, EntityDef>
-): [bugs: Map<number, EntityDef>, turrets: Map<number, EntityDef>] => {
-  bugs = bugs.map((bug) => ({
-    ...bug,
-    currentTarget: null,
-    currentPath: [],
-  }));
-
-  turrets = turrets.map((turret) => ({
-    ...turret,
-    currentTarget: null,
-    currentPath: [],
-  }));
-
-  return [bugs, turrets];
+) => {
+  bugs.forEach(clearTarget);
+  turrets.forEach(clearTarget);
 };
 
 const doMoveAndCombat = (
   bugs: Map<number, EntityDef>,
   turrets: Map<number, EntityDef>
-): [bugs: Map<number, EntityDef>, turrets: Map<number, EntityDef>] => {
-  bugs = bugs.withMutations((bugs) => {
-    turrets.forEach((turret) => {
-      if (turret.currentTarget && inRange(turret, turret.currentTarget)) {
-        bugs.update(turret.currentTarget.id, (bug) => {
-          return doAttack(turret, bug);
-        });
-      }
-    });
-
-    turrets = turrets.withMutations((turrets) => {
-      // combat stuff
-      bugs.forEach((bug) => {
-        if (bug.currentTarget) {
-          if (inRange(bug, bug.currentTarget)) {
-            if ((bug.currentPath?.length || 0) > 0) {
-              bugs.update(bug.id, (bug) => ({
-                ...bug,
-                currentPath: [],
-              }));
-            }
-            turrets.update(bug.currentTarget.id, (turret) => {
-              return doAttack(bug, turret);
-            });
-          } else {
-            bugs.update(bug.id, (bug) => {
-              if (!bug.currentTarget) return bug;
-              return doMove(bug);
-            });
-          }
-        }
-      });
-
-      return turrets;
-    });
-    return bugs;
+) => {
+  turrets.forEach((turret) => {
+    turret.isAttacking = false;
+    if (turret.currentTarget && inRange(turret, turret.currentTarget)) {
+      doAttack(turret, turret.currentTarget);
+    }
   });
 
-  return [bugs.filter(isAlive), turrets.filter(isAlive)];
+  // combat stuff
+  bugs.forEach((bug) => {
+    bug.isAttacking = false;
+    if (bug.currentTarget) {
+      if (inRange(bug, bug.currentTarget)) {
+        if ((bug.currentPath?.length || 0) > 0) {
+          bug.currentPath = [];
+        }
+        return doAttack(bug, bug.currentTarget);
+      } else {
+        if (bug.currentTarget) doMove(bug, bugs, turrets);
+      }
+    }
+  });
+
+  bugs.forEach((bug) => {
+    if (!isAlive(bug)) bugs.delete(bug.id);
+  });
+  turrets.forEach((turret) => {
+    if (!isAlive(turret)) turrets.delete(turret.id);
+  });
 };
 
 function scoreFunction(
@@ -303,7 +238,7 @@ function scoreFunction(
   enemies: EntityMap,
   bottomRight: Point
 ): (p: Point) => number {
-  const pointCache = Map<string, number>();
+  const pointCache = new Map<string, number>();
   return (p: Point): number => {
     //p = { x: p.x * scalingFactor, y: p.y * scalingFactor };
     const pointS = PointToS(p);
@@ -314,23 +249,32 @@ function scoreFunction(
         return Infinity;
 
       for (const [_, ent] of friendlies) {
-        //.forEach((ent) => {
         if (targetDistance(p, ent) <= bufferRadius + ent.hitRadius) {
-          //console.log("hit entity", PointToS(p));
-          return 15; //Infinity;
+          return 55; //Infinity;
         }
+        // Prefer not hitting future paths
+        // if (ent.currentPath?.length) {
+        //   for (var i = 0; i < Math.min(ent.currentPath.length, 15); i++) {
+        //     if (
+        //       targetDistance(p, ent.currentPath[i]) <=
+        //       bufferRadius + ent.hitRadius
+        //     ) {
+        //       return 10; //Infinity;
+        //     }
+        //   }
+        // }
       }
 
       for (const [_, ent] of enemies) {
         //}.forEach((ent) => {
         if (targetDistance(p, ent) <= bufferRadius + ent.hitRadius) {
-          return 25; //Infinity;
+          return 55; //Infinity;
         }
         if (
           targetDistance(p, ent) <=
           bufferRadius + ent.hitRadius + ent.weapon.range
         ) {
-          return 5;
+          return 1;
         }
       }
 
@@ -341,6 +285,25 @@ function scoreFunction(
   };
 }
 
+export function AdvanceGameState(delta: number) {
+  const score = scoreFunction(4, GameState.bugs, GameState.turrets, {
+    x: 600,
+    y: 600,
+  });
+  // Allow to target spawners
+  for (var [_, t] of GameState.turrets)
+    pickAndFaceTarget(t, GameState.bugs, score);
+  for (var [_, b] of GameState.bugs)
+    pickAndFaceTarget(b, GameState.turrets, score);
+  doMoveAndCombat(GameState.bugs, GameState.turrets);
+  // paintHitMap(10, hitContext, SpitterBugRadius, bugs, turrets);
+  // if (counter++ > 500) {
+  //   hitContext.fillStyle = "#000000";
+  //   hitContext.fillRect(0, 0, 60, 60);
+  //   console.log(JSON.stringify(hitContext.getImageData(0, 0, 60, 60).data));
+  //   counter = 0;
+}
+
 export function exploreStateReducer(
   state: ExploreState,
   action: ExploreAction
@@ -348,63 +311,61 @@ export function exploreStateReducer(
   const type = action.type;
   const actionX = Math.floor(action.position?.x || 0);
   const actionY = Math.floor(action.position?.y || 0);
-  var turrets = state.turrets,
-    bugs = state.bugs;
 
   switch (type) {
     case "Tick":
       // Spawn new biters?
-      const score = scoreFunction(16, state.bugs, state.turrets, {
-        x: 600,
-        y: 600,
-      });
-      turrets = state.turrets.map(
-        // Allow to target spawners
-        (t: EntityDef): EntityDef => pickAndFaceTarget(t, state.bugs, score)
-      );
-      bugs = state.bugs.map(
-        (b: EntityDef): EntityDef => pickAndFaceTarget(b, state.turrets, score)
-      );
-      // paintHitMap(10, hitContext, SpitterBugRadius, bugs, turrets);
-      // if (counter++ > 500) {
-      //   hitContext.fillStyle = "#000000";
-      //   hitContext.fillRect(0, 0, 60, 60);
-      //   console.log(JSON.stringify(hitContext.getImageData(0, 0, 60, 60).data));
-      //   counter = 0;
-      // }
-
-      [bugs, turrets] = doMoveAndCombat(bugs, turrets);
       (window as any).state = state;
+      const turrets = GameState.turrets,
+        bugs = GameState.bugs;
       return { ...state, turrets, bugs };
     case "PlaceTurret":
-      if (action.position && canPlaceTurretAt(state, actionX, actionY)) {
-        [bugs, turrets] = clearTargets(bugs, turrets);
-        turrets = state.turrets.withMutations((mt) => {
-          const t = Turret(actionX, actionY);
-          mt.set(t.id, t);
-        });
-        return { ...state, turrets, bugs };
+      if (
+        action.position &&
+        canPlaceTurretAt(actionX, actionY, GameState.bugs, GameState.turrets)
+      ) {
+        clearTargets(GameState.bugs, GameState.turrets);
+        const t = NewTurret(actionX, actionY);
+        GameState.turrets.set(t.id, t);
+
+        return { ...state, turrets: GameState.turrets };
       }
       break;
     case "SpawnBug":
       if (action.position && belowSpawnCap(state.bugs)) {
-        const bugs = state.bugs.withMutations((mb) => {
-          const Bug = Math.random() > 0.7 ? MeleeBug : SpitterBug;
-          const b = Bug(actionX, actionY);
-          mb.set(b.id, b);
-        });
-        return { ...state, bugs };
+        for (var [_, e] of GameState.bugs) {
+          if (targetDistance(action.position, e) < 16 + e.hitRadius) {
+            console.log(`New Bug Would collid with ${e.id}`);
+            return state;
+          }
+        }
+
+        const Bug = Math.random() > 0.3 ? NewMeleeBug : NewSpitterBug;
+        const b = Bug(actionX, actionY);
+        GameState.bugs.set(b.id, b);
       }
-      break;
+      return { ...state, bugs: GameState.bugs };
     default:
   }
   return state;
 }
 
 const canPlaceTurretAt = function (
-  state: ExploreState,
   x: number,
-  y: number
+  y: number,
+  bugs: EntityMap,
+  turrets: EntityMap
 ): boolean {
+  for (var [_, e] of bugs) {
+    if (targetDistance({ x, y }, e) < 16 + e.hitRadius) {
+      return false;
+    }
+  }
+  for (var [_, e] of turrets) {
+    if (targetDistance({ x, y }, e) < 16 + e.hitRadius) {
+      return false;
+    }
+  }
+
   return true;
 };

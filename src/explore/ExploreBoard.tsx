@@ -1,6 +1,10 @@
 import { Turret } from "./Turret";
 import { Bug } from "./Bug";
-import { useExploreState, ExploreDispatch } from "./exploreState";
+import {
+  useExploreState,
+  ExploreDispatch,
+  AdvanceGameState,
+} from "./exploreState";
 import { SyntheticEvent, useState } from "react";
 import { useInterval } from "../reactUtils";
 import poissonProcess from "poisson-process";
@@ -75,6 +79,10 @@ export const ExploreBoard = (_: ExploreBoardProps) => {
     // Entities have some current state
     // List of possible criteria that would transition to a new state
     //e.g. target gone, enemy in range, etc.
+    AdvanceGameState(tick);
+  }, 32);
+
+  useInterval(() => {
     dispatch({ type: "Tick" });
   }, 16);
 
@@ -92,13 +100,16 @@ export const ExploreBoard = (_: ExploreBoardProps) => {
       <svg id="exploreCanvas" version="2.0" width="600" height="600">
         <rect x="0" y="0" fill="none" width="100%" height="100%" />
         {ghostTurret}
-        {state.turrets.valueSeq().map((t) => (
+        {[...state.turrets.values()].map((t) => (
           <Turret key={t.id} rotation={t.rotation} x={t.x} y={t.y} />
         ))}
 
-        {state.bugs.valueSeq().map((t) => (
-          <Bug key={t.id} rotation={t.rotation} x={t.x} y={t.y} />
-        ))}
+        {[...state.bugs.values()].map((t) => {
+          const fill = t.isAttacking ? "red" : "blue";
+          return (
+            <Bug key={t.id} fill={fill} rotation={t.rotation} x={t.x} y={t.y} />
+          );
+        })}
       </svg>
     </div>
   );

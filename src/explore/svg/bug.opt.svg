@@ -2,7 +2,7 @@
 <svg width="54.194mm" height="53.581mm" version="1.1" viewBox="0 0 54.194 53.581" xmlns="http://www.w3.org/2000/svg">
  <g id="rotateHandle">
   <g transform="translate(-56.191 -178.74)">
-   <ellipse cx="83.762" cy="205.53" rx="13.791" ry="26.62" fill="#2a00ef" fill-opacity=".94218" opacity=".86429" stroke="#f55" stroke-linejoin="bevel" stroke-opacity=".95294" stroke-width=".341"/>
+   <ellipse id="mainBody" cx="83.762" cy="205.53" rx="13.791" ry="26.62" fill="#2a00ef" fill-opacity=".94218" opacity=".86429" stroke="#f55" stroke-linejoin="bevel" stroke-opacity=".95294" stroke-width=".341"/>
    <g stroke="#000">
     <g fill="none" stroke-width=".26458px">
      <path d="m72.162 191.01c-10.023-9.9424-14.352 1.4433-14.352 1.4433"/>

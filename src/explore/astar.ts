@@ -26,12 +26,14 @@ const scalePoint = (p: Point, scalingFactor: number): Point => ({
 //   x: p.x,
 //   y: p.y,
 // });
-
+// GoalFunc should return true if this is a goal state
+type GoalFunc = (p: Point) => boolean;
 export function BestPath(
   scalingFactor: number,
   start: Point,
   goal: Point,
-  score: ScoreFunc
+  score: ScoreFunc,
+  goalFunc: GoalFunc
 ): Point[] {
   const cameFrom = new Map<string, Point>(),
     gScore = new Map<string, number>(),
@@ -67,7 +69,7 @@ export function BestPath(
 
     openSetSet.delete(currentS);
 
-    if (current.x === goal.x && current.y === goal.y) {
+    if ((current.x === goal.x && current.y === goal.y) || goalFunc(current)) {
       return reconstructPath(cameFrom, current).map((p) =>
         scalePoint(p, 1 / scalingFactor)
       );
