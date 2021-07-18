@@ -17,7 +17,7 @@ import { UIAction, useUIState } from "./uiState";
 
 import { Card } from "./Card";
 
-import { ExploreBoard } from "./ExploreBoard";
+import { ExploreBoard } from "./explore/ExploreBoard";
 
 const UnlockedRecipes = new Set([
   "iron-ore",

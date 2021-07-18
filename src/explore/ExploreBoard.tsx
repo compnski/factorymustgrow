@@ -2,7 +2,7 @@ import { Turret } from "./Turret";
 import { Bug } from "./Bug";
 import { useExploreState, ExploreDispatch } from "./exploreState";
 import { SyntheticEvent, useState } from "react";
-import { useInterval } from "./reactUtils";
+import { useInterval } from "../reactUtils";
 import poissonProcess from "poisson-process";
 export type ExploreBoardProps = {};
 
