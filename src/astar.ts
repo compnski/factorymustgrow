@@ -8,16 +8,30 @@ export type Point = {
 };
 
 export function PointToS(p: Point): string {
-  return `${p.x}X${p.y}	`;
+  return `${p.x}X${p.y}`;
 }
 
+// const distanceFunc = (start: Point, goal: Point): number =>
+//   Math.abs(goal.x - start.x) + Math.abs(goal.y - start.y);
+
 const distanceFunc = (start: Point, goal: Point): number =>
-  Math.abs(goal.x - start.x) + Math.abs(goal.y - start.y);
+  Math.sqrt(Math.pow(goal.x - start.x, 2) + Math.pow(goal.y - start.y, 2));
+
+const scalePoint = (p: Point, scalingFactor: number): Point => ({
+  x: Math.floor(p.x / scalingFactor),
+  y: Math.floor(p.y / scalingFactor),
+});
+
+// const scalePoint = (p: Point, scalingFactor: number): Point => ({
+//   x: p.x,
+//   y: p.y,
+// });
 
 export function BestPath(
+  scalingFactor: number,
   start: Point,
   goal: Point,
-  scoreMap: ScoredMap
+  score: ScoreFunc
 ): Point[] {
   const cameFrom = new Map<string, Point>(),
     gScore = new Map<string, number>(),
@@ -29,12 +43,15 @@ export function BestPath(
       },
     });
 
+  start = scalePoint(start, scalingFactor);
+  goal = scalePoint(goal, scalingFactor);
+
   openSet.queue(start);
   openSetSet.add(PointToS(start));
 
   gScore.set(PointToS(start), 0);
 
-  var maxIter = 1000;
+  var maxIter = 100000;
 
   while (openSet.length > 0) {
     if (maxIter-- < 0) {
@@ -51,33 +68,39 @@ export function BestPath(
     openSetSet.delete(currentS);
 
     if (current.x === goal.x && current.y === goal.y) {
-      return reconstructPath(cameFrom, current);
+      return reconstructPath(cameFrom, current).map((p) =>
+        scalePoint(p, 1 / scalingFactor)
+      );
     }
-    scoreNeighbors(current, scoreMap).forEach(([neighbor, score]) => {
-      if (score === Infinity) return;
-      const neighborS = PointToS(neighbor);
+    scoreNeighbors(scalingFactor, current, score).forEach(
+      ([neighbor, score]) => {
+        if (PointToS(neighbor) != PointToS(goal) && score === Infinity) return;
+        const neighborS = PointToS(neighbor);
 
-      const localGScore = (gScore.get(currentS) ?? Infinity) + score;
-      if (localGScore < (gScore.get(neighborS) ?? Infinity)) {
-        cameFrom.set(neighborS, current);
-        gScore.set(neighborS, localGScore);
-        fScore.set(neighborS, localGScore + distanceFunc(neighbor, goal));
-        if (!openSetSet.has(neighborS)) {
-          openSetSet.add(neighborS);
-          openSet.queue(neighbor);
+        const localGScore = (gScore.get(currentS) ?? Infinity) + score;
+        if (localGScore < (gScore.get(neighborS) ?? Infinity)) {
+          cameFrom.set(neighborS, current);
+          gScore.set(neighborS, localGScore);
+          fScore.set(neighborS, localGScore + distanceFunc(neighbor, goal));
+          if (!openSetSet.has(neighborS)) {
+            openSetSet.add(neighborS);
+            openSet.queue(neighbor);
+          }
         }
       }
-    });
+    );
   }
 
   return [];
 }
 
-interface ScoredMap {
-  score(at: Point): number;
-}
+export type ScoreFunc = (at: Point) => number;
 
-function scoreNeighbors(n: Point, map: ScoredMap): [Point, number][] {
+function scoreNeighbors(
+  scalingFactor: number,
+  n: Point,
+  score: ScoreFunc
+): [Point, number][] {
   return [
     [-1, 0],
     [1, 0],
@@ -86,8 +109,7 @@ function scoreNeighbors(n: Point, map: ScoredMap): [Point, number][] {
   ].map(([x, y]) => {
     x = n.x + x;
     y = n.y + y;
-    const score = map.score({ x, y });
-    return [{ x, y }, score];
+    return [{ x, y }, score(scalePoint({ x, y }, 1 / scalingFactor))];
   });
 }
 
@@ -103,7 +125,7 @@ function reconstructPath(
   return totalPath;
 }
 
-export function PrintPath(path: Point[]): string {
+export function PrintPath(path: Point[], scalingFactor: number = 1): string {
   var maxX = -Infinity,
     maxY = -Infinity,
     minX = Infinity,
@@ -111,6 +133,7 @@ export function PrintPath(path: Point[]): string {
   var pathMap = new Map<string, number>();
 
   path.forEach((p, idx) => {
+    p = scalePoint(p, scalingFactor);
     maxX = Math.max(maxX, p.x);
     maxY = Math.max(maxY, p.y);
     minX = Math.min(minX, p.x);
