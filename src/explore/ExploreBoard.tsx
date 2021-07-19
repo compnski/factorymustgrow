@@ -107,7 +107,13 @@ export const ExploreBoard = (_: ExploreBoardProps) => {
         {[...state.bugs.values()].map((t) => {
           const fill = t.isAttacking ? "red" : "blue";
           return (
-            <Bug key={t.id} fill={fill} rotation={t.rotation} x={t.x} y={t.y} />
+            <Bug
+              key={t.id}
+              fill={fill}
+              rotation={t.rotation || 0}
+              x={t.x}
+              y={t.y}
+            />
           );
         })}
       </svg>

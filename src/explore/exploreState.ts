@@ -84,6 +84,10 @@ const pickAndFaceTarget = (
     clearTarget(ent);
     console.log(`Clear target for ${ent.id}`);
   }
+  if (!ent.currentTarget && ent.currentPath?.length) {
+    console.log(`Dead Path for ${ent.id}!!!`);
+    clearTarget(ent);
+  }
   if (!ent.currentTarget && targets.size > 0) {
     ent.currentTarget = chooseNearestTarget(ent, targets);
   }
@@ -93,7 +97,7 @@ const pickAndFaceTarget = (
     ent.currentTarget != null &&
     (!ent.currentPath || !ent.currentPath.length)
   ) {
-    console.log(`New path for ${ent.id} ${ent.currentPath?.length}`);
+    //console.log(`New path for ${ent.id} ${ent.currentPath?.length}`);
     ent.currentPath = BestPath(
       pathfindingScaleFactor,
       { x: ent.x, y: ent.y },
@@ -102,21 +106,22 @@ const pickAndFaceTarget = (
       (p: Point) =>
         !ent.currentTarget ||
         targetDistance(p, ent.currentTarget) < ent.weapon.range
-    ).slice(0, 20);
+    ); //.slice(0, 125);
   }
 
   if (ent.currentTarget) {
-    const rotationTarget = //ent.currentTarget;
-      !ent.isAttacking && ent.currentPath?.length && ent.currentPath[0]
-        ? ent.currentPath[0]
-        : ent.currentTarget;
+    const rotationTarget = ent.currentTarget;
+    // !ent.isAttacking && ent.currentPath?.length && ent.currentPath[0]
+    //   ? ent.currentPath[0]
+    //   : ent.currentTarget;
     const deltaY = rotationTarget.y - ent.y;
-    const deltaX = ent.x - rotationTarget.x;
-    let rotation = (Math.atan(deltaX / deltaY) * 180) / Math.PI;
-    if (deltaY > 0) {
-      rotation += 180;
-    }
-    ent.rotation = rotation;
+    const deltaX = rotationTarget.x - ent.x;
+    let rotation = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
+    // if (deltaY > 0) {
+    //   rotation += 180;
+    // }
+    //rotation = (rotation + 180) % 360;
+    ent.rotation = 360 - rotation;
   }
 };
 
@@ -145,7 +150,7 @@ const doMove = (entity: EntityDef, bugs: EntityMap, turrets: EntityMap) => {
   const x = entity.currentPath[0].x,
     y = entity.currentPath[0].y;
   //  console.log(PointToS(entity.currentPath[0]));
-  if (targetDistance(entity, entity.currentPath[0]) <= 1) {
+  if (targetDistance(entity, entity.currentPath[0]) <= entity.topSpeed) {
     entity.currentPath.shift();
   }
 
@@ -159,8 +164,9 @@ const doMove = (entity: EntityDef, bugs: EntityMap, turrets: EntityMap) => {
     if (e.id == entity.id) continue;
     if (targetDistance(newPos, e) < entity.hitRadius) {
       //console.log(`${entity.id} Would collide with bug ${e.id}`);
-      if (Date.now() - (entity?.lastMovedAt || 0) > 1000) {
-        clearTarget(entity);
+      if (Date.now() - (entity?.lastMovedAt || 0) > 100) {
+        entity.currentPath.shift();
+        //clearTarget(entity);
         //TODO Better collision fixing, maybe find angle between colliders and use that to unbounce
         entity.x -= 2 * deltaX;
         entity.y -= 2 * deltaY;
@@ -340,7 +346,7 @@ export function exploreStateReducer(
           }
         }
 
-        const Bug = Math.random() > 0.3 ? NewMeleeBug : NewSpitterBug;
+        const Bug = Math.random() > 0.7 ? NewMeleeBug : NewSpitterBug;
         const b = Bug(actionX, actionY);
         GameState.bugs.set(b.id, b);
       }
