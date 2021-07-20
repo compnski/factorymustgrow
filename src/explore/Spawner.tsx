@@ -7,6 +7,7 @@ const width = 64;
 const hpRingLength = 532;
 
 const hpColor = (n: number): string => {
+  if (n === 1) return "none";
   if (n < 0.3) return "red";
   if (n < 0.7) return "yellow";
   return "green";
