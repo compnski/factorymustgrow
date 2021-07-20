@@ -17,6 +17,10 @@ import poissonProcess from "poisson-process";
 export const useExploreState = () =>
   useReducer(exploreStateReducer, initialExploreState);
 
+export function exploreStateReducer(): ExploreState {
+  return { ...GameState };
+}
+
 export type ExploreAction = {
   type: "Reset" | "PlaceTurret" | "SpawnBug" | "SpawnSpawner" | "Tick";
   position?: { x: number; y: number };
@@ -458,10 +462,7 @@ function spawnRocks(): Map<number, TerrainDef> {
   return terrainMap;
 }
 
-export function exploreStateReducer(
-  state: ExploreState,
-  action: ExploreAction
-): ExploreState {
+export function updateExploreState(action: ExploreAction): void {
   const type = action.type;
   const actionX = Math.floor(action.position?.x || 0);
   const actionY = Math.floor(action.position?.y || 0);
@@ -473,16 +474,7 @@ export function exploreStateReducer(
       GameState.turrets = new Map();
       GameState.bugs = new Map();
       spawnSpawners();
-      return {
-        ...state,
-        terrain: GameState.terrain,
-        turrets: GameState.turrets,
-        bugs: GameState.bugs,
-      };
-    case "Tick":
-      // Spawn new biters?
-      (window as any).state = state;
-      return { ...state, turrets: GameState.turrets, bugs: GameState.bugs };
+      break;
     case "PlaceTurret":
       if (
         action.position &&
@@ -491,8 +483,6 @@ export function exploreStateReducer(
         clearTargets(GameState.bugs, GameState.turrets);
         const t = NewTurret(actionX, actionY);
         GameState.turrets.set(t.id, t);
-
-        return { ...state, turrets: GameState.turrets };
       }
       break;
     case "SpawnSpawner":
@@ -500,22 +490,20 @@ export function exploreStateReducer(
         for (var [_, e] of GameState.bugs) {
           if (targetDistance(action.position, e) < 16 + e.hitRadius) {
             console.log(`New Spawner Would collide with ${e.id} ${e.x},${e.y}`);
-            return state;
+            break;
           }
         }
         const b = NewSpawner(actionX, actionY);
         GameState.bugs.set(b.id, b);
       }
-      return { ...state, bugs: GameState.bugs };
-
+      break;
     case "SpawnBug":
-      if (action.position && belowSpawnCap(state.bugs)) {
+      if (action.position && belowSpawnCap(GameState.bugs)) {
         spawnBug(action.position);
       }
-      return { ...state, bugs: GameState.bugs };
+      break;
     default:
   }
-  return state;
 }
 
 function spawnBug(at: Point) {

@@ -1,6 +1,7 @@
 import { ReactComponent as StarSVG } from "./svg/star.svg";
 import { ReactComponent as CloudSVG } from "./svg/cloud.svg";
-import { EntityProps } from "./svg";
+import { EntityProps } from "../svg";
+
 const height = 16;
 const width = 16;
 

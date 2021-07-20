@@ -1,5 +1,5 @@
 import { ReactComponent as BugSVG } from "./svg/bug.opt.svg";
-import { useProperties, transformRotate } from "./svg";
+import { useProperties, transformRotate } from "../svg";
 
 export type BugProps = {
   rotation: number;

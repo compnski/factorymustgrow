@@ -7,17 +7,52 @@ span {
   border: 0px blue solid;
 }
 
-#exploreCanvas {
-  > g {
-    transform-box: fill-box;
-    transform-origin: 50% 50%;
-  }
-  width: 100%;
-  height: 100%;
+.exploreGame {
+  width: 600px;
+  height: 600px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  background-color: white;
 
-  #rotateHandle {
-    transform-box: fill-box;
-    transform-origin: 50% 50%;
+  .startCard {
+  }
+
+  .exploreBoard {
+    user-select: none;
+    background-color: #6c5435;
+    width: 600px;
+    height: 600px;
+
+    .placementGhost {
+      opacity: 50%;
+      z-index: 1;
+    }
+    .attackStar {
+      z-index: 1;
+    }
+  }
+  .buttonList {
+    display: flex;
+    .button {
+      margin-left: 15px;
+      padding: 5px;
+    }
+  }
+
+  // TODO Still needed?
+  #exploreCanvas {
+    > g {
+      transform-box: fill-box;
+      transform-origin: 50% 50%;
+    }
+    width: 100%;
+    height: 100%;
+
+    #rotateHandle {
+      transform-box: fill-box;
+      transform-origin: 50% 50%;
+    }
   }
 }
 
@@ -38,23 +73,6 @@ span {
 .scroller {
   overflow: scroll;
   height: 95vh;
-}
-
-.exploreBoard {
-  user-select: none;
-  width: 600px;
-  height: 50vh;
-  background-color: #6c5435;
-  position: fixed;
-  z-index: 1;
-
-  .placementGhost {
-    opacity: 50%;
-    z-index: 1;
-  }
-  .attackStar {
-    z-index: 1;
-  }
 }
 
 .infoCard {

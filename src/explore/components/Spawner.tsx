@@ -1,6 +1,6 @@
 import { ReactComponent as SpawnerSVG } from "./svg/spawner.opt.svg";
 
-import { useProperties, EntityProps } from "./svg";
+import { useProperties, EntityProps } from "../svg";
 const height = 64;
 const width = 64;
 

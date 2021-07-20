@@ -1,7 +1,5 @@
 import { ReactComponent as TurretSVG } from "./svg/turret.opt.svg";
-import { useProperties, transformRotate } from "./svg";
-
-import { EntityProps } from "./svg";
+import { useProperties, transformRotate, EntityProps } from "../svg";
 
 const rotateHandle = "#rotateHandle";
 const height = 64;

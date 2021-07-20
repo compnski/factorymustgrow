@@ -17,7 +17,7 @@ import { UIAction, useUIState } from "./uiState";
 
 import { Card } from "./Card";
 
-import { ExploreBoard } from "./explore/ExploreBoard";
+import { ExploreGame } from "./explore/ExploreGame";
 
 const UnlockedRecipes = new Set([
   "iron-ore",
@@ -149,9 +149,12 @@ function App() {
         dispatch({ type: "CloseDialog", evt });
       }}
     >
+      <ExploreGame
+        resources={[{ kind: "copper-ore", count: 100 }]}
+        inventory={[{ kind: "turret", count: 20 }]}
+      />
       {recipeSelector}
       <InfoCard gameState={gameState} />
-      <ExploreBoard />
       <div className="scoller">
         {cards}
         <div
