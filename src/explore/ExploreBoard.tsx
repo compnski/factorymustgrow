@@ -2,20 +2,16 @@ import { Turret } from "./Turret";
 import { EntityProps } from "./svg";
 import { Bug, BugProps } from "./Bug";
 import { Spawner } from "./Spawner";
+import { Boulder } from "./Boulder";
 import { Star, Cloud } from "./Icons";
 import {
   useExploreState,
   ExploreDispatch,
   AdvanceGameState,
 } from "./exploreState";
-import {
-  SyntheticEvent,
-  useState,
-  ComponentType,
-  FunctionComponent,
-} from "react";
+import { SyntheticEvent, useState, FunctionComponent } from "react";
 import { useInterval } from "../reactUtils";
-import poissonProcess from "poisson-process";
+
 export type ExploreBoardProps = {};
 
 const getEventPosition = (evt: SyntheticEvent): { x: number; y: number } => {
@@ -185,6 +181,10 @@ export const ExploreBoard = (_: ExploreBoardProps) => {
     );
   });
 
+  const terrainObjects = [...state.terrain.values()].map((t) => (
+    <Boulder key={t.id} x={t.x} y={t.y} rotation={0} />
+  ));
+
   return (
     <div
       onMouseUp={canvasMouseUp(dispatch)}
@@ -196,6 +196,7 @@ export const ExploreBoard = (_: ExploreBoardProps) => {
       <svg id="exploreCanvas" version="2.0" width="600" height="600">
         <rect x="0" y="0" fill="none" width="100%" height="100%" />
         {placementGhost}
+        {terrainObjects}
         {renderedTurrets}
         {renderedBugs}
         {renderedEffects}

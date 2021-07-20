@@ -9,6 +9,8 @@ import {
   NewSpawner,
   NewTestEnt,
   GameState,
+  TerrainDef,
+  NewTerrain,
 } from "./defs";
 import poissonProcess from "poisson-process";
 
@@ -25,11 +27,13 @@ export type ExploreDispatch = (action: ExploreAction) => void;
 export type ExploreState = {
   bugs: Map<number, EntityDef>;
   turrets: Map<number, EntityDef>;
+  terrain: Map<number, TerrainDef>;
 };
 
 const initialExploreState: ExploreState = {
   bugs: new Map(),
   turrets: new Map(),
+  terrain: new Map(),
 };
 
 type EntityMap = Map<number, EntityDef>;
@@ -65,6 +69,7 @@ const chooseNearestTarget = (
   var nearestTarget = null;
   var nearestDistance = 1e6;
   targets.forEach((target) => {
+    if (t.kind === "Turret" && !inRange(t, target)) return;
     const d = targetDistance(t, target);
     if (d < nearestDistance) {
       nearestDistance = d;
@@ -79,14 +84,14 @@ const pickAndFaceTarget = (
   targets: Map<number, EntityDef>,
   score: ScoreFunc
 ) => {
-  if (ent.kind == "Spawner") return;
+  if (ent.kind === "Spawner") return;
   if (
     ent.currentTarget &&
     (!targets.has(ent.currentTarget.id) ||
       (ent.topSpeed === 0 && !inRange(ent, ent.currentTarget)))
   ) {
     clearTarget(ent);
-    console.log(`Clear target for ${ent.id}`);
+    //console.log(`Clear target for ${ent.id}`);
   }
   if (!ent.currentTarget && ent.currentPath?.length) {
     console.log(`Dead Path for ${ent.id}!!!`);
@@ -130,10 +135,70 @@ const belowSpawnCap = (m: Map<number, EntityDef>): boolean => {
   return m.size < 20;
 };
 
+var maybeLog = 0;
 const isAlive = (e: EntityDef): boolean => e?.currentHP > 0;
+function linePoint(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  px: number,
+  py: number
+): boolean {
+  // get distance from the point to the two ends of the line
+  const d1 = targetDistance({ x: px, y: py }, { x: x1, y: y1 }),
+    d2 = targetDistance({ x: px, y: py }, { x: x2, y: y2 }),
+    lineLen = targetDistance({ x: x1, y: y1 }, { x: x2, y: y2 }),
+    buffer = 0.1;
 
-const inRange = (attacker: EntityDef, defender: EntityDef): boolean =>
-  targetDistance(attacker, defender) < attacker.weapon.range;
+  if (d1 + d2 >= lineLen - buffer && d1 + d2 <= lineLen + buffer) {
+    return true;
+  }
+  return false;
+}
+
+const lineIntersectsCircle = (
+  start: Point,
+  end: Point,
+  circle: Point,
+  radius: number
+): boolean => {
+  const cx = circle.x,
+    cy = circle.y,
+    distX = start.x - end.x,
+    distY = start.y - end.y,
+    len = Math.sqrt(distX * distX + distY * distY),
+    dot =
+      ((cx - start.x) * (end.x - start.x) +
+        (cy - start.y) * (end.y - start.y)) /
+      Math.pow(len, 2),
+    closestX = start.x + dot * (end.x - start.x),
+    closestY = start.y + dot * (end.y - start.y),
+    circDistX = closestX - cx,
+    circDistY = closestY - cy,
+    distance = Math.sqrt(circDistX * circDistX + circDistY * circDistY);
+
+  const onSegment = linePoint(
+    start.x,
+    start.y,
+    end.x,
+    end.y,
+    closestX,
+    closestY
+  );
+  if (!onSegment) return false;
+
+  return distance <= radius;
+};
+
+const inRange = (attacker: EntityDef, defender: EntityDef): boolean => {
+  const isInRange = targetDistance(attacker, defender) < attacker.weapon.range;
+  if (!isInRange) return false;
+  for (var [_, r] of GameState.terrain) {
+    if (lineIntersectsCircle(attacker, defender, r, r.hitRadius)) return false;
+  }
+  return true;
+};
 
 const doAttack = (attacker: EntityDef, defender: EntityDef) => {
   attacker.isAttacking = true;
@@ -146,7 +211,7 @@ const doAttack = (attacker: EntityDef, defender: EntityDef) => {
 const doMove = (entity: EntityDef, bugs: EntityMap, turrets: EntityMap) => {
   if (entity.topSpeed <= 0) return;
   if (!entity.currentPath || !entity.currentPath[0]) {
-    if (entity.currentTarget) console.log("No path to target for ", entity.id);
+    //if (entity.currentTarget) console.log("No path to target for ", entity.id);
     return;
   }
   const x = entity.currentPath[0].x,
@@ -250,7 +315,6 @@ function scoreFunction(
 ): (p: Point) => number {
   const pointCache = new Map<string, number>();
   return (p: Point): number => {
-    //p = { x: p.x * scalingFactor, y: p.y * scalingFactor };
     const pointS = PointToS(p);
     var points = pointCache.get(pointS);
     if (points != null) return points;
@@ -262,18 +326,25 @@ function scoreFunction(
         if (targetDistance(p, ent) <= bufferRadius + ent.hitRadius) {
           return 5; //Infinity;
         }
-        // Prefer not hitting future paths
-        // if (ent.currentPath?.length) {
-        //   for (var i = 0; i < Math.min(ent.currentPath.length, 15); i++) {
-        //     if (
-        //       targetDistance(p, ent.currentPath[i]) <=
-        //       bufferRadius + ent.hitRadius
-        //     ) {
-        //       return 10; //Infinity;
-        //     }
-        //   }
-        // }
       }
+
+      for (const [_, ent] of GameState.terrain) {
+        if (targetDistance(p, ent) <= bufferRadius + ent.hitRadius) {
+          return 15; //Infinity;
+        }
+      }
+
+      // Prefer not hitting future paths
+      // if (ent.currentPath?.length) {
+      //   for (var i = 0; i < Math.min(ent.currentPath.length, 15); i++) {
+      //     if (
+      //       targetDistance(p, ent.currentPath[i]) <=
+      //       bufferRadius + ent.hitRadius
+      //     ) {
+      //       return 10; //Infinity;
+      //     }
+      //   }
+      // }
 
       for (const [_, ent] of enemies) {
         //}.forEach((ent) => {
@@ -376,6 +447,17 @@ function spawnSpawners() {
   }
 }
 
+const NumRocks = 10;
+
+function spawnRocks(): Map<number, TerrainDef> {
+  const terrainMap = new Map();
+  for (var i = 0; i < NumRocks; i++) {
+    const rock = NewTerrain(Math.random() * 500, Math.random() * 500);
+    terrainMap.set(rock.id, rock);
+  }
+  return terrainMap;
+}
+
 export function exploreStateReducer(
   state: ExploreState,
   action: ExploreAction
@@ -387,10 +469,16 @@ export function exploreStateReducer(
   switch (type) {
     case "Reset":
       console.log("reset");
+      GameState.terrain = spawnRocks();
       GameState.turrets = new Map();
       GameState.bugs = new Map();
       spawnSpawners();
-      return { ...state, turrets: GameState.turrets, bugs: GameState.bugs };
+      return {
+        ...state,
+        terrain: GameState.terrain,
+        turrets: GameState.turrets,
+        bugs: GameState.bugs,
+      };
     case "Tick":
       // Spawn new biters?
       (window as any).state = state;
@@ -449,6 +537,11 @@ const canPlaceTurretAt = function (
   }
   for (var [_, e] of turrets) {
     if (targetDistance({ x, y }, e) < 16 + e.hitRadius) {
+      return false;
+    }
+  }
+  for (var [_, t] of GameState.terrain) {
+    if (targetDistance({ x, y }, t) < 16 + t.hitRadius) {
       return false;
     }
   }

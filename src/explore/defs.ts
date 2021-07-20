@@ -6,9 +6,11 @@ const entityId = (): number => _entityIdx++;
 export const GameState: {
   turrets: Map<number, EntityDef>;
   bugs: Map<number, EntityDef>;
+  terrain: Map<number, TerrainDef>;
 } = {
   turrets: new Map(),
   bugs: new Map(),
+  terrain: new Map(),
 };
 
 type EntityKind = "MeleeBug" | "SpitterBug" | "Turret" | "Spawner" | "TestEnt";
@@ -36,6 +38,20 @@ export interface EntityDef {
   notAIControlled?: boolean;
   context?: any;
 }
+
+export interface TerrainDef {
+  id: number;
+  x: number;
+  y: number;
+  hitRadius: number;
+}
+
+export const NewTerrain = (x: number, y: number): TerrainDef => ({
+  id: entityId(),
+  x,
+  y,
+  hitRadius: 32,
+});
 
 const SpitterBugMaxHP = 400,
   SpitterBugDamage = 5,
