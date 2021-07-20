@@ -1,5 +1,12 @@
 import { useRef, useEffect, RefObject } from "react";
 
+export type EntityProps = {
+  rotation: number;
+  x: number;
+  y: number;
+  hpPercent?: number;
+};
+
 export const useRotation = (
   rotation: number,
   rotateHandle: string

@@ -32,8 +32,9 @@ export function BestPath(
   scalingFactor: number,
   start: Point,
   goal: Point,
-  score: ScoreFunc,
-  goalFunc: GoalFunc
+  goalRadius: number,
+  score: ScoreFunc
+  //goalFunc: GoalFunc
 ): Point[] {
   const cameFrom = new Map<string, Point>(),
     gScore = new Map<string, number>(),
@@ -47,6 +48,7 @@ export function BestPath(
 
   start = scalePoint(start, scalingFactor);
   goal = scalePoint(goal, scalingFactor);
+  goalRadius = (goalRadius - 1) / scalingFactor;
 
   openSet.queue(start);
   openSetSet.add(PointToS(start));
@@ -69,7 +71,10 @@ export function BestPath(
 
     openSetSet.delete(currentS);
 
-    if ((current.x === goal.x && current.y === goal.y) || goalFunc(current)) {
+    if (
+      (current.x === goal.x && current.y === goal.y) ||
+      distanceFunc(current, goal) < goalRadius
+    ) {
       return reconstructPath(cameFrom, current).map((p) =>
         scalePoint(p, 1 / scalingFactor)
       );

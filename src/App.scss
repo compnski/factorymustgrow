@@ -47,6 +47,14 @@ span {
   background-color: slategrey;
   position: fixed;
   z-index: 1;
+
+  .placementGhost {
+    opacity: 50%;
+    z-index: 1;
+  }
+  .attackStar {
+    z-index: 1;
+  }
 }
 
 .infoCard {

@@ -1,13 +1,10 @@
-import { ReactComponent as TurretSVG } from "./svg/turret.opt.svg";
-import { useProperties, transformRotate } from "./svg";
+import { ReactComponent as SpawnerSVG } from "./svg/spawner.opt.svg";
 
-import { EntityProps } from "./svg";
-
-const rotateHandle = "#rotateHandle";
+import { useProperties, EntityProps } from "./svg";
 const height = 64;
 const width = 64;
 
-const hpRingLength = 189;
+const hpRingLength = 532;
 
 const hpColor = (n: number): string => {
   if (n < 0.3) return "red";
@@ -15,13 +12,8 @@ const hpColor = (n: number): string => {
   return "green";
 };
 
-export const Turret = ({ rotation, x, y, hpPercent = 1 }: EntityProps) => {
+export const Spawner = ({ rotation, x, y, hpPercent = 1 }: EntityProps) => {
   const svgRef = useProperties([
-    {
-      handle: rotateHandle,
-      attr: "transform",
-      value: transformRotate(rotation + 90),
-    },
     {
       handle: "#hpRing",
       attr: "stroke-dashoffset",
@@ -35,7 +27,7 @@ export const Turret = ({ rotation, x, y, hpPercent = 1 }: EntityProps) => {
   ]);
 
   return (
-    <TurretSVG
+    <SpawnerSVG
       ref={svgRef}
       width={width}
       height={height}

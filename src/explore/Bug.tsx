@@ -1,10 +1,12 @@
 import { ReactComponent as BugSVG } from "./svg/bug.opt.svg";
 import { useProperties, transformRotate } from "./svg";
-type BugProps = {
+
+export type BugProps = {
   rotation: number;
   fill?: string;
   x: number;
   y: number;
+  hpPercent?: number;
 };
 
 const rotateHandle = "#rotateHandle";
@@ -17,7 +19,7 @@ export const Bug = ({ fill = "#2a00ef", rotation, x, y }: BugProps) => {
     {
       handle: rotateHandle,
       attr: "transform",
-      value: transformRotate(rotation),
+      value: transformRotate(rotation + 90),
     },
     {
       handle: "#mainBody",
