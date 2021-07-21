@@ -1,3 +1,4 @@
+import "./Explore.scss";
 import { ExploreBoard, GhostInfo } from "./components/ExploreBoard";
 import { StartCard } from "./components/StartCard";
 import { EndCard } from "./components/EndCard";

@@ -1,12 +1,12 @@
-export interface ProducingEntity {
-  RecipeName: string;
-  ProducerCount: number;
-  ProducerCapacityUpgradeCount: number;
-  ProducerMaxCapacityUpgradeCount: number;
-  ResearchUpgradeCount: number;
-  // CurrentRate(): number;
-  //    CurrentMaxProducerCount():number;
-}
+// export interface ProducingEntity {
+//   RecipeName: string;
+//   ProducerCount: number;
+//   ProducerCapacityUpgradeCount: number;
+//   ProducerMaxCapacityUpgradeCount: number;
+//   ResearchUpgradeCount: number;
+//   // CurrentRate(): number;
+//   //    CurrentMaxProducerCount():number;
+// }
 
 export type ProducerType =
   | "Assembler"
@@ -29,6 +29,7 @@ export type Recipe = {
 export type EntityStack = {
   Entity: string;
   Count: number;
+  MaxCount?: number;
 };
 
 export type Entity = {
@@ -44,3 +45,37 @@ export type Region = {
   Ore: EntityStack[];
   Capacity: number;
 };
+
+type EntityKind = "iron-ore" | "iron-gear";
+
+class ProducingEntity {
+  inputBuffers?: Map<string, EntityStack>;
+  outputBuffer?: EntityStack;
+
+  RecipeName: string;
+  ProducerCount: number;
+  //  ProducerCapacityUpgradeCount: number;
+  //  ProducerMaxCapacityUpgradeCount: number;
+  //  ResearchUpgradeCount: number;
+}
+
+interface Producer {
+  inputBuffers?: Map<string, EntityStack>;
+  outputBuffer?: EntityStack;
+  produce(): Producer;
+}
+
+type MainBus = {
+  lanes: Map<number, EntityStack>;
+};
+
+type OutputStatus = {
+  above: "OUT" | "IN" | "NONE";
+  below: "OUT" | "IN" | "NONE";
+  beltConnections: { beltId: number; direction: "OUT" | "IN" }[];
+};
+
+type Extractor = {};
+
+type TrainStation = {};
+type Factory = {};
