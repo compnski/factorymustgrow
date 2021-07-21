@@ -101,6 +101,8 @@ function App() {
       ? uiDispatch(action as UIAction)
       : gameDispatch(action as GameAction);
 
+  (window as any).dispatch = dispatch;
+
   const entityCount = (e: string): number =>
     globalEntityCount(gameState.EntityCounts, e);
   const storageCapacity = (e: string): number =>
@@ -141,6 +143,22 @@ function App() {
     );
   });
 
+  const exploreGameEndCallback = () => {
+    console.log("Game Ended");
+    dispatch({ type: "CloseExploreGame" });
+  };
+
+  const exploreGame = uiState.exploreGameOpen ? (
+    <ExploreGame
+      resources={[
+        { kind: "space", count: 150 },
+        { kind: "copper-ore", count: 100_000 },
+      ]}
+      inventory={[{ kind: "turret", count: 20 }]}
+      gameEndCallback={exploreGameEndCallback}
+    />
+  ) : null;
+
   return (
     <div
       className="App"
@@ -149,10 +167,7 @@ function App() {
         dispatch({ type: "CloseDialog", evt });
       }}
     >
-      <ExploreGame
-        resources={[{ kind: "copper-ore", count: 100 }]}
-        inventory={[{ kind: "turret", count: 20 }]}
-      />
+      {exploreGame}
       {recipeSelector}
       <InfoCard gameState={gameState} />
       <div className="scoller">
@@ -168,6 +183,17 @@ function App() {
         >
           Add Recipe
         </div>
+        <div
+          className="clickable resetButton"
+          onClick={() =>
+            dispatch({
+              type: "OpenExploreGame",
+            })
+          }
+        >
+          Explore!
+        </div>
+
         <p
           className="clickable resetButton"
           onClick={() =>

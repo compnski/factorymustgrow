@@ -6,21 +6,30 @@ export type UIState = {
   dialogs: {
     recipeSelectorOpen: boolean;
   };
+  exploreGameOpen: boolean;
 };
 export type UIAction = {
-  type: "CloseDialog" | "ShowRecipeSelector";
-  evt: SyntheticEvent;
+  type:
+    | "CloseDialog"
+    | "ShowRecipeSelector"
+    | "OpenExploreGame"
+    | "CloseExploreGame";
+  evt?: SyntheticEvent;
 };
 
 export function uiStateReducer(state: UIState, action: UIAction): UIState {
   console.log(action);
-  action.evt.preventDefault();
+  action.evt?.preventDefault();
   switch (action.type) {
     case "ShowRecipeSelector":
-      action.evt.stopPropagation();
+      action.evt?.stopPropagation();
       return { ...state, dialogs: { recipeSelectorOpen: true } };
     case "CloseDialog":
       return { ...state, dialogs: { recipeSelectorOpen: false } };
+    case "OpenExploreGame":
+      return { ...state, exploreGameOpen: true };
+    case "CloseExploreGame":
+      return { ...state, exploreGameOpen: false };
     default:
       return { ...state };
   }

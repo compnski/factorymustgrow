@@ -1,7 +1,7 @@
-export type StartCardProps = {
+export type EndCardProps = {
   resources: { kind: string; count: number }[];
   inventory: { kind: string; count: number }[];
-  onClick: (skipFight: boolean) => void;
+  onClick: () => void;
 };
 
 const prettyResourceKind = (k: string): string => {
@@ -26,41 +26,26 @@ const itemList = (
     </li>
   ));
 
-export const StartCard = ({
-  resources,
-  inventory,
-  onClick,
-}: StartCardProps) => {
+export const EndCard = ({ resources, inventory, onClick }: EndCardProps) => {
   return (
     <div className="startCard">
       <div className="modalBg">
         <div className="modalContent">
-          <div className="title">Claim New Territory</div>
+          <div className="title">Success!</div>
           <div className="bodyText">
-            All the surrounding land has been claimed by the bugs. Clear out the
-            hives to expand! <em>The factory must grow!</em>
+            The surrounding land has been claimed. <em>The factory grows!</em>
           </div>
           <div className="resourceList">
             This region contains:
             <ul>{itemList(resources, prettyResourceKind)}</ul>
           </div>
           <div className="inventoryList">
-            You've brought the following supplies from home. Anything unused
-            will be refunded.
+            The follow supplies have survied and will be refunded.
             <ul>{itemList(inventory, prettyInventoryKind)}</ul>
           </div>
           <div className="buttonList">
-            <div
-              className="clickable button action"
-              onClick={() => onClick(false)}
-            >
-              Fight!
-            </div>
-            <div
-              className="clickable button action"
-              onClick={() => onClick(true)}
-            >
-              Avoid Violence
+            <div className="clickable button action" onClick={onClick}>
+              Next
             </div>
           </div>
         </div>

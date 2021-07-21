@@ -1,6 +1,8 @@
 import { ExploreBoard, GhostInfo } from "./components/ExploreBoard";
 import { StartCard } from "./components/StartCard";
+import { EndCard } from "./components/EndCard";
 import {
+  ExploreAction,
   useExploreState,
   ExploreDispatch,
   AdvanceGameState,
@@ -23,7 +25,7 @@ export type ExploreGameProps = {
 
   resources: { kind: ResourceKind; count: number }[];
   inventory: { kind: BattleItemKind; count: number }[];
-  gameEndCallback?: (
+  gameEndCallback: (
     success: boolean,
     remainingInventory: { kind: BattleItemKind; count: number }[]
   ) => void;
@@ -109,20 +111,31 @@ export const ExploreGame = ({
   const [ghostState, setGhostState] = useState<GhostInfo | null>(null);
   const [gamePhase, setGamePhase] = useState<"START" | "RUN" | "END">("START");
 
-  const dispatch = updateExploreState;
-
   useInterval(updateRenderState, 16);
   useInterval(() => {
+    if (gamePhase != "RUN") return;
     const tick = new Date().getTime();
     if (ghostState) {
       setGhostState({ ...ghostState, x: lastX, y: lastY });
     }
-    AdvanceGameState(tick, { x: lastX, y: lastY });
+    if (!AdvanceGameState(tick, { x: lastX, y: lastY })) {
+      setGamePhase("END");
+    }
   }, 32);
 
   const startCardClicked = (skipFight: boolean) => {
+    console.log("start", skipFight);
+    if (skipFight) {
+      gameEndCallback(true, []);
+      return;
+    }
     setGamePhase("RUN");
     updateExploreState({ type: "Reset" });
+    console.log("run");
+  };
+
+  const endCardClicked = () => {
+    gameEndCallback(true, inventory);
   };
 
   const startCard =
@@ -134,9 +147,24 @@ export const ExploreGame = ({
       />
     ) : null;
 
+  const endCard =
+    gamePhase === "END" ? (
+      <EndCard
+        resources={resources}
+        inventory={inventory}
+        onClick={endCardClicked}
+      />
+    ) : null;
+
+  const dispatch = (action: ExploreAction) => {
+    if (gamePhase != "RUN") return;
+    updateExploreState(action);
+  };
+
   return (
     <div className="exploreGame">
       {startCard}
+      {endCard}
       <ExploreBoard
         onMouseUp={canvasMouseUp(dispatch, ghostState, setGhostState)}
         onMouseDown={canvasMouseDown(dispatch, ghostState, setGhostState)}

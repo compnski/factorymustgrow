@@ -409,7 +409,8 @@ function spawnNewBugs(delta: number, bugs: Map<number, EntityDef>) {
 }
 
 var lastTick = 0;
-export function AdvanceGameState(tick: number, mousePos: Point) {
+// returns false when the game is over
+export function AdvanceGameState(tick: number, mousePos: Point): boolean {
   const score = scoreFunction(4, GameState.bugs, GameState.turrets, {
     x: 600,
     y: 600,
@@ -434,7 +435,15 @@ export function AdvanceGameState(tick: number, mousePos: Point) {
   //   hitContext.fillRect(0, 0, 60, 60);
   //   console.log(JSON.stringify(hitContext.getImageData(0, 0, 60, 60).data));
   //   counter = 0;
+  return !noMoreSpawners(GameState.bugs);
 }
+
+const noMoreSpawners = (bugs: Map<number, EntityDef>): boolean => {
+  for (var [_, b] of bugs) {
+    if (b.kind === "Spawner") return false;
+  }
+  return true;
+};
 
 const NumSpawners = 7;
 const AllowedBugsPerSpawner = 10;
