@@ -1,12 +1,12 @@
-// export interface ProducingEntity {
-//   RecipeName: string;
-//   ProducerCount: number;
-//   ProducerCapacityUpgradeCount: number;
-//   ProducerMaxCapacityUpgradeCount: number;
-//   ResearchUpgradeCount: number;
-//   // CurrentRate(): number;
-//   //    CurrentMaxProducerCount():number;
-// }
+export interface ProducingEntity {
+  RecipeName: string;
+  ProducerCount: number;
+  ProducerCapacityUpgradeCount: number;
+  ProducerMaxCapacityUpgradeCount: number;
+  ResearchUpgradeCount: number;
+  // CurrentRate(): number;
+  //    CurrentMaxProducerCount():number;
+}
 
 export type ProducerType =
   | "Assembler"
@@ -23,7 +23,8 @@ export type Recipe = {
   ProducerType: ProducerType;
   DurationSeconds: number;
   Input: EntityStack[];
-  Output: EntityStack[];
+  Output: EntityStack;
+  ProductionPerTick: number;
 };
 
 export type EntityStack = {
@@ -31,6 +32,27 @@ export type EntityStack = {
   Count: number;
   MaxCount?: number;
 };
+
+export function NewEntityStack(
+  e: string,
+  maxCount: number = 0,
+  initialCount: number = 0
+): EntityStack {
+  return { Entity: e, Count: initialCount, MaxCount: maxCount };
+}
+
+// Fills an entity stack with items, returns any overflow
+export function FillEntityStack(e: EntityStack, n: number): number {
+  if (e.MaxCount) {
+    if (e.Count + n > e.MaxCount) {
+      const delta = e.MaxCount - e.Count;
+      e.Count = e.MaxCount;
+      return delta;
+    }
+    e.Count += n;
+    return 0;
+  }
+}
 
 export type Entity = {
   Name: string;
@@ -42,40 +64,17 @@ export type Entity = {
 };
 
 export type Region = {
-  Ore: EntityStack[];
+  Ore: Map<string, EntityStack>;
   Capacity: number;
 };
 
-type EntityKind = "iron-ore" | "iron-gear";
+// clasas ProducingEntity {
+//   inputBuffers?: Map<string, EntityStack>;
+//   outputBuffer?: EntityStack;
 
-class ProducingEntity {
-  inputBuffers?: Map<string, EntityStack>;
-  outputBuffer?: EntityStack;
-
-  RecipeName: string;
-  ProducerCount: number;
-  //  ProducerCapacityUpgradeCount: number;
-  //  ProducerMaxCapacityUpgradeCount: number;
-  //  ResearchUpgradeCount: number;
-}
-
-interface Producer {
-  inputBuffers?: Map<string, EntityStack>;
-  outputBuffer?: EntityStack;
-  produce(): Producer;
-}
-
-type MainBus = {
-  lanes: Map<number, EntityStack>;
-};
-
-type OutputStatus = {
-  above: "OUT" | "IN" | "NONE";
-  below: "OUT" | "IN" | "NONE";
-  beltConnections: { beltId: number; direction: "OUT" | "IN" }[];
-};
-
-type Extractor = {};
-
-type TrainStation = {};
-type Factory = {};
+//   RecipeName: string;
+//   ProducerCount: number;
+//   //  ProducerCapacityUpgradeCount: number;
+//   //  ProducerMaxCapacityUpgradeCount: number;
+//   //  ResearchUpgradeCount: number;
+// }
