@@ -15,8 +15,7 @@ import { ExploreGame } from "./explore/ExploreGame";
 import { FactoryGame } from "./components/FactoryGame";
 
 function App() {
-  //const [gameState, gameDispatch] = useGameState();
-  const [gameState, setGameState] = useGameState(); //useState<FactoryGameState>(GameState);
+  const [gameState, setGameState] = useGameState();
   const [uiState, uiDispatch] = useUIState();
 
   (window as any).dispatch = uiDispatch;

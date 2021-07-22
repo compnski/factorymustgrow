@@ -1,4 +1,5 @@
 import { FactoryGameState } from "./factoryGame";
+import { MainBus } from "./types";
 
 const replacer = (key: string, value: any): any =>
   value instanceof Map
@@ -11,6 +12,11 @@ const replacer = (key: string, value: any): any =>
         dataType: "Set",
         value: [...value],
       }
+    : value instanceof MainBus
+    ? {
+        dataType: "MainBus",
+        value: [value.nextLaneId, value.lanes],
+      }
     : value;
 
 const reviver = (key: string, value: any): any =>
@@ -20,6 +26,8 @@ const reviver = (key: string, value: any): any =>
     ? new Map(value.value)
     : value.dataType === "Set"
     ? new Set(value.value)
+    : value.dataType === "MainBus"
+    ? new MainBus(...value.value)
     : value;
 
 const serialize = (obj: any): string => JSON.stringify(obj, replacer);

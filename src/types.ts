@@ -80,10 +80,16 @@ export interface Producer {
   outputStatus: OutputStatus;
 }
 
+interface Bus {
+  AddLane(Entity: string, initialCount?: number): number;
+  RemoveLane(Id: number): EntityStack | null;
+}
+
 export type Region = {
   Ore: Map<string, EntityStack>;
   BuildingCapacity: number;
   Buildings: Producer[];
+  Bus: Bus;
 };
 
 export const NewRegion = (
@@ -94,7 +100,51 @@ export const NewRegion = (
   BuildingCapacity,
   Ore: new Map(ore.map((es) => [es.Entity, es])),
   Buildings,
+  Bus: new MainBus(),
 });
+
+export type BusLane = {
+  Id: number;
+  Count: number;
+  Entity: string;
+  MaxCount?: number;
+};
+
+export const NewBusLane = (
+  Id: number,
+  Entity: string,
+  initialCount: number = 0
+): BusLane => ({
+  Id,
+  Entity,
+  Count: initialCount,
+  MaxCount: 0,
+});
+
+export class MainBus {
+  lanes: Map<number, EntityStack>;
+  nextLaneId: number = 1;
+
+  constructor(
+    firstLaneId: number = 1,
+    lanes: Map<number, EntityStack> = new Map()
+  ) {
+    this.lanes = lanes;
+    this.nextLaneId = firstLaneId;
+  }
+
+  AddLane(Entity: string, initialCount: number = 0): number {
+    const laneId = this.nextLaneId++;
+    this.lanes.set(laneId, NewBusLane(laneId, Entity, initialCount));
+    return laneId;
+  }
+
+  RemoveLane(id: number): EntityStack | null {
+    const contents = this.lanes.get(id);
+    this.lanes.delete(id);
+    return contents || null;
+  }
+}
 
 // clasas ProducingEntity {
 //   inputBuffers?: Map<string, EntityStack>;

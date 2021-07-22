@@ -1,8 +1,8 @@
 import { NewExtractor, NewFactory } from "./production";
-import { EntityStack, NewEntityStack } from "./types";
+import { MainBus, EntityStack, NewEntityStack } from "./types";
 
 import { TestRecipe, TestOreRecipe, TestItemConsumerRecipe } from "./test_defs";
-import { MainBus, PushPullFromMainBus, PushToOtherProducer } from "./movement";
+import { PushPullFromMainBus, PushToOtherProducer } from "./movement";
 
 describe("PushToOtherProducer", () => {
   function TestMovement(
