@@ -26,6 +26,15 @@ export class MainBus {
   }
 }
 
+export function CanPushTo(
+  from: { outputBuffer: EntityStack },
+  to: { inputBuffers?: Map<string, EntityStack> } | null
+): boolean {
+  return (
+    (to?.inputBuffers || false) && to.inputBuffers.has(from.outputBuffer.Entity)
+  );
+}
+
 export function PushToNeighbors(
   from: { outputBuffer: EntityStack; outputStatus: OutputStatus },
   toAbove: { inputBuffers?: Map<string, EntityStack> } | null,

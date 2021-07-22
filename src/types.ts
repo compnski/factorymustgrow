@@ -66,8 +66,8 @@ export type Entity = {
 };
 
 export type OutputStatus = {
-  above: "OUT" | "IN" | "NONE";
-  below: "OUT" | "IN" | "NONE";
+  above: "OUT" | "NONE";
+  below: "OUT" | "NONE";
   beltConnections: { beltId: number; direction: "TO_BUS" | "FROM_BUS" }[];
 };
 
