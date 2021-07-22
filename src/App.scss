@@ -48,6 +48,7 @@ span {
   width: 90%;
   background: grey;
   border: 2px black solid;
+  z-index: 1;
   .recipeList {
     display: flex;
     flex-wrap: wrap;
