@@ -34,7 +34,7 @@ export type FactoryGameState = {
   Region: Region;
 };
 
-const initialFactoryGameState = () => ({
+export const initialFactoryGameState = () => ({
   UnlockedRecipes: UnlockedRecipes,
   Region: NewRegion(50, [NewEntityStack("iron-ore", 50)]),
 });

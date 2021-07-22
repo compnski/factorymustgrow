@@ -1,30 +1,4 @@
-import {
-  OutputStatus,
-  NewEntityStack,
-  EntityStack,
-  Recipe,
-  Region,
-} from "./types";
-
-export class MainBus {
-  lanes: Map<number, EntityStack>;
-  nextLaneId: number = 1;
-
-  constructor() {
-    this.lanes = new Map();
-  }
-
-  AddLane(Entity: string, initialCapacity: number = 0): number {
-    this.lanes.set(this.nextLaneId++, NewEntityStack(Entity, initialCapacity));
-    return this.nextLaneId - 1;
-  }
-
-  RemoveLane(id: number): EntityStack | null {
-    const contents = this.lanes.get(id);
-    this.lanes.delete(id);
-    return contents || null;
-  }
-}
+import { OutputStatus, EntityStack, MainBus } from "./types";
 
 export function CanPushTo(
   from: { outputBuffer: EntityStack },
