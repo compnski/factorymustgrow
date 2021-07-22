@@ -10,6 +10,7 @@ import {
 import { NewRegion, NewEntityStack, Region, Producer } from "./types";
 import { GetRecipe } from "./gen/entities";
 import { CanPushTo, PushToNeighbors } from "./movement";
+import { loadStateFromLocalStorage } from "./localstorage";
 
 export const useGameState = () => useState<FactoryGameState>(GameState);
 
@@ -38,9 +39,8 @@ const initialFactoryGameState = () => ({
   Region: NewRegion(50, [NewEntityStack("iron-ore", 50)]),
 });
 
-export var GameState = initialFactoryGameState();
-
-export const saveStateToLocalStorage = (gs: FactoryGameState) => {};
+export var GameState = loadStateFromLocalStorage(initialFactoryGameState());
+(window as any).GameState = GameState;
 
 export const UpdateGameState = (tick: number) => {
   fixOutputStatus(GameState.Region.Buildings);

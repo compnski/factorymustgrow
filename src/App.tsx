@@ -6,10 +6,9 @@ import {
   GameState,
   useGameState,
   UpdateGameState,
-  saveStateToLocalStorage,
   GameDispatch,
 } from "./factoryGame";
-
+import { saveStateToLocalStorage } from "./localstorage";
 import { useInterval } from "./reactUtils";
 import { UIAction, useUIState } from "./uiState";
 import { ExploreGame } from "./explore/ExploreGame";
@@ -26,15 +25,12 @@ function App() {
     // Your custom logic here
     const tick = new Date().getTime();
     UpdateGameState(tick);
+    saveStateToLocalStorage(GameState);
   }, 1000);
 
   useInterval(() => {
     setGameState({ ...GameState });
   }, 32);
-
-  useEffect(() => {
-    saveStateToLocalStorage(GameState);
-  }, [GameState]);
 
   const exploreGameEndCallback = () => {
     console.log("Game Ended");
