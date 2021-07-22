@@ -1,5 +1,5 @@
 .producerCard {
-  width: 600px;
+  width: 550px;
   height: 86px;
   border: 1px black solid;
   display: flex;
@@ -13,21 +13,21 @@
   .dragArea {
     user-select: none;
     cursor: grab;
-    width: 20px;
     line-height: 86px;
+    border-right: 1px darkgrey solid;
   }
 
   .mainArea {
-    width: 550px;
+    width: 500px;
   }
 
   .topArea {
     display: flex;
-    border: 1px solid black;
+    //border: 1px solid black;
   }
   .bottomArea {
     display: flex;
-    border: 1px solid black;
+    //border: 1px solid black;
   }
 
   .title {
@@ -74,14 +74,18 @@
     width: 50px;
     display: flex;
     flex-direction: column;
+    margin: auto 0;
     //height: 86px;
     .outputArrow {
-      border: 1px red solid;
+      box-sizing: border-box;
+      border: 2px darkgrey outset;
       text-align: center;
       line-height: 20px;
+      height: 22px;
     }
     .outputArrow.right {
       line-height: 38px;
+      height: 38px;
     }
   }
 }

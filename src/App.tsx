@@ -3,37 +3,17 @@ import "./icons.scss";
 import "./App.scss";
 
 import {
-  GameAction,
-  FactoryGameState,
   GameState,
   useGameState,
   UpdateGameState,
   saveStateToLocalStorage,
   GameDispatch,
 } from "./factoryGame";
-import { ProducerCard } from "./components/ProducerCard";
+
 import { useInterval } from "./reactUtils";
 import { UIAction, useUIState } from "./uiState";
-
 import { ExploreGame } from "./explore/ExploreGame";
-
-import { RecipeSelector } from "./components/RecipeSelector";
-import { InfoHeader } from "./components/InfoHeader";
-
-const UnlockedRecipes = new Set([
-  "iron-ore",
-  "copper-ore",
-  "stone",
-  "stone-furnace",
-  "iron-plate",
-  "copper-plate",
-  "copper-cable",
-  "iron-gear-wheel",
-  "electronic-circuit",
-  "electric-mining-drill",
-  "assembling-machine-1",
-  "iron-chest",
-]);
+import { FactoryGame } from "./components/FactoryGame";
 
 function App() {
   //const [gameState, gameDispatch] = useGameState();
@@ -46,36 +26,15 @@ function App() {
     // Your custom logic here
     const tick = new Date().getTime();
     UpdateGameState(tick);
-    setGameState({ ...GameState });
   }, 1000);
+
+  useInterval(() => {
+    setGameState({ ...GameState });
+  }, 32);
 
   useEffect(() => {
     saveStateToLocalStorage(GameState);
   }, [GameState]);
-
-  const recipeSelector = uiState.dialogs.recipeSelectorOpen ? (
-    <RecipeSelector
-      recipes={[...UnlockedRecipes]}
-      onClick={(evt: SyntheticEvent, r: string) => {
-        uiDispatch({ type: "CloseDialog", evt });
-        GameDispatch({ type: "NewProducer", producerName: r });
-      }}
-    />
-  ) : null;
-
-  let cards;
-
-  cards = gameState.Region.Buildings.map((ep, idx) => {
-    const r = ep.RecipeId;
-    return (
-      <ProducerCard
-        key={idx}
-        buildingIdx={idx}
-        producer={ep}
-        dispatch={GameDispatch}
-      />
-    );
-  });
 
   const exploreGameEndCallback = () => {
     console.log("Game Ended");
@@ -102,48 +61,25 @@ function App() {
       }}
     >
       {exploreGame}
-      {recipeSelector}
-      <InfoHeader gameState={gameState} />
-      <div className="scoller">
-        {cards}
-        <div
-          className="addProducer clickable"
-          onClick={(evt) =>
-            uiDispatch({
-              type: "ShowRecipeSelector",
-              evt,
-            })
-          }
-        >
-          Add Recipe
-        </div>
-        <div
-          className="clickable resetButton"
-          onClick={() =>
-            uiDispatch({
-              type: "OpenExploreGame",
-            })
-          }
-        >
-          Explore!
-        </div>
-
-        <p
-          className="clickable resetButton"
-          onClick={() =>
-            GameDispatch({
-              producerName: "",
-              type: "Reset",
-            })
-          }
-        >
-          Reset
-        </p>
-
-        <p>
-          <a href="https://github.com/compnski/factorymustgrow">Github</a>
-        </p>
-      </div>
+      <FactoryGame
+        gameState={gameState}
+        uiState={uiState}
+        uiDispatch={uiDispatch}
+      />
+      <p
+        className="clickable resetButton"
+        onClick={() =>
+          GameDispatch({
+            producerName: "",
+            type: "Reset",
+          })
+        }
+      >
+        Reset
+      </p>
+      <p>
+        <a href="https://github.com/compnski/factorymustgrow">Github</a>
+      </p>
     </div>
   );
 }
