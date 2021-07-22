@@ -1,24 +1,15 @@
-import { NewEntityStack, EntityStack, Recipe, Region } from "./types";
+import {
+  Producer,
+  NewEntityStack,
+  EntityStack,
+  Recipe,
+  Region,
+  OutputStatus,
+} from "./types";
+import { stackTransfer } from "./movement";
 
-interface Producer {
-  kind: string;
-  inputBuffers?: Map<string, EntityStack>;
-  outputBuffer?: EntityStack;
-  ProducerCount: number;
-  //  produce(): Producer;
-}
-
-type MainBus = {
-  lanes: Map<number, EntityStack>;
-};
-
-type OutputStatus = {
-  above: "OUT" | "IN" | "NONE";
-  below: "OUT" | "IN" | "NONE";
-  beltConnections: { beltId: number; direction: "OUT" | "IN" }[];
-};
-
-type Extractor = {
+// Extractor
+export type Extractor = {
   kind: "Extractor";
   outputBuffer: EntityStack;
   outputStatus: OutputStatus;
@@ -26,30 +17,41 @@ type Extractor = {
   ProducerCount: number;
 };
 
-function GetRecipe(s: string): Recipe {}
+export function NewExtractor(
+  r: Recipe,
+  initialProduceCount: number = 0
+): Extractor {
+  return {
+    kind: "Extractor",
+    outputBuffer: NewEntityStack(r.Output.Entity, 0, 50),
+    outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
+    RecipeId: r.Id,
+    ProducerCount: initialProduceCount,
+  };
+}
 
 function productionPerTick(p: Producer, r: Recipe): number {
   return p.ProducerCount * r.ProductionPerTick;
 }
 
-function ProduceFromExtractor(e: Extractor, region: Region) {
-  const recipe = GetRecipe(e.RecipeId),
-    regionalOre = region.Ore.get(recipe.Output.Entity);
-  if (regionalOre) {
-    const maxProduction = productionPerTick(e, recipe),
-      availableOre = regionalOre.Count,
-      availableInventorySpace =
-        (e.outputBuffer.MaxCount || Infinity) - e.outputBuffer.Count,
-      actualProduction = Math.min(
-        maxProduction,
-        availableOre,
-        availableInventorySpace
-      );
-    console.log(maxProduction, availableOre, availableInventorySpace);
-    regionalOre.Count -= actualProduction;
-    e.outputBuffer.Count += actualProduction;
+export function ProduceFromExtractor(
+  e: Extractor,
+  region: Region,
+  GetRecipe: (s: string) => Recipe | undefined
+) {
+  const recipe = GetRecipe(e.RecipeId);
+  const regionalOre = region.Ore.get(recipe?.Output.Entity || "");
+  if (recipe && regionalOre) {
+    return stackTransfer(
+      regionalOre,
+      e.outputBuffer,
+      productionPerTick(e, recipe)
+    );
   }
+  return 0;
 }
+
+// Factory
 
 export type Factory = {
   kind: "Factory";
@@ -66,9 +68,12 @@ export function NewFactory(
 ): Factory {
   return {
     kind: "Factory",
-    outputBuffer: NewEntityStack(r.Output.Entity, 50),
+    outputBuffer: NewEntityStack(r.Output.Entity, 0, 50),
     inputBuffers: new Map(
-      r.Input.map((input) => [input.Entity, NewEntityStack(input.Entity, 50)])
+      r.Input.map((input) => [
+        input.Entity,
+        NewEntityStack(input.Entity, 0, 50),
+      ])
     ),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     RecipeId: r.Id,
@@ -111,6 +116,8 @@ export function ProduceFromFactory(
   f.outputBuffer.Count += actualProduction;
   return actualProduction;
 }
+
+// Train Station
 
 type TrainStation = {
   kind: "TrainStation";

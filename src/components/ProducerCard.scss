@@ -1,0 +1,87 @@
+.producerCard {
+  width: 600px;
+  height: 86px;
+  border: 1px black solid;
+  display: flex;
+  background: lightgrey;
+  box-sizing: border-box;
+  user-select: none;
+
+  .icon {
+  }
+
+  .dragArea {
+    user-select: none;
+    cursor: grab;
+    width: 20px;
+    line-height: 86px;
+  }
+
+  .mainArea {
+    width: 550px;
+  }
+
+  .topArea {
+    display: flex;
+    border: 1px solid black;
+  }
+  .bottomArea {
+    display: flex;
+    border: 1px solid black;
+  }
+
+  .title {
+    color: black;
+    //border: 1px solid black;
+    font-size: 1.5em;
+    line-height: 1em;
+    min-width: 150px;
+    padding-left: 4px;
+  }
+
+  .producerCountArea {
+    display: flex;
+    margin-left: 24px;
+    .icon {
+      height: 64px;
+      margin-bottom: -32px;
+      transform: scale(0.5) translateY(-50%);
+    }
+
+    .plusMinus {
+      padding: 0px 6px;
+      margin: 0 10px;
+      border: 1px outset darkgrey;
+      line-height: 32px;
+    }
+    .producerCount {
+      line-height: 32px;
+    }
+  }
+
+  .recipeDisplay {
+    line-height: 48px;
+    .icon {
+      border: 1px black solid;
+
+      height: 64px;
+      margin-bottom: -64px;
+      transform: scale(0.5) translateY(-100%);
+    }
+  }
+
+  .outputArea {
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    //height: 86px;
+    .outputArrow {
+      border: 1px red solid;
+      text-align: center;
+      line-height: 20px;
+    }
+    .outputArrow.right {
+      line-height: 38px;
+    }
+  }
+}

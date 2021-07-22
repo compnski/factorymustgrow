@@ -1,23 +1,24 @@
-import { useEffect } from "react";
+import { SyntheticEvent, useEffect } from "react";
 import "./icons.scss";
 import "./App.scss";
-import { Map } from "immutable";
+
 import {
   GameAction,
-  State,
+  FactoryGameState,
+  GameState,
   useGameState,
-  globalEntityCount,
-  entityStorageCapacity,
+  UpdateGameState,
   saveStateToLocalStorage,
-} from "./logic";
-
+  GameDispatch,
+} from "./factoryGame";
+import { ProducerCard } from "./components/ProducerCard";
 import { useInterval } from "./reactUtils";
-
 import { UIAction, useUIState } from "./uiState";
 
-import { Card } from "./Card";
-
 import { ExploreGame } from "./explore/ExploreGame";
+
+import { RecipeSelector } from "./components/RecipeSelector";
+import { InfoHeader } from "./components/InfoHeader";
 
 const UnlockedRecipes = new Set([
   "iron-ore",
@@ -34,118 +35,51 @@ const UnlockedRecipes = new Set([
   "iron-chest",
 ]);
 
-export type TabPaneProps = {
-  cardMap: Map<string, typeof Card[]>;
-};
-
-export const TabPane = ({ cardMap }: TabPaneProps) => (
-  <div>
-    <div>Ore</div>
-  </div>
-);
-
-export type InfoCardProps = { gameState: State };
-export const InfoCard = ({ gameState }: InfoCardProps) => {
-  const oreInfo = gameState.RegionInfo.oreCapacity;
-  const infoCards = [...oreInfo.entries()].map(([ore, count]) => (
-    <div key={ore} className="topInfo">
-      <div className={`icon ${ore}`} />
-      <div className="oreText">{count}</div>
-    </div>
-  ));
-
-  const remainingSpace = gameState.RegionInfo.landCapacity;
-  return (
-    <div className="infoCard">
-      {infoCards}
-      <div className="topInfo">
-        <div className={`icon landfill`} />
-        <div className="oreText">{remainingSpace}</div>
-      </div>
-    </div>
-  );
-};
-
-export type RecipeSelectorProps = {
-  dispatch(a: UIAction | GameAction): void;
-  recipes: string[];
-};
-
-export const RecipeSelector = ({ recipes, dispatch }: RecipeSelectorProps) => {
-  const recipeIcons = recipes.map((r) => {
-    return (
-      <div
-        key={r}
-        className={`clickable icon ${r}`}
-        onClick={(evt) => {
-          dispatch({ type: "CloseDialog", evt });
-          dispatch({ type: "NewProducer", producerName: r });
-        }}
-      />
-    );
-  });
-  return (
-    <div className="recipeSelector modal">
-      <p>Select Recipe</p>
-      <div className="recipeList">{recipeIcons}</div>
-    </div>
-  );
-};
-
 function App() {
-  const [gameState, gameDispatch] = useGameState();
+  //const [gameState, gameDispatch] = useGameState();
+  const [gameState, setGameState] = useGameState(); //useState<FactoryGameState>(GameState);
   const [uiState, uiDispatch] = useUIState();
 
-  const dispatch = (action: UIAction | GameAction) =>
-    (action as GameAction).producerName == null
-      ? uiDispatch(action as UIAction)
-      : gameDispatch(action as GameAction);
+  (window as any).dispatch = uiDispatch;
 
-  (window as any).dispatch = dispatch;
-
-  const entityCount = (e: string): number =>
-    globalEntityCount(gameState.EntityCounts, e);
-  const storageCapacity = (e: string): number =>
-    entityStorageCapacity(gameState.EntityStorageCapacityUpgrades, e);
   useInterval(() => {
     // Your custom logic here
-    gameState.EntityProducers.forEach((p, k) => {
-      for (let i = 0; i < p.ProducerCount; i++) {
-        gameDispatch({ producerName: k, type: "Produce" });
-      }
-    });
+    const tick = new Date().getTime();
+    UpdateGameState(tick);
+    setGameState({ ...GameState });
   }, 1000);
+
   useEffect(() => {
-    saveStateToLocalStorage(gameState);
-  }, [gameState]);
+    saveStateToLocalStorage(GameState);
+  }, [GameState]);
 
   const recipeSelector = uiState.dialogs.recipeSelectorOpen ? (
     <RecipeSelector
-      recipes={[...UnlockedRecipes].filter(
-        (r) => !gameState.EntityProducers.has(r)
-      )}
-      dispatch={dispatch}
+      recipes={[...UnlockedRecipes]}
+      onClick={(evt: SyntheticEvent, r: string) => {
+        uiDispatch({ type: "CloseDialog", evt });
+        GameDispatch({ type: "NewProducer", producerName: r });
+      }}
     />
   ) : null;
 
   let cards;
 
-  cards = gameState.EntityProducers.valueSeq().map((ep) => {
-    const r = ep.RecipeName;
+  cards = gameState.Region.Buildings.map((ep, idx) => {
+    const r = ep.RecipeId;
     return (
-      <Card
-        key={r}
-        producer={gameState.EntityProducers.get(r)}
-        dispatch={dispatch}
-        globalEntityCount={entityCount}
-        entityStorageCapacity={storageCapacity}
+      <ProducerCard
+        key={idx}
+        buildingIdx={idx}
+        producer={ep}
+        dispatch={GameDispatch}
       />
     );
   });
 
   const exploreGameEndCallback = () => {
     console.log("Game Ended");
-    dispatch({ type: "CloseExploreGame" });
+    uiDispatch({ type: "CloseExploreGame" });
   };
 
   const exploreGame = uiState.exploreGameOpen ? (
@@ -164,18 +98,18 @@ function App() {
       className="App"
       onClick={(evt) => {
         if ((evt.target as Element).classList.contains("clickable")) return;
-        dispatch({ type: "CloseDialog", evt });
+        uiDispatch({ type: "CloseDialog", evt });
       }}
     >
       {exploreGame}
       {recipeSelector}
-      <InfoCard gameState={gameState} />
+      <InfoHeader gameState={gameState} />
       <div className="scoller">
         {cards}
         <div
           className="addProducer clickable"
           onClick={(evt) =>
-            dispatch({
+            uiDispatch({
               type: "ShowRecipeSelector",
               evt,
             })
@@ -186,7 +120,7 @@ function App() {
         <div
           className="clickable resetButton"
           onClick={() =>
-            dispatch({
+            uiDispatch({
               type: "OpenExploreGame",
             })
           }
@@ -197,7 +131,7 @@ function App() {
         <p
           className="clickable resetButton"
           onClick={() =>
-            dispatch({
+            GameDispatch({
               producerName: "",
               type: "Reset",
             })

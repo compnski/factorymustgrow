@@ -27,6 +27,8 @@ export type Recipe = {
   ProductionPerTick: number;
 };
 
+//const ProductionPerTick = (r: Recipe): number => 1 / r.DurationSeconds;
+
 export type EntityStack = {
   Entity: string;
   Count: number;
@@ -35,8 +37,8 @@ export type EntityStack = {
 
 export function NewEntityStack(
   e: string,
-  maxCount: number = 0,
-  initialCount: number = 0
+  initialCount: number = 0,
+  maxCount: number = 0
 ): EntityStack {
   return { Entity: e, Count: initialCount, MaxCount: maxCount };
 }
@@ -50,8 +52,8 @@ export function FillEntityStack(e: EntityStack, n: number): number {
       return delta;
     }
     e.Count += n;
-    return 0;
   }
+  return 0;
 }
 
 export type Entity = {
@@ -63,10 +65,36 @@ export type Entity = {
   ResearchUpgradeItems: EntityStack[];
 };
 
+export type OutputStatus = {
+  above: "OUT" | "IN" | "NONE";
+  below: "OUT" | "IN" | "NONE";
+  beltConnections: { beltId: number; direction: "TO_BUS" | "FROM_BUS" }[];
+};
+
+export interface Producer {
+  kind: string;
+  RecipeId: string;
+  inputBuffers?: Map<string, EntityStack>;
+  outputBuffer: EntityStack;
+  ProducerCount: number;
+  outputStatus: OutputStatus;
+}
+
 export type Region = {
   Ore: Map<string, EntityStack>;
-  Capacity: number;
+  BuildingCapacity: number;
+  Buildings: Producer[];
 };
+
+export const NewRegion = (
+  BuildingCapacity: number,
+  ore: EntityStack[],
+  Buildings: Producer[] = []
+): Region => ({
+  BuildingCapacity,
+  Ore: new Map(ore.map((es) => [es.Entity, es])),
+  Buildings,
+});
 
 // clasas ProducingEntity {
 //   inputBuffers?: Map<string, EntityStack>;

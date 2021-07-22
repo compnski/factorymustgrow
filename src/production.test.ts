@@ -1,73 +1,187 @@
-import { NewFactory, ProduceFromFactory } from "./production";
-import { FillEntityStack, NewEntityStack, Recipe } from "./types";
+import {
+  Extractor,
+  Factory,
+  NewExtractor,
+  NewFactory,
+  ProduceFromExtractor,
+  ProduceFromFactory,
+} from "./production";
+import {
+  EntityStack,
+  FillEntityStack,
+  NewEntityStack,
+  NewRegion,
+  Recipe,
+  Region,
+} from "./types";
+import {
+  TestRecipeBook,
+  TestRecipe,
+  TestSlowRecipe,
+  TestOreRecipe,
+  TestSlowOreRecipe,
+} from "./test_defs";
 
-const TestRecipe: Recipe = {
-  Name: "Test Item",
-  Icon: "test-item",
-  Id: "test-item",
-  ProducerType: "Assembler",
-  DurationSeconds: 1,
-  Input: [NewEntityStack("iron-ore", 0, 2), NewEntityStack("copper-ore", 0, 3)],
-  Output: NewEntityStack("test-item", 0, 1),
-  ProductionPerTick: 1,
-};
+describe("Factories", () => {
+  function TestFactory(
+    factory: Factory,
+    expected: {
+      produced: number;
+      outputCount: number;
+      inputBuffers: EntityStack[];
+    }
+  ) {
+    const produced = ProduceFromFactory(
+      factory,
+      TestRecipeBook.get.bind(TestRecipeBook)
+    );
+    expect(produced).toBe(expected.produced);
+    expect(factory.outputBuffer.Count).toBe(expected.outputCount);
+    for (var expectedInput of expected.inputBuffers) {
+      expect(factory.inputBuffers.get(expectedInput.Entity)?.Count).toBe(
+        expectedInput.Count
+      );
+    }
+  }
 
-const TestSlowRecipe: Recipe = {
-  Name: "Test Slow Item",
-  Icon: "test-item",
-  Id: "test-slow-item",
-  ProducerType: "Assembler",
-  DurationSeconds: 2,
-  Input: [NewEntityStack("iron-ore", 0, 2), NewEntityStack("copper-ore", 0, 3)],
-  Output: NewEntityStack("test-item", 0, 1),
-  ProductionPerTick: 0.5,
-};
+  it("Produces a single item", () => {
+    const factory = NewFactory(TestRecipe, 1);
+    factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
+    factory.outputBuffer.Count = 1;
 
-const TestRecipeBook = new Map<string, Recipe>([
-  ["test-item", TestRecipe],
-  ["test-slow-item", TestSlowRecipe],
-]);
+    TestFactory(factory, {
+      produced: 1,
+      outputCount: 2,
+      inputBuffers: [
+        NewEntityStack("test-ore", 8),
+        NewEntityStack("copper-ore", 7),
+      ],
+    });
+  });
 
-it("Produces a single item", () => {
-  const factory = NewFactory(TestRecipe, 1);
-  factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
+  it("Produces three item", () => {
+    const factory = NewFactory(TestRecipe, 3);
+    factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
 
-  const produced = ProduceFromFactory(
-    factory,
-    TestRecipeBook.get.bind(TestRecipeBook)
-  );
-  expect(produced).toBe(1);
-  expect(factory.outputBuffer.Count).toBe(1);
-  expect(factory.inputBuffers.get("iron-ore")?.Count).toBe(8);
-  expect(factory.inputBuffers.get("copper-ore")?.Count).toBe(7);
+    TestFactory(factory, {
+      produced: 3,
+      outputCount: 3,
+      inputBuffers: [
+        NewEntityStack("test-ore", 4),
+        NewEntityStack("copper-ore", 1),
+      ],
+    });
+  });
+
+  it("Produces 1.5 items", () => {
+    const factory = NewFactory(TestSlowRecipe, 3);
+    factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
+
+    TestFactory(factory, {
+      produced: 1.5,
+      outputCount: 1.5,
+      inputBuffers: [
+        NewEntityStack("test-ore", 7),
+        NewEntityStack("copper-ore", 5.5),
+      ],
+    });
+  });
+
+  it("Requires 1 full set of materials to start", () => {
+    const factory = NewFactory(TestSlowRecipe, 3);
+    factory.inputBuffers.forEach((input) => FillEntityStack(input, 2));
+
+    TestFactory(factory, {
+      produced: 0,
+      outputCount: 0,
+      inputBuffers: [
+        NewEntityStack("test-ore", 2),
+        NewEntityStack("copper-ore", 2),
+      ],
+    });
+  });
+
+  it("Won't overfill inventory", () => {
+    const factory = NewFactory(TestRecipe, 1);
+    factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
+    factory.outputBuffer.Count = factory.outputBuffer.MaxCount || 0;
+
+    TestFactory(factory, {
+      produced: 0,
+      outputCount: 50,
+      inputBuffers: [
+        NewEntityStack("test-ore", 10),
+        NewEntityStack("copper-ore", 10),
+      ],
+    });
+  });
 });
 
-it("Produces three item", () => {
-  const factory = NewFactory(TestRecipe, 1);
-  factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
-  factory.ProducerCount = 3;
+describe("Extractors", () => {
+  function TestExtractor(
+    extractor: Extractor,
+    region: Region,
+    expected: {
+      produced: number;
+      outputCount: number;
+      regionalOre: EntityStack[];
+    }
+  ) {
+    const produced = ProduceFromExtractor(
+      extractor,
+      region,
+      TestRecipeBook.get.bind(TestRecipeBook)
+    );
+    expect(produced).toBe(expected.produced);
+    expect(extractor.outputBuffer.Count).toBe(expected.outputCount);
+    for (var expectedOre of expected.regionalOre) {
+      expect(region.Ore.get(expectedOre.Entity)?.Count).toBe(expectedOre.Count);
+    }
+  }
 
-  const produced = ProduceFromFactory(
-    factory,
-    TestRecipeBook.get.bind(TestRecipeBook)
-  );
-  expect(produced).toBe(3);
-  expect(factory.outputBuffer.Count).toBe(3);
-  expect(factory.inputBuffers.get("iron-ore")?.Count).toBe(4);
-  expect(factory.inputBuffers.get("copper-ore")?.Count).toBe(1);
-});
+  it("Produces a single item", () => {
+    const extractor = NewExtractor(TestOreRecipe, 1);
+    extractor.outputBuffer.Count = 1;
+    const region = NewRegion(0, [NewEntityStack("test-ore", 10)]);
 
-it("Produces 1.5 items", () => {
-  const factory = NewFactory(TestSlowRecipe, 1);
-  factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
-  factory.ProducerCount = 3;
+    TestExtractor(extractor, region, {
+      produced: 1,
+      outputCount: 2,
+      regionalOre: [NewEntityStack("test-ore", 9)],
+    });
+  });
 
-  const produced = ProduceFromFactory(
-    factory,
-    TestRecipeBook.get.bind(TestRecipeBook)
-  );
-  expect(produced).toBe(1.5);
-  expect(factory.outputBuffer.Count).toBe(1.5);
-  expect(factory.inputBuffers.get("iron-ore")?.Count).toBe(7);
-  expect(factory.inputBuffers.get("copper-ore")?.Count).toBe(5.5);
+  it("Produces 1.5 items", () => {
+    const extractor = NewExtractor(TestSlowOreRecipe, 3);
+    extractor.outputBuffer.Count = 1;
+    const region = NewRegion(0, [NewEntityStack("test-ore", 10)]);
+
+    TestExtractor(extractor, region, {
+      produced: 1.5,
+      outputCount: 2.5,
+      regionalOre: [NewEntityStack("test-ore", 8.5)],
+    });
+  });
+
+  it("Produces three items", () => {
+    const extractor = NewExtractor(TestOreRecipe, 3);
+    const region = NewRegion(0, [NewEntityStack("test-ore", 10)]);
+
+    TestExtractor(extractor, region, {
+      produced: 3,
+      outputCount: 3,
+      regionalOre: [NewEntityStack("test-ore", 7)],
+    });
+  });
+
+  it("Produces only as much ore is left", () => {
+    const extractor = NewExtractor(TestOreRecipe, 5);
+    const region = NewRegion(0, [NewEntityStack("test-ore", 3)]);
+
+    TestExtractor(extractor, region, {
+      produced: 3,
+      outputCount: 3,
+      regionalOre: [NewEntityStack("test-ore", 0)],
+    });
+  });
 });

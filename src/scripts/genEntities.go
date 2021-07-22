@@ -46,25 +46,27 @@ func (r RecipeJSON) AsRecipe() Recipe {
 		r.Recipe.Time = 1
 	}
 	return Recipe{
-		Name:            r.Name,
-		ID:              r.ID,
-		ProducerType:    GuessProducerType(r.ID),
-		DurationSeconds: r.Recipe.Time,
-		Input:           r.Recipe.Ingredients,
-		Output: []EntityStack{{
+		Name:              r.Name,
+		ID:                r.ID,
+		ProducerType:      GuessProducerType(r.ID),
+		DurationSeconds:   r.Recipe.Time,
+		ProductionPerTick: 1 / r.Recipe.Time,
+		Input:             r.Recipe.Ingredients,
+		Output: EntityStack{
 			Entity: r.ID,
 			Count:  r.Recipe.Yield,
-		}},
+		},
 	}
 }
 
 type Recipe struct {
-	Name            string
-	ID              string
-	ProducerType    string
-	DurationSeconds float32
-	Input           []EntityStack
-	Output          []EntityStack
+	Name              string
+	ID                string
+	ProducerType      string
+	DurationSeconds   float32
+	Input             []EntityStack
+	Output            EntityStack
+	ProductionPerTick float32
 }
 
 type EntityStack struct {
@@ -99,13 +101,12 @@ const recipeTplTxt = `{{define "EntityStack"}}{
   Id: "{{.ID}}",
   Icon: "{{.ID}}",
   DurationSeconds:{{.DurationSeconds}},
+  ProductionPerTick:{{.ProductionPerTick}},
   ProducerType: "{{.ProducerType}}",
   Input: [{{range .Input}}
     {{template "EntityStack" .}},
    {{end}}],
-  Output: [{{range .Output}}
-    {{template "EntityStack" .}},
-   {{end}}],
+  Output: {{template "EntityStack" .Output}},
 },
 `
 
