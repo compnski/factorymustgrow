@@ -1,6 +1,4 @@
 div {
-  border: 0px red solid;
-  box-sizing: content-box;
 }
 
 span {
@@ -38,9 +36,9 @@ span {
     display: inline-block;
   }
   display: flex;
-  line-height: 1em;
-  font-size: 1em;
-  vertical-align: text-top;
+  line-height: 12px;
+  font-size: 12px;
+  vertical-align: middle;
   background-color: grey;
 }
 
@@ -70,18 +68,15 @@ span {
   transform: translate(0%, 5%);
 }
 
-.addProducer {
+.addProducer,
+.resetButton,
+.exploreButton {
   width: 90%;
-  height: 2em;
-  font-size: 2em;
+  height: 32px;
+  font-size: 16px;
+  line-height: 32px;
   margin: auto;
   text-align: center;
-  line-height: 2em;
-}
-
-.resetButton {
-  text-align: center;
-  padding: 10px;
 }
 
 .clickable {
@@ -89,89 +84,6 @@ span {
   border: #121515 inset;
   cursor: pointer;
   user-select: none;
-}
-
-.infoRow {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-top: 5px;
-  div {
-    height: 100%;
-  }
-
-  .producerTypeIcon {
-    transform: scale(0.5);
-    margin-right: -24px;
-    margin-left: -4px;
-    margin-top: 4px;
-  }
-
-  .rate {
-    margin-left: 12px;
-    font-size: 0.8em;
-    line-height: 2em;
-  }
-
-  .plusMinus {
-    margin-left: 10px;
-    display: flex;
-    flex-direction: column;
-    height: 64px;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.75em;
-    line-height: 0.75em;
-    .clickable {
-      width: 0.75em;
-      height: 0.75em;
-      text-align: center;
-    }
-  }
-
-  .producerCount {
-    margin-left: 10px;
-    span {
-      margin-left: 3px;
-    }
-  }
-
-  .maxCapacity {
-    color: grey;
-  }
-
-  .count {
-    margin-left: 10px;
-    font-size: 0.5em;
-  }
-
-  .filler {
-    flex: 1;
-  }
-
-  .recipe {
-    margin-left: 2em;
-    .icon {
-      height: 64px;
-      margin-bottom: -64px;
-      transform: scale(0.5) translateY(-100%);
-    }
-    font-size: 0.5em;
-  }
-}
-
-.Producer {
-  box-sizing: border-box;
-  padding: 0.5em;
-  background-color: #282c34;
-  height: 150px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
 .material-icons {

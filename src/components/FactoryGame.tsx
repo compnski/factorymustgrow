@@ -4,6 +4,9 @@ import { UIAction, UIState } from "../uiState";
 import { ProducerCardList } from "./ProducerCardList";
 import { RecipeSelector } from "./RecipeSelector";
 import { InfoHeader } from "./InfoHeader";
+import { MainBus } from "../types";
+import { MainBusHeader } from "./MainBusHeader";
+import "./FactoryGame.scss";
 
 type FactoryGameProps = {
   gameState: FactoryGameState;
@@ -30,8 +33,12 @@ export const FactoryGame = ({
     <div className="factoryGame">
       {recipeSelector}
       <InfoHeader gameState={gameState} />
+      <MainBusHeader mainBus={gameState.Region.Bus} />
       <div className="scoller">
-        <ProducerCardList buildings={gameState.Region.Buildings} />
+        <ProducerCardList
+          mainBus={gameState.Region.Bus}
+          buildings={gameState.Region.Buildings}
+        />
         <div
           className="addProducer clickable"
           onClick={(evt) =>
@@ -44,7 +51,7 @@ export const FactoryGame = ({
           Add Recipe
         </div>
         <div
-          className="clickable resetButton"
+          className="clickable exploreButton"
           onClick={() =>
             uiDispatch({
               type: "OpenExploreGame",

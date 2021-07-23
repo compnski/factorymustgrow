@@ -1,16 +1,16 @@
 import { ProducerCard } from "./ProducerCard";
 import { FactoryGameState, GameDispatch } from "../factoryGame";
-import { Producer } from "../types";
+import { MainBus, Producer } from "../types";
 import { SyntheticEvent, useState } from "react";
 
-export const ProducerCardList = ({ buildings }: { buildings: Producer[] }) => {
+export const ProducerCardList = ({
+  buildings,
+  mainBus,
+}: {
+  buildings: Producer[];
+  mainBus: MainBus;
+}) => {
   const [dragIdx, setDragIdx] = useState(-1);
-
-  const handleDragOver = (e: SyntheticEvent) => {
-    //console.log("drag over");
-    //e.preventDefault();
-    //e.stopPropagation();
-  };
 
   const handleDrag = (buildingIdx: number) => (e: SyntheticEvent) => {
     console.log("drag start");
@@ -36,6 +36,7 @@ export const ProducerCardList = ({ buildings }: { buildings: Producer[] }) => {
         key={idx}
         buildingIdx={idx}
         producer={ep}
+        mainBus={mainBus}
         dispatch={GameDispatch}
         handleDrag={handleDrag(idx)}
         handleDrop={handleDrop(idx)}
