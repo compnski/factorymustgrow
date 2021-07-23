@@ -89,7 +89,7 @@ export type Region = {
   Ore: Map<string, EntityStack>;
   BuildingCapacity: number;
   Buildings: Producer[];
-  Bus: Bus;
+  Bus: MainBus;
 };
 
 export const NewRegion = (

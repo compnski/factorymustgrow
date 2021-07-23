@@ -1,9 +1,9 @@
 import { GameAction } from "../factoryGame";
-import { Producer, Recipe } from "../types";
+import { MainBus, Producer, Recipe } from "../types";
 import { GetEntity, GetRecipe } from "../gen/entities";
 import "./ProducerCard.scss";
 import { SyntheticEvent, useState } from "react";
-
+import { MainBusSegment } from "./MainBusSegment";
 const RecipeDisplay = ({
   recipe,
   producer,
@@ -37,6 +37,7 @@ export type ProducerCardProps = {
   producer: Producer;
   dispatch: (a: GameAction) => void;
   buildingIdx: number;
+  mainBus: MainBus;
   handleDrag: (evt: SyntheticEvent) => void;
   handleDrop: (evt: SyntheticEvent) => void;
 };
@@ -58,6 +59,7 @@ export const ProducerCard = ({
   dispatch,
   handleDrag,
   handleDrop,
+  mainBus,
 }: ProducerCardProps) => {
   const [dragging, setDragging] = useState(false);
   const recipe = GetRecipe(producer.RecipeId);
@@ -148,6 +150,11 @@ export const ProducerCard = ({
           {producer.outputStatus.below == "OUT" ? "v" : "-"}
         </div>
       </div>
+      <MainBusSegment
+        mainBus={mainBus}
+        producer={producer}
+        buildingIdx={buildingIdx}
+      />
     </div>
   );
 };

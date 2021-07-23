@@ -1,7 +1,7 @@
 .producerCard {
-  width: 550px;
+  width: 600px;
   height: 86px;
-  border: 1px black solid;
+  //border: 1px black solid;
   display: flex;
   background: lightgrey;
   box-sizing: border-box;
@@ -23,7 +23,7 @@
 
   .topArea {
     display: flex;
-    //border: 1px solid black;
+    border-top: 1px solid black;
   }
   .bottomArea {
     display: flex;
@@ -33,8 +33,8 @@
   .title {
     color: black;
     //border: 1px solid black;
-    font-size: 1.5em;
-    line-height: 1em;
+    font-size: 20px;
+    line-height: 20px;
     min-width: 150px;
     padding-left: 4px;
   }
@@ -52,18 +52,20 @@
       padding: 0px 6px;
       margin: 0 10px;
       border: 1px outset darkgrey;
+      font-size: 16px;
       line-height: 32px;
     }
     .producerCount {
+      font-size: 16px;
       line-height: 32px;
     }
   }
 
   .recipeDisplay {
     line-height: 48px;
+    font-size: 16px;
     .icon {
       border: 1px black solid;
-
       height: 64px;
       margin-bottom: -64px;
       transform: scale(0.5) translateY(-100%);
@@ -72,9 +74,12 @@
 
   .outputArea {
     width: 50px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     margin: auto 0;
+    font-size: 16px;
+    border-top: 1px solid black;
     //height: 86px;
     .outputArrow {
       box-sizing: border-box;
