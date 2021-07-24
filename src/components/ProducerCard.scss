@@ -1,5 +1,5 @@
 .producerCard {
-  width: 600px;
+  width: 700px;
   height: 86px;
   //border: 1px black solid;
   display: flex;
@@ -15,10 +15,14 @@
     cursor: grab;
     line-height: 86px;
     border-right: 1px darkgrey solid;
+    display: flex;
+    flex-direction: column;
+    .arrow {
+    }
   }
 
   .mainArea {
-    width: 500px;
+    width: 400px;
   }
 
   .topArea {

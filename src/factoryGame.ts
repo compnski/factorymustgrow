@@ -9,7 +9,7 @@ import {
 } from "./production";
 import { NewRegion, NewEntityStack, Region, Producer } from "./types";
 import { GetRecipe } from "./gen/entities";
-import { CanPushTo, PushToNeighbors } from "./movement";
+import { CanPushTo, PushPullFromMainBus, PushToNeighbors } from "./movement";
 import { loadStateFromLocalStorage } from "./localstorage";
 
 export const useGameState = () => useState<FactoryGameState>(GameState);
@@ -62,6 +62,7 @@ export const UpdateGameState = (tick: number) => {
       GameState.Region.Buildings[idx - 1],
       GameState.Region.Buildings[idx + 1]
     );
+    PushPullFromMainBus(p, GameState.Region.Bus);
   });
 };
 

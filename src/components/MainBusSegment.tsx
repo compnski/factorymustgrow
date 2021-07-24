@@ -1,6 +1,6 @@
 import { once } from "../utils";
 import { MainBus, Producer } from "../types";
-
+import { Icon } from "../svgIcons";
 const laneWidth = 5,
   segmentHeight = 86,
   laneOffset = 15,
@@ -45,19 +45,59 @@ export const MainBusSegment = ({
   const lanes = [];
   var idx = 0;
   const laneStartById: { [key: number]: number } = {};
+
+  const busLaneClicked = (laneId: number, entity: string) => {
+    if (
+      producer.outputStatus.beltConnections.filter((v) => v.beltId == laneId)
+        .length > 0
+    )
+      return;
+
+    if (entity == producer.outputBuffer.Entity) {
+      producer.outputStatus.beltConnections.push({
+        direction: "TO_BUS",
+        beltId: laneId,
+      });
+    }
+    if (producer.inputBuffers)
+      for (var [_, input] of producer.inputBuffers) {
+        if (input.Entity == entity) {
+          producer.outputStatus.beltConnections.push({
+            direction: "FROM_BUS",
+            beltId: laneId,
+          });
+        }
+      }
+
+    console.log(entity);
+  };
+
   for (var [id, lane] of mainBus.lanes.entries()) {
     const laneX = laneOffset + idx * (laneWidth + interLaneWidth);
     laneStartById[id] = laneX;
+    const entity = lane.Entity;
+    const laneId = id;
+
     lanes.push(
-      <rect
-        key={id}
-        width={laneWidth}
-        height={segmentHeight}
-        x={laneX}
-        fill="black"
-      >
-        <title>{lane.Entity}</title>
-      </rect>
+      <g key={`l${id}${producer.RecipeId}`}>
+        <rect
+          width={laneWidth}
+          height={segmentHeight}
+          x={laneX}
+          fill="black"
+          onDoubleClick={() => busLaneClicked(laneId, entity)}
+        >
+          <title>{lane.Entity}</title>
+        </rect>
+        {Icon(lane.Entity)}
+        <use
+          href={`#${lane.Entity}`}
+          width="16"
+          height="16"
+          x={laneX - 4}
+          y={0}
+        />
+      </g>
     );
     idx++;
   }
@@ -69,7 +109,7 @@ export const MainBusSegment = ({
       connectionOffset + connIdx * (connectionHeight + interConnectionHeight);
 
     connections.push(
-      <g key={idx}>
+      <g key={`C${connIdx}${producer.RecipeId}`}>
         <defs>
           <marker
             id="chevron"
@@ -86,9 +126,16 @@ export const MainBusSegment = ({
           </marker>
         </defs>
         <path
+          onDoubleClick={() => {
+            const beltId = beltConn.beltId;
+            producer.outputStatus.beltConnections =
+              producer.outputStatus.beltConnections.filter(
+                (v) => v.beltId != beltId
+              );
+          }}
           d={getPath(
             y,
-            connIdx,
+            beltConn.beltId, //connIdx,
             laneStartById[beltConn.beltId],
             beltConn.direction == "FROM_BUS"
           )}
@@ -101,14 +148,14 @@ export const MainBusSegment = ({
         />
 
         {/* <rect
-			width={laneStartById[idx]}
-			height={connectionHeight}
-			y={y}
-			fill="green"
-			stroke="black"
-			>
-			<title>{lane.Entity}</title>
-			</rect> */}
+			          width={laneStartById[idx]}
+			          height={connectionHeight}
+			          y={y}
+			          fill="green"
+			          stroke="black"
+			          >
+			          <title>{lane.Entity}</title>
+			          </rect> */}
       </g>
     );
   });

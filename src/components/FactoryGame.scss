@@ -6,10 +6,17 @@
   background-color: orange;
   width: 600px;
   height: 64px;
+  .addLaneButton {
+    font-size: 16px;
+    color: black;
+    cursor: pointer;
+    user-select: none;
+    width: 80px;
+  }
 }
 
 .mainBusSegment {
   background-color: orange;
   height: 86px;
-  width: 100px;
+  width: 200px;
 }
