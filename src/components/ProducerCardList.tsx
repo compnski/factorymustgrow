@@ -1,14 +1,16 @@
 import { ProducerCard } from "./ProducerCard";
 import { FactoryGameState, GameDispatch } from "../factoryGame";
-import { MainBus, Producer } from "../types";
+import { EntityStack, MainBus, Producer } from "../types";
 import { SyntheticEvent, useState } from "react";
 
 export const ProducerCardList = ({
   buildings,
   mainBus,
+  regionalOre,
 }: {
   buildings: Producer[];
   mainBus: MainBus;
+  regionalOre: Map<string, EntityStack>;
 }) => {
   const [dragIdx, setDragIdx] = useState(-1);
 
@@ -38,6 +40,7 @@ export const ProducerCardList = ({
         producer={ep}
         mainBus={mainBus}
         dispatch={GameDispatch}
+        regionalOre={regionalOre}
         handleDrag={handleDrag(idx)}
         handleDrop={handleDrop(idx)}
       />

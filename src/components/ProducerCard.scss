@@ -1,6 +1,6 @@
 .producerCard {
   width: 700px;
-  height: 86px;
+  height: 90px;
   //border: 1px black solid;
   display: flex;
   background: lightgrey;
@@ -13,7 +13,7 @@
   .dragArea {
     user-select: none;
     cursor: grab;
-    line-height: 86px;
+    line-height: 90px;
     border-right: 1px darkgrey solid;
     display: flex;
     flex-direction: column;
@@ -66,13 +66,38 @@
   }
 
   .recipeDisplay {
-    line-height: 48px;
-    font-size: 16px;
-    .icon {
-      border: 1px black solid;
-      height: 64px;
-      margin-bottom: -64px;
-      transform: scale(0.5) translateY(-100%);
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    line-height: 32px;
+
+    .quantityText {
+      font-size: 16px;
+      width: 50px;
+    }
+
+    .recipeItem {
+      display: flex;
+      flex-direction: column;
+      padding: 0 6px;
+    }
+
+    .equalsSign {
+      margin: auto 0;
+      padding: 0 8px;
+      font-size: 32px;
+    }
+
+    .iconFrame {
+      .icon {
+        margin: -25px;
+        transform: scale(0.4);
+      }
+      .icon.landfill {
+        margin-right: -40px;
+        transform: scale(0.7);
+        opacity: 80%;
+      }
     }
   }
 
@@ -96,5 +121,20 @@
       line-height: 38px;
       height: 38px;
     }
+  }
+}
+
+.item-icon-progress {
+  progress[value]::-webkit-progress-bar {
+    border-radius: 2px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+    background: inherit;
+  }
+
+  progress[value]::-webkit-progress-value {
+    background-color: #33333333;
+  }
+  progress {
+    appearance: none;
   }
 }

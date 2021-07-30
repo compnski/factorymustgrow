@@ -2,21 +2,36 @@
   font-size: 0;
 }
 
-.mainBusHeader {
+.mainBusHeader,
+.main-bus-header {
   background-color: orange;
-  width: 600px;
-  height: 64px;
-  .addLaneButton {
+  width: 675px;
+  height: 100px;
+  display: flex;
+  justify-content: flex-end;
+  .addLaneButton,
+  .add-lane-button {
     font-size: 16px;
     color: black;
     cursor: pointer;
     user-select: none;
     width: 80px;
+    height: 32px;
+  }
+  .belt-count {
+    font-size: 22px;
+    color: black;
+    line-height: 20px;
+  }
+  .mainBusSegment,
+  .main-bus-segment {
+    height: 70px;
   }
 }
 
-.mainBusSegment {
+.mainBusSegment,
+.main-bus-segment {
   background-color: orange;
-  height: 86px;
+  height: 100px;
   width: 200px;
 }

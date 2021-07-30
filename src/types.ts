@@ -65,10 +65,14 @@ export type Entity = {
   ResearchUpgradeItems: EntityStack[];
 };
 
+export type BeltConnection = {
+  beltId: number;
+  direction: "TO_BUS" | "FROM_BUS";
+};
 export type OutputStatus = {
   above: "OUT" | "NONE";
   below: "OUT" | "NONE";
-  beltConnections: { beltId: number; direction: "TO_BUS" | "FROM_BUS" }[];
+  beltConnections: BeltConnection[];
 };
 
 export interface Producer {
@@ -118,7 +122,7 @@ export const NewBusLane = (
   Id,
   Entity,
   Count: initialCount,
-  MaxCount: 0,
+  MaxCount: 50,
 });
 
 export class MainBus {
@@ -131,6 +135,7 @@ export class MainBus {
   ) {
     this.lanes = lanes;
     this.nextLaneId = firstLaneId;
+    console.log(lanes, firstLaneId);
   }
 
   AddLane(Entity: string, initialCount: number = 0): number {

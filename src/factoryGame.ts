@@ -36,7 +36,11 @@ export type FactoryGameState = {
 
 export const initialFactoryGameState = () => ({
   UnlockedRecipes: UnlockedRecipes,
-  Region: NewRegion(50, [NewEntityStack("iron-ore", 50)]),
+  Region: NewRegion(50, [
+    NewEntityStack("iron-ore", 500),
+    NewEntityStack("copper-ore", 500),
+    NewEntityStack("stone", 500),
+  ]),
 });
 
 export var GameState = loadStateFromLocalStorage(initialFactoryGameState());

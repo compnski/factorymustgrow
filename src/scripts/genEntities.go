@@ -41,9 +41,11 @@ func GuessProducerType(name string) string {
 }
 
 func (r RecipeJSON) AsRecipe() Recipe {
+	// Extractor recipe
 	if r.Recipe.Time == 0 && r.Recipe.Yield == 0 {
 		r.Recipe.Yield = 1
 		r.Recipe.Time = 1
+		r.Recipe.Ingredients = []EntityStack{{Entity: r.ID, Count: 1}}
 	}
 	return Recipe{
 		Name:              r.Name,
