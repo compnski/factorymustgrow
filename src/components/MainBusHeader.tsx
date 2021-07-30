@@ -4,6 +4,12 @@ import { Icon } from "../svgIcons";
 import { GameState } from "../factoryGame";
 import { RecipeSelector } from "./RecipeSelector";
 import { SyntheticEvent, useState } from "react";
+import { MainBusSegment } from "./MainBusSegment";
+import { MainBusConst } from "./constants";
+
+// TODO: Show belt resources
+
+// TODO Centralize these with those in MainBusSegment
 
 export const MainBusHeader = (props: { mainBus: MainBus }) => {
   const [showItemSelector, setShowItemSelector] = useState(false);
@@ -16,6 +22,20 @@ export const MainBusHeader = (props: { mainBus: MainBus }) => {
     props.mainBus.AddLane(entity);
     setShowItemSelector(false);
   };
+  const lanes = [];
+  var idx = 0;
+  for (var [laneId, lane] of props.mainBus.lanes.entries()) {
+    const laneX =
+      MainBusConst.laneOffset +
+      idx * (MainBusConst.laneWidth + MainBusConst.interLaneWidth);
+    lanes.push(
+      <text key={laneId} className="belt-count" x={laneX} y={20}>
+        {lane.Count}
+      </text>
+    );
+    idx++;
+  }
+
   return (
     <div className="mainBusHeader" onClick={() => setShowItemSelector(false)}>
       <div onClick={addLane} className="clickable addLaneButton">
@@ -27,31 +47,12 @@ export const MainBusHeader = (props: { mainBus: MainBus }) => {
             onClick: addMainBusLane,
           })
         : null}
+      <div style={{ width: 200, height: 100 }}>
+        <svg width={200} height={30}>
+          {lanes}
+        </svg>
+        <MainBusSegment segmentHeight={70} mainBus={props.mainBus} />
+      </div>
     </div>
   );
 };
-
-/* export const MainBusHeader = (props: { mainBus: MainBus }) => {
- *   return (
- *     <svg className="mainBusHeader">
- *       <symbol id="myIcon" viewBox="0 832 64 64" width="50" height="50">
- *         <image width="1024" height="1088" x={0} y={0} href={icons} />
- *       </symbol>
- *       <use xlinkHref="#myIcon" width="32" height="32" />
- *     </svg>
- *   );
- * }; */
-
-/* <svg className="mainBusHeader">
-		 *   <text x="12" y="30" onClick={() => console.log("foo")}>
-		 *     Add Lane
-		 *   </text>
-		 *   {[...uniqueItems].map((e: string): JSX.Element => Icon(e))}
-
-		 *   {[...uniqueItems].map(
-		 *     (e: string, idx: number): JSX.Element => (
-		 *       <use href={`#${e}`} width="16" height="16" x={500 + 32 * idx} />
-		 *     )
-		 *   )}
-		 * </svg>
-		   ); */

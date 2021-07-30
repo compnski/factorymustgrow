@@ -38,6 +38,7 @@ export const FactoryGame = ({
         <ProducerCardList
           mainBus={gameState.Region.Bus}
           buildings={gameState.Region.Buildings}
+          regionalOre={gameState.Region.Ore}
         />
         <div
           className="addProducer clickable"

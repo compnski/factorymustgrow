@@ -105,7 +105,9 @@ export function stackTransfer(
 ): number {
   const availableItems = fromStack.Count,
     availableSpace = (toStack.MaxCount || Infinity) - toStack.Count,
-    amountToTransfer = Math.min(maxTransferred, availableItems, availableSpace);
+    amountToTransfer = Math.floor(
+      Math.min(maxTransferred, availableItems, availableSpace)
+    );
   fromStack.Count -= amountToTransfer;
   toStack.Count += amountToTransfer;
   return amountToTransfer;
