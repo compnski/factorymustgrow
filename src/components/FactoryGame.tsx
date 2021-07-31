@@ -4,7 +4,6 @@ import { UIAction, UIState } from "../uiState";
 import { ProducerCardList } from "./ProducerCardList";
 import { RecipeSelector } from "./RecipeSelector";
 import { InfoHeader } from "./InfoHeader";
-import { MainBus } from "../types";
 import { MainBusHeader } from "./MainBusHeader";
 import "./FactoryGame.scss";
 

@@ -1,6 +1,5 @@
 import { MainBus } from "../types";
 
-import { Icon } from "../svgIcons";
 import { GameState } from "../factoryGame";
 import { RecipeSelector } from "./RecipeSelector";
 import { SyntheticEvent, useState } from "react";

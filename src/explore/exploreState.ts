@@ -1,6 +1,6 @@
 //import { Map } from "immutable";
 import { useReducer } from "react";
-import { Point, PointToS, BestPath, PrintPath, ScoreFunc } from "./astar";
+import { Point, PointToS, BestPath, ScoreFunc } from "./astar";
 import {
   EntityDef,
   NewTurret,
@@ -139,7 +139,6 @@ const belowSpawnCap = (m: Map<number, EntityDef>): boolean => {
   return m.size < 20;
 };
 
-var maybeLog = 0;
 const isAlive = (e: EntityDef): boolean => e?.currentHP > 0;
 function linePoint(
   x1: number,
@@ -198,7 +197,7 @@ const lineIntersectsCircle = (
 const inRange = (attacker: EntityDef, defender: EntityDef): boolean => {
   const isInRange = targetDistance(attacker, defender) < attacker.weapon.range;
   if (!isInRange) return false;
-  for (var [_, r] of GameState.terrain) {
+  for (var [, r] of GameState.terrain) {
     if (lineIntersectsCircle(attacker, defender, r, r.hitRadius)) return false;
   }
   return true;
@@ -233,8 +232,8 @@ const doMove = (entity: EntityDef, bugs: EntityMap, turrets: EntityMap) => {
   const newY = entity.y + deltaY;
   const newPos = { x: newX, y: newY };
 
-  for (var [_, e] of new Map([...turrets])) {
-    if (e.id == entity.id) continue;
+  for (var [, e] of new Map([...turrets])) {
+    if (e.id === entity.id) continue;
     if (targetDistance(newPos, e) < entity.hitRadius) {
       //console.log(`${entity.id} Would collide with bug ${e.id}`);
       if (Date.now() - (entity?.lastMovedAt || 0) > 100) {
@@ -250,7 +249,7 @@ const doMove = (entity: EntityDef, bugs: EntityMap, turrets: EntityMap) => {
     }
   }
 
-  // for (var [_, e] of turrets) {
+  // for (var [, e] of turrets) {
   //   if (e.id == entity.id) continue;
   //   if (targetDistance(entity, e) < entity.hitRadius + e.hitRadius) {
   //     console.log(`${entity.id} Would collide with turret ${e.id}`);
@@ -326,13 +325,13 @@ function scoreFunction(
       if (p.x < 0 || p.y < 0 || p.x > bottomRight.x || p.y > bottomRight.y)
         return Infinity;
 
-      for (const [_, ent] of friendlies) {
+      for (const [, ent] of friendlies) {
         if (targetDistance(p, ent) <= bufferRadius + ent.hitRadius) {
           return 5; //Infinity;
         }
       }
 
-      for (const [_, ent] of GameState.terrain) {
+      for (const [, ent] of GameState.terrain) {
         if (targetDistance(p, ent) <= bufferRadius + ent.hitRadius) {
           return 15; //Infinity;
         }
@@ -350,7 +349,7 @@ function scoreFunction(
       //   }
       // }
 
-      for (const [_, ent] of enemies) {
+      for (const [, ent] of enemies) {
         //}.forEach((ent) => {
         if (targetDistance(p, ent) <= bufferRadius + ent.hitRadius) {
           return 55; //Infinity;
@@ -371,7 +370,7 @@ function scoreFunction(
 }
 
 const mouseEnt = NewTestEnt(0, 0);
-const mouseEntList = new Map<number, EntityDef>([[0, mouseEnt]]);
+// const mouseEntList = new Map<number, EntityDef>([[0, mouseEnt]]);
 
 function inBounds(n: number): number {
   return Math.min(Math.max(n, 32), 568);
@@ -421,9 +420,9 @@ export function AdvanceGameState(tick: number, mousePos: Point): boolean {
   mouseEnt.x = mousePos.x;
   mouseEnt.y = mousePos.y;
   // Allow to target spawners
-  for (var [_, t] of GameState.turrets)
+  for (var [, t] of GameState.turrets)
     if (!t.notAIControlled) pickAndFaceTarget(t, GameState.bugs, score);
-  for (var [_, b] of GameState.bugs)
+  for (var [, b] of GameState.bugs)
     if (!b.notAIControlled) pickAndFaceTarget(b, GameState.turrets, score);
   doMoveAndCombat(GameState.bugs, GameState.turrets);
 
@@ -439,7 +438,7 @@ export function AdvanceGameState(tick: number, mousePos: Point): boolean {
 }
 
 const noMoreSpawners = (bugs: Map<number, EntityDef>): boolean => {
-  for (var [_, b] of bugs) {
+  for (var [, b] of bugs) {
     if (b.kind === "Spawner") return false;
   }
   return true;
@@ -496,7 +495,7 @@ export function updateExploreState(action: ExploreAction): void {
       break;
     case "SpawnSpawner":
       if (action.position) {
-        for (var [_, e] of GameState.bugs) {
+        for (var [, e] of GameState.bugs) {
           if (targetDistance(action.position, e) < 16 + e.hitRadius) {
             console.log(`New Spawner Would collide with ${e.id} ${e.x},${e.y}`);
             break;
@@ -527,17 +526,17 @@ const canPlaceTurretAt = function (
   bugs: EntityMap,
   turrets: EntityMap
 ): boolean {
-  for (var [_, e] of bugs) {
+  for (var [, e] of bugs) {
     if (targetDistance({ x, y }, e) < 16 + e.hitRadius) {
       return false;
     }
   }
-  for (var [_, e] of turrets) {
+  for ([, e] of turrets) {
     if (targetDistance({ x, y }, e) < 16 + e.hitRadius) {
       return false;
     }
   }
-  for (var [_, t] of GameState.terrain) {
+  for (var [, t] of GameState.terrain) {
     if (targetDistance({ x, y }, t) < 16 + t.hitRadius) {
       return false;
     }

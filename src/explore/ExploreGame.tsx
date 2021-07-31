@@ -114,7 +114,7 @@ export const ExploreGame = ({
 
   useInterval(updateRenderState, 16);
   useInterval(() => {
-    if (gamePhase != "RUN") return;
+    if (gamePhase !== "RUN") return;
     const tick = new Date().getTime();
     if (ghostState) {
       setGhostState({ ...ghostState, x: lastX, y: lastY });
@@ -158,7 +158,7 @@ export const ExploreGame = ({
     ) : null;
 
   const dispatch = (action: ExploreAction) => {
-    if (gamePhase != "RUN") return;
+    if (gamePhase !== "RUN") return;
     updateExploreState(action);
   };
 

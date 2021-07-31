@@ -1,5 +1,5 @@
 import { EntityStack, Recipe } from "../types";
-import { GetEntity, GetRecipe } from "../gen/entities";
+import { GetEntity } from "../gen/entities";
 
 export function RecipeDisplay({
   recipe,
@@ -18,7 +18,7 @@ export function RecipeDisplay({
           <div key={x.Entity} className="recipeItem" title={`Cost: ${x.Count}`}>
             <div className="quantityText">{Math.floor(producerCount)}</div>
             <div className="iconFrame">
-              {x.Entity == outputBuffer?.Entity ? (
+              {x.Entity === outputBuffer?.Entity ? (
                 <div className={`icon landfill`} />
               ) : null}
               <div className={`icon ${GetEntity(x.Entity).Id}`} />

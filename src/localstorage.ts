@@ -1,5 +1,5 @@
 import { FactoryGameState } from "./factoryGame";
-import { EntityStack, MainBus } from "./types";
+import { MainBus } from "./types";
 
 const replacer = (key: string, value: any): any =>
   value instanceof Map
@@ -21,7 +21,7 @@ const replacer = (key: string, value: any): any =>
     : value;
 
 const reviver = (key: string, value: any): any => {
-  if (value?.dataType == "MainBus") console.log(value);
+  if (value?.dataType === "MainBus") console.log(value);
   return typeof value !== "object" || !value
     ? value
     : value.dataType === "Map"
