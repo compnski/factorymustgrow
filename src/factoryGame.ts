@@ -7,7 +7,7 @@ import {
   ProduceFromExtractor,
   ProduceFromFactory,
 } from "./production";
-import { NewRegion, NewEntityStack, Region, Producer } from "./types";
+import { NewRegion, NewEntityStack, Region, Producer, MainBus } from "./types";
 import { GetRecipe } from "./gen/entities";
 import { CanPushTo, PushPullFromMainBus, PushToNeighbors } from "./movement";
 import { loadStateFromLocalStorage } from "./localstorage";
@@ -27,6 +27,7 @@ const UnlockedRecipes = new Set([
   "electric-mining-drill",
   "assembling-machine-1",
   "iron-chest",
+  "science-pack-1",
 ]);
 
 export type FactoryGameState = {
@@ -48,6 +49,7 @@ export var GameState = loadStateFromLocalStorage(initialFactoryGameState());
 
 export const UpdateGameState = (tick: number) => {
   fixOutputStatus(GameState.Region.Buildings);
+  fixBeltConnections(GameState.Region.Buildings, GameState.Region.Bus);
 
   GameState.Region.Buildings.forEach((p) => {
     switch (p.kind) {
@@ -139,6 +141,15 @@ export const GameDispatch = (action: GameAction) => {
       break;
   }
 };
+
+function fixBeltConnections(buildings: Producer[], bus: MainBus) {
+  buildings.forEach((p, idx) => {
+    p.outputStatus.beltConnections.forEach((beltConn, idx) => {
+      if (!bus.HasLane(beltConn.beltId))
+        p.outputStatus.beltConnections.splice(idx);
+    });
+  });
+}
 
 function fixOutputStatus(buildings: Producer[]) {
   buildings.forEach((p, idx) => {

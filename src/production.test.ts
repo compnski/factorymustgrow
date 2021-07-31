@@ -21,6 +21,7 @@ import {
   TestOreRecipe,
   TestSlowOreRecipe,
 } from "./test_defs";
+import { TicksPerSecond } from "./constants";
 
 describe("Factories", () => {
   function TestFactory(
@@ -31,11 +32,9 @@ describe("Factories", () => {
       inputBuffers: EntityStack[];
     }
   ) {
-    const produced = ProduceFromFactory(
-      factory,
-      TestRecipeBook.get.bind(TestRecipeBook)
-    );
-    expect(produced).toBe(expected.produced);
+    for (var i = 0; i < TicksPerSecond; i++) {
+      ProduceFromFactory(factory, TestRecipeBook.get.bind(TestRecipeBook));
+    }
     expect(factory.outputBuffer.Count).toBe(expected.outputCount);
     for (var expectedInput of expected.inputBuffers) {
       expect(factory.inputBuffers.get(expectedInput.Entity)?.Count).toBe(
@@ -127,12 +126,14 @@ describe("Extractors", () => {
       regionalOre: EntityStack[];
     }
   ) {
-    const produced = ProduceFromExtractor(
-      extractor,
-      region,
-      TestRecipeBook.get.bind(TestRecipeBook)
-    );
-    expect(produced).toBe(expected.produced);
+    for (var i = 0; i < TicksPerSecond; i++) {
+      ProduceFromExtractor(
+        extractor,
+        region,
+        TestRecipeBook.get.bind(TestRecipeBook)
+      );
+    }
+
     expect(extractor.outputBuffer.Count).toBe(expected.outputCount);
     for (var expectedOre of expected.regionalOre) {
       expect(region.Ore.get(expectedOre.Entity)?.Count).toBe(expectedOre.Count);
