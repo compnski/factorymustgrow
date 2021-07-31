@@ -1,6 +1,6 @@
 import { BeltConnection, MainBus } from "../types";
 import { Icon } from "../svgIcons";
-import { MainBusConst } from "./constants";
+import { MainBusConst } from "./uiConstants";
 
 const connectionHeight = 5,
   connectionOffset = 20,
