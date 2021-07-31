@@ -21,27 +21,31 @@ export function RecipeDisplay({
               {x.Entity === outputBuffer?.Entity ? (
                 <div className={`icon landfill`} />
               ) : null}
-              <div className={`icon ${GetEntity(x.Entity).Id}`} />
+              <div className={`icon ${x.Entity}`} />
             </div>
           </div>
         );
       })}
       <div className="equalsSign">=&gt;</div>
-      <div className="recipeItem">
-        <div
-          className="quantityText"
-          title={`Produces: ${outputBuffer?.Count}`}
-        >
-          {Math.floor(outputBuffer?.Count || 0)}
-        </div>
-        <div className="iconFrame item-icon-progress">
-          <progress
-            max={1}
-            value={(outputBuffer?.Count || 0) % 1}
-            className={`icon ${GetEntity(recipe.Output.Entity).Id}`}
-          />
-        </div>
-      </div>
+      {recipe.Output.map((entity, i) => {
+        return (
+          <div key={entity.Entity} className="recipeItem">
+            <div
+              className="quantityText"
+              title={`Produces: ${outputBuffer?.Count}`}
+            >
+              {Math.floor(outputBuffer?.Count || 0)}
+            </div>
+            <div className="iconFrame item-icon-progress">
+              <progress
+                max={1}
+                value={(outputBuffer?.Count || 0) % 1}
+                className={`icon ${entity.Entity}`}
+              />
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

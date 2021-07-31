@@ -6,68 +6,97 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"strings"
 	"text/template"
 )
 
-type RecipeJSON struct {
-	ID     string
-	Name   string
-	Recipe struct {
-		Time        float32
-		Yield       float32
-		Ingredients []EntityStack
-	}
+type FileJSON struct {
+	Items   []ItemJSON
+	Recipes []RecipeJSON
 }
 
-func (r RecipeJSON) AsEntity() Entity {
+type ItemJSON struct {
+	Category string
+	ID       string
+	Name     string
+	Stack    float32
+	Row      float32
+	Col      float32
+}
+
+type RecipeJSON struct {
+	ID        string
+	In        map[string]float32
+	Producers []string
+	Time      float32
+	Out       map[string]float32
+}
+
+func (r ItemJSON) AsEntity() Entity {
 	return Entity{
 		Name:                 r.Name,
 		ID:                   r.ID,
-		StackSize:            50,
+		StackSize:            r.Stack,
 		StorageUpgradeType:   "Solid",
 		ResearchUpgradeItems: []EntityStack{},
 	}
 }
 
-func GuessProducerType(name string) string {
-	if strings.Contains(name, "ore") || name == "stone" {
+func GuessProducerType(firstProducer string) string {
+	switch firstProducer {
+	case "assembling-machine-1", "assembling-machine-2", "assembling-machine-3":
+		return "Assembler"
+	case "electric-mining-drill":
 		return "Miner"
-	}
-	if strings.Contains(name, "plate") {
+	case "electric-furnace":
 		return "Smelter"
+	case "chemical-plant":
+		return "ChemPlant"
+	case "oil-refinery":
+		return "Refinery"
+	case "centrifuge":
+		return "Centrifuge"
+	case "pumpjack":
+		return "Pumpjack"
+	case "offshore-pump":
+		return "WaterPump"
+	case "boiler":
+		return "Boiler"
+	default:
+		panic("Unknown producer: " + firstProducer)
 	}
-	return "Assembler"
 }
 
 func (r RecipeJSON) AsRecipe() Recipe {
 	// Extractor recipe
-	if r.Recipe.Time == 0 && r.Recipe.Yield == 0 {
-		r.Recipe.Yield = 1
-		r.Recipe.Time = 1
-		r.Recipe.Ingredients = []EntityStack{{Entity: r.ID, Count: 1}}
+	if len(r.Out) == 0 {
+		r.Out = map[string]float32{r.ID: 1}
+	}
+	if len(r.In) == 0 {
+		r.In = map[string]float32{r.ID: 1}
 	}
 	return Recipe{
-		Name:              r.Name,
 		ID:                r.ID,
-		ProducerType:      GuessProducerType(r.ID),
-		DurationSeconds:   r.Recipe.Time,
-		ProductionPerTick: 1 / r.Recipe.Time,
-		Input:             r.Recipe.Ingredients,
-		Output: EntityStack{
-			Entity: r.ID,
-			Count:  r.Recipe.Yield,
-		},
+		ProducerType:      GuessProducerType(r.Producers[0]),
+		DurationSeconds:   r.Time,
+		ProductionPerTick: 1 / r.Time,
+		Input:             mapToEntityStacks(r.In),
+		Output:            mapToEntityStacks(r.Out),
 	}
 }
 
+func mapToEntityStacks(m map[string]float32) (ret []EntityStack) {
+	for key, val := range m {
+		ret = append(ret, EntityStack{Entity: key, Count: val})
+	}
+	return
+}
+
 type Recipe struct {
-	Name              string
 	ID                string
 	ProducerType      string
 	DurationSeconds   float32
 	Input             []EntityStack
-	Output            EntityStack
+	Output            []EntityStack
 	ProductionPerTick float32
 }
 
@@ -79,7 +108,7 @@ type EntityStack struct {
 type Entity struct {
 	Name                 string
 	ID                   string
-	StackSize            int
+	StackSize            float32
 	StorageUpgradeType   string
 	ResearchUpgradeItems []EntityStack
 }
@@ -99,7 +128,6 @@ const recipeTplTxt = `{{define "EntityStack"}}{
   Count: {{.Count}},
   }{{end}}
 "{{.ID}}": {
-  Name: "{{.Name}}",
   Id: "{{.ID}}",
   Icon: "{{.ID}}",
   DurationSeconds:{{.DurationSeconds}},
@@ -108,7 +136,9 @@ const recipeTplTxt = `{{define "EntityStack"}}{
   Input: [{{range .Input}}
     {{template "EntityStack" .}},
    {{end}}],
-  Output: {{template "EntityStack" .Output}},
+  Output: [{{range .Output}}
+    {{template "EntityStack" .}},
+   {{end}}],
 },
 `
 
@@ -128,18 +158,20 @@ func main() {
 	if len(os.Args) < 2 {
 		log.Fatalf("usage: %s <output filename>\n", os.Args[0])
 	}
-	var jsonRecipes = []RecipeJSON{}
+	var parsedJson = FileJSON{}
 	var recipes = []Recipe{}
 	content, err := ioutil.ReadFile("recipes.json")
 	if err != nil {
 		log.Fatal(err)
 	}
-	json.Unmarshal(content, &jsonRecipes)
+	json.Unmarshal(content, &parsedJson)
 	var entities = map[string]Entity{}
-	for _, r := range jsonRecipes {
-		if _, exists := entities[r.ID]; !exists {
-			entities[r.ID] = r.AsEntity()
+	for _, i := range parsedJson.Items {
+		if _, exists := entities[i.ID]; !exists {
+			entities[i.ID] = i.AsEntity()
 		}
+	}
+	for _, r := range parsedJson.Recipes {
 		recipes = append(recipes, r.AsRecipe())
 	}
 
