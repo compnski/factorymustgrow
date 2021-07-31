@@ -6,10 +6,6 @@ import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
 import { MainBusConst } from "./constants";
 
-// TODO: Show belt resources
-
-// TODO Centralize these with those in MainBusSegment
-
 export const MainBusHeader = (props: { mainBus: MainBus }) => {
   const [showItemSelector, setShowItemSelector] = useState(false);
 
@@ -35,6 +31,10 @@ export const MainBusHeader = (props: { mainBus: MainBus }) => {
     idx++;
   }
 
+  const busLaneClicked = (laneId: number) => {
+    props.mainBus.RemoveLane(laneId);
+  };
+
   return (
     <div className="mainBusHeader" onClick={() => setShowItemSelector(false)}>
       <div onClick={addLane} className="clickable addLaneButton">
@@ -50,7 +50,11 @@ export const MainBusHeader = (props: { mainBus: MainBus }) => {
         <svg width={200} height={30}>
           {lanes}
         </svg>
-        <MainBusSegment segmentHeight={70} mainBus={props.mainBus} />
+        <MainBusSegment
+          segmentHeight={70}
+          mainBus={props.mainBus}
+          busLaneClicked={busLaneClicked}
+        />
       </div>
     </div>
   );

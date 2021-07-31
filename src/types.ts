@@ -144,6 +144,10 @@ export class MainBus {
     this.lanes.delete(id);
     return contents || null;
   }
+
+  HasLane(id: number): boolean {
+    return this.lanes.has(id);
+  }
 }
 
 // clasas ProducingEntity {
