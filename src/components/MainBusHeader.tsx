@@ -4,7 +4,7 @@ import { GameState } from "../factoryGame";
 import { RecipeSelector } from "./RecipeSelector";
 import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
-import { MainBusConst } from "./constants";
+import { MainBusConst } from "./uiConstants";
 
 export const MainBusHeader = (props: { mainBus: MainBus }) => {
   const [showItemSelector, setShowItemSelector] = useState(false);
