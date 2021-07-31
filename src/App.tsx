@@ -12,6 +12,7 @@ import { useInterval } from "./reactUtils";
 import { useUIState } from "./uiState";
 import { ExploreGame } from "./explore/ExploreGame";
 import { FactoryGame } from "./components/FactoryGame";
+import { TicksPerSecond } from "./constants";
 
 function App() {
   const [gameState, setGameState] = useGameState();
@@ -24,7 +25,7 @@ function App() {
     const tick = new Date().getTime();
     UpdateGameState(tick);
     saveStateToLocalStorage(GameState);
-  }, 1000);
+  }, 1000 / TicksPerSecond);
 
   useInterval(() => {
     setGameState({ ...GameState });
