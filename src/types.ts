@@ -12,18 +12,21 @@ export type ProducerType =
   | "Assembler"
   | "Smelter"
   | "Miner"
-  | "ChemFactory"
+  | "ChemPlant"
   | "Refinery"
-  | "Pumpjack";
+  | "Pumpjack"
+  | "Centrifuge"
+  | "WaterPump"
+  | "Boiler";
 
 export type Recipe = {
-  Name: string;
+  //  Name: string;
   Icon: string;
   Id: string;
   ProducerType: ProducerType;
   DurationSeconds: number;
   Input: EntityStack[];
-  Output: EntityStack;
+  Output: EntityStack[];
   ProductionPerTick: number;
 };
 
@@ -130,7 +133,6 @@ export class MainBus {
   ) {
     this.lanes = lanes;
     this.nextLaneId = firstLaneId;
-    console.log(lanes, firstLaneId);
   }
 
   AddLane(Entity: string, initialCount: number = 0): number {

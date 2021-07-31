@@ -24,7 +24,7 @@ export function NewExtractor(
 ): Extractor {
   return {
     kind: "Extractor",
-    outputBuffer: NewEntityStack(r.Output.Entity, 0, 50),
+    outputBuffer: NewEntityStack(r.Output[0].Entity, 0, 50),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     RecipeId: r.Id,
     ProducerCount: initialProduceCount,
@@ -41,7 +41,7 @@ export function ProduceFromExtractor(
   GetRecipe: (s: string) => Recipe | undefined
 ) {
   const recipe = GetRecipe(e.RecipeId);
-  const regionalOre = region.Ore.get(recipe?.Output.Entity || "");
+  const regionalOre = region.Ore.get(recipe?.Input[0].Entity || "");
   if (recipe && regionalOre) {
     return stackTransfer(
       regionalOre,
@@ -70,7 +70,7 @@ export function NewFactory(
 ): Factory {
   return {
     kind: "Factory",
-    outputBuffer: NewEntityStack(r.Output.Entity, 0, 50),
+    outputBuffer: NewEntityStack(r.Output[0].Entity, 0, 50),
     inputBuffers: new Map(
       r.Input.map((input) => [
         input.Entity,

@@ -124,7 +124,7 @@ export const ProducerCard = ({
       </div>
       <div className="mainArea">
         <div className="topArea">
-          <div className="title">{recipe.Name}</div>
+          <div className="title">{recipe.Id /* TODO Fix name */}</div>
           <div className="producerCountArea">
             <span className={`icon ${ProducerIcon(recipe)}`} />
             <div
