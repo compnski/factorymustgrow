@@ -1,4 +1,3 @@
-import { SyntheticEvent, useEffect } from "react";
 import "./icons.scss";
 import "./App.scss";
 
@@ -10,7 +9,7 @@ import {
 } from "./factoryGame";
 import { saveStateToLocalStorage } from "./localstorage";
 import { useInterval } from "./reactUtils";
-import { UIAction, useUIState } from "./uiState";
+import { useUIState } from "./uiState";
 import { ExploreGame } from "./explore/ExploreGame";
 import { FactoryGame } from "./components/FactoryGame";
 

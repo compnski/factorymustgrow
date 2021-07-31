@@ -119,7 +119,7 @@ export function ProduceFromFactory(
 
 // Train Station
 
-type TrainStation = {
+export type TrainStation = {
   kind: "TrainStation";
   outputBuffers: Map<string, EntityStack>;
   inputBuffers: Map<string, EntityStack>;

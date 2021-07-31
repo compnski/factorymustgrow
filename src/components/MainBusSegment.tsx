@@ -1,4 +1,4 @@
-import { BeltConnection, MainBus, Producer } from "../types";
+import { BeltConnection, MainBus } from "../types";
 import { Icon } from "../svgIcons";
 import { MainBusConst } from "./constants";
 
@@ -106,7 +106,7 @@ export function MainBusSegment({
             y,
             beltConn.beltId, //connIdx,
             laneStartById[beltConn.beltId],
-            beltConn.direction == "FROM_BUS"
+            beltConn.direction === "FROM_BUS"
           )}
           fill="none"
           stroke="green"

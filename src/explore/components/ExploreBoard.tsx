@@ -46,7 +46,7 @@ function placementGhost(ghost: GhostInfo): JSX.Element | null {
 function renderBugs(bugs: Map<number, EntityDef>): ReactElement[] {
   const renderedBugs: ReactElement[] = [];
   bugs.forEach((bug) => {
-    const fill = bug.kind == "MeleeBug" ? "darkred" : "darkblue";
+    const fill = bug.kind === "MeleeBug" ? "darkred" : "darkblue";
     const BugElement = bug.kind === "Spawner" ? Spawner : Bug;
     renderedBugs.push(
       <BugElement

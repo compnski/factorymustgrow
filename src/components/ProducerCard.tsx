@@ -1,6 +1,6 @@
 import { GameAction, GameDispatch } from "../factoryGame";
 import { EntityStack, MainBus, Producer, Recipe } from "../types";
-import { GetEntity, GetRecipe } from "../gen/entities";
+import { GetRecipe } from "../gen/entities";
 import "./ProducerCard.scss";
 import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
@@ -62,24 +62,24 @@ export const ProducerCard = ({
   };
 
   const recipeInput =
-    producer.kind == "Extractor" ? regionalOre : producer.inputBuffers;
+    producer.kind === "Extractor" ? regionalOre : producer.inputBuffers;
 
   const busLaneClicked = (laneId: number, entity: string) => {
     if (
-      producer.outputStatus.beltConnections.filter((v) => v.beltId == laneId)
+      producer.outputStatus.beltConnections.filter((v) => v.beltId === laneId)
         .length > 0
     )
       return;
 
-    if (entity == producer.outputBuffer.Entity) {
+    if (entity === producer.outputBuffer.Entity) {
       producer.outputStatus.beltConnections.push({
         direction: "TO_BUS",
         beltId: laneId,
       });
     }
     if (producer.inputBuffers)
-      for (var [_, input] of producer.inputBuffers) {
-        if (input.Entity == entity) {
+      for (var [, input] of producer.inputBuffers) {
+        if (input.Entity === entity) {
           producer.outputStatus.beltConnections.push({
             direction: "FROM_BUS",
             beltId: laneId,
@@ -173,7 +173,7 @@ export const ProducerCard = ({
             })
           }
         >
-          {producer.outputStatus.above == "OUT" ? "^" : "-"}
+          {producer.outputStatus.above === "OUT" ? "^" : "-"}
         </div>
         <div className="outputArrow right">&gt;</div>
         <div
@@ -186,7 +186,7 @@ export const ProducerCard = ({
             })
           }
         >
-          {producer.outputStatus.below == "OUT" ? "v" : "-"}
+          {producer.outputStatus.below === "OUT" ? "v" : "-"}
         </div>
       </div>
       <MainBusSegment

@@ -27,7 +27,7 @@ const scalePoint = (p: Point, scalingFactor: number): Point => ({
 //   y: p.y,
 // });
 // GoalFunc should return true if this is a goal state
-type GoalFunc = (p: Point) => boolean;
+// type GoalFunc = (p: Point) => boolean;
 export function BestPath(
   scalingFactor: number,
   start: Point,
@@ -81,7 +81,7 @@ export function BestPath(
     }
     scoreNeighbors(scalingFactor, current, score).forEach(
       ([neighbor, score]) => {
-        if (PointToS(neighbor) != PointToS(goal) && score === Infinity) return;
+        if (PointToS(neighbor) !== PointToS(goal) && score === Infinity) return;
         const neighborS = PointToS(neighbor);
 
         const localGScore = (gScore.get(currentS) ?? Infinity) + score;
@@ -152,7 +152,7 @@ export function PrintPath(path: Point[], scalingFactor: number = 1): string {
   for (var y = minY; y <= maxY; y++) {
     var line = "";
     for (var x = minX; x <= maxX; x++) {
-      line += pathMap.get(PointToS({ x, y })) != undefined ? "X" : "0";
+      line += pathMap.get(PointToS({ x, y })) !== undefined ? "X" : "0";
     }
     output += line + "\n";
   }

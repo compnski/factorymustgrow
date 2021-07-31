@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Extractor,
   Factory,

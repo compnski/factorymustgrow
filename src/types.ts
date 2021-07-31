@@ -84,11 +84,6 @@ export interface Producer {
   outputStatus: OutputStatus;
 }
 
-interface Bus {
-  AddLane(Entity: string, initialCount?: number): number;
-  RemoveLane(Id: number): EntityStack | null;
-}
-
 export type Region = {
   Ore: Map<string, EntityStack>;
   BuildingCapacity: number;

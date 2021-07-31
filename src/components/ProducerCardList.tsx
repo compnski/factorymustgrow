@@ -1,5 +1,5 @@
 import { ProducerCard } from "./ProducerCard";
-import { FactoryGameState, GameDispatch } from "../factoryGame";
+import { GameDispatch } from "../factoryGame";
 import { EntityStack, MainBus, Producer } from "../types";
 import { SyntheticEvent, useState } from "react";
 
