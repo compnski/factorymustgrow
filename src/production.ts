@@ -7,6 +7,7 @@ import {
   OutputStatus,
 } from "./types";
 import { stackTransfer } from "./movement";
+import { TicksPerSecond } from "./constants";
 
 // Extractor
 export type Extractor = {
@@ -31,7 +32,7 @@ export function NewExtractor(
 }
 
 function productionPerTick(p: Producer, r: Recipe): number {
-  return p.ProducerCount * r.ProductionPerTick;
+  return (p.ProducerCount * r.ProductionPerTick) / TicksPerSecond;
 }
 
 export function ProduceFromExtractor(
@@ -45,7 +46,8 @@ export function ProduceFromExtractor(
     return stackTransfer(
       regionalOre,
       e.outputBuffer,
-      productionPerTick(e, recipe)
+      productionPerTick(e, recipe),
+      false
     );
   }
   return 0;

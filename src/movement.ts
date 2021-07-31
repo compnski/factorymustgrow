@@ -101,13 +101,17 @@ function PushPullLaneFromMainBus(
 export function stackTransfer(
   fromStack: EntityStack,
   toStack: EntityStack,
-  maxTransferred: number
+  maxTransferred: number,
+  integersOnly: boolean = true
 ): number {
   const availableItems = fromStack.Count,
-    availableSpace = (toStack.MaxCount || Infinity) - toStack.Count,
-    amountToTransfer = Math.floor(
-      Math.min(maxTransferred, availableItems, availableSpace)
-    );
+    availableSpace = (toStack.MaxCount || Infinity) - toStack.Count;
+  var amountToTransfer = Math.min(
+    maxTransferred,
+    availableItems,
+    availableSpace
+  );
+  if (integersOnly) amountToTransfer = Math.floor(amountToTransfer);
   fromStack.Count -= amountToTransfer;
   toStack.Count += amountToTransfer;
   return amountToTransfer;

@@ -7,7 +7,7 @@ export const InfoHeader = ({ gameState }: InfoHeaderProps) => {
   const infoCards = [...oreInfo.values()].map(({ Entity, Count }) => (
     <div key={Entity} className="topInfo">
       <div className={`icon ${Entity}`} />
-      <div className="oreText">{Count}</div>
+      <div className="oreText">{Math.floor(Count)}</div>
     </div>
   ));
 
@@ -17,7 +17,7 @@ export const InfoHeader = ({ gameState }: InfoHeaderProps) => {
       {infoCards}
       <div className="topInfo">
         <div className={`icon landfill`} />
-        <div className="oreText">{remainingSpace}</div>
+        <div className="oreText">{Math.floor(remainingSpace)}</div>
       </div>
     </div>
   );
