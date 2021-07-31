@@ -8,6 +8,18 @@ export interface ProducingEntity {
   //    CurrentMaxProducerCount():number;
 }
 
+export type ResearchTech = {
+  Id: string;
+  Name: string;
+  Input: EntityStack[];
+  Prereqs: string[];
+  Unlocks: string[];
+  Effects: string[];
+  ProductionPerTick: number;
+  DurationSeconds: number;
+  Row: number;
+};
+
 export type ProducerType =
   | "Assembler"
   | "Smelter"
