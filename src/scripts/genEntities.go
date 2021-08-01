@@ -1,12 +1,13 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"text/template"
+
+	"gopkg.in/yaml.v2"
 )
 
 type FileJSON struct {
@@ -25,10 +26,10 @@ type ItemJSON struct {
 
 type RecipeJSON struct {
 	ID        string
-	In        map[string]float32
+	In        yaml.MapSlice //map[string]float32
 	Producers []string
 	Time      float32
-	Out       map[string]float32
+	Out       yaml.MapSlice // map[string]float32
 }
 
 func (r ItemJSON) AsEntity() Entity {
@@ -69,10 +70,10 @@ func GuessProducerType(firstProducer string) string {
 func (r RecipeJSON) AsRecipe() Recipe {
 	// Extractor recipe
 	if len(r.Out) == 0 {
-		r.Out = map[string]float32{r.ID: 1}
+		r.Out = yaml.MapSlice{{Key: r.ID, Value: float64(1)}}
 	}
 	if len(r.In) == 0 {
-		r.In = map[string]float32{r.ID: 1}
+		r.In = yaml.MapSlice{{Key: r.ID, Value: float64(1)}} //map[string]float32{r.ID: 1}
 	}
 	return Recipe{
 		ID:                r.ID,
@@ -84,9 +85,15 @@ func (r RecipeJSON) AsRecipe() Recipe {
 	}
 }
 
-func mapToEntityStacks(m map[string]float32) (ret []EntityStack) {
-	for key, val := range m {
-		ret = append(ret, EntityStack{Entity: key, Count: val})
+func mapToEntityStacks(m yaml.MapSlice) (ret []EntityStack) {
+	for _, val := range m {
+		switch count := val.Value.(type) {
+		case int:
+			ret = append(ret, EntityStack{Entity: val.Key.(string), Count: float64(count)})
+		case float64:
+			ret = append(ret, EntityStack{Entity: val.Key.(string), Count: count})
+		}
+
 	}
 	return
 }
@@ -102,7 +109,7 @@ type Recipe struct {
 
 type EntityStack struct {
 	Entity string  `json:"id"`
-	Count  float32 `json:"amount"`
+	Count  float64 `json:"amount"`
 }
 
 type Entity struct {
@@ -164,11 +171,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	json.Unmarshal(content, &parsedJson)
-	var entities = map[string]Entity{}
+	yaml.Unmarshal(content, &parsedJson)
+	var (
+		entities  = map[string]Entity{}
+		entityIDs = []string{}
+	)
+
 	for _, i := range parsedJson.Items {
 		if _, exists := entities[i.ID]; !exists {
 			entities[i.ID] = i.AsEntity()
+			entityIDs = append(entityIDs, i.ID)
 		}
 	}
 	for _, r := range parsedJson.Recipes {
@@ -188,7 +200,8 @@ func main() {
 	fmt.Fprintf(outFile, headerTxt)
 
 	fmt.Fprintf(outFile, "export const Entities:Map<string,Entity> = Map({\n")
-	for _, e := range entities {
+	for _, entId := range entityIDs {
+		e := entities[entId]
 		err := entityTpl.Execute(outFile, e)
 		if err != nil {
 			panic(err)
