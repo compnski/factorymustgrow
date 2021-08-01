@@ -1,10 +1,9 @@
 import { GameAction, GameDispatch } from "../factoryGame";
-import { EntityStack, MainBus, Producer, Recipe } from "../types";
-import { GetRecipe } from "../gen/entities";
+import { EntityStack, MainBus, Producer } from "../types";
 import "./ProducerCard.scss";
 import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
-import { RecipeDisplay } from "./RecipeDisplay";
+import { ProducerBufferDisplay } from "./ProducerBufferDisplay";
 
 export type ProducerCardProps = {
   producer: Producer;
@@ -17,15 +16,15 @@ export type ProducerCardProps = {
 };
 
 const ProducerTypeIconMap: { [key: string]: string } = {
-  Assembler: "assembling-machine-1",
+  Factory: "assembling-machine-1",
   Smelter: "stone-furnace",
-  Miner: "electric-mining-drill",
+  Extractor: "electric-mining-drill",
   ChemFactory: "",
   Refinery: "",
   Pumpjack: "",
 };
 
-const ProducerIcon = (r: Recipe): string => ProducerTypeIconMap[r.ProducerType];
+const ProducerIcon = (p: Producer): string => ProducerTypeIconMap[p.kind];
 
 export const ProducerCard = ({
   producer,
@@ -37,7 +36,6 @@ export const ProducerCard = ({
   regionalOre,
 }: ProducerCardProps) => {
   const [dragging, setDragging] = useState(false);
-  const recipe = GetRecipe(producer.RecipeId);
 
   const handleDragOver = (e: SyntheticEvent) => {
     //console.log("drag over");
@@ -61,8 +59,15 @@ export const ProducerCard = ({
     });
   };
 
-  const recipeInput =
-    producer.kind === "Extractor" ? regionalOre : producer.inputBuffers;
+  var recipeInput = producer.inputBuffers;
+
+  if (producer.kind === "Extractor" && producer.inputBuffers) {
+    recipeInput = new Map();
+    for (var [entity] of producer.inputBuffers) {
+      const ore = regionalOre.get(entity);
+      if (ore) recipeInput.set(entity, ore);
+    }
+  }
 
   const busLaneClicked = (laneId: number, entity: string) => {
     if (
@@ -124,16 +129,15 @@ export const ProducerCard = ({
       </div>
       <div className="mainArea">
         <div className="topArea">
-          <div className="title">{recipe.Id /* TODO Fix name */}</div>
+          <div className="title">{producer.RecipeId /* TODO Fix name */}</div>
           <div className="producerCountArea">
-            <span className={`icon ${ProducerIcon(recipe)}`} />
+            <span className={`icon ${ProducerIcon(producer)}`} />
             <div
               className="plusMinus"
               onClick={() =>
                 dispatch({
                   type: "DecreaseProducerCount",
                   buildingIdx,
-                  producerName: producer.RecipeId,
                 })
               }
             >
@@ -146,7 +150,6 @@ export const ProducerCard = ({
                 dispatch({
                   type: "IncreaseProducerCount",
                   buildingIdx,
-                  producerName: producer.RecipeId,
                 })
               }
             >
@@ -155,10 +158,9 @@ export const ProducerCard = ({
           </div>
         </div>
         <div className="bottomArea">
-          <RecipeDisplay
+          <ProducerBufferDisplay
             inputBuffers={recipeInput}
             outputBuffer={producer.outputBuffer}
-            recipe={recipe}
           />
         </div>
       </div>

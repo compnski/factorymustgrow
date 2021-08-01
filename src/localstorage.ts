@@ -21,7 +21,6 @@ const replacer = (key: string, value: any): any =>
     : value;
 
 const reviver = (key: string, value: any): any => {
-  if (value?.dataType === "MainBus") console.log(value);
   return typeof value !== "object" || !value
     ? value
     : value.dataType === "Map"

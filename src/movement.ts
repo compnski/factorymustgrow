@@ -2,7 +2,7 @@ import { OutputStatus, EntityStack, MainBus } from "./types";
 
 export function CanPushTo(
   from: { outputBuffer: EntityStack },
-  to: { inputBuffers?: Map<string, EntityStack> } | null
+  to: { inputBuffers: Map<string, EntityStack> } | null
 ): boolean {
   return (
     (to?.inputBuffers || false) && to.inputBuffers.has(from.outputBuffer.Entity)
@@ -11,8 +11,8 @@ export function CanPushTo(
 
 export function PushToNeighbors(
   from: { outputBuffer: EntityStack; outputStatus: OutputStatus },
-  toAbove: { inputBuffers?: Map<string, EntityStack> } | null,
-  toBelow: { inputBuffers?: Map<string, EntityStack> } | null
+  toAbove: { inputBuffers: Map<string, EntityStack> } | null,
+  toBelow: { inputBuffers: Map<string, EntityStack> } | null
 ) {
   if (from.outputStatus.above === "OUT" && toAbove) {
     PushToOtherProducer(from, toAbove, 50);
@@ -24,7 +24,7 @@ export function PushToNeighbors(
 
 export function PushToOtherProducer(
   { outputBuffer }: { outputBuffer: EntityStack },
-  { inputBuffers }: { inputBuffers?: Map<string, EntityStack> },
+  { inputBuffers }: { inputBuffers: Map<string, EntityStack> },
   maxTransferred: number
 ): number {
   if (!inputBuffers) return 0;
@@ -38,7 +38,7 @@ export function PushToOtherProducer(
 
 interface MainBusConnector {
   outputStatus: OutputStatus;
-  inputBuffers?: Map<string, EntityStack>;
+  inputBuffers: Map<string, EntityStack>;
   outputBuffer?: EntityStack;
 }
 
@@ -62,7 +62,7 @@ export function PushPullFromMainBus(producer: MainBusConnector, mb: MainBus) {
     const producerBuffer =
       laneConnection.direction === "TO_BUS"
         ? producer.outputBuffer
-        : producer?.inputBuffers?.get(busLane.Entity);
+        : producer?.inputBuffers.get(busLane.Entity);
     if (!producerBuffer)
       throw new Error(
         `Failed to find producer buffer for ${JSON.stringify(
