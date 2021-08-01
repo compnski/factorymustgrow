@@ -11,7 +11,7 @@ span {
     color: blue;
     padding-top: 10px;
   }
-  width: 600px;
+  width: 675px;
 }
 
 .title {
@@ -24,26 +24,8 @@ span {
   height: 95vh;
 }
 
-.infoCard {
-  .icon {
-    transform: scale(0.5);
-    margin: -16px;
-  }
-  .topInfo {
-    margin-right: 12px;
-  }
-  .oreText {
-    display: inline-block;
-  }
-  display: flex;
-  line-height: 12px;
-  font-size: 12px;
-  vertical-align: middle;
-  background-color: grey;
-}
-
 .recipeSelector {
-  width: 90%;
+  width: 650px;
   background: grey;
   border: 2px black solid;
   z-index: 1;

@@ -1,24 +1,46 @@
 import { OutputStatus, EntityStack, MainBus } from "./types";
+import { ProducerHasInput, ProducerHasOutput } from "./utils";
 
 export function CanPushTo(
-  from: { outputBuffer: EntityStack },
-  to: { inputBuffers: Map<string, EntityStack> } | null
+  from: { kind: string; outputBuffer: EntityStack },
+  to: { kind: string; inputBuffers: Map<string, EntityStack> } | null
 ): boolean {
   return (
-    (to?.inputBuffers || false) && to.inputBuffers.has(from.outputBuffer.Entity)
+    ProducerHasInput(to?.kind) &&
+    ProducerHasOutput(from?.kind) &&
+    (to?.inputBuffers || false) &&
+    to.inputBuffers.has(from.outputBuffer.Entity)
   );
 }
 
 export function PushToNeighbors(
-  from: { outputBuffer: EntityStack; outputStatus: OutputStatus },
-  toAbove: { inputBuffers: Map<string, EntityStack> } | null,
-  toBelow: { inputBuffers: Map<string, EntityStack> } | null
+  from: {
+    outputBuffer: EntityStack;
+    outputStatus: OutputStatus;
+    ProducerCount: number;
+  },
+  toAbove: {
+    inputBuffers: Map<string, EntityStack>;
+    ProducerCount: number;
+  } | null,
+  toBelow: {
+    inputBuffers: Map<string, EntityStack>;
+    ProducerCount: number;
+  } | null
 ) {
+  const maxTransferAbove = Math.min(
+      from.ProducerCount,
+      toAbove?.ProducerCount || 0
+    ),
+    maxTransferBelow = Math.min(
+      from.ProducerCount,
+      toBelow?.ProducerCount || 0
+    );
   if (from.outputStatus.above === "OUT" && toAbove) {
-    PushToOtherProducer(from, toAbove, 50);
+    PushToOtherProducer(from, toAbove, maxTransferAbove);
   }
   if (from.outputStatus.below === "OUT" && toBelow) {
-    PushToOtherProducer(from, toBelow, 50);
+    PushToOtherProducer(from, toBelow, maxTransferBelow);
   }
 }
 
@@ -40,6 +62,7 @@ interface MainBusConnector {
   outputStatus: OutputStatus;
   inputBuffers: Map<string, EntityStack>;
   outputBuffer?: EntityStack;
+  ProducerCount: number;
 }
 
 export type MainBusConnection = {
@@ -60,9 +83,10 @@ export function PushPullFromMainBus(producer: MainBusConnector, mb: MainBus) {
       );
     }
     const producerBuffer =
-      laneConnection.direction === "TO_BUS"
-        ? producer.outputBuffer
-        : producer?.inputBuffers.get(busLane.Entity);
+        laneConnection.direction === "TO_BUS"
+          ? producer.outputBuffer
+          : producer?.inputBuffers.get(busLane.Entity),
+      maxTransferToFromBelt = producer.ProducerCount;
     if (!producerBuffer)
       throw new Error(
         `Failed to find producer buffer for ${JSON.stringify(
@@ -73,7 +97,7 @@ export function PushPullFromMainBus(producer: MainBusConnector, mb: MainBus) {
       busLane,
       producerBuffer,
       laneConnection.direction,
-      50
+      maxTransferToFromBelt
     );
   }
 }

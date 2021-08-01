@@ -37,3 +37,26 @@
   height: 100px;
   width: 200px;
 }
+
+.info-card {
+  .icon {
+    transform: scale(0.5);
+    margin: -16px;
+  }
+  .top-info {
+    margin-right: 12px;
+  }
+  .ore-text {
+    display: inline-block;
+  }
+  .science-info {
+    margin-left: auto;
+  }
+  display: flex;
+  line-height: 12px;
+  font-size: 12px;
+  vertical-align: middle;
+  background-color: grey;
+  align-items: flex-start;
+  width: 100%;
+}

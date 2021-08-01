@@ -34,11 +34,12 @@ type RecipeJSON struct {
 
 func (r ItemJSON) AsEntity() Entity {
 	return Entity{
-		Name:                 r.Name,
-		ID:                   r.ID,
-		StackSize:            r.Stack,
-		StorageUpgradeType:   "Solid",
-		ResearchUpgradeItems: []EntityStack{},
+		Name:      r.Name,
+		ID:        r.ID,
+		StackSize: r.Stack,
+		Row:       r.Row,
+		Col:       r.Col,
+		Category:  r.Category,
 	}
 }
 
@@ -113,11 +114,12 @@ type EntityStack struct {
 }
 
 type Entity struct {
-	Name                 string
-	ID                   string
-	StackSize            float32
-	StorageUpgradeType   string
-	ResearchUpgradeItems []EntityStack
+	Name      string
+	ID        string
+	StackSize float32
+	Category  string
+	Row       float32
+	Col       float32
 }
 
 const entityTplTxt = `"{{.ID}}": {
@@ -125,8 +127,9 @@ const entityTplTxt = `"{{.ID}}": {
   Id: "{{.ID}}",
   Icon: "{{.ID}}",
   StackSize: {{.StackSize}},
-  StorageUpgradeType: "{{.StorageUpgradeType}}",
-  ResearchUpgradeItems: [],
+  Category: "{{.Category}}",
+  Row: {{.Row}},
+  Col: {{.Col}},
 },
 `
 

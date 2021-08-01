@@ -28,6 +28,7 @@
   .topArea {
     display: flex;
     border-top: 1px solid black;
+    justify-content: flex-end;
   }
   .bottomArea {
     display: flex;
@@ -41,11 +42,12 @@
     line-height: 20px;
     min-width: 150px;
     padding-left: 4px;
+    margin-right: auto;
   }
 
   .producerCountArea {
     display: flex;
-    margin-left: 24px;
+
     .icon {
       height: 64px;
       margin-bottom: -32px;

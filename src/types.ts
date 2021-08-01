@@ -17,7 +17,7 @@ export type Research = {
   ProductionPerTick: number;
   DurationSeconds: number;
   Row: number;
-  Prereqs: string[];
+  Prereqs: Set<string>;
   Unlocks: string[];
   Effects: string[];
 };
@@ -79,8 +79,9 @@ export type Entity = {
   Icon: string;
   Id: string;
   StackSize: number;
-  StorageUpgradeType: "Liquid" | "Solid";
-  ResearchUpgradeItems: EntityStack[];
+  Category: string;
+  Row: number;
+  Col: number;
 };
 
 export type BeltConnection = {
