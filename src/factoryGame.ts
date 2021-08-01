@@ -21,6 +21,7 @@ import { loadStateFromLocalStorage } from "./localstorage";
 import { IsResearchComplete, Lab, NewLab, ResearchInLab } from "./research";
 import { GetResearch } from "./gen/research";
 import { ProducerHasOutput } from "./utils";
+import { UIAction } from "./uiState";
 
 export const useGameState = () => useState<FactoryGameState>(GameState);
 
@@ -58,53 +59,64 @@ export const initialFactoryGameState = () => ({
     CurrentResearchId: "",
   },
   Region: NewRegion(50, [
-    NewEntityStack("iron-ore", 500),
-    NewEntityStack("copper-ore", 500),
-    NewEntityStack("stone", 500),
+    NewEntityStack("iron-ore", 9000),
+    NewEntityStack("copper-ore", 9000),
+    NewEntityStack("stone", 9000),
+    NewEntityStack("coal", 9000),
   ]),
 });
 
 export var GameState = loadStateFromLocalStorage(initialFactoryGameState());
 (window as any).GameState = GameState;
 
-export const UpdateGameState = (tick: number) => {
-  fixOutputStatus(GameState.Region.Buildings);
-  fixBeltConnections(GameState.Region.Buildings, GameState.Region.Bus);
+export const UpdateGameState = (
+  tick: number,
+  uiDispatch: (a: UIAction) => void
+) => {
+  try {
+    fixOutputStatus(GameState.Region.Buildings);
+    fixBeltConnections(GameState.Region.Buildings, GameState.Region.Bus);
 
-  GameState.Region.Buildings.forEach((p) => {
-    switch (p.kind) {
-      case "Factory":
-        ProduceFromFactory(p as Factory, GetRecipe);
-        break;
-      case "Extractor":
-        ProduceFromExtractor(p as Extractor, GameState.Region, GetRecipe);
-        break;
-      case "Lab":
-        ResearchInLab(p as Lab, GameState.Research, GetResearch);
-        break;
+    GameState.Region.Buildings.forEach((p) => {
+      switch (p.kind) {
+        case "Factory":
+          ProduceFromFactory(p as Factory, GetRecipe);
+          break;
+        case "Extractor":
+          ProduceFromExtractor(p as Extractor, GameState.Region, GetRecipe);
+          break;
+        case "Lab":
+          ResearchInLab(p as Lab, GameState.Research, GetResearch);
+          break;
+      }
+    });
+
+    // Check Research Completion
+
+    if (IsResearchComplete(GameState.Research)) {
+      console.log("Research Complete!");
+      uiDispatch({ type: "ShowResearchSelector" });
+      GameState.Research.CurrentResearchId = "";
     }
-  });
-
-  // Check Research Completion
-
-  if (IsResearchComplete(GameState.Research)) {
-    console.log("Research Complete!");
-    GameState.Research.CurrentResearchId = "";
+    GameState.Region.Buildings.forEach((p, idx) => {
+      PushToNeighbors(
+        p,
+        GameState.Region.Buildings[idx - 1],
+        GameState.Region.Buildings[idx + 1]
+      );
+      PushPullFromMainBus(p, GameState.Region.Bus);
+    });
+  } catch (e) {
+    //TODO Show error dialog
+    console.error("Failed to update game state:", e);
   }
-  GameState.Region.Buildings.forEach((p, idx) => {
-    PushToNeighbors(
-      p,
-      GameState.Region.Buildings[idx - 1],
-      GameState.Region.Buildings[idx + 1]
-    );
-    PushPullFromMainBus(p, GameState.Region.Bus);
-  });
 };
 
 export type GameAction = {
   type:
     | "NewProducer"
     | "NewLab"
+    | "RemoveBuilding"
     | "IncreaseProducerCount"
     | "DecreaseProducerCount"
     | "ToggleUpperOutputState"
@@ -126,6 +138,11 @@ export const GameDispatch = (action: GameAction) => {
   switch (action.type) {
     case "Reset":
       GameState = initialFactoryGameState();
+      break;
+    case "RemoveBuilding":
+      if (action.buildingIdx !== undefined) {
+        GameState.Region.Buildings.splice(action.buildingIdx, 1);
+      }
       break;
     case "ChangeResearch":
       if (action.producerName) {
@@ -196,7 +213,7 @@ function fixBeltConnections(buildings: Producer[], bus: MainBus) {
   buildings.forEach((p, idx) => {
     p.outputStatus.beltConnections.forEach((beltConn, idx) => {
       if (!bus.HasLane(beltConn.beltId))
-        p.outputStatus.beltConnections.splice(idx);
+        p.outputStatus.beltConnections.splice(idx, 1);
     });
   });
 }

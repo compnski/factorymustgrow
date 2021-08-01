@@ -24,7 +24,7 @@ function App() {
   useInterval(() => {
     // Your custom logic here
     const tick = new Date().getTime();
-    UpdateGameState(tick);
+    UpdateGameState(tick, uiDispatch);
     saveStateToLocalStorage(GameState);
   }, 1000 / TicksPerSecond);
 

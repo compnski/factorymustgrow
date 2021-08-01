@@ -6,18 +6,14 @@ import { RecipeSelector } from "./RecipeSelector";
 import { InfoHeader } from "./InfoHeader";
 import { MainBusHeader } from "./MainBusHeader";
 import "./FactoryGame.scss";
-import { ResearchMap } from "../gen/research";
 import { entityIconLookupByKind } from "../utils";
+import { availableRecipes, availableResearch } from "../research";
 
 type FactoryGameProps = {
   gameState: FactoryGameState;
   uiState: UIState;
   uiDispatch: (a: UIAction) => void;
 };
-
-function unlockedResearch(researchState: ResearchState): string[] {
-  return [...ResearchMap.keys()];
-}
 
 export const FactoryGame = ({
   gameState,
@@ -26,7 +22,7 @@ export const FactoryGame = ({
 }: FactoryGameProps) => {
   const recipeSelector = uiState.dialogs.recipeSelectorOpen ? (
     <RecipeSelector
-      recipes={[...gameState.UnlockedRecipes]}
+      recipes={availableRecipes(gameState.Research)}
       onClick={(evt: SyntheticEvent, r: string) => {
         uiDispatch({ type: "CloseDialog", evt });
         GameDispatch({ type: "NewProducer", producerName: r });
@@ -36,7 +32,7 @@ export const FactoryGame = ({
 
   const researchSelector = uiState.dialogs.researchSelectorOpen ? (
     <RecipeSelector
-      recipes={unlockedResearch(gameState.Research)}
+      recipes={availableResearch(gameState.Research)}
       onClick={(evt: SyntheticEvent, r: string) => {
         uiDispatch({ type: "CloseDialog", evt });
         GameDispatch({ type: "ChangeResearch", producerName: r });
@@ -48,7 +44,7 @@ export const FactoryGame = ({
   return (
     <div className="factoryGame">
       {recipeSelector || researchSelector}
-      <InfoHeader gameState={gameState} />
+      <InfoHeader uiDispatch={uiDispatch} gameState={gameState} />
       <MainBusHeader mainBus={gameState.Region.Bus} />
       <div className="scoller">
         <ProducerCardList

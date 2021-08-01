@@ -5,6 +5,7 @@ import { RecipeSelector } from "./RecipeSelector";
 import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
 import { MainBusConst } from "./uiConstants";
+import { availableRecipes } from "../research";
 
 export const MainBusHeader = (props: { mainBus: MainBus }) => {
   const [showItemSelector, setShowItemSelector] = useState(false);
@@ -42,7 +43,7 @@ export const MainBusHeader = (props: { mainBus: MainBus }) => {
       </div>
       {showItemSelector
         ? RecipeSelector({
-            recipes: [...GameState.UnlockedRecipes],
+            recipes: availableRecipes(GameState.Research),
             onClick: addMainBusLane,
           })
         : null}

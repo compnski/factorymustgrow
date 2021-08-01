@@ -12,7 +12,7 @@ export const TestResearch = {
   ProductionPerTick: 1,
   DurationSeconds: 1,
   Row: 2,
-  Prereqs: ["fast-inserter", "logistics-2", "advanced-electronics"],
+  Prereqs: new Set(["fast-inserter", "logistics-2", "advanced-electronics"]),
   Unlocks: ["test-research", "stack-filter-inserter"],
   Effects: ["Test research capacity: +1"],
 };
@@ -29,7 +29,7 @@ export const TestSlowResearch = {
   DurationSeconds: 30,
   ProductionRequiredForCompletion: 150,
   Row: 2,
-  Prereqs: ["fast-inserter", "logistics-2", "advanced-electronics"],
+  Prereqs: new Set(["fast-inserter", "logistics-2", "advanced-electronics"]),
   Unlocks: ["test-slow-research", "slow-stack-filter-inserter"],
   Effects: ["Slow Test research capacity: +1"],
 };

@@ -50,9 +50,9 @@ export const ResearchMap:Map<string,Research> = new Map([
   ProductionPerTick:{{.ProductionPerTick}},
   DurationSeconds:{{.DurationSeconds}},
   Row: {{.Row}},
-  Prereqs: [{{range .Prereqs -}}
+  Prereqs: new Set([{{range .Prereqs -}}
     "{{- . -}}",
-   {{- end}}],
+   {{- end}}]),
   Unlocks: [{{range .Unlocks -}}
     {{if .}}"{{.}}",{{end}}
    {{- end -}}],
@@ -126,6 +126,9 @@ func main() {
 			DurationSeconds:                 researchTime,
 			ProductionPerTick:               1 / researchTime,
 			ProductionRequiredForCompletion: productionRequired,
+		}
+		if len(tech.Prereqs) == 1 && tech.Prereqs[0] == "" {
+			tech.Prereqs = []string{}
 		}
 		techInfoList = append(techInfoList, tech)
 		log.Printf("%+v", matchInfo[1:])

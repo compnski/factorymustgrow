@@ -27,3 +27,7 @@ export function entityIconLookupByKind(
 export function ProducerHasOutput(kind?: string): boolean {
   return kind !== "Lab";
 }
+
+export function ProducerHasInput(kind?: string): boolean {
+  return kind !== "Extractor";
+}

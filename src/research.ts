@@ -1,6 +1,7 @@
 import { TicksPerSecond } from "./constants";
 import { ResearchState } from "./factoryGame";
-import { GetResearch } from "./gen/research";
+import { GetEntity } from "./gen/entities";
+import { GetResearch, ResearchMap } from "./gen/research";
 import {
   EntityStack,
   NewEntityStack,
@@ -108,4 +109,85 @@ export function ResearchInLab(
   }
   l.outputBuffer.Count += actualProduction;
   return actualProduction;
+}
+
+export function availableResearch(researchState: ResearchState): string[] {
+  const unlockedResearch = new Set();
+  researchState.Progress.forEach((stack) => {
+    if (stack.Count === stack.MaxCount) unlockedResearch.add(stack.Entity);
+  });
+  const availableResearch: string[] = [];
+  for (var research of ResearchMap.values()) {
+    if (unlockedResearch.has(research.Id)) continue;
+    if (
+      [...research.Prereqs].filter((x) => !unlockedResearch.has(x)).length == 0
+    ) {
+      availableResearch.push(research.Id);
+    }
+  }
+  availableResearch.sort((a, b) => GetResearch(a).Row - GetResearch(b).Row);
+  return availableResearch;
+}
+
+const AlwaysUnlockedRecipes = [
+  "wood",
+  "iron-ore",
+  "copper-ore",
+  "stone",
+  "coal",
+  "automation-science-pack",
+  "boiler",
+  "burner-inserter",
+  "burner-mining-drill",
+  "copper-cable",
+  "copper-plate",
+  "electric-mining-drill",
+  "electronic-circuit",
+  "firearm-magazine",
+  "inserter",
+  "iron-chest",
+  "iron-gear-wheel",
+  "iron-plate",
+  "iron-stick",
+  "lab",
+  "light-armor",
+  "offshore-pump",
+  "pipe",
+  "pipe-to-ground",
+  "pistol",
+  "radar",
+  "repair-pack",
+  "small-electric-pole",
+  "steam-engine",
+  "stone-brick",
+  "stone-furnace",
+  "transport-belt",
+  "wooden-chest",
+];
+
+const categoryOrder: { [key: string]: number } = {
+  fluids: 0,
+  logistics: 1,
+  production: 2,
+  "intermediate-products": 3,
+  combat: 4,
+};
+
+export function availableRecipes(researchState: ResearchState): string[] {
+  const availableRecipes: string[] = [...AlwaysUnlockedRecipes];
+  researchState.Progress.forEach((stack) => {
+    if (stack.Count === stack.MaxCount) {
+      const research = GetResearch(stack.Entity);
+      availableRecipes.push(...research.Unlocks);
+    }
+  });
+  availableRecipes.sort((a, b): number => {
+    const entA = GetEntity(a),
+      entB = GetEntity(b);
+    if (entA.Category !== entB.Category)
+      return categoryOrder[entA.Category] - categoryOrder[entB.Category];
+    if (entA.Row !== entB.Row) return entA.Row - entB.Row;
+    return entA.Col - entB.Col;
+  });
+  return availableRecipes;
 }

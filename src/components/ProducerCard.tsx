@@ -4,7 +4,11 @@ import "./ProducerCard.scss";
 import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
 import { ProducerBufferDisplay } from "./ProducerBufferDisplay";
-import { entityIconLookupByKind, ProducerHasOutput } from "../utils";
+import {
+  entityIconLookupByKind,
+  ProducerHasInput,
+  ProducerHasOutput,
+} from "../utils";
 
 export type ProducerCardProps = {
   producer: Producer;
@@ -61,6 +65,13 @@ export const ProducerCard = ({
     });
   };
 
+  const removeBuilding = () => {
+    GameDispatch({
+      type: "RemoveBuilding",
+      buildingIdx: buildingIdx,
+    });
+  };
+
   var recipeInput = producer.inputBuffers;
 
   if (producer.kind === "Extractor" && producer.inputBuffers) {
@@ -89,7 +100,7 @@ export const ProducerCard = ({
         beltId: laneId,
       });
     }
-    if (producer.inputBuffers)
+    if (ProducerHasInput(producer.kind) && producer.inputBuffers)
       for (var [, input] of producer.inputBuffers) {
         if (input.Entity === entity) {
           producer.outputStatus.beltConnections.push({
@@ -98,15 +109,12 @@ export const ProducerCard = ({
           });
         }
       }
-
-    console.log(entity);
   };
   const beltConnectionClicked = (laneId: number) => {
     const connectIdx = producer.outputStatus.beltConnections.findIndex(
       (v) => v.beltId === laneId
     );
-
-    producer.outputStatus.beltConnections.splice(connectIdx);
+    producer.outputStatus.beltConnections.splice(connectIdx, 1);
   };
 
   return (
@@ -132,6 +140,9 @@ export const ProducerCard = ({
         <span className="material-icons">reorder</span>
         <span onClick={moveDown} className="material-icons arrow">
           arrow_downward
+        </span>
+        <span onDoubleClick={removeBuilding} className="material-icons arrow">
+          close
         </span>
       </div>
       <div className="mainArea">

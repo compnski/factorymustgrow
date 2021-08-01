@@ -81,6 +81,7 @@ describe("PushToOtherProducer", () => {
   });
 
   it.todo("Errors if no relevant input buffer ");
+  it.todo("Only pushes up to #producer count");
 });
 
 describe("PushPullFromMainBus", () => {
@@ -106,7 +107,7 @@ describe("PushPullFromMainBus", () => {
       );
     }
   }
-
+  it.todo("Only pushes up to #producer count");
   it("Moves between Factory and MainBus", () => {
     const mb = new MainBus();
     mb.AddLane("test-item", 0);
@@ -130,15 +131,15 @@ describe("PushPullFromMainBus", () => {
     ];
     TestMovement(factory, mb, {
       inputBuffers: [
-        NewEntityStack("test-ore", 5),
-        NewEntityStack("copper-ore", 10),
+        NewEntityStack("test-ore", 1),
+        NewEntityStack("copper-ore", 1),
       ],
       busCounts: new Map([
-        [1, 5],
-        [2, 0],
-        [3, 0],
+        [1, 1],
+        [2, 4],
+        [3, 9],
       ]),
-      outputBufferCount: 0,
+      outputBufferCount: 4,
     });
   });
 });
