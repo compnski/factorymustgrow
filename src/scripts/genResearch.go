@@ -16,28 +16,32 @@ type EntityStack struct {
 }
 
 type TechInfo struct {
-	ID                string
-	Name              string
-	Ingredients       []EntityStack
-	Prereqs           []string
-	Unlocks           []string
-	Row               float32
-	Bonuses           []string
-	DurationSeconds   float32
-	ProductionPerTick float32
+	ID                              string
+	Name                            string
+	Ingredients                     []EntityStack
+	ProductionRequiredForCompletion float32
+	Prereqs                         []string
+	Unlocks                         []string
+	Row                             float32
+	Bonuses                         []string
+	DurationSeconds                 float32
+	ProductionPerTick               float32
 }
 
 const techTplTxt = `
 {{define "EntityStack"}}{Entity: "{{.Entity}}", Count: {{.Count}}}{{end}}
-
-import { ResearchTech } from "../types"
-export const Research:Map<string,ResearchTech> = new Map([
+import { Research } from "../types"
+export const ResearchMap:Map<string,Research> = new Map([
 {{range .}}
 ["{{.ID}}", {
   Id: "{{.ID}}",
   Name: "{{.Name}}",
-  DurationSeconds:{{.DurationSeconds}},
+  Input: [{{- range .Ingredients -}}
+    {{template "EntityStack" .}},
+   {{end -}}],
+  ProductionRequiredForCompletion: {{.ProductionRequiredForCompletion}},
   ProductionPerTick:{{.ProductionPerTick}},
+  DurationSeconds:{{.DurationSeconds}},
   Row: {{.Row}},
   Prereqs: [{{range .Prereqs -}}
     "{{- . -}}",
@@ -45,9 +49,6 @@ export const Research:Map<string,ResearchTech> = new Map([
   Unlocks: [{{range .Unlocks -}}
     {{if .}}"{{.}}",{{end}}
    {{- end -}}],
-  Input: [{{- range .Ingredients -}}
-    {{template "EntityStack" .}},
-   {{end -}}],
   Effects: [{{range .Bonuses}}
     {{- if .}}"{{.}}",{{end -}}
    {{end}}],
@@ -75,14 +76,15 @@ func parseFloatOrZero(s string) float32 {
 	return float32(n)
 }
 
-func listOfPairsToEntityStackAndTime(pairs string) (ret []EntityStack, researchTime float32) {
+func listOfPairsToEntityStackAndTime(pairs string) (ret []EntityStack, researchTime, productionRequired float32) {
 	splitPairs := strings.Split(pairs, ",")
 	for i := 0; i < len(splitPairs); i += 2 {
 		if splitPairs[i] == "time" {
 			researchTime = parseFloatOrZero(splitPairs[i+1])
 		} else {
+			productionRequired = parseFloatOrZero(splitPairs[i+1])
 			ret = append(ret, EntityStack{Entity: splitPairs[i],
-				Count: parseFloatOrZero(splitPairs[i+1])})
+				Count: 1})
 		}
 	}
 	return
@@ -103,17 +105,18 @@ func main() {
 
 	var techInfoList []TechInfo
 	for _, matchInfo := range parseHTMLPattern.FindAllStringSubmatch(string(css), -1) {
-		ingredients, researchTime := listOfPairsToEntityStackAndTime(matchInfo[5])
+		ingredients, researchTime, productionRequired := listOfPairsToEntityStackAndTime(matchInfo[5])
 		tech := TechInfo{
-			ID:                matchInfo[1],
-			Name:              matchInfo[4],
-			Row:               parseFloatOrZero(matchInfo[2]),
-			Ingredients:       ingredients,
-			Prereqs:           strings.Split(matchInfo[3], ","),
-			Unlocks:           matchInfo[6:16],
-			Bonuses:           matchInfo[16:26],
-			DurationSeconds:   researchTime,
-			ProductionPerTick: 1 / researchTime,
+			ID:                              matchInfo[1],
+			Name:                            matchInfo[4],
+			Row:                             parseFloatOrZero(matchInfo[2]),
+			Ingredients:                     ingredients,
+			Prereqs:                         strings.Split(matchInfo[3], ","),
+			Unlocks:                         matchInfo[6:16],
+			Bonuses:                         matchInfo[16:26],
+			DurationSeconds:                 researchTime,
+			ProductionPerTick:               1 / researchTime,
+			ProductionRequiredForCompletion: productionRequired,
 		}
 		techInfoList = append(techInfoList, tech)
 		log.Printf("%+v", matchInfo[1:])
