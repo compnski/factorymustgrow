@@ -1,4 +1,5 @@
 import "./icons.scss";
+import "./technology.css";
 import "./App.scss";
 
 import {

@@ -11,7 +11,6 @@ import {
   FillEntityStack,
   NewEntityStack,
   NewRegion,
-  Recipe,
   Region,
 } from "./types";
 import {
@@ -20,7 +19,7 @@ import {
   TestSlowRecipe,
   TestOreRecipe,
   TestSlowOreRecipe,
-} from "./test_defs";
+} from "./test_recipe_defs";
 import { TicksPerSecond } from "./constants";
 
 describe("Factories", () => {

@@ -3,9 +3,11 @@ import { EntityStack } from "../types";
 export function ProducerBufferDisplay({
   inputBuffers,
   outputBuffer,
+  entityIconLookup = (entity: string): string => entity,
 }: {
   inputBuffers: Map<string, EntityStack> | undefined;
   outputBuffer: EntityStack | undefined;
+  entityIconLookup?: (entity: string) => string;
 }) {
   return (
     <div className="recipeDisplay">
@@ -20,7 +22,7 @@ export function ProducerBufferDisplay({
                 {Entity === outputBuffer?.Entity ? (
                   <div className={`icon landfill`} />
                 ) : null}
-                <div className={`icon ${Entity}`} />
+                <div className={`icon ${entityIconLookup(Entity)}`} />
               </div>
             </div>
           );
@@ -35,7 +37,7 @@ export function ProducerBufferDisplay({
             <progress
               max={1}
               value={(outputBuffer?.Count || 0) % 1}
-              className={`icon ${outputBuffer.Entity}`}
+              className={`icon ${entityIconLookup(outputBuffer.Entity)}`}
             />
           </div>
         </div>

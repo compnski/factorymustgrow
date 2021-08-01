@@ -7,10 +7,20 @@ import {
   ProduceFromExtractor,
   ProduceFromFactory,
 } from "./production";
-import { NewRegion, NewEntityStack, Region, Producer, MainBus } from "./types";
+import {
+  NewRegion,
+  NewEntityStack,
+  Region,
+  Producer,
+  MainBus,
+  EntityStack,
+} from "./types";
 import { GetRecipe } from "./gen/entities";
 import { CanPushTo, PushPullFromMainBus, PushToNeighbors } from "./movement";
 import { loadStateFromLocalStorage } from "./localstorage";
+import { IsResearchComplete, Lab, NewLab, ResearchInLab } from "./research";
+import { GetResearch } from "./gen/research";
+import { ProducerHasOutput } from "./utils";
 
 export const useGameState = () => useState<FactoryGameState>(GameState);
 
@@ -27,16 +37,26 @@ const UnlockedRecipes = new Set([
   "electric-mining-drill",
   "assembling-machine-1",
   "iron-chest",
-  "science-pack-1",
+  "automation-science-pack",
 ]);
+
+export type ResearchState = {
+  CurrentResearchId: string;
+  Progress: Map<string, EntityStack>;
+};
 
 export type FactoryGameState = {
   UnlockedRecipes: Set<string>;
   Region: Region;
+  Research: ResearchState;
 };
 
 export const initialFactoryGameState = () => ({
   UnlockedRecipes: UnlockedRecipes,
+  Research: {
+    Progress: new Map(),
+    CurrentResearchId: "",
+  },
   Region: NewRegion(50, [
     NewEntityStack("iron-ore", 500),
     NewEntityStack("copper-ore", 500),
@@ -59,9 +79,18 @@ export const UpdateGameState = (tick: number) => {
       case "Extractor":
         ProduceFromExtractor(p as Extractor, GameState.Region, GetRecipe);
         break;
+      case "Lab":
+        ResearchInLab(p as Lab, GameState.Research, GetResearch);
+        break;
     }
   });
 
+  // Check Research Completion
+
+  if (IsResearchComplete(GameState.Research)) {
+    console.log("Research Complete!");
+    GameState.Research.CurrentResearchId = "";
+  }
   GameState.Region.Buildings.forEach((p, idx) => {
     PushToNeighbors(
       p,
@@ -75,11 +104,13 @@ export const UpdateGameState = (tick: number) => {
 export type GameAction = {
   type:
     | "NewProducer"
+    | "NewLab"
     | "IncreaseProducerCount"
     | "DecreaseProducerCount"
     | "ToggleUpperOutputState"
     | "ToggleLowerOutputState"
     | "ReorderBuildings"
+    | "ChangeResearch"
     | "Reset";
   producerName?: string;
   buildingIdx?: number;
@@ -95,6 +126,15 @@ export const GameDispatch = (action: GameAction) => {
   switch (action.type) {
     case "Reset":
       GameState = initialFactoryGameState();
+      break;
+    case "ChangeResearch":
+      if (action.producerName) {
+        console.log("Set research to ", action.producerName);
+        GameState.Research.CurrentResearchId = action.producerName;
+      }
+      break;
+    case "NewLab":
+      Buildings.push(NewLab());
       break;
     case "NewProducer":
       if (action.producerName) {
@@ -113,7 +153,12 @@ export const GameDispatch = (action: GameAction) => {
         building.ProducerCount = Math.max(0, building.ProducerCount - 1);
       break;
     case "ToggleUpperOutputState":
-      if (!building || action.buildingIdx === undefined) return;
+      if (
+        !ProducerHasOutput(building?.kind) ||
+        !building ||
+        action.buildingIdx === undefined
+      )
+        return;
       building.outputStatus.above =
         building.outputStatus.above === "NONE" &&
         CanPushTo(building, Buildings[action.buildingIdx - 1])
@@ -122,7 +167,12 @@ export const GameDispatch = (action: GameAction) => {
 
       break;
     case "ToggleLowerOutputState":
-      if (!building || action.buildingIdx === undefined) return;
+      if (
+        !ProducerHasOutput(building?.kind) ||
+        !building ||
+        action.buildingIdx === undefined
+      )
+        return;
       building.outputStatus.below =
         building.outputStatus.below === "NONE" &&
         CanPushTo(building, Buildings[action.buildingIdx + 1])
