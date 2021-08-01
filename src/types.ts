@@ -1,11 +1,10 @@
-export interface ProducingEntity {
-  RecipeName: string;
+export interface Producer {
+  kind: string;
+  RecipeId: string;
+  inputBuffers: Map<string, EntityStack>;
+  outputBuffer: EntityStack;
   ProducerCount: number;
-  ProducerCapacityUpgradeCount: number;
-  ProducerMaxCapacityUpgradeCount: number;
-  ResearchUpgradeCount: number;
-  // CurrentRate(): number;
-  //    CurrentMaxProducerCount():number;
+  outputStatus: OutputStatus;
 }
 
 export type ResearchTech = {
@@ -90,15 +89,6 @@ export type OutputStatus = {
   beltConnections: BeltConnection[];
 };
 
-export interface Producer {
-  kind: string;
-  RecipeId: string;
-  inputBuffers?: Map<string, EntityStack>;
-  outputBuffer: EntityStack;
-  ProducerCount: number;
-  outputStatus: OutputStatus;
-}
-
 export type Region = {
   Ore: Map<string, EntityStack>;
   BuildingCapacity: number;
@@ -163,14 +153,3 @@ export class MainBus {
     return this.lanes.has(id);
   }
 }
-
-// clasas ProducingEntity {
-//   inputBuffers?: Map<string, EntityStack>;
-//   outputBuffer?: EntityStack;
-
-//   RecipeName: string;
-//   ProducerCount: number;
-//   //  ProducerCapacityUpgradeCount: number;
-//   //  ProducerMaxCapacityUpgradeCount: number;
-//   //  ResearchUpgradeCount: number;
-// }

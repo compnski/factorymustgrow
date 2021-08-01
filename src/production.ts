@@ -12,6 +12,7 @@ import { TicksPerSecond } from "./constants";
 // Extractor
 export type Extractor = {
   kind: "Extractor";
+  inputBuffers: Map<string, EntityStack>;
   outputBuffer: EntityStack;
   outputStatus: OutputStatus;
   RecipeId: string;
@@ -24,6 +25,9 @@ export function NewExtractor(
 ): Extractor {
   return {
     kind: "Extractor",
+    inputBuffers: new Map([
+      [r.Output[0].Entity, NewEntityStack(r.Output[0].Entity, 0, 0)],
+    ]),
     outputBuffer: NewEntityStack(r.Output[0].Entity, 0, 50),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     RecipeId: r.Id,
