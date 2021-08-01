@@ -4,6 +4,7 @@ import "./ProducerCard.scss";
 import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
 import { ProducerBufferDisplay } from "./ProducerBufferDisplay";
+import { entityIconLookupByKind, ProducerHasOutput } from "../utils";
 
 export type ProducerCardProps = {
   producer: Producer;
@@ -22,6 +23,7 @@ const ProducerTypeIconMap: { [key: string]: string } = {
   ChemFactory: "",
   Refinery: "",
   Pumpjack: "",
+  Lab: "lab",
 };
 
 const ProducerIcon = (p: Producer): string => ProducerTypeIconMap[p.kind];
@@ -76,7 +78,12 @@ export const ProducerCard = ({
     )
       return;
 
-    if (entity === producer.outputBuffer.Entity) {
+    // Labs should only input from bus
+    //
+    if (
+      ProducerHasOutput(producer.kind) &&
+      entity === producer.outputBuffer.Entity
+    ) {
       producer.outputStatus.beltConnections.push({
         direction: "TO_BUS",
         beltId: laneId,
@@ -161,6 +168,7 @@ export const ProducerCard = ({
           <ProducerBufferDisplay
             inputBuffers={recipeInput}
             outputBuffer={producer.outputBuffer}
+            entityIconLookup={entityIconLookupByKind(producer.kind)}
           />
         </div>
       </div>

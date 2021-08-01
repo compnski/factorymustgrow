@@ -5,13 +5,21 @@ export const useUIState = () =>
 export type UIState = {
   dialogs: {
     recipeSelectorOpen: boolean;
+    researchSelectorOpen: boolean;
   };
   exploreGameOpen: boolean;
 };
+
+const closedDialogs = {
+  recipeSelectorOpen: false,
+  researchSelectorOpen: false,
+};
+
 export type UIAction = {
   type:
     | "CloseDialog"
     | "ShowRecipeSelector"
+    | "ShowResearchSelector"
     | "OpenExploreGame"
     | "CloseExploreGame";
   evt?: SyntheticEvent;
@@ -23,9 +31,22 @@ export function uiStateReducer(state: UIState, action: UIAction): UIState {
   switch (action.type) {
     case "ShowRecipeSelector":
       action.evt?.stopPropagation();
-      return { ...state, dialogs: { recipeSelectorOpen: true } };
+      return {
+        ...state,
+        dialogs: { ...closedDialogs, recipeSelectorOpen: true },
+      };
+    case "ShowResearchSelector":
+      action.evt?.stopPropagation();
+      return {
+        ...state,
+        dialogs: { ...closedDialogs, researchSelectorOpen: true },
+      };
+
     case "CloseDialog":
-      return { ...state, dialogs: { recipeSelectorOpen: false } };
+      return {
+        ...state,
+        dialogs: { ...closedDialogs },
+      };
     case "OpenExploreGame":
       return { ...state, exploreGameOpen: true };
     case "CloseExploreGame":

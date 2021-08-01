@@ -7,16 +7,19 @@ export interface Producer {
   outputStatus: OutputStatus;
 }
 
-export type ResearchTech = {
+export type Research = {
   Id: string;
   Name: string;
+  Icon: string;
   Input: EntityStack[];
-  Prereqs: string[];
-  Unlocks: string[];
-  Effects: string[];
+  // How many units of research must be produced (at Input cost) to learn this research
+  ProductionRequiredForCompletion: number;
   ProductionPerTick: number;
   DurationSeconds: number;
   Row: number;
+  Prereqs: string[];
+  Unlocks: string[];
+  Effects: string[];
 };
 
 export type ProducerType =
@@ -28,7 +31,8 @@ export type ProducerType =
   | "Pumpjack"
   | "Centrifuge"
   | "WaterPump"
-  | "Boiler";
+  | "Boiler"
+  | "Lab";
 
 export type Recipe = {
   //  Name: string;

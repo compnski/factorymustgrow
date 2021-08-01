@@ -18,6 +18,7 @@ type EntityStack struct {
 type TechInfo struct {
 	ID                              string
 	Name                            string
+	Icon                            string
 	Ingredients                     []EntityStack
 	ProductionRequiredForCompletion float32
 	Prereqs                         []string
@@ -31,11 +32,17 @@ type TechInfo struct {
 const techTplTxt = `
 {{define "EntityStack"}}{Entity: "{{.Entity}}", Count: {{.Count}}}{{end}}
 import { Research } from "../types"
+
+export function GetResearch(name:string):Research {
+  return ResearchMap.get(name)!;
+}
+
 export const ResearchMap:Map<string,Research> = new Map([
 {{range .}}
 ["{{.ID}}", {
   Id: "{{.ID}}",
   Name: "{{.Name}}",
+  Icon: "{{.Icon}}",
   Input: [{{- range .Ingredients -}}
     {{template "EntityStack" .}},
    {{end -}}],
@@ -62,11 +69,12 @@ var techTpl = template.Must(template.New("svg").Parse(techTplTxt))
 //var parseCssPattern = regexp.MustCompile(`(?:\.([-a-zA-Z0-9]+) {.*? background-position: -?(\d+)px -?(\d+)px; })+`)
 
 var (
-	unlockedItemGroup  = `(?:<div class="item" id="item_(.+?)".+?><\/div>)?`
-	unlockedBonusGroup = `(?:<div class="bonus" data-title="(.+?)"><\/div>)?`
-	techInfo           = `<div id="(.+?)" class="tech L(.+?)" style=".+?" data-prereqs="(.+?)" data-title="(.+?)" data-ingredients="(.+?)"`
+	unlockedItemGroup  = `(?:<div class="item" id="item_(.*?)".+?><\/div>)?`
+	unlockedBonusGroup = `(?:<div class="bonus" data-title="(.*?)"><\/div>)?`
+	techInfo           = `<div id="(.+?)" class="tech L(.+?)" style=".+?" data-prereqs="(.*?)" data-title="(.+?)" data-ingredients="(.+?)"`
+	imageInfo          = `<img class="pic" src="graphics/technology/(.+?).png" \/>`
 )
-var parseHTMLPattern = regexp.MustCompile(techInfo + `.+?>` +
+var parseHTMLPattern = regexp.MustCompile(techInfo + `.+?>` + imageInfo + `.+?>` +
 	strings.Repeat(unlockedItemGroup, 10) +
 	strings.Repeat(unlockedBonusGroup, 10) +
 	`</div>`)
@@ -110,10 +118,11 @@ func main() {
 			ID:                              matchInfo[1],
 			Name:                            matchInfo[4],
 			Row:                             parseFloatOrZero(matchInfo[2]),
+			Icon:                            matchInfo[6],
 			Ingredients:                     ingredients,
 			Prereqs:                         strings.Split(matchInfo[3], ","),
-			Unlocks:                         matchInfo[6:16],
-			Bonuses:                         matchInfo[16:26],
+			Unlocks:                         matchInfo[7:17],
+			Bonuses:                         matchInfo[17:27],
 			DurationSeconds:                 researchTime,
 			ProductionPerTick:               1 / researchTime,
 			ProductionRequiredForCompletion: productionRequired,

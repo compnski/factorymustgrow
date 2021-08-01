@@ -73,17 +73,18 @@
 
     .quantityText {
       font-size: 16px;
-      width: 50px;
+      width: 40px;
     }
 
     .recipeItem {
       display: flex;
       flex-direction: column;
-      padding: 0 6px;
+      padding: 0 0px;
     }
 
     .equalsSign {
       margin: auto 0;
+      margin-right: 12px;
       padding: 0 8px;
       font-size: 32px;
     }

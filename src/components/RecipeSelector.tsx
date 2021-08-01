@@ -3,14 +3,20 @@ import { SyntheticEvent } from "react";
 export type RecipeSelectorProps = {
   onClick: (evt: SyntheticEvent, recipe: string) => void;
   recipes: string[];
+  entityIconLookup?: (entity: string) => string;
 };
 
-export const RecipeSelector = ({ recipes, onClick }: RecipeSelectorProps) => {
+export const RecipeSelector = ({
+  recipes,
+  onClick,
+  entityIconLookup = (entity: string): string => entity,
+}: RecipeSelectorProps) => {
   const recipeIcons = recipes.map((r) => {
     return (
       <div
         key={r}
-        className={`clickable icon ${r}`}
+        title={r}
+        className={`clickable icon ${entityIconLookup(r)}`}
         onClick={(evt) => onClick(evt, r)}
       />
     );
