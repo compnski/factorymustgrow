@@ -758,6 +758,7 @@ export const ResearchMap: Map<string, Research> = new Map([
         "chemical-plant",
         "basic-oil-processing",
         "solid-fuel-from-petroleum-gas",
+        "crude-oil",
       ],
       Effects: ["Basic oil processing"],
     },

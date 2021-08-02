@@ -64,6 +64,7 @@ export const initialFactoryGameState = () => ({
     NewEntityStack("copper-ore", 9000),
     NewEntityStack("stone", 9000),
     NewEntityStack("coal", 9000),
+    NewEntityStack("crude-oil", 9000),
   ]),
 });
 
@@ -176,6 +177,7 @@ export const GameDispatch = (action: GameAction) => {
         if (r && r.ProducerType === "Miner") Buildings.push(NewExtractor(r));
         if (r && r.ProducerType === "ChemPlant") Buildings.push(NewFactory(r));
         if (r && r.ProducerType === "Refinery") Buildings.push(NewFactory(r));
+        if (r && r.ProducerType === "Pumpjack") Buildings.push(NewExtractor(r));
       }
       break;
 
