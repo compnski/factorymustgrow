@@ -5,7 +5,7 @@ import { entityIconLookupByKind } from "../utils";
 
 export type InfoHeaderProps = {
   gameState: { Region: Region; Research: ResearchState };
-  uiDispatch: (a: UIAction) => void;
+  uiDispatch(a: UIAction): void;
 };
 
 export const InfoHeader = ({ gameState, uiDispatch }: InfoHeaderProps) => {
