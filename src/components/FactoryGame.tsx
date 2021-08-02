@@ -88,6 +88,17 @@ export const FactoryGame = ({
         </div>
 
         <div
+          className="add-producer clickable"
+          onClick={() =>
+            GameDispatch({
+              type: "CompleteResearch",
+            })
+          }
+        >
+          Complete Research (DEBUG)
+        </div>
+
+        <div
           className="clickable exploreButton"
           onClick={() =>
             uiDispatch({

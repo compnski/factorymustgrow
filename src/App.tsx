@@ -14,12 +14,14 @@ import { useUIState } from "./uiState";
 import { ExploreGame } from "./explore/ExploreGame";
 import { FactoryGame } from "./components/FactoryGame";
 import { TicksPerSecond } from "./constants";
+import { GameWindow } from "./globals";
+import { Macro } from "./macro_def";
 
 function App() {
   const [gameState, setGameState] = useGameState();
   const [uiState, uiDispatch] = useUIState();
 
-  (window as any).dispatch = uiDispatch;
+  (window as unknown as GameWindow).uiDispatch = uiDispatch;
 
   useInterval(() => {
     // Your custom logic here
@@ -80,4 +82,5 @@ function App() {
   );
 }
 
+const _ = Macro;
 export default App;

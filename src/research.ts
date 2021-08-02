@@ -111,6 +111,7 @@ export function ResearchInLab(
   return actualProduction;
 }
 
+// Returns all research that is not completed and unlocked
 export function availableResearch(researchState: ResearchState): string[] {
   const unlockedResearch = new Set();
   researchState.Progress.forEach((stack) => {
@@ -120,7 +121,7 @@ export function availableResearch(researchState: ResearchState): string[] {
   for (var research of ResearchMap.values()) {
     if (unlockedResearch.has(research.Id)) continue;
     if (
-      [...research.Prereqs].filter((x) => !unlockedResearch.has(x)).length == 0
+      [...research.Prereqs].filter((x) => !unlockedResearch.has(x)).length === 0
     ) {
       availableResearch.push(research.Id);
     }
@@ -145,17 +146,22 @@ const categoryOrder: { [key: string]: number } = {
   combat: 4,
 };
 
+// Returns all recipes that can be crafted given the completed research
 export function availableRecipes(researchState: ResearchState): string[] {
   const availableRecipes: string[] = [...AlwaysUnlockedRecipes];
   researchState.Progress.forEach((stack) => {
     if (stack.Count === stack.MaxCount) {
       const research = GetResearch(stack.Entity);
-      availableRecipes.push(...research.Unlocks);
+      if (research) availableRecipes.push(...research.Unlocks);
+      else console.log("Missing research entity for ", stack.Entity);
     }
   });
   availableRecipes.sort((a, b): number => {
     const entA = GetEntity(a),
       entB = GetEntity(b);
+    if (!entA || !entB) {
+      return 0;
+    }
     if (entA.Category !== entB.Category)
       return categoryOrder[entA.Category] - categoryOrder[entB.Category];
     if (entA.Row !== entB.Row) return entA.Row - entB.Row;

@@ -22,6 +22,7 @@ import { IsResearchComplete, Lab, NewLab, ResearchInLab } from "./research";
 import { GetResearch } from "./gen/research";
 import { ProducerHasOutput } from "./utils";
 import { UIAction } from "./uiState";
+import { GameWindow } from "./globals";
 
 export const useGameState = () => useState<FactoryGameState>(GameState);
 
@@ -67,7 +68,6 @@ export const initialFactoryGameState = () => ({
 });
 
 export var GameState = loadStateFromLocalStorage(initialFactoryGameState());
-(window as any).GameState = GameState;
 
 export const UpdateGameState = (
   tick: number,
@@ -92,9 +92,9 @@ export const UpdateGameState = (
     });
 
     // Check Research Completion
-
     if (IsResearchComplete(GameState.Research)) {
       console.log("Research Complete!");
+      GameDispatch({ type: "CompleteResearch" });
       uiDispatch({ type: "ShowResearchSelector" });
       GameState.Research.CurrentResearchId = "";
     }
@@ -123,6 +123,7 @@ export type GameAction = {
     | "ToggleLowerOutputState"
     | "ReorderBuildings"
     | "ChangeResearch"
+    | "CompleteResearch"
     | "Reset";
   producerName?: string;
   buildingIdx?: number;
@@ -139,36 +140,55 @@ export const GameDispatch = (action: GameAction) => {
     case "Reset":
       GameState = initialFactoryGameState();
       break;
+
     case "RemoveBuilding":
       if (action.buildingIdx !== undefined) {
         GameState.Region.Buildings.splice(action.buildingIdx, 1);
       }
       break;
+
     case "ChangeResearch":
       if (action.producerName) {
         console.log("Set research to ", action.producerName);
         GameState.Research.CurrentResearchId = action.producerName;
       }
       break;
+
+    case "CompleteResearch":
+      const currentResearchId = GameState.Research.CurrentResearchId,
+        currentResearchProgress =
+          GameState.Research.Progress.get(currentResearchId);
+      if (currentResearchProgress)
+        currentResearchProgress.Count = currentResearchProgress.MaxCount || 0;
+      else console.log("No research", currentResearchId);
+      console.log(currentResearchId, currentResearchProgress);
+      break;
+
     case "NewLab":
       Buildings.push(NewLab());
       break;
+
     case "NewProducer":
       if (action.producerName) {
         const r = GetRecipe(action.producerName);
         if (r && r.ProducerType === "Assembler") Buildings.push(NewFactory(r));
         if (r && r.ProducerType === "Smelter") Buildings.push(NewFactory(r));
         if (r && r.ProducerType === "Miner") Buildings.push(NewExtractor(r));
+        if (r && r.ProducerType === "ChemPlant") Buildings.push(NewFactory(r));
+        if (r && r.ProducerType === "Refinery") Buildings.push(NewFactory(r));
       }
       break;
+
     case "IncreaseProducerCount":
       if (building)
         building.ProducerCount = Math.min(50, building.ProducerCount + 1);
       break;
+
     case "DecreaseProducerCount":
       if (building)
         building.ProducerCount = Math.max(0, building.ProducerCount - 1);
       break;
+
     case "ToggleUpperOutputState":
       if (
         !ProducerHasOutput(building?.kind) ||
@@ -181,8 +201,8 @@ export const GameDispatch = (action: GameAction) => {
         CanPushTo(building, Buildings[action.buildingIdx - 1])
           ? "OUT"
           : "NONE";
-
       break;
+
     case "ToggleLowerOutputState":
       if (
         !ProducerHasOutput(building?.kind) ||
@@ -196,6 +216,7 @@ export const GameDispatch = (action: GameAction) => {
           ? "OUT"
           : "NONE";
       break;
+
     case "ReorderBuildings":
       if (
         action.buildingIdx !== undefined &&
@@ -226,3 +247,6 @@ function fixOutputStatus(buildings: Producer[]) {
       p.outputStatus.below = "NONE";
   });
 }
+
+(window as unknown as GameWindow).GameState = GameState;
+(window as unknown as GameWindow).GameDispatch = GameDispatch;
