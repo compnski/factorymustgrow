@@ -250,5 +250,5 @@ function fixOutputStatus(buildings: Producer[]) {
   });
 }
 
-(window as unknown as GameWindow).GameState = GameState;
+(window as unknown as GameWindow).GameState = () => GameState;
 (window as unknown as GameWindow).GameDispatch = GameDispatch;

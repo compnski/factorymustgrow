@@ -2,11 +2,11 @@ import { EntityStack, FillEntityStack } from "../types";
 
 export function ProducerBufferDisplay({
   inputBuffers,
-  outputBuffer,
+  outputBuffers,
   entityIconLookup = (entity: string): string => entity,
 }: {
   inputBuffers: Map<string, EntityStack> | undefined;
-  outputBuffer: EntityStack | undefined;
+  outputBuffers: Map<string, EntityStack> | undefined;
   entityIconLookup?: (entity: string) => string;
 }) {
   return (
@@ -23,7 +23,7 @@ export function ProducerBufferDisplay({
                 {Math.floor(entityStack.Count)}
               </div>
               <div className="iconFrame">
-                {Entity === outputBuffer?.Entity ? (
+                {outputBuffers?.has(Entity) ? (
                   <div className={`icon landfill`} />
                 ) : null}
                 <div className={`icon ${entityIconLookup(Entity)}`} />
@@ -32,24 +32,25 @@ export function ProducerBufferDisplay({
           );
         })}
       <div className="equalsSign">=&gt;</div>
-      {outputBuffer && (
-        <div
-          key={outputBuffer.Entity}
-          className="recipeItem"
-          onDoubleClick={() => FillEntityStack(outputBuffer, 1)}
-        >
-          <div className="quantityText">
-            {Math.floor(outputBuffer?.Count || 0)}
+      {outputBuffers &&
+        [...outputBuffers.values()].map((outputBuffer) => (
+          <div
+            key={outputBuffer.Entity}
+            className="recipeItem"
+            onDoubleClick={() => FillEntityStack(outputBuffer, 1)}
+          >
+            <div className="quantityText">
+              {Math.floor(outputBuffer?.Count || 0)}
+            </div>
+            <div className="iconFrame item-icon-progress">
+              <progress
+                max={1}
+                value={(outputBuffer?.Count || 0) % 1}
+                className={`icon ${entityIconLookup(outputBuffer.Entity)}`}
+              />
+            </div>
           </div>
-          <div className="iconFrame item-icon-progress">
-            <progress
-              max={1}
-              value={(outputBuffer?.Count || 0) % 1}
-              className={`icon ${entityIconLookup(outputBuffer.Entity)}`}
-            />
-          </div>
-        </div>
-      )}
+        ))}
       ;
     </div>
   );

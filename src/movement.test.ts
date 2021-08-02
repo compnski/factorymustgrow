@@ -14,14 +14,18 @@ describe("PushToOtherProducer", () => {
     to: any,
     maxMoved: number,
     expected: {
-      moved: number;
-      outputCount: number;
+      outputBuffers: EntityStack[];
       inputBuffers: EntityStack[];
     }
   ) {
-    const moved = PushToOtherProducer(from, to, maxMoved);
-    expect(moved).toBe(expected.moved);
-    expect(from.outputBuffer.Count).toBe(expected.outputCount);
+    PushToOtherProducer(from, to, maxMoved);
+
+    for (var expectedOutput of expected.outputBuffers) {
+      expect(from.outputBuffers.get(expectedOutput.Entity)?.Count).toBe(
+        expectedOutput.Count
+      );
+    }
+
     for (var expectedInput of expected.inputBuffers) {
       expect(to.inputBuffers.get(expectedInput.Entity)?.Count).toBe(
         expectedInput.Count
@@ -32,11 +36,10 @@ describe("PushToOtherProducer", () => {
   it("Moves between Extractor and Factory", () => {
     const extractor = NewExtractor(TestOreRecipe, 1),
       factory = NewFactory(TestRecipe, 1);
-    extractor.outputBuffer.Count = 5;
+    extractor.outputBuffers.get("test-ore")!.Count = 5;
 
     TestMovement(extractor, factory, 3, {
-      moved: 3,
-      outputCount: 2,
+      outputBuffers: [NewEntityStack("test-ore", 2)],
       inputBuffers: [
         NewEntityStack("test-ore", 3),
         NewEntityStack("copper-ore", 0),
@@ -47,11 +50,10 @@ describe("PushToOtherProducer", () => {
   it("Moves between Factory and Factory", () => {
     const fromFactory = NewFactory(TestRecipe, 1),
       toFactory = NewFactory(TestItemConsumerRecipe, 1);
-    fromFactory.outputBuffer.Count = 5;
+    fromFactory.outputBuffers.get("test-item")!.Count = 5;
 
     TestMovement(fromFactory, toFactory, 3, {
-      moved: 3,
-      outputCount: 2,
+      outputBuffers: [NewEntityStack("test-item", 2)],
       inputBuffers: [NewEntityStack("test-item", 3)],
     });
   });
@@ -59,11 +61,10 @@ describe("PushToOtherProducer", () => {
   it("Moves uncapped amounts between Factory and Factory", () => {
     const fromFactory = NewFactory(TestRecipe, 1),
       toFactory = NewFactory(TestItemConsumerRecipe, 1);
-    fromFactory.outputBuffer.Count = 5;
+    fromFactory.outputBuffers.get("test-item")!.Count = 5;
 
     TestMovement(fromFactory, toFactory, Infinity, {
-      moved: 5,
-      outputCount: 0,
+      outputBuffers: [NewEntityStack("test-item", 0)],
       inputBuffers: [NewEntityStack("test-item", 5)],
     });
   });
@@ -71,11 +72,10 @@ describe("PushToOtherProducer", () => {
   it("Won't overflow target input", () => {
     const fromFactory = NewFactory(TestRecipe, 1),
       toFactory = NewFactory(TestItemConsumerRecipe, 1);
-    fromFactory.outputBuffer.Count = 55;
+    fromFactory.outputBuffers.get("test-item")!.Count = 55;
 
     TestMovement(fromFactory, toFactory, Infinity, {
-      moved: 50,
-      outputCount: 5,
+      outputBuffers: [NewEntityStack("test-item", 5)],
       inputBuffers: [NewEntityStack("test-item", 50)],
     });
   });
@@ -90,31 +90,40 @@ describe("PushPullFromMainBus", () => {
     bus: MainBus,
     expected: {
       inputBuffers: EntityStack[];
-      outputBufferCount: number;
+      outputBuffers: EntityStack[];
       busCounts: Map<number, number>;
     }
   ) {
     PushPullFromMainBus(producer, bus);
 
-    expect(producer.outputBuffer.Count).toBe(expected.outputBufferCount);
+    for (var expectedOutput of expected.outputBuffers) {
+      expect(producer.outputBuffers.get(expectedOutput.Entity)?.Count).toBe(
+        expectedOutput.Count
+      );
+    }
 
     for (var [beltId, count] of expected.busCounts) {
       expect(bus.lanes.get(beltId)?.Count).toBe(count);
     }
+
     for (var expectedInput of expected.inputBuffers) {
       expect(producer.inputBuffers.get(expectedInput.Entity)?.Count).toBe(
         expectedInput.Count
       );
     }
   }
+
   it.todo("Only pushes up to #producer count");
+
   it("Moves between Factory and MainBus", () => {
     const mb = new MainBus();
     mb.AddLane("test-item", 0);
     mb.AddLane("test-ore", 5);
     mb.AddLane("copper-ore", 10);
     const factory = NewFactory(TestRecipe, 1);
-    factory.outputBuffer.Count = 5;
+
+    factory.outputBuffers.get("test-item")!.Count = 5;
+
     factory.outputStatus.beltConnections = [
       {
         direction: "TO_BUS",
@@ -139,7 +148,7 @@ describe("PushPullFromMainBus", () => {
         [2, 4],
         [3, 9],
       ]),
-      outputBufferCount: 4,
+      outputBuffers: [NewEntityStack("test-item", 4)],
     });
   });
 });

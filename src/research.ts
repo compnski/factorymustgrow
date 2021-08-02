@@ -14,7 +14,7 @@ export type Lab = {
   kind: "Lab";
   RecipeId: string;
   inputBuffers: Map<string, EntityStack>;
-  outputBuffer: EntityStack;
+  outputBuffers: Map<string, EntityStack>;
   ProducerCount: number;
   outputStatus: OutputStatus;
 };
@@ -32,7 +32,7 @@ const initialLabInput = [
 export function NewLab(initialProduceCount: number = 0): Lab {
   return {
     kind: "Lab",
-    outputBuffer: NewEntityStack(""),
+    outputBuffers: new Map(),
     inputBuffers: new Map(
       initialLabInput.map((input) => [
         input.Entity,
@@ -79,7 +79,7 @@ export function ResearchInLab(
   const research = GetResearch(l.RecipeId);
   if (!research) {
     // TODO No research icon?
-    l.outputBuffer = NewEntityStack("");
+    l.outputBuffers = new Map();
     return 0;
   }
   if (!researchState.Progress.has(currentResearchId))
@@ -92,12 +92,20 @@ export function ResearchInLab(
       )
     );
   const currentProgress = researchState.Progress.get(currentResearchId);
-  if (currentProgress) l.outputBuffer = currentProgress;
+  if (currentProgress) l.outputBuffers.set(currentResearchId, currentProgress);
 
   const maxProduction = productionPerTick(l, research),
     availableInputs = producableItemsForInput(l.inputBuffers, research.Input),
-    availableInventorySpace =
-      (l.outputBuffer.MaxCount || Infinity) - l.outputBuffer.Count,
+    availableInventorySpace = [...l.outputBuffers.values()].reduce(
+      (accum, entityStack) => {
+        const outputStack = l.outputBuffers.get(entityStack.Entity);
+        return Math.min(
+          accum,
+          (outputStack?.MaxCount || Infinity) - (outputStack?.Count || 0)
+        );
+      },
+      Infinity
+    ),
     actualProduction = Math.min(
       maxProduction,
       availableInputs,
@@ -107,7 +115,7 @@ export function ResearchInLab(
     const inputItem = l.inputBuffers.get(input.Entity);
     if (inputItem) inputItem.Count -= input.Count * actualProduction;
   }
-  l.outputBuffer.Count += actualProduction;
+  currentProgress!.Count += actualProduction;
   return actualProduction;
 }
 

@@ -26,15 +26,20 @@ describe("Factories", () => {
   function TestFactory(
     factory: Factory,
     expected: {
-      produced: number;
-      outputCount: number;
+      outputBuffers: EntityStack[];
       inputBuffers: EntityStack[];
     }
   ) {
     for (var i = 0; i < TicksPerSecond; i++) {
       ProduceFromFactory(factory, TestRecipeBook.get.bind(TestRecipeBook));
     }
-    expect(factory.outputBuffer.Count).toBe(expected.outputCount);
+
+    for (var expectedOutput of expected.outputBuffers) {
+      expect(factory.outputBuffers.get(expectedOutput.Entity)?.Count).toBe(
+        expectedOutput.Count
+      );
+    }
+
     for (var expectedInput of expected.inputBuffers) {
       expect(factory.inputBuffers.get(expectedInput.Entity)?.Count).toBe(
         expectedInput.Count
@@ -45,11 +50,10 @@ describe("Factories", () => {
   it("Produces a single item", () => {
     const factory = NewFactory(TestRecipe, 1);
     factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
-    factory.outputBuffer.Count = 1;
+    factory.outputBuffers.get("test-item")!.Count = 1;
 
     TestFactory(factory, {
-      produced: 1,
-      outputCount: 2,
+      outputBuffers: [NewEntityStack("test-item", 2)],
       inputBuffers: [
         NewEntityStack("test-ore", 8),
         NewEntityStack("copper-ore", 7),
@@ -62,8 +66,7 @@ describe("Factories", () => {
     factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
 
     TestFactory(factory, {
-      produced: 3,
-      outputCount: 3,
+      outputBuffers: [NewEntityStack("test-item", 3)],
       inputBuffers: [
         NewEntityStack("test-ore", 4),
         NewEntityStack("copper-ore", 1),
@@ -76,8 +79,8 @@ describe("Factories", () => {
     factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
 
     TestFactory(factory, {
-      produced: 1.5,
-      outputCount: 1.5,
+      outputBuffers: [NewEntityStack("test-item", 1.5)],
+
       inputBuffers: [
         NewEntityStack("test-ore", 7),
         NewEntityStack("copper-ore", 5.5),
@@ -90,8 +93,7 @@ describe("Factories", () => {
     factory.inputBuffers.forEach((input) => FillEntityStack(input, 2));
 
     TestFactory(factory, {
-      produced: 0,
-      outputCount: 0,
+      outputBuffers: [NewEntityStack("test-item", 0)],
       inputBuffers: [
         NewEntityStack("test-ore", 2),
         NewEntityStack("copper-ore", 2),
@@ -102,11 +104,11 @@ describe("Factories", () => {
   it("Won't overfill inventory", () => {
     const factory = NewFactory(TestRecipe, 1);
     factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
-    factory.outputBuffer.Count = factory.outputBuffer.MaxCount || 0;
+    factory.outputBuffers.get("test-item")!.Count =
+      factory.outputBuffers.get("test-item")!.MaxCount;
 
     TestFactory(factory, {
-      produced: 0,
-      outputCount: 50,
+      outputBuffers: [NewEntityStack("test-item", 50)],
       inputBuffers: [
         NewEntityStack("test-ore", 10),
         NewEntityStack("copper-ore", 10),
@@ -120,8 +122,7 @@ describe("Extractors", () => {
     extractor: Extractor,
     region: Region,
     expected: {
-      produced: number;
-      outputCount: number;
+      outputBuffers: EntityStack[];
       regionalOre: EntityStack[];
     }
   ) {
@@ -133,7 +134,12 @@ describe("Extractors", () => {
       );
     }
 
-    expect(extractor.outputBuffer.Count).toBe(expected.outputCount);
+    for (var expectedOutput of expected.outputBuffers) {
+      expect(extractor.outputBuffers.get(expectedOutput.Entity)?.Count).toBe(
+        expectedOutput.Count
+      );
+    }
+
     for (var expectedOre of expected.regionalOre) {
       expect(region.Ore.get(expectedOre.Entity)?.Count).toBe(expectedOre.Count);
     }
@@ -141,24 +147,22 @@ describe("Extractors", () => {
 
   it("Produces a single item", () => {
     const extractor = NewExtractor(TestOreRecipe, 1);
-    extractor.outputBuffer.Count = 1;
+    extractor.outputBuffers.get("test-ore")!.Count = 1;
     const region = NewRegion(0, [NewEntityStack("test-ore", 10)]);
 
     TestExtractor(extractor, region, {
-      produced: 1,
-      outputCount: 2,
+      outputBuffers: [NewEntityStack("test-ore", 2)],
       regionalOre: [NewEntityStack("test-ore", 9)],
     });
   });
 
   it("Produces 1.5 items", () => {
     const extractor = NewExtractor(TestSlowOreRecipe, 3);
-    extractor.outputBuffer.Count = 1;
+    extractor.outputBuffers.get("test-ore")!.Count = 1;
     const region = NewRegion(0, [NewEntityStack("test-ore", 10)]);
 
     TestExtractor(extractor, region, {
-      produced: 1.5,
-      outputCount: 2.5,
+      outputBuffers: [NewEntityStack("test-ore", 2.5)],
       regionalOre: [NewEntityStack("test-ore", 8.5)],
     });
   });
@@ -168,8 +172,7 @@ describe("Extractors", () => {
     const region = NewRegion(0, [NewEntityStack("test-ore", 10)]);
 
     TestExtractor(extractor, region, {
-      produced: 3,
-      outputCount: 3,
+      outputBuffers: [NewEntityStack("test-ore", 3)],
       regionalOre: [NewEntityStack("test-ore", 7)],
     });
   });
@@ -179,8 +182,7 @@ describe("Extractors", () => {
     const region = NewRegion(0, [NewEntityStack("test-ore", 3)]);
 
     TestExtractor(extractor, region, {
-      produced: 3,
-      outputCount: 3,
+      outputBuffers: [NewEntityStack("test-ore", 3)],
       regionalOre: [NewEntityStack("test-ore", 0)],
     });
   });

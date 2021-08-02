@@ -13,7 +13,7 @@ import { TicksPerSecond } from "./constants";
 export type Extractor = {
   kind: "Extractor";
   inputBuffers: Map<string, EntityStack>;
-  outputBuffer: EntityStack;
+  outputBuffers: Map<string, EntityStack>;
   outputStatus: OutputStatus;
   RecipeId: string;
   ProducerCount: number;
@@ -28,7 +28,9 @@ export function NewExtractor(
     inputBuffers: new Map([
       [r.Output[0].Entity, NewEntityStack(r.Output[0].Entity, 0, 0)],
     ]),
-    outputBuffer: NewEntityStack(r.Output[0].Entity, 0, 50),
+    outputBuffers: new Map([
+      [r.Output[0].Entity, NewEntityStack(r.Output[0].Entity, 0, 50)],
+    ]),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     RecipeId: r.Id,
     ProducerCount: initialProduceCount,
@@ -47,25 +49,26 @@ export function ProduceFromExtractor(
   const recipe = GetRecipe(e.RecipeId);
   const regionalOre = region.Ore.get(recipe?.Input[0].Entity || "");
   if (recipe && regionalOre) {
-    return stackTransfer(
-      regionalOre,
-      e.outputBuffer,
-      productionPerTick(e, recipe),
-      false
-    );
+    recipe.Output.forEach((entityStack) => {
+      stackTransfer(
+        regionalOre,
+        e.outputBuffers.get(entityStack.Entity)!,
+        productionPerTick(e, recipe),
+        false
+      );
+    });
   }
-  return 0;
 }
 
 // Factory
 
 export type Factory = {
   kind: "Factory";
-  outputBuffer: EntityStack;
   inputBuffers: Map<string, EntityStack>;
-  outputStatus: OutputStatus;
+  outputBuffers: Map<string, EntityStack>;
   RecipeId: string;
   ProducerCount: number;
+  outputStatus: OutputStatus;
 };
 
 export function NewFactory(
@@ -74,7 +77,12 @@ export function NewFactory(
 ): Factory {
   return {
     kind: "Factory",
-    outputBuffer: NewEntityStack(r.Output[0].Entity, 0, 50),
+    outputBuffers: new Map(
+      r.Output.map((output) => [
+        output.Entity,
+        NewEntityStack(output.Entity, 0, 50),
+      ])
+    ),
     inputBuffers: new Map(
       r.Input.map((input) => [
         input.Entity,
@@ -102,14 +110,19 @@ function producableItemsForInput(
 export function ProduceFromFactory(
   f: Factory,
   GetRecipe: (s: string) => Recipe | undefined
-): number {
+) {
   const recipe = GetRecipe(f.RecipeId);
   if (!recipe) return 0;
 
   const maxProduction = productionPerTick(f, recipe),
     availableInputs = producableItemsForInput(f.inputBuffers, recipe.Input),
-    availableInventorySpace =
-      (f.outputBuffer.MaxCount || Infinity) - f.outputBuffer.Count,
+    availableInventorySpace = recipe.Output.reduce((accum, entityStack) => {
+      const outputStack = f.outputBuffers.get(entityStack.Entity);
+      return Math.min(
+        accum,
+        (outputStack?.MaxCount || Infinity) - (outputStack?.Count || 0)
+      );
+    }, Infinity),
     actualProduction = Math.min(
       maxProduction,
       availableInputs,
@@ -119,8 +132,11 @@ export function ProduceFromFactory(
     const inputItem = f.inputBuffers.get(input.Entity);
     if (inputItem) inputItem.Count -= input.Count * actualProduction;
   }
-  f.outputBuffer.Count += actualProduction;
-  return actualProduction;
+
+  recipe.Output.forEach((entityStack) => {
+    f.outputBuffers.get(entityStack.Entity)!.Count +=
+      entityStack.Count * actualProduction;
+  });
 }
 
 // Train Station

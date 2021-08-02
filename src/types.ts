@@ -2,7 +2,7 @@ export interface Producer {
   kind: string;
   RecipeId: string;
   inputBuffers: Map<string, EntityStack>;
-  outputBuffer: EntityStack;
+  outputBuffers: Map<string, EntityStack>;
   ProducerCount: number;
   outputStatus: OutputStatus;
 }

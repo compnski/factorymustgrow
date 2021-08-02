@@ -93,7 +93,7 @@ export const ProducerCard = ({
     //
     if (
       ProducerHasOutput(producer.kind) &&
-      entity === producer.outputBuffer.Entity
+      producer.outputBuffers.has(entity)
     ) {
       producer.outputStatus.beltConnections.push({
         direction: "TO_BUS",
@@ -101,13 +101,11 @@ export const ProducerCard = ({
       });
     }
     if (ProducerHasInput(producer.kind) && producer.inputBuffers)
-      for (var [, input] of producer.inputBuffers) {
-        if (input.Entity === entity) {
-          producer.outputStatus.beltConnections.push({
-            direction: "FROM_BUS",
-            beltId: laneId,
-          });
-        }
+      if (producer.inputBuffers.has(entity)) {
+        producer.outputStatus.beltConnections.push({
+          direction: "FROM_BUS",
+          beltId: laneId,
+        });
       }
   };
   const beltConnectionClicked = (laneId: number) => {
@@ -178,7 +176,7 @@ export const ProducerCard = ({
         <div className="bottomArea">
           <ProducerBufferDisplay
             inputBuffers={recipeInput}
-            outputBuffer={producer.outputBuffer}
+            outputBuffers={producer.outputBuffers}
             entityIconLookup={entityIconLookupByKind(producer.kind)}
           />
         </div>
