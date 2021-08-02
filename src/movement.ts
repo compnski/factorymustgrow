@@ -2,20 +2,29 @@ import { OutputStatus, EntityStack, MainBus } from "./types";
 import { ProducerHasInput, ProducerHasOutput } from "./utils";
 
 export function CanPushTo(
-  from: { kind: string; outputBuffer: EntityStack },
+  from: { kind: string; outputBuffers: Map<string, EntityStack> },
   to: { kind: string; inputBuffers: Map<string, EntityStack> } | null
 ): boolean {
   return (
     ProducerHasInput(to?.kind) &&
     ProducerHasOutput(from?.kind) &&
     (to?.inputBuffers || false) &&
-    to.inputBuffers.has(from.outputBuffer.Entity)
+    hasIntersection(to.inputBuffers.keys(), from.outputBuffers.keys())
+    //to.inputBuffers.has(from.outputBuffer.Entity)
   );
+}
+
+function hasIntersection(
+  a: string[] | IterableIterator<string>,
+  b: string[] | IterableIterator<string>
+): boolean {
+  const setB = new Set(b);
+  return [...a].filter((x) => setB.has(x)).length > 0;
 }
 
 export function PushToNeighbors(
   from: {
-    outputBuffer: EntityStack;
+    outputBuffers: Map<string, EntityStack>;
     outputStatus: OutputStatus;
     ProducerCount: number;
   },
@@ -45,23 +54,20 @@ export function PushToNeighbors(
 }
 
 export function PushToOtherProducer(
-  { outputBuffer }: { outputBuffer: EntityStack },
+  { outputBuffers }: { outputBuffers: Map<string, EntityStack> },
   { inputBuffers }: { inputBuffers: Map<string, EntityStack> },
   maxTransferred: number
-): number {
-  if (!inputBuffers) return 0;
-  var toStack = inputBuffers.get(outputBuffer.Entity);
-  if (!toStack)
-    throw new Error(
-      `Bad push, no ${outputBuffer.Entity} found in ${inputBuffers}`
-    );
-  return stackTransfer(outputBuffer, toStack, maxTransferred);
+) {
+  outputBuffers.forEach((outputBuffer) => {
+    var toStack = inputBuffers.get(outputBuffer.Entity);
+    if (toStack) stackTransfer(outputBuffer, toStack, maxTransferred);
+  });
 }
 
 interface MainBusConnector {
   outputStatus: OutputStatus;
   inputBuffers: Map<string, EntityStack>;
-  outputBuffer?: EntityStack;
+  outputBuffers: Map<string, EntityStack>;
   ProducerCount: number;
 }
 
@@ -84,7 +90,7 @@ export function PushPullFromMainBus(producer: MainBusConnector, mb: MainBus) {
     }
     const producerBuffer =
         laneConnection.direction === "TO_BUS"
-          ? producer.outputBuffer
+          ? producer.outputBuffers.get(busLane.Entity)
           : producer?.inputBuffers.get(busLane.Entity),
       maxTransferToFromBelt = producer.ProducerCount;
     if (!producerBuffer)

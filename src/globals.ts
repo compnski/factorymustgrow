@@ -4,7 +4,7 @@ import { UIAction } from "./uiState";
 import { MacroName } from "./macro_def";
 
 export type GameWindow = {
-  GameState: FactoryGameState;
+  GameState: () => FactoryGameState;
   GameDispatch: (a: GameAction) => void;
   Macro: (name: MacroName) => any;
   uiDispatch: (a: UIAction) => void;
