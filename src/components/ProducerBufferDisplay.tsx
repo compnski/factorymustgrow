@@ -1,4 +1,4 @@
-import { EntityStack } from "../types";
+import { EntityStack, FillEntityStack } from "../types";
 
 export function ProducerBufferDisplay({
   inputBuffers,
@@ -14,7 +14,11 @@ export function ProducerBufferDisplay({
       {inputBuffers &&
         [...inputBuffers.entries()].map(([Entity, entityStack]) => {
           return (
-            <div key={Entity} className="recipeItem">
+            <div
+              key={Entity}
+              className="recipeItem"
+              onDoubleClick={() => FillEntityStack(entityStack, 1)}
+            >
               <div className="quantityText">
                 {Math.floor(entityStack.Count)}
               </div>
@@ -29,7 +33,11 @@ export function ProducerBufferDisplay({
         })}
       <div className="equalsSign">=&gt;</div>
       {outputBuffer && (
-        <div key={outputBuffer.Entity} className="recipeItem">
+        <div
+          key={outputBuffer.Entity}
+          className="recipeItem"
+          onDoubleClick={() => FillEntityStack(outputBuffer, 1)}
+        >
           <div className="quantityText">
             {Math.floor(outputBuffer?.Count || 0)}
           </div>
