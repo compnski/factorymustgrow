@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { GameDispatch } from "./factoryGame";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -12,6 +13,17 @@ ReactDOM.render(
     />
 
     <App />
+    <p
+      className="clickable resetButton"
+      onClick={() =>
+        GameDispatch({
+          producerName: "",
+          type: "Reset",
+        })
+      }
+    >
+      Reset
+    </p>
   </React.StrictMode>,
   document.getElementById("root")
 );
