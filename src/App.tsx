@@ -64,17 +64,6 @@ function App() {
         uiState={uiState}
         uiDispatch={uiDispatch}
       />
-      <p
-        className="clickable resetButton"
-        onClick={() =>
-          GameDispatch({
-            producerName: "",
-            type: "Reset",
-          })
-        }
-      >
-        Reset
-      </p>
       <p>
         <a href="https://github.com/compnski/factorymustgrow">Github</a>
       </p>

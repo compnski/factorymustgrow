@@ -41,5 +41,13 @@ export const saveStateToLocalStorage = (gs: FactoryGameState) => {
 
 export const loadStateFromLocalStorage = (
   defaultState: FactoryGameState
-): FactoryGameState =>
-  parse(localStorage.getItem("FactoryGameState") || "false") || defaultState;
+): FactoryGameState => {
+  try {
+    return (
+      parse(localStorage.getItem("FactoryGameState") || "false") || defaultState
+    );
+  } catch (e) {
+    console.log(e);
+  }
+  return defaultState;
+};
