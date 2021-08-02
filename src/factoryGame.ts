@@ -55,7 +55,7 @@ export type FactoryGameState = {
 export const initialFactoryGameState = () => ({
   UnlockedRecipes: UnlockedRecipes,
   Research: {
-    Progress: new Map(),
+    Progress: new Map([["start", NewEntityStack("start", 0, 0)]]),
     CurrentResearchId: "",
   },
   Region: NewRegion(50, [
