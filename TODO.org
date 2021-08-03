@@ -1,5 +1,6 @@
 #+TITLE: Todo
 * UI
+** Fix Liquid stack sizes
 ** Tabs
 ** Card UI Rework
 *** Show resource consumption per-minute
