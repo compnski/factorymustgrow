@@ -144,6 +144,7 @@ const AlwaysUnlockedRecipes = [
   "copper-ore",
   "stone",
   "coal",
+  "water",
 ];
 
 const categoryOrder: { [key: string]: number } = {

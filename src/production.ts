@@ -8,6 +8,7 @@ import {
 } from "./types";
 import { stackTransfer } from "./movement";
 import { TicksPerSecond } from "./constants";
+import { GetEntity } from "./gen/entities";
 
 // Extractor
 export type Extractor = {
@@ -71,6 +72,11 @@ export type Factory = {
   outputStatus: OutputStatus;
 };
 
+function EntityStackForEntity(entity: string): EntityStack {
+  const e = GetEntity(entity);
+  return NewEntityStack(entity, 0, e.StackSize || Infinity);
+}
+
 export function NewFactory(
   r: Recipe,
   initialProduceCount: number = 0
@@ -80,14 +86,11 @@ export function NewFactory(
     outputBuffers: new Map(
       r.Output.map((output) => [
         output.Entity,
-        NewEntityStack(output.Entity, 0, 50),
+        EntityStackForEntity(output.Entity),
       ])
     ),
     inputBuffers: new Map(
-      r.Input.map((input) => [
-        input.Entity,
-        NewEntityStack(input.Entity, 0, 50),
-      ])
+      r.Input.map((input) => [input.Entity, EntityStackForEntity(input.Entity)])
     ),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     RecipeId: r.Id,

@@ -47,8 +47,8 @@ export const MainBusHeader = (props: { mainBus: MainBus }) => {
             onClick: addMainBusLane,
           })
         : null}
-      <div style={{ width: 200, height: 100 }}>
-        <svg width={200} height={30}>
+      <div style={{ width: 400, height: 100 }}>
+        <svg width={400} height={30}>
           {lanes}
         </svg>
         <MainBusSegment

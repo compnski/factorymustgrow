@@ -18,10 +18,14 @@ const replacer = (key: string, value: any): any =>
         nextId: value.nextLaneId,
         lanes: value.lanes,
       }
+    : value === Infinity
+    ? "Infinity"
     : value;
 
 const reviver = (key: string, value: any): any => {
-  return typeof value !== "object" || !value
+  return value === "Infinity"
+    ? Infinity
+    : typeof value !== "object" || !value
     ? value
     : value.dataType === "Map"
     ? new Map(value.value)

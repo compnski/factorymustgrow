@@ -26,35 +26,17 @@ import { GameWindow } from "./globals";
 
 export const useGameState = () => useState<FactoryGameState>(GameState);
 
-const UnlockedRecipes = new Set([
-  "iron-ore",
-  "copper-ore",
-  "stone",
-  "stone-furnace",
-  "iron-plate",
-  "copper-plate",
-  "copper-cable",
-  "iron-gear-wheel",
-  "electronic-circuit",
-  "electric-mining-drill",
-  "assembling-machine-1",
-  "iron-chest",
-  "automation-science-pack",
-]);
-
 export type ResearchState = {
   CurrentResearchId: string;
   Progress: Map<string, EntityStack>;
 };
 
 export type FactoryGameState = {
-  UnlockedRecipes: Set<string>;
   Region: Region;
   Research: ResearchState;
 };
 
 export const initialFactoryGameState = () => ({
-  UnlockedRecipes: UnlockedRecipes,
   Research: {
     Progress: new Map([["start", NewEntityStack("start", 0, 0)]]),
     CurrentResearchId: "",
@@ -65,6 +47,7 @@ export const initialFactoryGameState = () => ({
     NewEntityStack("stone", 9000),
     NewEntityStack("coal", 9000),
     NewEntityStack("crude-oil", 9000),
+    NewEntityStack("water", Infinity),
   ]),
 });
 
@@ -178,6 +161,8 @@ export const GameDispatch = (action: GameAction) => {
         if (r && r.ProducerType === "ChemPlant") Buildings.push(NewFactory(r));
         if (r && r.ProducerType === "Refinery") Buildings.push(NewFactory(r));
         if (r && r.ProducerType === "Pumpjack") Buildings.push(NewExtractor(r));
+        if (r && r.ProducerType === "WaterPump")
+          Buildings.push(NewExtractor(r));
       }
       break;
 
