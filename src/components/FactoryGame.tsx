@@ -45,12 +45,12 @@ export const FactoryGame = ({
     <div className="factoryGame">
       {recipeSelector || researchSelector}
       <InfoHeader uiDispatch={uiDispatch} gameState={gameState} />
-      <MainBusHeader mainBus={gameState.Region.Bus} />
+      <MainBusHeader mainBus={gameState.CurrentRegion.Bus} />
       <div className="scoller">
         <ProducerCardList
-          mainBus={gameState.Region.Bus}
-          buildings={gameState.Region.Buildings}
-          regionalOre={gameState.Region.Ore}
+          mainBus={gameState.CurrentRegion.Bus}
+          buildings={gameState.CurrentRegion.Buildings}
+          regionalOre={gameState.CurrentRegion.Ore}
         />
         <div className="add-producer-frame">
           <div
