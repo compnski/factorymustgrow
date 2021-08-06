@@ -19,7 +19,9 @@ export const InfoHeader = ({ gameState, uiDispatch }: InfoHeaderProps) => {
 
   const remainingSpace = gameState.CurrentRegion.BuildingCapacity,
     currentResarch = gameState.Research.CurrentResearchId,
-    researchIcon = entityIconLookupByKind("Lab")(currentResarch),
+    researchIcon =
+      entityIconLookupByKind("Lab")(currentResarch) ||
+      "sprite-technology-no-science",
     researchProgress = gameState.Research.Progress.get(currentResarch),
     researchProgressPercent =
       ((researchProgress?.Count || 0) / (researchProgress?.MaxCount || 1)) *
