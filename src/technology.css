@@ -1,4 +1,4 @@
-/* glue: 0.13 hash: 5dffd1b3b8 */
+/* glue: 0.13 hash: f0a6559fd1 */
         .sprite-technology-worker-robots-storage,
 .sprite-technology-worker-robots-speed,
 .sprite-technology-weapon-shooting-speed-3,
@@ -51,6 +51,7 @@
 .sprite-technology-oil-gathering,
 .sprite-technology-nuclear-power,
 .sprite-technology-nuclear-fuel-reprocessing,
+.sprite-technology-no-science,
 .sprite-technology-night-vision-equipment,
 .sprite-technology-module,
 .sprite-technology-mining-productivity,
@@ -439,434 +440,440 @@
             height: 64px;
         }
         
-        .sprite-technology-night-vision-equipment {
+        .sprite-technology-no-science {
             background-position: -448px -192px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-module {
+        .sprite-technology-night-vision-equipment {
             background-position: -448px -256px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-mining-productivity {
+        .sprite-technology-module {
             background-position: -448px -320px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-military {
+        .sprite-technology-mining-productivity {
             background-position: -448px -384px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-military-science-pack {
+        .sprite-technology-military {
             background-position: 0 -448px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-lubricant {
+        .sprite-technology-military-science-pack {
             background-position: -64px -448px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-low-density-structure {
+        .sprite-technology-lubricant {
             background-position: -128px -448px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-logistics-3 {
+        .sprite-technology-low-density-structure {
             background-position: -192px -448px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-logistics-2 {
+        .sprite-technology-logistics-3 {
             background-position: -256px -448px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-logistics-1 {
+        .sprite-technology-logistics-2 {
             background-position: -320px -448px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-logistic-system {
+        .sprite-technology-logistics-1 {
             background-position: -384px -448px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-logistic-science-pack {
+        .sprite-technology-logistic-system {
             background-position: -448px -448px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-logistic-robotics {
+        .sprite-technology-logistic-science-pack {
             background-position: -512px 0;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-laser {
+        .sprite-technology-logistic-robotics {
             background-position: -512px -64px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-laser-turrets {
+        .sprite-technology-laser {
             background-position: -512px -128px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-laser-turret-speed {
+        .sprite-technology-laser-turrets {
             background-position: -512px -192px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-landfill {
+        .sprite-technology-laser-turret-speed {
             background-position: -512px -256px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-land-mine {
+        .sprite-technology-landfill {
             background-position: -512px -320px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-kovarex-enrichment-process {
+        .sprite-technology-land-mine {
             background-position: -512px -384px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-inserter-capacity {
+        .sprite-technology-kovarex-enrichment-process {
             background-position: -512px -448px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-gates {
+        .sprite-technology-inserter-capacity {
             background-position: 0 -512px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-fusion-reactor-equipment {
+        .sprite-technology-gates {
             background-position: -64px -512px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-follower-robots {
+        .sprite-technology-fusion-reactor-equipment {
             background-position: -128px -512px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-fluid-wagon {
+        .sprite-technology-follower-robots {
             background-position: -192px -512px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-fluid-handling {
+        .sprite-technology-fluid-wagon {
             background-position: -256px -512px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-flammables {
+        .sprite-technology-fluid-handling {
             background-position: -320px -512px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-flamethrower {
+        .sprite-technology-flammables {
             background-position: -384px -512px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-fast-inserter {
+        .sprite-technology-flamethrower {
             background-position: -448px -512px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-explosives {
+        .sprite-technology-fast-inserter {
             background-position: -512px -512px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-explosive-rocketry {
+        .sprite-technology-explosives {
             background-position: -576px 0;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-exoskeleton-equipment {
+        .sprite-technology-explosive-rocketry {
             background-position: -576px -64px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-engine {
+        .sprite-technology-exoskeleton-equipment {
             background-position: -576px -128px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-energy-weapons-damage-3 {
+        .sprite-technology-engine {
             background-position: -576px -192px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-energy-weapons-damage-2 {
+        .sprite-technology-energy-weapons-damage-3 {
             background-position: -576px -256px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-energy-weapons-damage-1 {
+        .sprite-technology-energy-weapons-damage-2 {
             background-position: -576px -320px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-energy-shield-mk2-equipment {
+        .sprite-technology-energy-weapons-damage-1 {
             background-position: -576px -384px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-energy-shield-equipment {
+        .sprite-technology-energy-shield-mk2-equipment {
             background-position: -576px -448px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-electronics {
+        .sprite-technology-energy-shield-equipment {
             background-position: -576px -512px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-electric-engine {
+        .sprite-technology-electronics {
             background-position: 0 -576px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-electric-energy-distribution-2 {
+        .sprite-technology-electric-engine {
             background-position: -64px -576px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-electric-energy-distribution-1 {
+        .sprite-technology-electric-energy-distribution-2 {
             background-position: -128px -576px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-electric-energy-acumulators {
+        .sprite-technology-electric-energy-distribution-1 {
             background-position: -192px -576px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-effectivity-module-3 {
+        .sprite-technology-electric-energy-acumulators {
             background-position: -256px -576px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-effectivity-module-2 {
+        .sprite-technology-effectivity-module-3 {
             background-position: -320px -576px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-effectivity-module-1 {
+        .sprite-technology-effectivity-module-2 {
             background-position: -384px -576px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-effect-transmission {
+        .sprite-technology-effectivity-module-1 {
             background-position: -448px -576px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-discharge-defense-equipment {
+        .sprite-technology-effect-transmission {
             background-position: -512px -576px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-construction-robotics {
+        .sprite-technology-discharge-defense-equipment {
             background-position: -576px -576px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-concrete {
+        .sprite-technology-construction-robotics {
             background-position: -640px 0;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-combat-robotics {
+        .sprite-technology-concrete {
             background-position: -640px -64px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-coal-liquefaction {
+        .sprite-technology-combat-robotics {
             background-position: -640px -128px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-cliff-explosives {
+        .sprite-technology-coal-liquefaction {
             background-position: -640px -192px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-circuit-network {
+        .sprite-technology-cliff-explosives {
             background-position: -640px -256px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-chemical-science-pack {
+        .sprite-technology-circuit-network {
             background-position: -640px -320px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-braking-force {
+        .sprite-technology-chemical-science-pack {
             background-position: -640px -384px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-belt-immunity-equipment {
+        .sprite-technology-braking-force {
             background-position: -640px -448px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-battery {
+        .sprite-technology-belt-immunity-equipment {
             background-position: -640px -512px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-battery-mk2-equipment {
+        .sprite-technology-battery {
             background-position: -640px -576px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-battery-equipment {
+        .sprite-technology-battery-mk2-equipment {
             background-position: 0 -640px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-automobilism {
+        .sprite-technology-battery-equipment {
             background-position: -64px -640px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-automation-3 {
+        .sprite-technology-automobilism {
             background-position: -128px -640px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-automation-2 {
+        .sprite-technology-automation-3 {
             background-position: -192px -640px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-automation-1 {
+        .sprite-technology-automation-2 {
             background-position: -256px -640px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-automated-rail-transportation {
+        .sprite-technology-automation-1 {
             background-position: -320px -640px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-atomic-bomb {
+        .sprite-technology-automated-rail-transportation {
             background-position: -384px -640px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-artillery {
+        .sprite-technology-atomic-bomb {
             background-position: -448px -640px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-artillery-speed {
+        .sprite-technology-artillery {
             background-position: -512px -640px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-artillery-range {
+        .sprite-technology-artillery-speed {
             background-position: -576px -640px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-armor-making {
+        .sprite-technology-artillery-range {
             background-position: -640px -640px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-advanced-material-processing {
+        .sprite-technology-armor-making {
             background-position: -704px 0;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-advanced-electronics {
+        .sprite-technology-advanced-material-processing {
             background-position: -704px -64px;
             width: 64px;
             height: 64px;
         }
         
-        .sprite-technology-advanced-electronics-2 {
+        .sprite-technology-advanced-electronics {
             background-position: -704px -128px;
+            width: 64px;
+            height: 64px;
+        }
+        
+        .sprite-technology-advanced-electronics-2 {
+            background-position: -704px -192px;
             width: 64px;
             height: 64px;
         }
@@ -924,6 +931,7 @@
     .sprite-technology-oil-gathering,
     .sprite-technology-nuclear-power,
     .sprite-technology-nuclear-fuel-reprocessing,
+    .sprite-technology-no-science,
     .sprite-technology-night-vision-equipment,
     .sprite-technology-module,
     .sprite-technology-mining-productivity,
