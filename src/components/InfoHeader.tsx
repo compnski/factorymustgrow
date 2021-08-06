@@ -4,12 +4,12 @@ import { UIAction } from "../uiState";
 import { entityIconLookupByKind } from "../utils";
 
 export type InfoHeaderProps = {
-  gameState: { Region: Region; Research: ResearchState };
+  gameState: { CurrentRegion: Region; Research: ResearchState };
   uiDispatch(a: UIAction): void;
 };
 
 export const InfoHeader = ({ gameState, uiDispatch }: InfoHeaderProps) => {
-  const oreInfo = gameState.Region.Ore;
+  const oreInfo = gameState.CurrentRegion.Ore;
   const infoCards = [...oreInfo.values()].map(({ Entity, Count }) => (
     <div key={Entity} className="top-info">
       <div className={`icon ${Entity}`} />
@@ -17,7 +17,7 @@ export const InfoHeader = ({ gameState, uiDispatch }: InfoHeaderProps) => {
     </div>
   ));
 
-  const remainingSpace = gameState.Region.BuildingCapacity,
+  const remainingSpace = gameState.CurrentRegion.BuildingCapacity,
     currentResarch = gameState.Research.CurrentResearchId,
     researchIcon = entityIconLookupByKind("Lab")(currentResarch),
     researchProgress = gameState.Research.Progress.get(currentResarch),

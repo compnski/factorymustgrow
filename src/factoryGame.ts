@@ -32,7 +32,7 @@ export type ResearchState = {
 };
 
 export type FactoryGameState = {
-  Region: Region;
+  CurrentRegion: Region;
   Research: ResearchState;
 };
 
@@ -41,7 +41,7 @@ export const initialFactoryGameState = () => ({
     Progress: new Map([["start", NewEntityStack("start", 0, 0)]]),
     CurrentResearchId: "",
   },
-  Region: NewRegion(50, [
+  CurrentRegion: NewRegion(50, [
     NewEntityStack("iron-ore", 9000),
     NewEntityStack("copper-ore", 9000),
     NewEntityStack("stone", 9000),
@@ -58,16 +58,23 @@ export const UpdateGameState = (
   uiDispatch: (a: UIAction) => void
 ) => {
   try {
-    fixOutputStatus(GameState.Region.Buildings);
-    fixBeltConnections(GameState.Region.Buildings, GameState.Region.Bus);
+    fixOutputStatus(GameState.CurrentRegion.Buildings);
+    fixBeltConnections(
+      GameState.CurrentRegion.Buildings,
+      GameState.CurrentRegion.Bus
+    );
 
-    GameState.Region.Buildings.forEach((p) => {
+    GameState.CurrentRegion.Buildings.forEach((p) => {
       switch (p.kind) {
         case "Factory":
           ProduceFromFactory(p as Factory, GetRecipe);
           break;
         case "Extractor":
-          ProduceFromExtractor(p as Extractor, GameState.Region, GetRecipe);
+          ProduceFromExtractor(
+            p as Extractor,
+            GameState.CurrentRegion,
+            GetRecipe
+          );
           break;
         case "Lab":
           ResearchInLab(p as Lab, GameState.Research, GetResearch);
@@ -82,13 +89,13 @@ export const UpdateGameState = (
       uiDispatch({ type: "ShowResearchSelector" });
       GameState.Research.CurrentResearchId = "";
     }
-    GameState.Region.Buildings.forEach((p, idx) => {
+    GameState.CurrentRegion.Buildings.forEach((p, idx) => {
       PushToNeighbors(
         p,
-        GameState.Region.Buildings[idx - 1],
-        GameState.Region.Buildings[idx + 1]
+        GameState.CurrentRegion.Buildings[idx - 1],
+        GameState.CurrentRegion.Buildings[idx + 1]
       );
-      PushPullFromMainBus(p, GameState.Region.Bus);
+      PushPullFromMainBus(p, GameState.CurrentRegion.Bus);
     });
   } catch (e) {
     //TODO Show error dialog
@@ -115,10 +122,10 @@ export type GameAction = {
 };
 
 export const GameDispatch = (action: GameAction) => {
-  const Buildings = GameState.Region.Buildings;
+  const Buildings = GameState.CurrentRegion.Buildings;
   const building =
     action.buildingIdx !== undefined
-      ? GameState.Region.Buildings[action.buildingIdx]
+      ? GameState.CurrentRegion.Buildings[action.buildingIdx]
       : undefined;
   switch (action.type) {
     case "Reset":
@@ -127,7 +134,7 @@ export const GameDispatch = (action: GameAction) => {
 
     case "RemoveBuilding":
       if (action.buildingIdx !== undefined) {
-        GameState.Region.Buildings.splice(action.buildingIdx, 1);
+        GameState.CurrentRegion.Buildings.splice(action.buildingIdx, 1);
       }
       break;
 
