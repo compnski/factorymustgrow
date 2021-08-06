@@ -9,7 +9,7 @@ describe("Labs", () => {
     lab: Lab,
     researchState: ResearchState,
     expected: {
-      outputCount: number;
+      outputBuffers: EntityStack[];
       inputBuffers: EntityStack[];
       recipeId: string;
       progress: EntityStack[];
@@ -23,7 +23,11 @@ describe("Labs", () => {
       );
     }
     expect(lab.RecipeId).toBe(expected.recipeId);
-    expect(lab.outputBuffer.Count).toBe(expected.outputCount);
+    for (var expectedOutput of expected.outputBuffers) {
+      expect(lab.outputBuffers.get(expectedOutput.Entity)?.Count).toBe(
+        expectedOutput.Count
+      );
+    }
     for (var expectedInput of expected.inputBuffers) {
       expect(lab.inputBuffers.get(expectedInput.Entity)?.Count).toBe(
         expectedInput.Count
@@ -42,7 +46,7 @@ describe("Labs", () => {
     lab.inputBuffers.forEach((input) => FillEntityStack(input, 10));
 
     TestLab(lab, testResearchState(), {
-      outputCount: 1,
+      outputBuffers: [NewEntityStack("test-research", 1)],
       recipeId: "test-research",
       inputBuffers: [
         NewEntityStack("automation-science-pack", 9),
@@ -63,7 +67,7 @@ describe("Labs", () => {
     );
 
     TestLab(lab, testResearchState(), {
-      outputCount: 0,
+      outputBuffers: [NewEntityStack("test-research", 0)],
       recipeId: "test-research",
       inputBuffers: [
         NewEntityStack("automation-science-pack", 1),
@@ -84,7 +88,7 @@ describe("Labs", () => {
     lab.inputBuffers.forEach((input) => FillEntityStack(input, 10));
 
     TestLab(lab, researchState, {
-      outputCount: 150,
+      outputBuffers: [NewEntityStack("test-research", 150)],
       recipeId: "test-research",
       inputBuffers: [
         NewEntityStack("automation-science-pack", 10),
