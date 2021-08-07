@@ -5,6 +5,7 @@ import {
   Recipe,
   Region,
   OutputStatus,
+  Entity,
 } from "./types";
 import { stackTransfer } from "./movement";
 import { TicksPerSecond } from "./constants";
@@ -72,25 +73,33 @@ export type Factory = {
   outputStatus: OutputStatus;
 };
 
-function EntityStackForEntity(entity: string): EntityStack {
-  const e = GetEntity(entity);
-  return NewEntityStack(entity, 0, e.StackSize || Infinity);
+function EntityStackForEntity(
+  entity: string,
+  getEntity: (e: string) => Entity | undefined
+): EntityStack {
+  const e = getEntity(entity);
+  if (!e) console.error("Failed to find entity for ", entity);
+  return NewEntityStack(entity, 0, e?.StackSize || Infinity);
 }
 
 export function NewFactory(
   r: Recipe,
-  initialProduceCount: number = 0
+  initialProduceCount: number = 0,
+  getEntity: (e: string) => Entity | undefined = GetEntity
 ): Factory {
   return {
     kind: "Factory",
     outputBuffers: new Map(
       r.Output.map((output) => [
         output.Entity,
-        EntityStackForEntity(output.Entity),
+        EntityStackForEntity(output.Entity, getEntity),
       ])
     ),
     inputBuffers: new Map(
-      r.Input.map((input) => [input.Entity, EntityStackForEntity(input.Entity)])
+      r.Input.map((input) => [
+        input.Entity,
+        EntityStackForEntity(input.Entity, getEntity),
+      ])
     ),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     RecipeId: r.Id,
