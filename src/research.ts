@@ -19,6 +19,7 @@ export type Lab = {
   outputStatus: OutputStatus;
 };
 
+// TODO Only show science packs that you have access to
 const initialLabInput = [
   { Entity: "automation-science-pack", Count: 0 },
   { Entity: "logistic-science-pack", Count: 0 },
@@ -26,7 +27,7 @@ const initialLabInput = [
   { Entity: "production-science-pack", Count: 0 },
   { Entity: "chemical-science-pack", Count: 0 },
   { Entity: "utility-science-pack", Count: 0 },
-  { Entity: "space-science-pack", Count: 0 },
+  //  { Entity: "space-science-pack", Count: 0 },
 ];
 
 export function NewLab(initialProduceCount: number = 0): Lab {
@@ -78,7 +79,6 @@ export function ResearchInLab(
   const currentResearchId = (l.RecipeId = researchState.CurrentResearchId);
   const research = GetResearch(l.RecipeId);
   if (!research) {
-    // TODO No research icon?
     l.outputBuffers = new Map();
     return 0;
   }
@@ -139,7 +139,7 @@ export function availableResearch(researchState: ResearchState): string[] {
 }
 
 const AlwaysUnlockedRecipes = [
-  "wood",
+  //  "wood",
   "iron-ore",
   "copper-ore",
   "stone",

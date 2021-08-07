@@ -87,7 +87,6 @@ export const UpdateGameState = (
       console.log("Research Complete!");
       GameDispatch({ type: "CompleteResearch" });
       uiDispatch({ type: "ShowResearchSelector" });
-      GameState.Research.CurrentResearchId = "";
     }
     GameState.CurrentRegion.Buildings.forEach((p, idx) => {
       PushToNeighbors(
@@ -152,7 +151,7 @@ export const GameDispatch = (action: GameAction) => {
       if (currentResearchProgress)
         currentResearchProgress.Count = currentResearchProgress.MaxCount || 0;
       else console.log("No research", currentResearchId);
-      console.log(currentResearchId, currentResearchProgress);
+      GameState.Research.CurrentResearchId = "";
       break;
 
     case "NewLab":
