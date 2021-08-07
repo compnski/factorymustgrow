@@ -92,6 +92,12 @@ export function ResearchInLab(
       )
     );
   const currentProgress = researchState.Progress.get(currentResearchId);
+  if (
+    l.outputBuffers.size > 1 ||
+    (l.outputBuffers.size > 0 && !l.outputBuffers.has(currentResearchId))
+  ) {
+    l.outputBuffers.clear();
+  }
   if (currentProgress) l.outputBuffers.set(currentResearchId, currentProgress);
 
   const maxProduction = productionPerTick(l, research),
