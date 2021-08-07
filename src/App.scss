@@ -24,32 +24,6 @@ span {
   height: 95vh;
 }
 
-.recipeSelector {
-  width: 650px;
-  background: grey;
-  border: 2px black solid;
-  z-index: 1;
-  .recipeList {
-    display: flex;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    align-items: flex-start;
-    .icon {
-      box-sizing: border-box;
-      border: 1px red solid;
-      transform: scale(0.5);
-      margin-right: -24px;
-    }
-  }
-}
-
-.modal {
-  position: fixed;
-  top: 0%;
-  left: 5%;
-  transform: translate(0%, 5%);
-}
-
 .add-producer,
 .resetButton,
 .exploreButton {

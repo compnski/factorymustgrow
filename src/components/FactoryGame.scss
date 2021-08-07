@@ -4,8 +4,9 @@
 
 .mainBusHeader,
 .main-bus-header {
+  padding-top: 40px;
   background-color: orange;
-  width: 715px;
+  width: 1000px;
   height: 100px;
   display: flex;
   justify-content: flex-end;
@@ -52,6 +53,7 @@
   .science-info {
     margin-left: auto;
   }
+  position: fixed;
   display: flex;
   line-height: 12px;
   font-size: 12px;
@@ -59,4 +61,37 @@
   background-color: grey;
   align-items: flex-start;
   width: 100%;
+  z-index: 1;
+}
+
+.recipeSelector {
+  width: 650px;
+  background: grey;
+  border: 2px black solid;
+  z-index: 1;
+  padding: 10px;
+  > p {
+    font-size: 24px;
+    color: black;
+    margin: 0;
+  }
+  .recipeList {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: flex-start;
+    .icon {
+      box-sizing: border-box;
+      border: 1px red solid;
+      transform: scale(0.5);
+      margin-right: -24px;
+    }
+  }
+}
+
+.modal {
+  position: fixed;
+  top: 10%;
+  left: 5%;
+  transform: translate(0%, 5%);
 }
