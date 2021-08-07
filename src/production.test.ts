@@ -21,6 +21,7 @@ import {
   TestSlowOreRecipe,
 } from "./test_recipe_defs";
 import { TicksPerSecond } from "./constants";
+import { TestEntityList } from "./test_entity_defs";
 
 describe("Factories", () => {
   function TestFactory(
@@ -48,7 +49,11 @@ describe("Factories", () => {
   }
 
   it("Produces a single item", () => {
-    const factory = NewFactory(TestRecipe, 1);
+    const factory = NewFactory(
+      TestRecipe,
+      1,
+      TestEntityList.get.bind(TestEntityList)
+    );
     factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
     factory.outputBuffers.get("test-item")!.Count = 1;
 
@@ -56,26 +61,34 @@ describe("Factories", () => {
       outputBuffers: [NewEntityStack("test-item", 2)],
       inputBuffers: [
         NewEntityStack("test-ore", 8),
-        NewEntityStack("copper-ore", 7),
+        NewEntityStack("test-slow-ore", 7),
       ],
     });
   });
 
   it("Produces three item", () => {
-    const factory = NewFactory(TestRecipe, 3);
+    const factory = NewFactory(
+      TestRecipe,
+      3,
+      TestEntityList.get.bind(TestEntityList)
+    );
     factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
 
     TestFactory(factory, {
       outputBuffers: [NewEntityStack("test-item", 3)],
       inputBuffers: [
         NewEntityStack("test-ore", 4),
-        NewEntityStack("copper-ore", 1),
+        NewEntityStack("test-slow-ore", 1),
       ],
     });
   });
 
   it("Produces 1.5 items", () => {
-    const factory = NewFactory(TestSlowRecipe, 3);
+    const factory = NewFactory(
+      TestSlowRecipe,
+      3,
+      TestEntityList.get.bind(TestEntityList)
+    );
     factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
 
     TestFactory(factory, {
@@ -83,26 +96,34 @@ describe("Factories", () => {
 
       inputBuffers: [
         NewEntityStack("test-ore", 7),
-        NewEntityStack("copper-ore", 5.5),
+        NewEntityStack("test-slow-ore", 5.5),
       ],
     });
   });
 
   it("Requires 1 full set of materials to start", () => {
-    const factory = NewFactory(TestSlowRecipe, 3);
+    const factory = NewFactory(
+      TestSlowRecipe,
+      3,
+      TestEntityList.get.bind(TestEntityList)
+    );
     factory.inputBuffers.forEach((input) => FillEntityStack(input, 2));
 
     TestFactory(factory, {
       outputBuffers: [NewEntityStack("test-item", 0)],
       inputBuffers: [
         NewEntityStack("test-ore", 2),
-        NewEntityStack("copper-ore", 2),
+        NewEntityStack("test-slow-ore", 2),
       ],
     });
   });
 
   it("Won't overfill inventory", () => {
-    const factory = NewFactory(TestRecipe, 1);
+    const factory = NewFactory(
+      TestRecipe,
+      1,
+      TestEntityList.get.bind(TestEntityList)
+    );
     factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
     factory.outputBuffers.get("test-item")!.Count =
       factory.outputBuffers.get("test-item")!.MaxCount;
@@ -111,7 +132,7 @@ describe("Factories", () => {
       outputBuffers: [NewEntityStack("test-item", 50)],
       inputBuffers: [
         NewEntityStack("test-ore", 10),
-        NewEntityStack("copper-ore", 10),
+        NewEntityStack("test-slow-ore", 10),
       ],
     });
   });
