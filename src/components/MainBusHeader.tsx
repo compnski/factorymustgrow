@@ -1,13 +1,19 @@
 import { MainBus } from "../types";
 
-import { GameState } from "../factoryGame";
+import { ResearchState } from "../factoryGame";
 import { RecipeSelector } from "./RecipeSelector";
 import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
 import { MainBusConst } from "./uiConstants";
 import { availableRecipes } from "../research";
 
-export const MainBusHeader = (props: { mainBus: MainBus }) => {
+export const MainBusHeader = ({
+  mainBus,
+  researchState,
+}: {
+  mainBus: MainBus;
+  researchState: ResearchState;
+}) => {
   const [showItemSelector, setShowItemSelector] = useState(false);
 
   const addLane = (evt: SyntheticEvent) => {
@@ -15,12 +21,12 @@ export const MainBusHeader = (props: { mainBus: MainBus }) => {
     evt.stopPropagation();
   };
   const addMainBusLane = (evt: SyntheticEvent, entity: string) => {
-    props.mainBus.AddLane(entity);
+    mainBus.AddLane(entity);
     setShowItemSelector(false);
   };
   const lanes = [];
   var idx = 0;
-  for (var [laneId, lane] of props.mainBus.lanes.entries()) {
+  for (var [laneId, lane] of mainBus.lanes.entries()) {
     const laneX =
       MainBusConst.laneOffset +
       idx * (MainBusConst.laneWidth + MainBusConst.interLaneWidth);
@@ -33,7 +39,7 @@ export const MainBusHeader = (props: { mainBus: MainBus }) => {
   }
 
   const busLaneClicked = (laneId: number) => {
-    props.mainBus.RemoveLane(laneId);
+    mainBus.RemoveLane(laneId);
   };
 
   return (
@@ -43,7 +49,7 @@ export const MainBusHeader = (props: { mainBus: MainBus }) => {
       </div>
       {showItemSelector
         ? RecipeSelector({
-            recipes: availableRecipes(GameState.Research),
+            recipes: availableRecipes(researchState),
             onClick: addMainBusLane,
           })
         : null}
@@ -53,7 +59,7 @@ export const MainBusHeader = (props: { mainBus: MainBus }) => {
         </svg>
         <MainBusSegment
           segmentHeight={70}
-          mainBus={props.mainBus}
+          mainBus={mainBus}
           busLaneClicked={busLaneClicked}
         />
       </div>

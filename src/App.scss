@@ -1,3 +1,5 @@
+@import "./components/constants";
+
 div {
 }
 
@@ -11,28 +13,7 @@ span {
     color: blue;
     padding-top: 10px;
   }
-  width: 675px;
-}
-
-.title {
-  color: white;
-  font-size: 0.5em;
-}
-
-.scroller {
-  overflow: scroll;
-  height: 95vh;
-}
-
-.add-producer,
-.resetButton,
-.exploreButton {
-  width: 90%;
-  height: 32px;
-  font-size: 16px;
-  line-height: 32px;
-  margin: auto;
-  text-align: center;
+  width: $appWidth;
 }
 
 .clickable {
@@ -65,4 +46,13 @@ span {
 
   /* Support for IE. */
   font-feature-settings: "liga";
+}
+
+.reset-button {
+  height: 32px;
+  font-size: 16px;
+  line-height: 32px;
+  //   text-decoration: underline;
+  //   color: blue;
+  //   cursor: pointer;
 }
