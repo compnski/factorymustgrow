@@ -13,17 +13,18 @@ ReactDOM.render(
     />
 
     <App />
-    <p
-      className="clickable resetButton"
-      onClick={() =>
+    <a
+      className="reset-button"
+      onDoubleClick={() =>
         GameDispatch({
           producerName: "",
           type: "Reset",
         })
       }
+      href="#"
     >
-      Reset
-    </p>
+      Reset All Data
+    </a>
   </React.StrictMode>,
   document.getElementById("root")
 );

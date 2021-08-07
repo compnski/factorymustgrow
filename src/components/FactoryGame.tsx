@@ -8,6 +8,7 @@ import { MainBusHeader } from "./MainBusHeader";
 import "./FactoryGame.scss";
 import { entityIconLookupByKind } from "../utils";
 import { availableRecipes, availableResearch } from "../research";
+import { FactoryButtonPanel } from "./FactoryButtonPanel";
 
 type FactoryGameProps = {
   gameState: FactoryGameState;
@@ -44,71 +45,23 @@ export const FactoryGame = ({
   return (
     <div className="factoryGame">
       {recipeSelector || researchSelector}
-      <InfoHeader uiDispatch={uiDispatch} gameState={gameState} />
-      <MainBusHeader mainBus={gameState.CurrentRegion.Bus} />
+      <InfoHeader
+        uiDispatch={uiDispatch}
+        currentRegion={gameState.CurrentRegion}
+        researchState={gameState.Research}
+      />
+      <MainBusHeader
+        mainBus={gameState.CurrentRegion.Bus}
+        researchState={gameState.Research}
+      />
       <div className="scoller">
         <ProducerCardList
           mainBus={gameState.CurrentRegion.Bus}
           buildings={gameState.CurrentRegion.Buildings}
           regionalOre={gameState.CurrentRegion.Ore}
         />
-        <div className="add-producer-frame">
-          <div
-            className="add-producer clickable"
-            onClick={(evt) =>
-              uiDispatch({
-                type: "ShowRecipeSelector",
-                evt,
-              })
-            }
-          >
-            Add Recipe
-          </div>
-          <div
-            className="add-producer clickable"
-            onClick={(evt) =>
-              GameDispatch({
-                type: "NewLab",
-              })
-            }
-          >
-            Add Lab
-          </div>
-        </div>
-        <div
-          className="add-producer clickable"
-          onClick={(evt) =>
-            uiDispatch({
-              type: "ShowResearchSelector",
-              evt,
-            })
-          }
-        >
-          Choose Research
-        </div>
-
-        <div
-          className="add-producer clickable"
-          onClick={() =>
-            GameDispatch({
-              type: "CompleteResearch",
-            })
-          }
-        >
-          Complete Research (DEBUG)
-        </div>
-
-        <div
-          className="clickable exploreButton"
-          onClick={() =>
-            uiDispatch({
-              type: "OpenExploreGame",
-            })
-          }
-        >
-          Explore!
-        </div>
       </div>
+      <FactoryButtonPanel gameDispatch={GameDispatch} uiDispatch={uiDispatch} />
     </div>
   );
 };

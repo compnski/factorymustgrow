@@ -4,12 +4,17 @@ import { UIAction } from "../uiState";
 import { entityIconLookupByKind } from "../utils";
 
 export type InfoHeaderProps = {
-  gameState: { CurrentRegion: Region; Research: ResearchState };
+  currentRegion: Region;
+  researchState: ResearchState;
   uiDispatch(a: UIAction): void;
 };
 
-export const InfoHeader = ({ gameState, uiDispatch }: InfoHeaderProps) => {
-  const oreInfo = gameState.CurrentRegion.Ore;
+export const InfoHeader = ({
+  currentRegion,
+  researchState,
+  uiDispatch,
+}: InfoHeaderProps) => {
+  const oreInfo = currentRegion.Ore;
   const infoCards = [...oreInfo.values()].map(({ Entity, Count }) => (
     <div key={Entity} className="top-info">
       <div className={`icon ${Entity}`} />
@@ -17,12 +22,12 @@ export const InfoHeader = ({ gameState, uiDispatch }: InfoHeaderProps) => {
     </div>
   ));
 
-  const remainingSpace = gameState.CurrentRegion.BuildingCapacity,
-    currentResarch = gameState.Research.CurrentResearchId,
+  const remainingSpace = currentRegion.BuildingCapacity,
+    currentResarch = researchState.CurrentResearchId,
     researchIcon =
       entityIconLookupByKind("Lab")(currentResarch) ||
       "sprite-technology-no-science",
-    researchProgress = gameState.Research.Progress.get(currentResarch),
+    researchProgress = researchState.Progress.get(currentResarch),
     researchProgressPercent =
       ((researchProgress?.Count || 0) / (researchProgress?.MaxCount || 1)) *
       100;

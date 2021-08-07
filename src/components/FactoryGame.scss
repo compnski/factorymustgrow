@@ -97,3 +97,18 @@
   left: 5%;
   transform: translate(0%, 5%);
 }
+
+.scroller {
+  overflow: scroll;
+  height: 95vh;
+}
+
+.add-producer,
+.explore-button {
+  width: 90%;
+  height: 32px;
+  font-size: 16px;
+  line-height: 32px;
+  margin: auto;
+  text-align: center;
+}
