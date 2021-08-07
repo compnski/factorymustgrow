@@ -1,5 +1,7 @@
+@import "./_constants";
+
 .producerCard {
-  width: 1000px;
+  width: $appWidth;
   height: 100px;
   //border: 1px black solid;
   display: flex;
@@ -18,19 +20,19 @@
     border-right: 1px darkgrey solid;
     display: flex;
     flex-direction: column;
-    .arrow {
-    }
   }
 
   .mainArea {
-    width: 400px;
+    width: 525px;
   }
 
   .topArea {
     display: flex;
     border-top: 1px solid black;
     justify-content: flex-end;
+    padding-left: 25px;
   }
+
   .bottomArea {
     display: flex;
     //border: 1px solid black;

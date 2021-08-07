@@ -1,3 +1,5 @@
+@import "./_constants";
+
 .factoryGame {
   font-size: 0;
 }
@@ -6,7 +8,7 @@
 .main-bus-header {
   padding-top: 40px;
   background-color: orange;
-  width: 1000px;
+  width: $appWidth;
   height: 100px;
   display: flex;
   justify-content: flex-end;
@@ -60,7 +62,7 @@
   vertical-align: middle;
   background-color: grey;
   align-items: flex-start;
-  width: 100%;
+  width: $appWidth;
   z-index: 1;
 }
 
