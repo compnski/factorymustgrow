@@ -15,7 +15,7 @@ import {
   MainBus,
   EntityStack,
 } from "./types";
-import { GetRecipe } from "./gen/entities";
+import { GetEntity, GetRecipe } from "./gen/entities";
 import { CanPushTo, PushPullFromMainBus, PushToNeighbors } from "./movement";
 import { loadStateFromLocalStorage } from "./localstorage";
 import { IsResearchComplete, Lab, NewLab, ResearchInLab } from "./research";
@@ -38,6 +38,7 @@ export type FactoryGameState = {
   Inventory: Inventory;
 };
 
+const initialInventorySize = 8;
 export const initialFactoryGameState = () => ({
   Research: {
     Progress: new Map([["start", NewEntityStack("start", 0, 0)]]),
@@ -51,7 +52,11 @@ export const initialFactoryGameState = () => ({
     NewEntityStack("crude-oil", 9000),
     NewEntityStack("water", Infinity),
   ]),
-  Inventory: new Inventory(),
+  Inventory: new Inventory(8, [
+    NewEntityStack(GetEntity("burner-mining-drill"), 5),
+    NewEntityStack(GetEntity("assembling-machine-1"), 5),
+    NewEntityStack(GetEntity("stone-furnace"), 5),
+  ]),
 });
 
 export var GameState = loadStateFromLocalStorage(initialFactoryGameState());
