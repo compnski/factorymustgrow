@@ -36,7 +36,7 @@ const svgTplTxt = `
   </symbol>)],
 {{- end -}}
 
-import svgIcons from "./icon_sprite.png";
+import svgIcons from "../icons.png";
 const IconSymbols = new Map([{{range .}}{{template "Symbol" .}}{{end -}}])
 
 export const Icon = (name:string):JSX.Element=> {
@@ -50,13 +50,13 @@ var svgTpl = template.Must(template.New("svg").Parse(svgTplTxt))
 
 //.wooden-chest { width: 64px; height: 64px; background-position: 0px 0px; }
 const (
-	spriteSheetHeight = 1088
+	spriteSheetHeight = 960
 	spriteSheetWidth  = 1024
 	spriteHeight      = 64
 	spriteWidth       = 64
 )
 
-var parseCssPattern = regexp.MustCompile(`(?:\.([-a-zA-Z0-9]+) {.*? background-position: -?(\d+)px -?(\d+)px; })+`)
+var parseCssPattern = regexp.MustCompile(`(?s)(?:\.([-a-zA-Z0-9]+) {.*? background-position: -?(\d+)px -?(\d+)px.*?})+`)
 
 func main() {
 	if len(os.Args) < 2 {
