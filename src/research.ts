@@ -7,7 +7,6 @@ import {
   NewEntityStack,
   OutputStatus,
   Producer,
-  Recipe,
   Research,
 } from "./types";
 
@@ -132,7 +131,7 @@ export function availableResearch(researchState: ResearchState): string[] {
   researchState.Progress.forEach((stack) => {
     if (stack.Count === stack.MaxCount) unlockedResearch.add(stack.Entity);
   });
-  const availableResearch: string[] = [];
+  var availableResearch: string[] = [];
   for (var research of ResearchMap.values()) {
     if (unlockedResearch.has(research.Id)) continue;
     if (
@@ -141,6 +140,7 @@ export function availableResearch(researchState: ResearchState): string[] {
       availableResearch.push(research.Id);
     }
   }
+  availableResearch = availableResearch.filter((r) => !IgnoredResearch.has(r));
   availableResearch.sort((a, b) => GetResearch(a).Row - GetResearch(b).Row);
   return availableResearch;
 }
@@ -162,9 +162,72 @@ const categoryOrder: { [key: string]: number } = {
   combat: 4,
 };
 
+const IgnoredRecipies: Set<string> = new Set([
+  "refined-concrete",
+  "hazard-concrete",
+  "refined-hazard-concrete",
+  "burner-inserter",
+  "long-handed-inserter",
+  "fast-transport-belt",
+  "fast-splitter",
+  "splitter",
+  "underground-belt",
+  "fast-underground-belt",
+  "wooden-chest",
+  "iron-chest",
+  "steel-chest",
+  "roboport",
+  "pistol",
+  "light-armor",
+  "storage-tank",
+  "small-electric-pole",
+  "pump",
+  "pipe-to-ground",
+  "repair-pack",
+  "empty-barrel",
+  "raw-fish",
+  "medium-electric-pole",
+  "big-electric-pole",
+  "rail-chain-signal",
+  "firearm-magazine",
+  "small-lamp",
+]);
+
+const IgnoredResearch: Set<string> = new Set([
+  "stone-walls",
+  "military",
+  "turrets",
+  "fast-inserter",
+  "steel-axe",
+  "electric-energy-distribution-2",
+  "circuit-network",
+  "automobilism",
+  "explosives",
+  "uranium-processing",
+  "effectivity-module",
+  "effect-transmission",
+  "laser",
+
+  //
+  "research-speed-1",
+  "toolbelt",
+  "mining-productivity-1",
+  "braking-force-1",
+
+  //
+  "automated-rail-transportation",
+  "fluid-wagon",
+  "worker-robots-storage-1",
+  "logistic-robotics",
+  "worker-robots-speed-1",
+  "coal-liquefaction",
+  "automation-3",
+  "logistics-3",
+]);
+
 // Returns all recipes that can be crafted given the completed research
 export function availableRecipes(researchState: ResearchState): string[] {
-  const availableRecipes: string[] = [...AlwaysUnlockedRecipes];
+  var availableRecipes: string[] = [...AlwaysUnlockedRecipes];
   researchState.Progress.forEach((stack) => {
     if (stack.Count === stack.MaxCount) {
       const research = GetResearch(stack.Entity);
@@ -172,10 +235,14 @@ export function availableRecipes(researchState: ResearchState): string[] {
       else console.log("Missing research entity for ", stack.Entity);
     }
   });
+  availableRecipes = availableRecipes.filter((r) => !IgnoredRecipies.has(r));
   availableRecipes.sort((a, b): number => {
-    const entA = GetEntity(a),
-      entB = GetEntity(b);
+    const recipeA = GetRecipe(a),
+      recipeB = GetRecipe(b);
+    const entA = GetEntity(recipeA.Output[0].Entity),
+      entB = GetEntity(recipeB.Output[0].Entity);
     if (!entA || !entB) {
+      console.error("missing entity", !entA && a, !entB && b);
       return 0;
     }
     if (entA.Category !== entB.Category)
@@ -187,10 +254,18 @@ export function availableRecipes(researchState: ResearchState): string[] {
 }
 
 export function availableItems(researchState: ResearchState): string[] {
-  const availableItems: string[] = [];
+  const availableItems: string[] = [],
+    seenItems: Set<string> = new Set();
   availableRecipes(researchState).forEach((r: string) => {
     const recipe = GetRecipe(r);
-    if (recipe) availableItems.push(...recipe.Output.map((x) => x.Entity));
+    if (recipe) {
+      recipe.Output.forEach((x) => {
+        if (!seenItems.has(x.Entity)) {
+          availableItems.push(x.Entity);
+          seenItems.add(x.Entity);
+        }
+      });
+    }
   });
   return availableItems;
 }
