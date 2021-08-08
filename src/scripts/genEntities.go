@@ -63,6 +63,8 @@ func GuessProducerType(firstProducer string) string {
 		return "WaterPump"
 	case "boiler":
 		return "Boiler"
+	case "rocket-silo":
+		return "RocketSilo"
 	default:
 		panic("Unknown producer: " + firstProducer)
 	}

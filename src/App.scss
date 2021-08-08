@@ -16,6 +16,11 @@ span {
   width: $appWidth;
 }
 
+.icon {
+  display: inline-block;
+  background-image: url("./icons.png");
+}
+
 .clickable {
   box-shadow: 2px 2px #36373844;
   border: #121515cc inset 1px;
