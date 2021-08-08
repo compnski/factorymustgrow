@@ -76,12 +76,11 @@ export const MainBusHeader = ({
     );
   }
 
-  /* <text key={laneId} className="belt-count" x={laneX} y={20}>
-        {lane.Count}
-        </text> */
-
   const busLaneClicked = (laneId: number) => {
-    mainBus.RemoveLane(laneId);
+    GameDispatch({
+      type: "RemoveLane",
+      laneId: laneId,
+    });
   };
 
   return (
@@ -97,11 +96,22 @@ export const MainBusHeader = ({
         : null}
       <div style={{ width: 400, height: 100 }}>
         <div className="lane-header-counts">{lanes}</div>
-        <MainBusSegment
-          segmentHeight={70}
-          mainBus={mainBus}
-          busLaneClicked={busLaneClicked}
-        />
+        <svg>
+          {[...mainBus.lanes.entries()].map(([laneId], idx) => {
+            const laneX =
+              MainBusConst.laneOffset +
+              idx * (MainBusConst.laneWidth + MainBusConst.interLaneWidth);
+            return (
+              <rect
+                width={MainBusConst.laneWidth}
+                height={50}
+                x={laneX}
+                fill="black"
+                onDoubleClick={() => busLaneClicked(laneId)}
+              />
+            );
+          })}
+        </svg>
       </div>
     </div>
   );
