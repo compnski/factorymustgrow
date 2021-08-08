@@ -1,4 +1,5 @@
 import { FactoryGameState } from "./factoryGame";
+import { Inventory } from "./inventory";
 import { MainBus } from "./types";
 
 const replacer = (key: string, value: any): any =>
@@ -18,6 +19,12 @@ const replacer = (key: string, value: any): any =>
         nextId: value.nextLaneId,
         lanes: value.lanes,
       }
+    : value instanceof Inventory
+    ? {
+        dataType: "Inventory",
+        maxCapacity: value.Capacity,
+        slots: value.Slots,
+      }
     : value === Infinity
     ? "Infinity"
     : value;
@@ -33,6 +40,8 @@ const reviver = (key: string, value: any): any => {
     ? new Set(value.value)
     : value.dataType === "MainBus"
     ? new MainBus(value.nextId, value.lanes)
+    : value.dataType === "Inventory"
+    ? new Inventory(value.maxCapacity, value.slots)
     : value;
 };
 

@@ -1,0 +1,38 @@
+@import "./constants";
+.inventory-display {
+  width: 450px;
+  font-size: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  background: lightgray;
+  padding: 12px 110px 12px 40px;
+  border-top: 2px black inset;
+}
+
+.inventory-slot {
+  border: 4px darkgray inset;
+  width: 48px;
+  height: 48px;
+  .icon {
+    transform: scale(0.6);
+    margin: -6px;
+  }
+}
+
+.item-stack-count-text {
+  position: relative;
+  top: -28px;
+  font-size: 24px;
+  line-height: 24px;
+  text-align: right;
+  width: 100%;
+  > span {
+    background: #aaaaaa88;
+    color: black;
+  }
+}
+
+.inventory-slot-over-capacity {
+  background-color: lightpink;
+  border-color: indianred;
+}

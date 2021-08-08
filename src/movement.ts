@@ -128,6 +128,12 @@ function PushPullLaneFromMainBus(
   return stackTransfer(fromStack, toStack, maxTransfered);
 }
 
+export function StackCapacity(stack: EntityStack): number {
+  if (stack.MaxCount === undefined || stack.MaxCount === Infinity)
+    return Infinity;
+  return stack.MaxCount - stack.Count;
+}
+
 export function stackTransfer(
   fromStack: EntityStack,
   toStack: EntityStack,
@@ -135,13 +141,20 @@ export function stackTransfer(
   integersOnly: boolean = true
 ): number {
   const availableItems = fromStack.Count,
-    availableSpace = (toStack.MaxCount || Infinity) - toStack.Count;
+    availableSpace = StackCapacity(toStack);
   var amountToTransfer = Math.min(
     maxTransferred,
     availableItems,
     availableSpace
   );
   if (integersOnly) amountToTransfer = Math.floor(amountToTransfer);
+  // if (amountToTransfer > 0)
+  //   console.log(
+  //     `Transfer ${amountToTransfer} ${fromStack.Entity} from`,
+  //     fromStack,
+  //     "to",
+  //     toStack
+  //   );
   fromStack.Count -= amountToTransfer;
   toStack.Count += amountToTransfer;
   return amountToTransfer;

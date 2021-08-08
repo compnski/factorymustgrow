@@ -20,9 +20,10 @@ import { CanPushTo, PushPullFromMainBus, PushToNeighbors } from "./movement";
 import { loadStateFromLocalStorage } from "./localstorage";
 import { IsResearchComplete, Lab, NewLab, ResearchInLab } from "./research";
 import { GetResearch } from "./gen/research";
-import { ProducerHasOutput } from "./utils";
+import { ProducerHasInput, ProducerHasOutput } from "./utils";
 import { UIAction } from "./uiState";
 import { GameWindow } from "./globals";
+import { Inventory } from "./inventory";
 
 export const useGameState = () => useState<FactoryGameState>(GameState);
 
@@ -34,6 +35,7 @@ export type ResearchState = {
 export type FactoryGameState = {
   CurrentRegion: Region;
   Research: ResearchState;
+  Inventory: Inventory;
 };
 
 export const initialFactoryGameState = () => ({
@@ -49,6 +51,7 @@ export const initialFactoryGameState = () => ({
     NewEntityStack("crude-oil", 9000),
     NewEntityStack("water", Infinity),
   ]),
+  Inventory: new Inventory(),
 });
 
 export var GameState = loadStateFromLocalStorage(initialFactoryGameState());
@@ -102,39 +105,85 @@ export const UpdateGameState = (
   }
 };
 
-export type GameAction = {
+export type GameAction =
+  | BasicAction
+  | ProducerAction
+  | BuildingAction
+  | DragBuildingAction
+  | InventoryTransferAction;
+
+type ProducerAction = {
+  type: "NewProducer" | "ChangeResearch";
+  producerName: string;
+};
+
+type BasicAction = {
+  type: "NewLab" | "CompleteResearch" | "Reset";
+};
+
+type BuildingAction = {
   type:
-    | "NewProducer"
-    | "NewLab"
     | "RemoveBuilding"
     | "IncreaseProducerCount"
     | "DecreaseProducerCount"
     | "ToggleUpperOutputState"
-    | "ToggleLowerOutputState"
-    | "ReorderBuildings"
-    | "ChangeResearch"
-    | "CompleteResearch"
-    | "Reset";
-  producerName?: string;
-  buildingIdx?: number;
+    | "ToggleLowerOutputState";
+  buildingIdx: number;
+};
+
+type DragBuildingAction = {
+  type: "ReorderBuildings";
+  buildingIdx: number;
   dropBuildingIdx?: number;
 };
 
+type InventoryTransferAction =
+  | {
+      type: "TransferToInventory" | "TransferFromInventory";
+      entity: string;
+      otherStackKind: "MainBus";
+      laneId: number;
+    }
+  | {
+      type: "TransferToInventory" | "TransferFromInventory";
+      entity: string;
+      otherStackKind: "Building";
+      buildingIdx: number;
+    }
+  | {
+      type: "TransferToInventory" | "TransferFromInventory";
+      entity: string;
+      otherStackKind: "Void";
+    };
+
+function building(action: { buildingIdx: number }): Producer | undefined {
+  return action.buildingIdx !== undefined
+    ? GameState.CurrentRegion.Buildings[action.buildingIdx]
+    : undefined;
+}
+
 export const GameDispatch = (action: GameAction) => {
   const Buildings = GameState.CurrentRegion.Buildings;
-  const building =
-    action.buildingIdx !== undefined
-      ? GameState.CurrentRegion.Buildings[action.buildingIdx]
-      : undefined;
   switch (action.type) {
     case "Reset":
       GameState = initialFactoryGameState();
       break;
 
     case "RemoveBuilding":
-      if (action.buildingIdx !== undefined) {
-        GameState.CurrentRegion.Buildings.splice(action.buildingIdx, 1);
-      }
+      (() => {
+        const b = building(action);
+        if (b) {
+          GameState.CurrentRegion.Buildings.splice(action.buildingIdx, 1);
+          if (ProducerHasInput(b.kind))
+            b.inputBuffers.forEach((s: EntityStack) =>
+              GameState.Inventory.Add(s, Infinity, true)
+            );
+          if (ProducerHasOutput(b.kind))
+            b.outputBuffers.forEach((s: EntityStack) =>
+              GameState.Inventory.Add(s, Infinity, true)
+            );
+        }
+      })();
       break;
 
     case "ChangeResearch":
@@ -173,58 +222,113 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "IncreaseProducerCount":
-      if (building)
-        building.ProducerCount = Math.min(50, building.ProducerCount + 1);
+      (() => {
+        const b = building(action);
+        if (b) b.ProducerCount = Math.min(50, b.ProducerCount + 1);
+      })();
       break;
 
     case "DecreaseProducerCount":
-      if (building)
-        building.ProducerCount = Math.max(0, building.ProducerCount - 1);
+      (() => {
+        const b = building(action);
+        if (b) b.ProducerCount = Math.max(0, b.ProducerCount - 1);
+      })();
       break;
 
     case "ToggleUpperOutputState":
-      if (
-        !ProducerHasOutput(building?.kind) ||
-        !building ||
-        action.buildingIdx === undefined
-      )
-        return;
-      building.outputStatus.above =
-        building.outputStatus.above === "NONE" &&
-        CanPushTo(building, Buildings[action.buildingIdx - 1])
-          ? "OUT"
-          : "NONE";
+      (() => {
+        const b = building(action);
+        if (
+          !ProducerHasOutput(b?.kind) ||
+          !b ||
+          action.buildingIdx === undefined
+        )
+          return;
+        b.outputStatus.above =
+          b.outputStatus.above === "NONE" &&
+          CanPushTo(b, Buildings[action.buildingIdx - 1])
+            ? "OUT"
+            : "NONE";
+      })();
       break;
 
     case "ToggleLowerOutputState":
-      if (
-        !ProducerHasOutput(building?.kind) ||
-        !building ||
-        action.buildingIdx === undefined
-      )
-        return;
-      building.outputStatus.below =
-        building.outputStatus.below === "NONE" &&
-        CanPushTo(building, Buildings[action.buildingIdx + 1])
-          ? "OUT"
-          : "NONE";
+      (() => {
+        const b = building(action);
+        if (
+          !ProducerHasOutput(b?.kind) ||
+          !b ||
+          action.buildingIdx === undefined
+        )
+          return;
+        b.outputStatus.below =
+          b.outputStatus.below === "NONE" &&
+          CanPushTo(b, Buildings[action.buildingIdx + 1])
+            ? "OUT"
+            : "NONE";
+      })();
       break;
 
     case "ReorderBuildings":
-      if (
-        action.buildingIdx !== undefined &&
-        action.dropBuildingIdx !== undefined
-      ) {
-        Buildings.splice(action.buildingIdx, 1);
-        Buildings.splice(action.dropBuildingIdx, 0, building as Producer);
-        fixOutputStatus(Buildings);
-      }
+      (() => {
+        const b = building(action);
+
+        if (
+          action.buildingIdx !== undefined &&
+          action.dropBuildingIdx !== undefined
+        ) {
+          Buildings.splice(action.buildingIdx, 1);
+          Buildings.splice(action.dropBuildingIdx, 0, b as Producer);
+          fixOutputStatus(Buildings);
+        }
+      })();
+      break;
+
+    case "TransferToInventory":
+      (() => {
+        const fromStack = inventoryTransferStack(action);
+        if (fromStack)
+          if (GameState.Inventory.CanFit(fromStack)) {
+            GameState.Inventory.Add(fromStack);
+          }
+      })();
+      break;
+
+    case "TransferFromInventory":
+      (() => {
+        const toStack = inventoryTransferStack(action);
+        if (toStack) GameState.Inventory.Remove(toStack);
+      })();
       break;
   }
 };
 
+function inventoryTransferStack(
+  action: InventoryTransferAction
+): EntityStack | undefined {
+  switch (action.otherStackKind) {
+    case "Void":
+      return NewEntityStack(action.entity, Infinity, Infinity);
+
+    case "MainBus":
+      return GameState.CurrentRegion.Bus.lanes.get(action.laneId);
+
+    case "Building":
+      const b = building(action);
+      if (b) {
+        if (ProducerHasOutput(b.kind) && b.outputBuffers.has(action.entity)) {
+          return b.outputBuffers.get(action.entity);
+        }
+        if (ProducerHasInput(b.kind) && b?.inputBuffers.has(action.entity)) {
+          return b.inputBuffers.get(action.entity);
+        }
+      }
+  }
+  return;
+}
+
 function fixBeltConnections(buildings: Producer[], bus: MainBus) {
-  buildings.forEach((p, idx) => {
+  buildings.forEach((p) => {
     p.outputStatus.beltConnections.forEach((beltConn, idx) => {
       if (!bus.HasLane(beltConn.beltId))
         p.outputStatus.beltConnections.splice(idx, 1);
