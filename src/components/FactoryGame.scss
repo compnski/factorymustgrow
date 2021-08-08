@@ -85,9 +85,9 @@
   z-index: 1;
 }
 
-.recipeSelector {
+.recipe-selector {
   width: 650px;
-  background: grey;
+  background: lightgrey;
   border: 2px black solid;
   z-index: 1;
   padding: 10px;
@@ -103,9 +103,10 @@
     align-items: flex-start;
     .icon {
       box-sizing: border-box;
-      border: 1px red solid;
-      transform: scale(0.5);
-      margin-right: -24px;
+      border-color: lightgrey;
+      //border: 1px red solid;
+      //transform: scale(0.8);
+      //margin-right: -8px;
     }
   }
 }
