@@ -14,7 +14,7 @@ export function ProducerBufferDisplay({
     evt: {
       clientX: number;
       clientY: number;
-      ctrlKey: boolean;
+      shiftKey: boolean;
       //target: { hasOwnProperty(p: string): boolean }; //unknown; //{ getBoundingClientRect(): DOMRect };
       nativeEvent: { offsetX: number; offsetY: number };
     },

@@ -5,6 +5,12 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { GameDispatch } from "./factoryGame";
 
+console.log(window.location.hash);
+if (window.location.hash === "#reset") {
+  localStorage.clear();
+  window.location.hash = "";
+}
+
 ReactDOM.render(
   <React.StrictMode>
     <link

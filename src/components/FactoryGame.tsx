@@ -10,6 +10,7 @@ import { entityIconLookupByKind } from "../utils";
 import { availableRecipes, availableResearch } from "../research";
 import { FactoryButtonPanel } from "./FactoryButtonPanel";
 import { InventoryDisplay } from "./InventoryDisplay";
+import { availableItems } from "../research";
 
 type FactoryGameProps = {
   gameState: FactoryGameState;
@@ -24,6 +25,7 @@ export const FactoryGame = ({
 }: FactoryGameProps) => {
   const recipeSelector = uiState.dialogs.recipeSelectorOpen ? (
     <RecipeSelector
+      title="Select Recipe"
       recipes={availableRecipes(gameState.Research)}
       onClick={(evt: SyntheticEvent, r: string) => {
         uiDispatch({ type: "CloseDialog", evt });
@@ -34,6 +36,7 @@ export const FactoryGame = ({
 
   const researchSelector = uiState.dialogs.researchSelectorOpen ? (
     <RecipeSelector
+      title="Select Research"
       recipes={availableResearch(gameState.Research)}
       onClick={(evt: SyntheticEvent, r: string) => {
         uiDispatch({ type: "CloseDialog", evt });
@@ -43,9 +46,24 @@ export const FactoryGame = ({
     />
   ) : null;
 
+  const debugInventorySelector = uiState.dialogs.debugInventorySelectorOpen ? (
+    <RecipeSelector
+      title="Select Item"
+      recipes={availableItems(gameState.Research)}
+      onClick={(evt: SyntheticEvent, r: string) => {
+        uiDispatch({ type: "CloseDialog", evt });
+        GameDispatch({
+          type: "TransferToInventory",
+          otherStackKind: "Void",
+          entity: r,
+        });
+      }}
+    />
+  ) : null;
+
   return (
     <div className="factoryGame">
-      {recipeSelector || researchSelector}
+      {recipeSelector || researchSelector || debugInventorySelector}
       <InfoHeader
         uiDispatch={uiDispatch}
         currentRegion={gameState.CurrentRegion}

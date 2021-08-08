@@ -3,12 +3,14 @@ import { SyntheticEvent } from "react";
 export type RecipeSelectorProps = {
   onClick: (evt: SyntheticEvent, recipe: string) => void;
   recipes: string[];
+  title: string;
   entityIconLookup?: (entity: string) => string;
 };
 
 export const RecipeSelector = ({
   recipes,
   onClick,
+  title,
   entityIconLookup = (entity: string): string => entity,
 }: RecipeSelectorProps) => {
   const recipeIcons = recipes.map((r) => {
@@ -22,8 +24,8 @@ export const RecipeSelector = ({
     );
   });
   return (
-    <div className="recipeSelector modal">
-      <p>Select Recipe</p>
+    <div className="recipe-selector modal">
+      <p>{title}</p>
       <div className="recipeList">{recipeIcons}</div>
     </div>
   );

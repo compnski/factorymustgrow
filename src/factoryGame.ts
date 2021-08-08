@@ -215,7 +215,20 @@ export const GameDispatch = (action: GameAction) => {
           GameState.Research.Progress.get(currentResearchId);
       if (currentResearchProgress)
         currentResearchProgress.Count = currentResearchProgress.MaxCount || 0;
-      else console.log("No research", currentResearchId);
+      else {
+        const r = GetResearch(currentResearchId);
+        if (r)
+          GameState.Research.Progress.set(
+            currentResearchId,
+            NewEntityStack(
+              currentResearchId,
+              r.ProductionRequiredForCompletion,
+              r.ProductionRequiredForCompletion
+            )
+          );
+        else console.log("No Research");
+      }
+      //else console.log("No research", currentResearchId);
       GameState.Research.CurrentResearchId = "";
       break;
 

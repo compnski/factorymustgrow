@@ -1,12 +1,13 @@
 import { TicksPerSecond } from "./constants";
 import { ResearchState } from "./factoryGame";
-import { GetEntity } from "./gen/entities";
+import { GetEntity, GetRecipe } from "./gen/entities";
 import { GetResearch, ResearchMap } from "./gen/research";
 import {
   EntityStack,
   NewEntityStack,
   OutputStatus,
   Producer,
+  Recipe,
   Research,
 } from "./types";
 
@@ -183,4 +184,13 @@ export function availableRecipes(researchState: ResearchState): string[] {
     return entA.Col - entB.Col;
   });
   return availableRecipes;
+}
+
+export function availableItems(researchState: ResearchState): string[] {
+  const availableItems: string[] = [];
+  availableRecipes(researchState).forEach((r: string) => {
+    const recipe = GetRecipe(r);
+    if (recipe) availableItems.push(...recipe.Output.map((x) => x.Entity));
+  });
+  return availableItems;
 }

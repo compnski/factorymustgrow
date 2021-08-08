@@ -119,13 +119,13 @@ export const ProducerCard = ({
     evt: {
       clientX: number;
       clientY: number;
-      ctrlKey: boolean;
+      shiftKey: boolean;
       //target: { hasOwnProperty(p: string): boolean };
       nativeEvent: { offsetX: number; offsetY: number };
     },
     stack: EntityStack
   ): void => {
-    if (evt.ctrlKey) {
+    if (evt.shiftKey) {
       FillEntityStack(stack, 1);
       return;
     }

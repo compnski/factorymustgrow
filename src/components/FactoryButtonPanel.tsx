@@ -47,13 +47,25 @@ export function FactoryButtonPanel({
 
       <div
         className="add-producer clickable"
-        onClick={() =>
+        onClick={() => {
           gameDispatch({
             type: "CompleteResearch",
+          });
+          uiDispatch({ type: "ShowResearchSelector" });
+        }}
+      >
+        Complete Research (DEBUG)
+      </div>
+
+      <div
+        className="add-producer clickable"
+        onClick={() =>
+          uiDispatch({
+            type: "ShowDebugInventorySelector",
           })
         }
       >
-        Complete Research (DEBUG)
+        Add To Inventory (DEBUG)
       </div>
     </div>
   );

@@ -6,19 +6,20 @@ import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
 import { MainBusConst } from "./uiConstants";
 import { availableRecipes } from "../research";
+import { availableItems } from "../research";
 
 const entityIconDoubleClickHandler = (
   evt: {
     clientX: number;
     clientY: number;
-    ctrlKey: boolean;
+    shiftKey: boolean;
     //target: { hasOwnProperty(p: string): boolean };
     nativeEvent: { offsetX: number; offsetY: number };
   },
   laneId: number,
   stack: EntityStack
 ): void => {
-  if (evt.ctrlKey) {
+  if (evt.shiftKey) {
     FillEntityStack(stack, 1);
     return;
   }
@@ -90,7 +91,8 @@ export const MainBusHeader = ({
       </div>
       {showItemSelector
         ? RecipeSelector({
-            recipes: availableRecipes(researchState),
+            title: "Select Item",
+            recipes: availableItems(researchState),
             onClick: addMainBusLane,
           })
         : null}
@@ -103,6 +105,7 @@ export const MainBusHeader = ({
               idx * (MainBusConst.laneWidth + MainBusConst.interLaneWidth);
             return (
               <rect
+                key={laneId}
                 width={MainBusConst.laneWidth}
                 height={50}
                 x={laneX}
