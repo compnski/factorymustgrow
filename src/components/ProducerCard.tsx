@@ -1,5 +1,5 @@
 import { GameAction, GameDispatch } from "../factoryGame";
-import { EntityStack, MainBus, Producer } from "../types";
+import { EntityStack, FillEntityStack, MainBus, Producer } from "../types";
 import "./ProducerCard.scss";
 import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
@@ -115,6 +115,40 @@ export const ProducerCard = ({
     producer.outputStatus.beltConnections.splice(connectIdx, 1);
   };
 
+  const entityIconDoubleClickHandler = (
+    evt: {
+      clientX: number;
+      clientY: number;
+      ctrlKey: boolean;
+      //target: { hasOwnProperty(p: string): boolean };
+      nativeEvent: { offsetX: number; offsetY: number };
+    },
+    stack: EntityStack
+  ): void => {
+    if (evt.ctrlKey) {
+      FillEntityStack(stack, 1);
+      return;
+    }
+    const clickY = evt.nativeEvent.offsetY;
+    if (clickY < 20) {
+      GameDispatch({
+        type: "TransferFromInventory",
+        entity: stack.Entity,
+        otherStackKind: "Building",
+        buildingIdx: buildingIdx,
+      });
+    }
+
+    if (clickY > 30) {
+      GameDispatch({
+        type: "TransferToInventory",
+        entity: stack.Entity,
+        otherStackKind: "Building",
+        buildingIdx: buildingIdx,
+      });
+    }
+  };
+
   return (
     <div
       className="producerCard"
@@ -177,6 +211,7 @@ export const ProducerCard = ({
           <ProducerBufferDisplay
             inputBuffers={recipeInput}
             outputBuffers={producer.outputBuffers}
+            doubleClickHandler={entityIconDoubleClickHandler}
             entityIconLookup={entityIconLookupByKind(producer.kind)}
           />
         </div>
@@ -188,7 +223,6 @@ export const ProducerCard = ({
             dispatch({
               type: "ToggleUpperOutputState",
               buildingIdx,
-              producerName: producer.RecipeId,
             })
           }
         >
@@ -201,7 +235,6 @@ export const ProducerCard = ({
             dispatch({
               type: "ToggleLowerOutputState",
               buildingIdx,
-              producerName: producer.RecipeId,
             })
           }
         >

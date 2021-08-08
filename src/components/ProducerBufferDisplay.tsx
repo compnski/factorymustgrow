@@ -1,13 +1,26 @@
+import { SyntheticEvent } from "react";
 import { EntityStack, FillEntityStack } from "../types";
 
 export function ProducerBufferDisplay({
   inputBuffers,
   outputBuffers,
+  doubleClickHandler,
   entityIconLookup = (entity: string): string => entity,
 }: {
   inputBuffers: Map<string, EntityStack> | undefined;
   outputBuffers: Map<string, EntityStack> | undefined;
   entityIconLookup?: (entity: string) => string;
+  doubleClickHandler?: (
+    evt: {
+      clientX: number;
+      clientY: number;
+      ctrlKey: boolean;
+      //target: { hasOwnProperty(p: string): boolean }; //unknown; //{ getBoundingClientRect(): DOMRect };
+      nativeEvent: { offsetX: number; offsetY: number };
+    },
+
+    s: EntityStack
+  ) => void;
 }) {
   return (
     <div className="recipeDisplay">
@@ -17,7 +30,10 @@ export function ProducerBufferDisplay({
             <div
               key={Entity}
               className="recipeItem"
-              onDoubleClick={() => FillEntityStack(entityStack, 1)}
+              onDoubleClick={
+                doubleClickHandler &&
+                ((evt) => doubleClickHandler(evt, entityStack))
+              }
             >
               <div className="quantityText">
                 {Math.floor(entityStack.Count)}
@@ -37,7 +53,10 @@ export function ProducerBufferDisplay({
           <div
             key={outputBuffer.Entity}
             className="recipeItem"
-            onDoubleClick={() => FillEntityStack(outputBuffer, 1)}
+            onDoubleClick={
+              doubleClickHandler &&
+              ((evt) => doubleClickHandler(evt, outputBuffer))
+            }
           >
             <div className="quantityText">
               {Math.floor(outputBuffer?.Count || 0)}

@@ -17,7 +17,6 @@ ReactDOM.render(
       className="reset-button"
       onDoubleClick={() =>
         GameDispatch({
-          producerName: "",
           type: "Reset",
         })
       }

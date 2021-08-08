@@ -9,6 +9,7 @@ import "./FactoryGame.scss";
 import { entityIconLookupByKind } from "../utils";
 import { availableRecipes, availableResearch } from "../research";
 import { FactoryButtonPanel } from "./FactoryButtonPanel";
+import { InventoryDisplay } from "./InventoryDisplay";
 
 type FactoryGameProps = {
   gameState: FactoryGameState;
@@ -61,6 +62,7 @@ export const FactoryGame = ({
           regionalOre={gameState.CurrentRegion.Ore}
         />
       </div>
+      <InventoryDisplay inventory={gameState.Inventory} />
       <FactoryButtonPanel gameDispatch={GameDispatch} uiDispatch={uiDispatch} />
     </div>
   );
