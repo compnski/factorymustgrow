@@ -34,6 +34,25 @@
   }
 }
 
+.lane-header-counts {
+  display: flex;
+  .icon {
+    transform: scale(0.35);
+    margin: -6px;
+  }
+  cursor: pointer;
+  user-select: none;
+}
+
+.lane-header-item-stack {
+  width: 35px;
+  height: 50px;
+  background-color: darkorange;
+  > * {
+    pointer-events: none;
+  }
+}
+
 .mainBusSegment,
 .main-bus-segment {
   background-color: orange;

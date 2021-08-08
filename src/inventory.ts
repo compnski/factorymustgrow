@@ -35,7 +35,6 @@ export class Inventory {
       existingSlotIdx = this.unfilledSlotForEntity(fromStack.Entity),
       existingSlot = this.Slots[existingSlotIdx];
 
-    console.log("Z", existingSlot);
     var transferAmount = Math.min(fromStack.Count, count ?? stackSize);
 
     if (existingSlot) {
