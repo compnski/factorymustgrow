@@ -1,4 +1,3 @@
-//import { Map } from "immutable";
 import { useReducer } from "react";
 import { Point, PointToS, BestPath, ScoreFunc } from "./astar";
 import {

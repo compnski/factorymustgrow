@@ -10,7 +10,7 @@ import { ExploreGame } from "./explore/ExploreGame";
 import { FactoryGame } from "./components/FactoryGame";
 import { TicksPerSecond } from "./constants";
 import { GameWindow } from "./globals";
-import { Macro } from "./macro_def";
+import "./macro_def";
 
 function App() {
   const [gameState, setGameState] = useGameState();
@@ -66,5 +66,4 @@ function App() {
   );
 }
 
-const _ = Macro;
 export default App;

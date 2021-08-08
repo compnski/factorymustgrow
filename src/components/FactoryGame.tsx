@@ -1,5 +1,5 @@
 import { SyntheticEvent } from "react";
-import { FactoryGameState, GameDispatch, ResearchState } from "../factoryGame";
+import { FactoryGameState, GameDispatch } from "../factoryGame";
 import { UIAction, UIState } from "../uiState";
 import { ProducerCardList } from "./ProducerCardList";
 import { RecipeSelector } from "./RecipeSelector";

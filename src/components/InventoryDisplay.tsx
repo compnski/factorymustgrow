@@ -1,6 +1,6 @@
 import "./InventoryDisplay.scss";
 import { Inventory } from "../inventory";
-import { EntityStack, NewEntityStack } from "../types";
+import { EntityStack } from "../types";
 import { GameDispatch } from "../factoryGame";
 
 export type InventoryDisplayProps = {
