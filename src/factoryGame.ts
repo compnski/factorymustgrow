@@ -115,7 +115,13 @@ export type GameAction =
   | ProducerAction
   | BuildingAction
   | DragBuildingAction
-  | InventoryTransferAction;
+  | InventoryTransferAction
+  | LaneAction;
+
+type LaneAction = {
+  type: "RemoveLane";
+  laneId: number;
+};
 
 type ProducerAction = {
   type: "NewProducer" | "ChangeResearch";
@@ -189,6 +195,11 @@ export const GameDispatch = (action: GameAction) => {
             );
         }
       })();
+      break;
+
+    case "RemoveLane":
+      const stack = GameState.CurrentRegion.Bus.RemoveLane(action.laneId);
+      if (stack) GameState.Inventory.Add(stack, Infinity, true);
       break;
 
     case "ChangeResearch":
