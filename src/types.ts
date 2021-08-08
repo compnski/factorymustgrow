@@ -32,7 +32,8 @@ export type ProducerType =
   | "Centrifuge"
   | "WaterPump"
   | "Boiler"
-  | "Lab";
+  | "Lab"
+  | "RocketSilo";
 
 export type Recipe = {
   //  Name: string;

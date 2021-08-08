@@ -1748,6 +1748,14 @@
       "stack": 1
     },
     {
+      "category": "intermediate-products",
+      "col": 8,
+      "id": "rocket-part",
+      "name": "Rocket part",
+      "row": 9,
+      "stack": 100
+    },
+    {
       "category": "fluids",
       "col": 1,
       "id": "water",
@@ -4718,6 +4726,17 @@
       ],
       "time": 30
     },
+    {
+      "id": "rocket-part",
+      "in": {
+        "low-density-structure": 10,
+        "rocket-control-unit": 10,
+        "rocket-fuel": 10
+      },
+      "producers": ["rocket-silo"],
+      "time": 3
+    },
+
     {
       "id": "iron-ore",
       "producers": ["electric-mining-drill"],

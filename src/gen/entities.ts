@@ -1782,6 +1782,15 @@ export const Entities: Map<string, Entity> = Map({
     Row: 8,
     Col: 8,
   },
+  "rocket-part": {
+    Name: "Rocket part",
+    Id: "rocket-part",
+    Icon: "rocket-part",
+    StackSize: 100,
+    Category: "intermediate-products",
+    Row: 9,
+    Col: 8,
+  },
   water: {
     Name: "Water",
     Id: "water",
@@ -7542,6 +7551,36 @@ export const Recipes: Map<string, Recipe> = Map({
     Output: [
       {
         Entity: "rocket-silo",
+        Count: 1,
+      },
+    ],
+  },
+
+  "rocket-part": {
+    Id: "rocket-part",
+    Icon: "rocket-part",
+    DurationSeconds: 3,
+    ProductionPerTick: 0.33333334,
+    ProducerType: "RocketSilo",
+    Input: [
+      {
+        Entity: "low-density-structure",
+        Count: 10,
+      },
+
+      {
+        Entity: "rocket-control-unit",
+        Count: 10,
+      },
+
+      {
+        Entity: "rocket-fuel",
+        Count: 10,
+      },
+    ],
+    Output: [
+      {
+        Entity: "rocket-part",
         Count: 1,
       },
     ],

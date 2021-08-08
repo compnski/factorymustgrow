@@ -239,6 +239,7 @@ export const GameDispatch = (action: GameAction) => {
     case "NewProducer":
       if (action.producerName) {
         const r = GetRecipe(action.producerName);
+        if (r && r.ProducerType === "RocketSilo") Buildings.push(NewFactory(r));
         if (r && r.ProducerType === "Assembler") Buildings.push(NewFactory(r));
         if (r && r.ProducerType === "Smelter") Buildings.push(NewFactory(r));
         if (r && r.ProducerType === "Miner") Buildings.push(NewExtractor(r));
