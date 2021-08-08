@@ -54,11 +54,17 @@ export type EntityStack = {
 };
 
 export function NewEntityStack(
-  e: string,
+  e: string | Entity,
   initialCount: number = 0,
   maxCount: number = 0
 ): EntityStack {
-  return { Entity: e, Count: initialCount, MaxCount: maxCount };
+  const entityId = typeof e === "string" ? e : e.Id;
+  const stackSize = typeof e === "string" ? 0 : e.StackSize;
+  return {
+    Entity: entityId,
+    Count: initialCount,
+    MaxCount: maxCount || stackSize,
+  };
 }
 
 // Fills an entity stack with items, returns any overflow
