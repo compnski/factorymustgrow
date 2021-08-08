@@ -3,9 +3,7 @@ import { EntityStack, FillEntityStack, MainBus } from "../types";
 import { GameDispatch, ResearchState } from "../factoryGame";
 import { RecipeSelector } from "./RecipeSelector";
 import { SyntheticEvent, useState } from "react";
-import { MainBusSegment } from "./MainBusSegment";
 import { MainBusConst } from "./uiConstants";
-import { availableRecipes } from "../research";
 import { availableItems } from "../research";
 
 const entityIconDoubleClickHandler = (
