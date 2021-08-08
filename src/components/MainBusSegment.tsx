@@ -28,6 +28,8 @@ const getPath = (
   return p;
 };
 
+const beltAnimationDuration = "4s";
+
 export function MainBusSegment({
   mainBus,
   segmentHeight,
@@ -71,7 +73,34 @@ export function MainBusSegment({
           height="16"
           x={laneX + 4}
           y={0}
-        />
+        >
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            from={`0 0`}
+            to={`0 ${segmentHeight}`}
+            begin="0s"
+            dur={beltAnimationDuration}
+            repeatCount="indefinite"
+          />
+        </use>
+        <use
+          href={`#${lane.Entity}`}
+          width="16"
+          height="16"
+          x={laneX + 4}
+          y={0}
+        >
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            from={`0 ${-segmentHeight}`}
+            to={`0 0`}
+            begin="0s"
+            dur={beltAnimationDuration}
+            repeatCount="indefinite"
+          />
+        </use>
       </g>
     );
     idx++;
