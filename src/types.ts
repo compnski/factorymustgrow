@@ -101,19 +101,34 @@ export type OutputStatus = {
   beltConnections: BeltConnection[];
 };
 
+export type RegionInfo = {
+  Id: string;
+  Cost: EntityStack[];
+  Provides: EntityStack[];
+  Capacity: number;
+  MainBusCapacity: number;
+  AdjacentTo: string[];
+};
+
 export type Region = {
+  Id: string;
   Ore: Map<string, EntityStack>;
   BuildingCapacity: number;
+  MainBusCapacity: number;
   Buildings: Producer[];
   Bus: MainBus;
 };
 
 export const NewRegion = (
+  id: string,
   BuildingCapacity: number,
+  MainBusCapacity: number,
   ore: EntityStack[],
   Buildings: Producer[] = []
 ): Region => ({
+  Id: id,
   BuildingCapacity,
+  MainBusCapacity,
   Ore: new Map(ore.map((es) => [es.Entity, es])),
   Buildings,
   Bus: new MainBus(),

@@ -169,7 +169,7 @@ describe("Extractors", () => {
   it("Produces a single item", () => {
     const extractor = NewExtractor(TestOreRecipe, 1);
     extractor.outputBuffers.get("test-ore")!.Count = 1;
-    const region = NewRegion(0, [NewEntityStack("test-ore", 10)]);
+    const region = NewRegion("start", 0, 0, [NewEntityStack("test-ore", 10)]);
 
     TestExtractor(extractor, region, {
       outputBuffers: [NewEntityStack("test-ore", 2)],
@@ -180,7 +180,7 @@ describe("Extractors", () => {
   it("Produces 1.5 items", () => {
     const extractor = NewExtractor(TestSlowOreRecipe, 3);
     extractor.outputBuffers.get("test-ore")!.Count = 1;
-    const region = NewRegion(0, [NewEntityStack("test-ore", 10)]);
+    const region = NewRegion("start", 0, 0, [NewEntityStack("test-ore", 10)]);
 
     TestExtractor(extractor, region, {
       outputBuffers: [NewEntityStack("test-ore", 2.5)],
@@ -190,7 +190,7 @@ describe("Extractors", () => {
 
   it("Produces three items", () => {
     const extractor = NewExtractor(TestOreRecipe, 3);
-    const region = NewRegion(0, [NewEntityStack("test-ore", 10)]);
+    const region = NewRegion("start", 0, 0, [NewEntityStack("test-ore", 10)]);
 
     TestExtractor(extractor, region, {
       outputBuffers: [NewEntityStack("test-ore", 3)],
@@ -200,7 +200,7 @@ describe("Extractors", () => {
 
   it("Produces only as much ore is left", () => {
     const extractor = NewExtractor(TestOreRecipe, 5);
-    const region = NewRegion(0, [NewEntityStack("test-ore", 3)]);
+    const region = NewRegion("start", 0, 0, [NewEntityStack("test-ore", 3)]);
 
     TestExtractor(extractor, region, {
       outputBuffers: [NewEntityStack("test-ore", 3)],

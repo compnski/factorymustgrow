@@ -25,7 +25,6 @@ ReactDOM.render(
           type: "Reset",
         })
       }
-      href="#"
     >
       Reset All Data
     </a>
