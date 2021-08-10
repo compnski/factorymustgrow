@@ -69,43 +69,49 @@ export const UpdateGameState = (
   uiDispatch: (a: UIAction) => void
 ) => {
   try {
-    const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
-    fixOutputStatus(currentRegion.Buildings);
-    fixBeltConnections(currentRegion.Buildings, currentRegion.Bus);
-
-    currentRegion.Buildings.forEach((p) => {
-      switch (p.kind) {
-        case "Factory":
-          ProduceFromFactory(p as Factory, GetRecipe);
-          break;
-        case "Extractor":
-          ProduceFromExtractor(p as Extractor, currentRegion, GetRecipe);
-          break;
-        case "Lab":
-          ResearchInLab(p as Lab, GameState.Research, GetResearch);
-          break;
-      }
-    });
-
+    //const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
+    for (var [, currentRegion] of GameState.Regions) {
+      UpdateGameStateForRegion(tick, currentRegion);
+    }
     // Check Research Completion
     if (IsResearchComplete(GameState.Research)) {
       console.log("Research Complete!");
       GameDispatch({ type: "CompleteResearch" });
       uiDispatch({ type: "ShowResearchSelector" });
     }
-    currentRegion.Buildings.forEach((p, idx) => {
-      PushToNeighbors(
-        p,
-        currentRegion.Buildings[idx - 1],
-        currentRegion.Buildings[idx + 1]
-      );
-      PushPullFromMainBus(p, currentRegion.Bus);
-    });
   } catch (e) {
     //TODO Show error dialog
     console.error("Failed to update game state:", e);
   }
 };
+
+function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
+  fixOutputStatus(currentRegion.Buildings);
+  fixBeltConnections(currentRegion.Buildings, currentRegion.Bus);
+
+  currentRegion.Buildings.forEach((p) => {
+    switch (p.kind) {
+      case "Factory":
+        ProduceFromFactory(p as Factory, GetRecipe);
+        break;
+      case "Extractor":
+        ProduceFromExtractor(p as Extractor, currentRegion, GetRecipe);
+        break;
+      case "Lab":
+        ResearchInLab(p as Lab, GameState.Research, GetResearch);
+        break;
+    }
+  });
+
+  currentRegion.Buildings.forEach((p, idx) => {
+    PushToNeighbors(
+      p,
+      currentRegion.Buildings[idx - 1],
+      currentRegion.Buildings[idx + 1]
+    );
+    PushPullFromMainBus(p, currentRegion.Bus);
+  });
+}
 
 export type GameAction =
   | BasicAction
