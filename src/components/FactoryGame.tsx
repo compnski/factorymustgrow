@@ -11,6 +11,8 @@ import { availableRecipes, availableResearch } from "../research";
 import { FactoryButtonPanel } from "./FactoryButtonPanel";
 import { InventoryDisplay } from "./InventoryDisplay";
 import { availableItems } from "../research";
+import { RegionSelector } from "./RegionSelector";
+import { RegionTabBar } from "./RegionTabBar";
 
 type FactoryGameProps = {
   gameState: FactoryGameState;
@@ -34,7 +36,7 @@ export const FactoryGame = ({
     />
   ) : null;
 
-  const researchSelector = uiState.dialogs.researchSelectorOpen ? (
+  const researchSelector = uiState.dialogs.researchSelectorOpen && (
     <RecipeSelector
       title="Select Research"
       recipes={availableResearch(gameState.Research)}
@@ -44,9 +46,9 @@ export const FactoryGame = ({
       }}
       entityIconLookup={entityIconLookupByKind("Lab")}
     />
-  ) : null;
+  );
 
-  const debugInventorySelector = uiState.dialogs.debugInventorySelectorOpen ? (
+  const debugInventorySelector = uiState.dialogs.debugInventorySelectorOpen && (
     <RecipeSelector
       title="Select Item"
       recipes={availableItems(gameState.Research)}
@@ -59,25 +61,44 @@ export const FactoryGame = ({
         });
       }}
     />
-  ) : null;
+  );
+
+  const regionIds = [...gameState.Regions.keys()];
+  const regionSelector = uiState.dialogs.regionSelectorOpen && (
+    <RegionSelector
+      regionIds={regionIds}
+      currentRegionId={gameState.CurrentRegionId}
+      inventory={gameState.Inventory}
+      gameDispatch={GameDispatch}
+    />
+  );
+  const currentRegion = gameState.Regions.get(gameState.CurrentRegionId)!;
 
   return (
     <div className="factoryGame">
-      {recipeSelector || researchSelector || debugInventorySelector}
+      {recipeSelector ||
+        researchSelector ||
+        debugInventorySelector ||
+        regionSelector}
       <InfoHeader
         uiDispatch={uiDispatch}
-        currentRegion={gameState.CurrentRegion}
-        researchState={gameState.Research}
-      />
-      <MainBusHeader
-        mainBus={gameState.CurrentRegion.Bus}
+        currentRegion={currentRegion}
         researchState={gameState.Research}
       />
       <div className="scoller">
+        <RegionTabBar
+          currentRegionId={gameState.CurrentRegionId}
+          regionIds={regionIds}
+          gameDispatch={GameDispatch}
+        />
+        <MainBusHeader
+          mainBus={currentRegion.Bus}
+          researchState={gameState.Research}
+        />
         <ProducerCardList
-          mainBus={gameState.CurrentRegion.Bus}
-          buildings={gameState.CurrentRegion.Buildings}
-          regionalOre={gameState.CurrentRegion.Ore}
+          mainBus={currentRegion.Bus}
+          buildings={currentRegion.Buildings}
+          regionalOre={currentRegion.Ore}
         />
       </div>
       <InventoryDisplay inventory={gameState.Inventory} />

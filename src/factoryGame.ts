@@ -14,6 +14,7 @@ import {
   Producer,
   MainBus,
   EntityStack,
+  RegionInfo,
 } from "./types";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { CanPushTo, PushPullFromMainBus, PushToNeighbors } from "./movement";
@@ -24,6 +25,7 @@ import { ProducerHasInput, ProducerHasOutput } from "./utils";
 import { UIAction } from "./uiState";
 import { GameWindow } from "./globals";
 import { Inventory } from "./inventory";
+import { GetRegionInfo } from "./region";
 
 export const useGameState = () => useState<FactoryGameState>(GameState);
 
@@ -33,10 +35,17 @@ export type ResearchState = {
 };
 
 export type FactoryGameState = {
-  CurrentRegion: Region;
+  CurrentRegionId: string;
   Research: ResearchState;
   Inventory: Inventory;
+  Regions: Map<string, Region>;
 };
+
+function NewRegionFromInfo(info: RegionInfo): Region {
+  return NewRegion(info.Id, info.Capacity, info.MainBusCapacity, [
+    ...info.Provides,
+  ]);
+}
 
 const initialInventorySize = 8;
 export const initialFactoryGameState = () => ({
@@ -44,19 +53,13 @@ export const initialFactoryGameState = () => ({
     Progress: new Map([["start", NewEntityStack("start", 0, 0)]]),
     CurrentResearchId: "",
   },
-  CurrentRegion: NewRegion(50, [
-    NewEntityStack("iron-ore", 9000),
-    NewEntityStack("copper-ore", 9000),
-    NewEntityStack("stone", 9000),
-    NewEntityStack("coal", 9000),
-    NewEntityStack("crude-oil", 9000),
-    NewEntityStack("water", Infinity),
-  ]),
-  Inventory: new Inventory(8, [
+  CurrentRegionId: "start",
+  Inventory: new Inventory(initialInventorySize, [
     NewEntityStack(GetEntity("burner-mining-drill"), 5),
     NewEntityStack(GetEntity("assembling-machine-1"), 5),
     NewEntityStack(GetEntity("stone-furnace"), 5),
   ]),
+  Regions: new Map([["start", NewRegionFromInfo(GetRegionInfo("start"))]]),
 });
 
 export var GameState = loadStateFromLocalStorage(initialFactoryGameState());
@@ -66,23 +69,17 @@ export const UpdateGameState = (
   uiDispatch: (a: UIAction) => void
 ) => {
   try {
-    fixOutputStatus(GameState.CurrentRegion.Buildings);
-    fixBeltConnections(
-      GameState.CurrentRegion.Buildings,
-      GameState.CurrentRegion.Bus
-    );
+    const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
+    fixOutputStatus(currentRegion.Buildings);
+    fixBeltConnections(currentRegion.Buildings, currentRegion.Bus);
 
-    GameState.CurrentRegion.Buildings.forEach((p) => {
+    currentRegion.Buildings.forEach((p) => {
       switch (p.kind) {
         case "Factory":
           ProduceFromFactory(p as Factory, GetRecipe);
           break;
         case "Extractor":
-          ProduceFromExtractor(
-            p as Extractor,
-            GameState.CurrentRegion,
-            GetRecipe
-          );
+          ProduceFromExtractor(p as Extractor, currentRegion, GetRecipe);
           break;
         case "Lab":
           ResearchInLab(p as Lab, GameState.Research, GetResearch);
@@ -96,13 +93,13 @@ export const UpdateGameState = (
       GameDispatch({ type: "CompleteResearch" });
       uiDispatch({ type: "ShowResearchSelector" });
     }
-    GameState.CurrentRegion.Buildings.forEach((p, idx) => {
+    currentRegion.Buildings.forEach((p, idx) => {
       PushToNeighbors(
         p,
-        GameState.CurrentRegion.Buildings[idx - 1],
-        GameState.CurrentRegion.Buildings[idx + 1]
+        currentRegion.Buildings[idx - 1],
+        currentRegion.Buildings[idx + 1]
       );
-      PushPullFromMainBus(p, GameState.CurrentRegion.Bus);
+      PushPullFromMainBus(p, currentRegion.Bus);
     });
   } catch (e) {
     //TODO Show error dialog
@@ -116,11 +113,17 @@ export type GameAction =
   | BuildingAction
   | DragBuildingAction
   | InventoryTransferAction
-  | LaneAction;
+  | LaneAction
+  | RegionAction;
 
 type LaneAction = {
   type: "RemoveLane";
   laneId: number;
+};
+
+type RegionAction = {
+  type: "ClaimRegion" | "ChangeRegion";
+  regionId: string;
 };
 
 type ProducerAction = {
@@ -168,13 +171,17 @@ type InventoryTransferAction =
     };
 
 function building(action: { buildingIdx: number }): Producer | undefined {
+  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
+
   return action.buildingIdx !== undefined
-    ? GameState.CurrentRegion.Buildings[action.buildingIdx]
+    ? currentRegion.Buildings[action.buildingIdx]
     : undefined;
 }
 
 export const GameDispatch = (action: GameAction) => {
-  const Buildings = GameState.CurrentRegion.Buildings;
+  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
+
+  const Buildings = currentRegion.Buildings;
   switch (action.type) {
     case "Reset":
       GameState = initialFactoryGameState();
@@ -184,7 +191,7 @@ export const GameDispatch = (action: GameAction) => {
       (() => {
         const b = building(action);
         if (b) {
-          GameState.CurrentRegion.Buildings.splice(action.buildingIdx, 1);
+          currentRegion.Buildings.splice(action.buildingIdx, 1);
           if (ProducerHasInput(b.kind))
             b.inputBuffers.forEach((s: EntityStack) =>
               GameState.Inventory.Add(s, Infinity, true)
@@ -198,7 +205,7 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "RemoveLane":
-      const stack = GameState.CurrentRegion.Bus.RemoveLane(action.laneId);
+      const stack = currentRegion.Bus.RemoveLane(action.laneId);
       if (stack) GameState.Inventory.Add(stack, Infinity, true);
       break;
 
@@ -330,18 +337,37 @@ export const GameDispatch = (action: GameAction) => {
         if (toStack) GameState.Inventory.Remove(toStack);
       })();
       break;
+
+    case "ChangeRegion":
+      if (GameState.Regions.has(action.regionId))
+        GameState.CurrentRegionId = action.regionId;
+      break;
+
+    case "ClaimRegion":
+      if (GameState.Regions.has(action.regionId)) {
+        console.log("Region already unlocked", action.regionId);
+        return;
+      }
+      const regionInfo = GetRegionInfo(action.regionId);
+      if (regionInfo) {
+        GameState.Regions.set(action.regionId, NewRegionFromInfo(regionInfo));
+        GameState.CurrentRegionId = action.regionId;
+      }
+      break;
   }
 };
 
 function inventoryTransferStack(
   action: InventoryTransferAction
 ): EntityStack | undefined {
+  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
+
   switch (action.otherStackKind) {
     case "Void":
       return NewEntityStack(action.entity, Infinity, Infinity);
 
     case "MainBus":
-      return GameState.CurrentRegion.Bus.lanes.get(action.laneId);
+      return currentRegion.Bus.lanes.get(action.laneId);
 
     case "Building":
       const b = building(action);

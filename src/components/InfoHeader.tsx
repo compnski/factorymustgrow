@@ -33,11 +33,11 @@ export const InfoHeader = ({
       100;
   return (
     <div className="info-card">
-      {infoCards}
       <div className="top-info">
         <div className={`icon landfill`} />
         <div className="ore-text">{Math.floor(remainingSpace)}</div>
       </div>
+      {infoCards}
       <div
         className="top-info science-info"
         onDoubleClick={(evt) =>

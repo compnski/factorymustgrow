@@ -32,14 +32,16 @@ function addProducers(
     };
   }[]
 ) {
+  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
+
   const upperToggles: number[] = [],
     lowerToggles: number[] = [];
   producerList.forEach(({ name, connect = {} }) => {
-    const buildingIdx = GameState.CurrentRegion.Buildings.length;
+    const buildingIdx = currentRegion.Buildings.length;
 
     GameDispatch({ type: "NewProducer", producerName: name });
 
-    const nextBuildingIdx = GameState.CurrentRegion.Buildings.length;
+    const nextBuildingIdx = currentRegion.Buildings.length;
 
     if (buildingIdx === nextBuildingIdx) {
       throw new Error(`Failed to add producer ${name}`);

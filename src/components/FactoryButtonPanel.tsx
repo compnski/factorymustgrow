@@ -23,6 +23,7 @@ export function FactoryButtonPanel({
       >
         Add Producer
       </div>
+
       <div
         className="add-producer clickable"
         onClick={() =>
@@ -33,6 +34,7 @@ export function FactoryButtonPanel({
       >
         Add Lab
       </div>
+
       <div
         className="add-producer clickable"
         onClick={(evt) =>
@@ -43,6 +45,18 @@ export function FactoryButtonPanel({
         }
       >
         Choose Research
+      </div>
+
+      <div
+        className="add-producer clickable"
+        onClick={(evt) =>
+          uiDispatch({
+            type: "ShowRegionSelector",
+            evt,
+          })
+        }
+      >
+        Claim Region
       </div>
 
       <div

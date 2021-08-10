@@ -6,7 +6,6 @@
 
 .mainBusHeader,
 .main-bus-header {
-  padding-top: 40px;
   background-color: orange;
   width: $appWidth;
   height: 100px;
@@ -22,6 +21,7 @@
     height: 32px;
     text-align: center;
     line-height: 32px;
+    margin: auto 0;
   }
   .belt-count {
     font-size: 22px;
@@ -74,7 +74,7 @@
   .science-info {
     margin-left: auto;
   }
-  position: fixed;
+  //position: fixed;
   display: flex;
   line-height: 12px;
   font-size: 12px;
@@ -131,4 +131,26 @@
   line-height: 32px;
   margin: auto;
   text-align: center;
+}
+
+.region-tab-bar {
+  height: 40px;
+  width: $appWidth;
+  display: flex;
+  background: lightblue;
+}
+.region-tab {
+  min-width: 50px;
+  font-size: 12px;
+  line-height: 14px;
+  border: 2px solid darkgrey;
+  border-radius: 4px;
+  border-bottom: none;
+  margin: 2px 4px;
+  cursor: pointer;
+  padding: 4px;
+  text-align: center;
+  &.active {
+    border-color: black;
+  }
 }

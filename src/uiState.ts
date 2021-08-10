@@ -7,6 +7,7 @@ export type UIState = {
     recipeSelectorOpen: boolean;
     researchSelectorOpen: boolean;
     debugInventorySelectorOpen: boolean;
+    regionSelectorOpen: boolean;
   };
   exploreGameOpen: boolean;
 };
@@ -15,6 +16,7 @@ const closedDialogs = {
   recipeSelectorOpen: false,
   researchSelectorOpen: false,
   debugInventorySelectorOpen: false,
+  regionSelectorOpen: false,
 };
 
 export type UIAction = {
@@ -24,7 +26,8 @@ export type UIAction = {
     | "ShowResearchSelector"
     | "OpenExploreGame"
     | "CloseExploreGame"
-    | "ShowDebugInventorySelector";
+    | "ShowDebugInventorySelector"
+    | "ShowRegionSelector";
   evt?: SyntheticEvent;
 };
 
@@ -38,18 +41,27 @@ export function uiStateReducer(state: UIState, action: UIAction): UIState {
         ...state,
         dialogs: { ...closedDialogs, recipeSelectorOpen: true },
       };
+
     case "ShowResearchSelector":
       action.evt?.stopPropagation();
       return {
         ...state,
         dialogs: { ...closedDialogs, researchSelectorOpen: true },
       };
+
     case "ShowDebugInventorySelector":
       action.evt?.stopPropagation();
       return {
         ...state,
         dialogs: { ...closedDialogs, debugInventorySelectorOpen: true },
       };
+
+    case "ShowRegionSelector":
+      return {
+        ...state,
+        dialogs: { ...closedDialogs, regionSelectorOpen: true },
+      };
+
     case "CloseDialog":
       return {
         ...state,
