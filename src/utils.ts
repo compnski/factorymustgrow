@@ -9,6 +9,16 @@ export const once = (key: string | number | null, f: () => void) => {
   f();
 };
 
+const Liquids = new Set([
+  "water",
+  "crude-oil",
+  "heavy-oil",
+  "light-oil",
+  "lubricant",
+  "petroleum-gas",
+  "sulfuric-acid",
+]);
+
 export function entityIconLookupByKind(
   kind: string
 ): (entity: string) => string {
@@ -20,8 +30,17 @@ export function entityIconLookupByKind(
         if (research) return "sprite-technology-" + research.Icon;
         return "";
       };
+    case "MainBus":
+      return (entity: string) => {
+        if (Liquids.has(entity)) {
+          return entity + "-barrel";
+        }
+        return entity;
+      };
   }
-  return (entity: string) => entity;
+  return (entity: string) => {
+    return entity;
+  };
 }
 
 export function ProducerHasOutput(kind?: string): boolean {

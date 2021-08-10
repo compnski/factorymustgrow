@@ -1,6 +1,7 @@
 import { BeltConnection, MainBus } from "../types";
 import { Icon } from "../gen/svgIcons";
 import { MainBusConst } from "./uiConstants";
+import { entityIconLookupByKind } from "../utils";
 
 const connectionHeight = 5,
   connectionOffset = 20,
@@ -46,6 +47,7 @@ export function MainBusSegment({
   const lanes = [];
   var idx = 0;
   const laneIdxByBeltId: { [key: number]: number } = {};
+  const entityIconLookup = entityIconLookupByKind("MainBus");
 
   for (var [id, lane] of mainBus.lanes.entries()) {
     const laneX =
@@ -54,7 +56,7 @@ export function MainBusSegment({
     laneIdxByBeltId[id] = idx;
     const entity = lane.Entity;
     const laneId = id;
-
+    const iconName = entityIconLookup(entity);
     lanes.push(
       <g key={`lane${id}`}>
         <rect
@@ -66,14 +68,8 @@ export function MainBusSegment({
         >
           <title>{lane.Entity}</title>
         </rect>
-        {Icon(lane.Entity)}
-        <use
-          href={`#${lane.Entity}`}
-          width="16"
-          height="16"
-          x={laneX + 4}
-          y={0}
-        >
+        {Icon(iconName)}
+        <use href={`#${iconName}`} width="16" height="16" x={laneX + 4} y={0}>
           <animateTransform
             attributeName="transform"
             type="translate"
