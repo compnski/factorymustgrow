@@ -72,6 +72,7 @@ export const FactoryGame = ({
       gameDispatch={GameDispatch}
     />
   );
+
   const currentRegion = gameState.Regions.get(gameState.CurrentRegionId)!;
 
   return (

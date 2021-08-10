@@ -1,5 +1,7 @@
+import { SyntheticEvent } from "react";
 import { GameAction } from "../factoryGame";
 import { UIAction } from "../uiState";
+import { ButtonPanel } from "./ButtonPanel";
 
 export type FactoryButtonPanelProps = {
   uiDispatch(e: UIAction): void;
@@ -10,89 +12,61 @@ export function FactoryButtonPanel({
   uiDispatch,
   gameDispatch,
 }: FactoryButtonPanelProps) {
+  const factoryButtons = [
+    {
+      clickHandler: () =>
+        gameDispatch({
+          type: "NewLab",
+        }),
+      title: "Add Lab",
+    },
+    {
+      clickHandler: (evt: SyntheticEvent) =>
+        uiDispatch({
+          type: "ShowResearchSelector",
+          evt,
+        }),
+      title: "Choose Research",
+    },
+
+    {
+      clickHandler: (evt: SyntheticEvent) =>
+        uiDispatch({
+          type: "ShowRegionSelector",
+          evt,
+        }),
+      title: "Claim Region",
+    },
+    {
+      clickHandler: () => {
+        gameDispatch({
+          type: "CompleteResearch",
+        });
+        uiDispatch({ type: "ShowResearchSelector" });
+      },
+
+      title: "Complete Research (DEBUG)",
+    },
+    {
+      clickHandler: () =>
+        uiDispatch({
+          type: "ShowDebugInventorySelector",
+        }),
+      title: "Add To Inventory (DEBUG)",
+    },
+    {
+      clickHandler: (evt: SyntheticEvent) =>
+        uiDispatch({
+          type: "ShowRecipeSelector",
+          evt,
+        }),
+      title: "Add Producer",
+    },
+  ];
+
   return (
     <div className="factory-button-panel">
-      <div
-        className="add-producer clickable"
-        onClick={(evt) =>
-          uiDispatch({
-            type: "ShowRecipeSelector",
-            evt,
-          })
-        }
-      >
-        Add Producer
-      </div>
-
-      <div
-        className="add-producer clickable"
-        onClick={() =>
-          gameDispatch({
-            type: "NewLab",
-          })
-        }
-      >
-        Add Lab
-      </div>
-
-      <div
-        className="add-producer clickable"
-        onClick={(evt) =>
-          uiDispatch({
-            type: "ShowResearchSelector",
-            evt,
-          })
-        }
-      >
-        Choose Research
-      </div>
-
-      <div
-        className="add-producer clickable"
-        onClick={(evt) =>
-          uiDispatch({
-            type: "ShowRegionSelector",
-            evt,
-          })
-        }
-      >
-        Claim Region
-      </div>
-
-      <div
-        className="add-producer clickable"
-        onClick={() => {
-          gameDispatch({
-            type: "CompleteResearch",
-          });
-          uiDispatch({ type: "ShowResearchSelector" });
-        }}
-      >
-        Complete Research (DEBUG)
-      </div>
-
-      <div
-        className="add-producer clickable"
-        onClick={() =>
-          uiDispatch({
-            type: "ShowDebugInventorySelector",
-          })
-        }
-      >
-        Add To Inventory (DEBUG)
-      </div>
+      <ButtonPanel buttons={factoryButtons} />
     </div>
   );
 }
-
-/*
- *       <div
- *         className="clickable explore-button"
- *         onClick={() =>
- *           uiDispatch({
- *             type: "OpenExploreGame",
- *           })
- *         }
- * >
- * Explore!
- * </div> */
