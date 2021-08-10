@@ -41,6 +41,22 @@ const Regions = new Map([
     "region2",
     {
       Id: "region2",
+      Capacity: 400,
+      MainBusCapacity: 7,
+      AdjacentTo: ["start"],
+      Cost: [],
+      Provides: [
+        NewEntityStack("iron-ore", 500000),
+        NewEntityStack("copper-ore", 500000),
+        NewEntityStack("stone", 100000),
+        NewEntityStack("coal", 100000),
+      ],
+    },
+  ],
+  [
+    "region4",
+    {
+      Id: "region4",
       Capacity: 300,
       MainBusCapacity: 6,
       AdjacentTo: ["start"],
@@ -62,22 +78,6 @@ const Regions = new Map([
       Provides: [
         NewEntityStack("iron-ore", 10000),
         NewEntityStack("copper-ore", 10000),
-      ],
-    },
-  ],
-  [
-    "region4",
-    {
-      Id: "region4",
-      Capacity: 400,
-      MainBusCapacity: 7,
-      AdjacentTo: ["start"],
-      Cost: [],
-      Provides: [
-        NewEntityStack("iron-ore", 500000),
-        NewEntityStack("copper-ore", 500000),
-        NewEntityStack("stone", 100000),
-        NewEntityStack("coal", 100000),
       ],
     },
   ],
