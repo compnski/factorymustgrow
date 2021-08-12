@@ -58,7 +58,8 @@ export function FactoryButtonPanel({
       clickHandler: (evt: SyntheticEvent) =>
         uiDispatch({
           type: "ShowRecipeSelector",
-          evt,
+          callback: (recipeId: string) =>
+            gameDispatch({ type: "NewProducer", producerName: recipeId }),
         }),
       title: "Add Producer",
     },

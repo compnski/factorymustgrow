@@ -7,12 +7,15 @@ import {
   NewEntityStack,
   OutputStatus,
   Producer,
+  Recipe,
   Research,
 } from "./types";
 
 export type Lab = {
   kind: "Lab";
+  subkind: "";
   RecipeId: string;
+  ProducerType: string;
   inputBuffers: Map<string, EntityStack>;
   outputBuffers: Map<string, EntityStack>;
   ProducerCount: number;
@@ -33,6 +36,8 @@ const initialLabInput = [
 export function NewLab(initialProduceCount: number = 0): Lab {
   return {
     kind: "Lab",
+    subkind: "",
+    ProducerType: "Lab",
     outputBuffers: new Map(),
     inputBuffers: new Map(
       initialLabInput.map((input) => [
@@ -226,23 +231,27 @@ const IgnoredResearch: Set<string> = new Set([
 ]);
 
 // Returns all recipes that can be crafted given the completed research
-export function availableRecipes(researchState: ResearchState): string[] {
-  var availableRecipes: string[] = [...AlwaysUnlockedRecipes];
+export function availableRecipes(
+  researchState: ResearchState,
+  filterFunc?: (r: Recipe) => boolean
+): string[] {
+  var availableRecipesIds: string[] = [...AlwaysUnlockedRecipes];
   researchState.Progress.forEach((stack) => {
     if (stack.Count === stack.MaxCount) {
       const research = GetResearch(stack.Entity);
-      if (research) availableRecipes.push(...research.Unlocks);
+      if (research) availableRecipesIds.push(...research.Unlocks);
       else console.log("Missing research entity for ", stack.Entity);
     }
   });
-  availableRecipes = availableRecipes.filter((r) => !IgnoredRecipies.has(r));
-  availableRecipes.sort((a, b): number => {
-    const recipeA = GetRecipe(a),
-      recipeB = GetRecipe(b);
+  var availableRecipes = availableRecipesIds
+    .filter((r) => !IgnoredRecipies.has(r))
+    .map((r) => GetRecipe(r));
+  if (filterFunc) availableRecipes = availableRecipes.filter(filterFunc);
+  availableRecipes.sort((recipeA, recipeB): number => {
     const entA = GetEntity(recipeA.Output[0].Entity),
       entB = GetEntity(recipeB.Output[0].Entity);
     if (!entA || !entB) {
-      console.error("missing entity", !entA && a, !entB && b);
+      console.error("missing entity", !entA && recipeA, !entB && recipeB);
       return 0;
     }
     if (entA.Category !== entB.Category)
@@ -250,7 +259,7 @@ export function availableRecipes(researchState: ResearchState): string[] {
     if (entA.Row !== entB.Row) return entA.Row - entB.Row;
     return entA.Col - entB.Col;
   });
-  return availableRecipes;
+  return availableRecipes.map((r) => r.Id);
 }
 
 export function availableItems(researchState: ResearchState): string[] {

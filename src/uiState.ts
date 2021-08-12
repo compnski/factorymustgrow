@@ -1,4 +1,8 @@
+import { resolve } from "dns";
 import { useReducer, SyntheticEvent } from "react";
+import { Recipes } from "./gen/entities";
+import { Recipe } from "./types";
+
 export const useUIState = () =>
   useReducer(uiStateReducer, { dialogs: {} } as UIState);
 
@@ -10,6 +14,8 @@ export type UIState = {
     regionSelectorOpen: boolean;
   };
   exploreGameOpen: boolean;
+  dialogCallback?: (a: any) => void;
+  filterFunc?: (r: Recipe) => boolean;
 };
 
 const closedDialogs = {
@@ -29,16 +35,21 @@ export type UIAction = {
     | "ShowDebugInventorySelector"
     | "ShowRegionSelector";
   evt?: SyntheticEvent;
+  callback?: (a: any) => void;
+  filterFunc?: (r: Recipe) => boolean;
 };
 
 export function uiStateReducer(state: UIState, action: UIAction): UIState {
   console.log(action);
+  const filterFunc = action.filterFunc;
   action.evt?.preventDefault();
   switch (action.type) {
     case "ShowRecipeSelector":
       action.evt?.stopPropagation();
       return {
         ...state,
+        dialogCallback: action.callback,
+        filterFunc,
         dialogs: { ...closedDialogs, recipeSelectorOpen: true },
       };
 
@@ -46,6 +57,8 @@ export function uiStateReducer(state: UIState, action: UIAction): UIState {
       action.evt?.stopPropagation();
       return {
         ...state,
+        dialogCallback: action.callback,
+        filterFunc,
         dialogs: { ...closedDialogs, researchSelectorOpen: true },
       };
 
@@ -53,18 +66,24 @@ export function uiStateReducer(state: UIState, action: UIAction): UIState {
       action.evt?.stopPropagation();
       return {
         ...state,
+        dialogCallback: action.callback,
+        filterFunc,
         dialogs: { ...closedDialogs, debugInventorySelectorOpen: true },
       };
 
     case "ShowRegionSelector":
       return {
         ...state,
+        dialogCallback: action.callback,
+        filterFunc,
         dialogs: { ...closedDialogs, regionSelectorOpen: true },
       };
 
     case "CloseDialog":
       return {
         ...state,
+        dialogCallback: action.callback,
+        filterFunc: undefined,
         dialogs: { ...closedDialogs },
       };
     case "OpenExploreGame":

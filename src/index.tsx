@@ -18,7 +18,7 @@ ReactDOM.render(
     />
 
     <App />
-    <a
+    <div
       className="reset-button"
       onDoubleClick={() =>
         GameDispatch({
@@ -26,8 +26,8 @@ ReactDOM.render(
         })
       }
     >
-      Reset All Data
-    </a>
+      Double Click to Reset All Data
+    </div>
   </React.StrictMode>,
   document.getElementById("root")
 );

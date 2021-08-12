@@ -9,16 +9,19 @@ import {
 } from "./types";
 import { stackTransfer } from "./movement";
 import { TicksPerSecond } from "./constants";
-import { GetEntity } from "./gen/entities";
+import { GetEntity, GetRecipe } from "./gen/entities";
+import { ProducerHasInput, ProducerHasOutput } from "./utils";
+import { GameState } from "./factoryGame";
 
 // Extractor
 export type Extractor = {
   kind: "Extractor";
   subkind:
+    | "burner-mining-drill"
     | "electric-mining-drill"
-    | "pumpjack"
     | "offshore-pump"
-    | "burner-mining-drill";
+    | "pumpjack";
+  ProducerType: string; //"Miner" | "Pumpjack" | "WaterPump";
 
   inputBuffers: Map<string, EntityStack>;
   outputBuffers: Map<string, EntityStack>;
@@ -27,22 +30,79 @@ export type Extractor = {
   ProducerCount: number;
 };
 
+export function UpdateBuildingRecipe(
+  b: Producer | Extractor,
+  recipeId: string,
+  getEntity: (e: string) => Entity = GetEntity
+) {
+  const recipe = GetRecipe(recipeId);
+  const oldInputBuffers = b.inputBuffers,
+    oldOutputBuffers = b.outputBuffers;
+
+  switch (b.kind) {
+    case "Extractor":
+      b.inputBuffers = inputBuffersForExtractor(recipe);
+      b.outputBuffers = outputBuffersForExtractor(recipe);
+      break;
+
+    case "Factory":
+      b.inputBuffers = inputBuffersForFactory(recipe, getEntity);
+      b.outputBuffers = outputBuffersForFactory(recipe, getEntity);
+  }
+  b.RecipeId = recipeId;
+
+  // Remove from input buffers
+  if (ProducerHasInput(b.kind)) {
+    oldInputBuffers.forEach((stack, entity) => {
+      if (recipe.Input.findIndex((e) => e.Entity === entity) < 0) {
+        //Not in input, remove
+        console.log("remove ", entity);
+        GameState.Inventory.Add(stack, Infinity, true);
+      } else {
+        b.inputBuffers.get(entity)!.Count = stack.Count;
+      }
+    });
+  }
+
+  // Remove from output buffers
+  if (ProducerHasOutput(b.kind)) {
+    oldOutputBuffers.forEach((stack, entity) => {
+      if (recipe.Output.findIndex((e) => e.Entity === entity) < 0) {
+        //Not in output, remove
+        console.log("remove ", entity);
+        GameState.Inventory.Add(stack, Infinity, true);
+      } else {
+        b.outputBuffers.get(entity)!.Count = stack.Count;
+      }
+    });
+  }
+}
+
 export function NewExtractor(
   r: Recipe,
   initialProduceCount: number = 0
 ): Extractor {
   return {
     kind: "Extractor",
-    inputBuffers: new Map([
-      [r.Output[0].Entity, NewEntityStack(r.Output[0].Entity, 0, 0)],
-    ]),
-    outputBuffers: new Map([
-      [r.Output[0].Entity, NewEntityStack(r.Output[0].Entity, 0, 50)],
-    ]),
+    subkind: "electric-mining-drill",
+    ProducerType: r.ProducerType,
+    inputBuffers: inputBuffersForExtractor(r),
+    outputBuffers: outputBuffersForExtractor(r),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     RecipeId: r.Id,
     ProducerCount: initialProduceCount,
   };
+}
+
+function inputBuffersForExtractor(r: Recipe): Map<string, EntityStack> {
+  return new Map([
+    [r.Output[0].Entity, NewEntityStack(r.Output[0].Entity, 0, 0)],
+  ]);
+}
+function outputBuffersForExtractor(r: Recipe): Map<string, EntityStack> {
+  return new Map([
+    [r.Output[0].Entity, NewEntityStack(r.Output[0].Entity, 0, 50)],
+  ]);
 }
 
 function productionPerTick(p: Producer, r: Recipe): number {
@@ -84,6 +144,7 @@ export type Factory = {
     | "rocket-silo"
     | "steel-furnace"
     | "stone-furnace";
+  ProducerType: string; //"Assembler" | "RocketSilo" | "ChemPlant" | "Refinery";
 
   inputBuffers: Map<string, EntityStack>;
   outputBuffers: Map<string, EntityStack>;
@@ -104,26 +165,41 @@ function EntityStackForEntity(
 export function NewFactory(
   r: Recipe,
   initialProduceCount: number = 0,
-  getEntity: (e: string) => Entity | undefined = GetEntity
+  getEntity: (e: string) => Entity = GetEntity
 ): Factory {
   return {
     kind: "Factory",
-    outputBuffers: new Map(
-      r.Output.map((output) => [
-        output.Entity,
-        EntityStackForEntity(output.Entity, getEntity),
-      ])
-    ),
-    inputBuffers: new Map(
-      r.Input.map((input) => [
-        input.Entity,
-        EntityStackForEntity(input.Entity, getEntity),
-      ])
-    ),
+    ProducerType: r.ProducerType,
+    subkind: "assembling-machine-1",
+    outputBuffers: outputBuffersForFactory(r, getEntity),
+    inputBuffers: inputBuffersForFactory(r, getEntity),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     RecipeId: r.Id,
     ProducerCount: initialProduceCount,
   };
+}
+
+function inputBuffersForFactory(
+  r: Recipe,
+  getEntity: (e: string) => Entity
+): Map<string, EntityStack> {
+  return new Map(
+    r.Input.map((input) => [
+      input.Entity,
+      EntityStackForEntity(input.Entity, getEntity),
+    ])
+  );
+}
+function outputBuffersForFactory(
+  r: Recipe,
+  getEntity: (e: string) => Entity
+): Map<string, EntityStack> {
+  return new Map(
+    r.Output.map((output) => [
+      output.Entity,
+      EntityStackForEntity(output.Entity, getEntity),
+    ])
+  );
 }
 
 // Requires at least Input items to produce anything
@@ -171,9 +247,10 @@ export function ProduceFromFactory(
 }
 
 // Train Station
-
 export type TrainStation = {
   kind: "TrainStation";
+  subkind: "";
+  ProducerType: string;
   outputBuffers: Map<string, EntityStack>;
   inputBuffers: Map<string, EntityStack>;
   outputStatus: OutputStatus;
