@@ -6,6 +6,7 @@ import {
   NewFactory,
   ProduceFromExtractor,
   ProduceFromFactory,
+  UpdateBuildingRecipe,
 } from "./production";
 import {
   NewRegion,
@@ -26,6 +27,7 @@ import { UIAction } from "./uiState";
 import { GameWindow } from "./globals";
 import { Inventory } from "./inventory";
 import { GetRegionInfo } from "./region";
+import { Building } from "./building";
 
 export const useGameState = () => useState<FactoryGameState>(GameState);
 
@@ -120,7 +122,13 @@ export type GameAction =
   | DragBuildingAction
   | InventoryTransferAction
   | LaneAction
-  | RegionAction;
+  | RegionAction
+  | AddBuildingAction
+  | ChangeRecipeAction;
+
+type AddBuildingAction = {
+  type: "AddBuilding";
+} & Pick<Building, "kind" | "subkind">;
 
 type LaneAction = {
   type: "RemoveLane";
@@ -149,6 +157,12 @@ type BuildingAction = {
     | "ToggleUpperOutputState"
     | "ToggleLowerOutputState";
   buildingIdx: number;
+};
+
+type ChangeRecipeAction = {
+  type: "ChangeRecipe";
+  buildingIdx: number;
+  recipeId: string;
 };
 
 type DragBuildingAction = {
@@ -185,12 +199,24 @@ function building(action: { buildingIdx: number }): Producer | undefined {
 }
 
 export const GameDispatch = (action: GameAction) => {
-  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
+  const currentRegion = GameState?.Regions?.get(GameState.CurrentRegionId)!;
 
-  const Buildings = currentRegion.Buildings;
+  const Buildings = currentRegion?.Buildings;
   switch (action.type) {
     case "Reset":
       GameState = initialFactoryGameState();
+      break;
+
+    case "ChangeRecipe":
+      (() => {
+        const b = building(action);
+        console.log("Change recipe for ", b, "to", action.recipeId);
+        // Change Recipe
+        // Move any Input / Output that no longer matches a buffer into inventory
+        // Update input/output buffers
+        if (b && (b.kind === "Factory" || b.kind === "Extractor"))
+          UpdateBuildingRecipe(b, action.recipeId);
+      })();
       break;
 
     case "RemoveBuilding":

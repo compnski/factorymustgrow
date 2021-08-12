@@ -1,5 +1,11 @@
 import { GameAction, GameDispatch } from "../factoryGame";
-import { EntityStack, FillEntityStack, MainBus, Producer } from "../types";
+import {
+  EntityStack,
+  FillEntityStack,
+  MainBus,
+  Producer,
+  Recipe,
+} from "../types";
 import "./ProducerCard.scss";
 import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
@@ -9,10 +15,12 @@ import {
   ProducerHasInput,
   ProducerHasOutput,
 } from "../utils";
+import { UIAction } from "../uiState";
 
 export type ProducerCardProps = {
   producer: Producer;
   dispatch: (a: GameAction) => void;
+  uiDispatch: (a: UIAction) => void;
   buildingIdx: number;
   mainBus: MainBus;
   regionalOre: Map<string, EntityStack>;
@@ -36,6 +44,7 @@ export const ProducerCard = ({
   producer,
   buildingIdx,
   dispatch,
+  uiDispatch,
   handleDrag,
   handleDrop,
   mainBus,
@@ -208,6 +217,21 @@ export const ProducerCard = ({
           </div>
         </div>
         <div className="bottomArea">
+          <div
+            onClick={() =>
+              uiDispatch({
+                type: "ShowRecipeSelector",
+                filterFunc: function filterRecipes(r: Recipe): boolean {
+                  return r.ProducerType === producer.ProducerType;
+                },
+                callback: (recipeId: string) =>
+                  dispatch({ type: "ChangeRecipe", buildingIdx, recipeId }),
+              })
+            }
+            className="change-recipe clickable"
+          >
+            Change Recipe
+          </div>
           <ProducerBufferDisplay
             inputBuffers={recipeInput}
             outputBuffers={producer.outputBuffers}
@@ -251,3 +275,25 @@ export const ProducerCard = ({
     </div>
   );
 };
+
+function producerTypeFromBuildingKind(kind: string, subkind: string): string {
+  switch (kind) {
+    case "Factory":
+      return "Assembler";
+    case "Extractor":
+      switch (subkind) {
+        case "electric-mining-drill":
+          return "Miner";
+      }
+  }
+  return "";
+}
+
+/* if (r && r.ProducerType === "RocketSilo") Buildings.push(NewFactory(r));
+   if (r && r.ProducerType === "Assembler") Buildings.push(NewFactory(r));
+   if (r && r.ProducerType === "Smelter") Buildings.push(NewFactory(r));
+   if (r && r.ProducerType === "Miner") Buildings.push(NewExtractor(r));
+   if (r && r.ProducerType === "ChemPlant") Buildings.push(NewFactory(r));
+   if (r && r.ProducerType === "Refinery") Buildings.push(NewFactory(r));
+   if (r && r.ProducerType === "Pumpjack") Buildings.push(NewExtractor(r));
+   if (r && r.ProducerType === "WaterPump") */

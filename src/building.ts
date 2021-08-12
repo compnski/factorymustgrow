@@ -14,7 +14,8 @@ export type Building =
 // // // //
 export type Chest = {
   kind: "Chest";
-  subkind: "IronChest" | "SteelChest";
+  subkind: "iron-chest" | "steel-chest";
+  ProducerType: string;
   inputBuffers: Map<string, EntityStack>;
   outputBuffers: Map<string, EntityStack>;
   outputStatus: OutputStatus;
