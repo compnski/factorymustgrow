@@ -1,5 +1,6 @@
 export interface Producer {
   kind: string;
+  subkind: string;
   RecipeId: string;
   inputBuffers: Map<string, EntityStack>;
   outputBuffers: Map<string, EntityStack>;
