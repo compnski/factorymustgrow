@@ -14,6 +14,12 @@ import { GetEntity } from "./gen/entities";
 // Extractor
 export type Extractor = {
   kind: "Extractor";
+  subkind:
+    | "electric-mining-drill"
+    | "pumpjack"
+    | "offshore-pump"
+    | "burner-mining-drill";
+
   inputBuffers: Map<string, EntityStack>;
   outputBuffers: Map<string, EntityStack>;
   outputStatus: OutputStatus;
@@ -66,6 +72,19 @@ export function ProduceFromExtractor(
 
 export type Factory = {
   kind: "Factory";
+  subkind:
+    | "assembling-machine-1"
+    | "assembling-machine-2"
+    | "assembling-machine-3"
+    | "boiler"
+    | "centrifuge"
+    | "chemical-plant"
+    | "electric-furnace"
+    | "oil-refinery"
+    | "rocket-silo"
+    | "steel-furnace"
+    | "stone-furnace";
+
   inputBuffers: Map<string, EntityStack>;
   outputBuffers: Map<string, EntityStack>;
   RecipeId: string;
