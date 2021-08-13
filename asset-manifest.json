@@ -1,30 +1,31 @@
 {
   "files": {
-    "main.css": "/factorymustgrow/static/css/main.3f5c802b.chunk.css",
-    "main.js": "/factorymustgrow/static/js/main.895dd074.chunk.js",
-    "main.js.map": "/factorymustgrow/static/js/main.895dd074.chunk.js.map",
-    "runtime-main.js": "/factorymustgrow/static/js/runtime-main.52fef625.js",
-    "runtime-main.js.map": "/factorymustgrow/static/js/runtime-main.52fef625.js.map",
-    "static/js/2.85b9a4f9.chunk.js": "/factorymustgrow/static/js/2.85b9a4f9.chunk.js",
-    "static/js/2.85b9a4f9.chunk.js.map": "/factorymustgrow/static/js/2.85b9a4f9.chunk.js.map",
-    "static/js/3.4874b2d5.chunk.js": "/factorymustgrow/static/js/3.4874b2d5.chunk.js",
-    "static/js/3.4874b2d5.chunk.js.map": "/factorymustgrow/static/js/3.4874b2d5.chunk.js.map",
+    "main.css": "/factorymustgrow/static/css/main.9b3b17c7.chunk.css",
+    "main.js": "/factorymustgrow/static/js/main.fae3848c.chunk.js",
+    "main.js.map": "/factorymustgrow/static/js/main.fae3848c.chunk.js.map",
+    "runtime-main.js": "/factorymustgrow/static/js/runtime-main.e603c4de.js",
+    "runtime-main.js.map": "/factorymustgrow/static/js/runtime-main.e603c4de.js.map",
+    "static/js/2.12927376.chunk.js": "/factorymustgrow/static/js/2.12927376.chunk.js",
+    "static/js/2.12927376.chunk.js.map": "/factorymustgrow/static/js/2.12927376.chunk.js.map",
+    "static/js/3.52f4c42a.chunk.js": "/factorymustgrow/static/js/3.52f4c42a.chunk.js",
+    "static/js/3.52f4c42a.chunk.js.map": "/factorymustgrow/static/js/3.52f4c42a.chunk.js.map",
     "index.html": "/factorymustgrow/index.html",
-    "static/css/main.3f5c802b.chunk.css.map": "/factorymustgrow/static/css/main.3f5c802b.chunk.css.map",
-    "static/js/2.85b9a4f9.chunk.js.LICENSE.txt": "/factorymustgrow/static/js/2.85b9a4f9.chunk.js.LICENSE.txt",
+    "static/css/main.9b3b17c7.chunk.css.map": "/factorymustgrow/static/css/main.9b3b17c7.chunk.css.map",
+    "static/js/2.12927376.chunk.js.LICENSE.txt": "/factorymustgrow/static/js/2.12927376.chunk.js.LICENSE.txt",
     "static/media/boulder.opt.7fe45767.svg": "/factorymustgrow/static/media/boulder.opt.7fe45767.svg",
     "static/media/bug.opt.a8e27623.svg": "/factorymustgrow/static/media/bug.opt.a8e27623.svg",
     "static/media/cloud.79696805.svg": "/factorymustgrow/static/media/cloud.79696805.svg",
     "static/media/App.scss": "/factorymustgrow/static/media/icons.e7652a31.png",
+    "static/media/regionmap.8cc76147.svg": "/factorymustgrow/static/media/regionmap.8cc76147.svg",
     "static/media/spawner.opt.e29682da.svg": "/factorymustgrow/static/media/spawner.opt.e29682da.svg",
     "static/media/star.a49751f1.svg": "/factorymustgrow/static/media/star.a49751f1.svg",
     "static/media/technology.css": "/factorymustgrow/static/media/technology.7056d4fd.png",
     "static/media/turret.opt.23149056.svg": "/factorymustgrow/static/media/turret.opt.23149056.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.52fef625.js",
-    "static/js/2.85b9a4f9.chunk.js",
-    "static/css/main.3f5c802b.chunk.css",
-    "static/js/main.895dd074.chunk.js"
+    "static/js/runtime-main.e603c4de.js",
+    "static/js/2.12927376.chunk.js",
+    "static/css/main.9b3b17c7.chunk.css",
+    "static/js/main.fae3848c.chunk.js"
   ]
 }
