@@ -34,6 +34,20 @@ export async function showDebugAddItemSelector(
     });
 }
 
+export async function showAddLaneItemSelector(
+  selectRecipe: (c: IconSelectorConfig) => Promise<string | false>
+): Promise<void> {
+  const item = await selectRecipe({
+    title: "Add Bus Lane",
+    recipes: availableItems(GameState.Research),
+  });
+  if (item)
+    GameDispatch({
+      type: "AddLane",
+      entity: item,
+    });
+}
+
 export async function showAddProducerSelector(
   selectRecipe: (c: IconSelectorConfig) => Promise<string | false>
 ): Promise<void> {

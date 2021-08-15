@@ -1,6 +1,6 @@
 @import "./_constants";
 
-.producerCard {
+.producer-card {
   width: $appWidth;
   height: 100px;
   //border: 1px black solid;
@@ -13,27 +13,17 @@
   .icon {
   }
 
-  .dragArea {
-    user-select: none;
-    cursor: grab;
-    line-height: 90px;
-    border-right: 1px darkgrey solid;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .mainArea {
+  .main-area {
     width: 525px;
   }
 
-  .topArea {
+  .top-area {
     display: flex;
     border-top: 1px solid black;
     justify-content: flex-end;
-    padding-left: 25px;
   }
 
-  .bottomArea {
+  .bottom-area {
     display: flex;
     //border: 1px solid black;
   }
@@ -48,7 +38,7 @@
     margin-right: auto;
   }
 
-  .producerCountArea {
+  .producer-count-area {
     display: flex;
 
     .icon {
@@ -57,44 +47,44 @@
       transform: scale(0.5) translateY(-50%);
     }
 
-    .plusMinus {
+    .plus-minus {
       padding: 0px 6px;
       margin: 0 10px;
       border: 1px outset darkgrey;
       font-size: 16px;
       line-height: 32px;
     }
-    .producerCount {
+    .producer-count {
       font-size: 16px;
       line-height: 32px;
     }
   }
 
-  .recipeDisplay {
+  .recipe-display {
     display: flex;
     width: 100%;
     justify-content: flex-end;
     line-height: 32px;
 
-    .quantityText {
+    .quantity-text {
       font-size: 16px;
       width: 40px;
     }
 
-    .recipeItem {
+    .recipe-item {
       display: flex;
       flex-direction: column;
       padding: 0 0px;
     }
 
-    .equalsSign {
+    .equals-sign {
       margin: auto 0;
       margin-right: 12px;
       padding: 0 8px;
       font-size: 32px;
     }
 
-    .iconFrame {
+    .icon-frame {
       .icon {
         margin: -25px;
         transform: scale(0.4);
@@ -107,7 +97,7 @@
     }
   }
 
-  .outputArea {
+  .output-area {
     width: 50px;
     height: 100%;
     display: flex;
@@ -116,14 +106,14 @@
     font-size: 16px;
     border-top: 1px solid black;
     //height: 86px;
-    .outputArrow {
+    .output-arrow {
       box-sizing: border-box;
       border: 2px darkgrey outset;
       text-align: center;
       line-height: 20px;
       height: 22px;
     }
-    .outputArrow.right {
+    .output-arrow.right {
       line-height: 38px;
       height: 38px;
     }

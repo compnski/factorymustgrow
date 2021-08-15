@@ -65,8 +65,6 @@ export const ProducerCard = ({
     )
       return;
 
-    // Labs should only input from bus
-    //
     if (
       ProducerHasOutput(producer.kind) &&
       producer.outputBuffers.has(entity)
@@ -143,9 +141,9 @@ export const ProducerCard = ({
             >
               -
             </div>
-            <div className="producerCount">{producer.ProducerCount}</div>
+            <div className="producer-count">{producer.ProducerCount}</div>
             <div
-              className="plusMinus"
+              className="plus-minus"
               onClick={() =>
                 dispatch({
                   type: "IncreaseProducerCount",
@@ -157,7 +155,7 @@ export const ProducerCard = ({
             </div>
           </div>
         </div>
-        <div className="bottomArea">
+        <div className="bottom-area">
           <div
             onClick={async () => {
               const recipe = await showChangeProducerRecipeSelector(
@@ -178,9 +176,9 @@ export const ProducerCard = ({
           />
         </div>
       </div>
-      <div className="outputArea">
+      <div className="output-area">
         <div
-          className="outputArrow up"
+          className="output-arrow up"
           onClick={() =>
             dispatch({
               type: "ToggleUpperOutputState",
@@ -190,9 +188,9 @@ export const ProducerCard = ({
         >
           {producer.outputStatus.above === "OUT" ? "^" : "-"}
         </div>
-        <div className="outputArrow right">&gt;</div>
+        <div className="output-arrow right">&gt;</div>
         <div
-          className="outputArrow down"
+          className="output-arrow down"
           onClick={() =>
             dispatch({
               type: "ToggleLowerOutputState",
