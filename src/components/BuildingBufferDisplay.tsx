@@ -1,7 +1,7 @@
 import { SyntheticEvent } from "react";
 import { EntityStack, FillEntityStack } from "../types";
 
-export function ProducerBufferDisplay({
+export function BuildingBufferDisplay({
   inputBuffers,
   outputBuffers,
   doubleClickHandler,

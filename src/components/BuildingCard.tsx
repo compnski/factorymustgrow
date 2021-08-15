@@ -6,10 +6,10 @@ import {
   Producer,
   Recipe,
 } from "../types";
-import "./ProducerCard.scss";
+import "./BuildingCard.scss";
 import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
-import { ProducerBufferDisplay } from "./ProducerBufferDisplay";
+import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import {
   entityIconLookupByKind,
   ProducerHasInput,
@@ -19,7 +19,7 @@ import { UIAction } from "../uiState";
 import { showChangeProducerRecipeSelector } from "./selectors";
 import { useIconSelector } from "../IconSelectorProvider";
 
-export type ProducerCardProps = {
+export type BuildingCardProps = {
   producer: Producer;
   dispatch: (a: GameAction) => void;
   uiDispatch: (a: UIAction) => void;
@@ -28,7 +28,7 @@ export type ProducerCardProps = {
   regionalOre: Map<string, EntityStack>;
 };
 
-const ProducerTypeIconMap: { [key: string]: string } = {
+const BuildingTypeIconMap: { [key: string]: string } = {
   Factory: "assembling-machine-1",
   Smelter: "stone-furnace",
   Extractor: "electric-mining-drill",
@@ -38,16 +38,16 @@ const ProducerTypeIconMap: { [key: string]: string } = {
   Lab: "lab",
 };
 
-const ProducerIcon = (p: Producer): string => ProducerTypeIconMap[p.kind];
+const ProducerIcon = (p: Producer): string => BuildingTypeIconMap[p.kind];
 
-export const ProducerCard = ({
+export const BuildingCard = ({
   producer,
   buildingIdx,
   dispatch,
   uiDispatch,
   mainBus,
   regionalOre,
-}: ProducerCardProps) => {
+}: BuildingCardProps) => {
   var recipeInput = producer.inputBuffers;
 
   if (producer.kind === "Extractor" && producer.inputBuffers) {
@@ -168,7 +168,7 @@ export const ProducerCard = ({
           >
             Change Recipe
           </div>
-          <ProducerBufferDisplay
+          <BuildingBufferDisplay
             inputBuffers={recipeInput}
             outputBuffers={producer.outputBuffers}
             doubleClickHandler={entityIconDoubleClickHandler}
@@ -211,25 +211,3 @@ export const ProducerCard = ({
     </div>
   );
 };
-
-function producerTypeFromBuildingKind(kind: string, subkind: string): string {
-  switch (kind) {
-    case "Factory":
-      return "Assembler";
-    case "Extractor":
-      switch (subkind) {
-        case "electric-mining-drill":
-          return "Miner";
-      }
-  }
-  return "";
-}
-
-/* if (r && r.ProducerType === "RocketSilo") Buildings.push(NewFactory(r));
-   if (r && r.ProducerType === "Assembler") Buildings.push(NewFactory(r));
-   if (r && r.ProducerType === "Smelter") Buildings.push(NewFactory(r));
-   if (r && r.ProducerType === "Miner") Buildings.push(NewExtractor(r));
-   if (r && r.ProducerType === "ChemPlant") Buildings.push(NewFactory(r));
-   if (r && r.ProducerType === "Refinery") Buildings.push(NewFactory(r));
-   if (r && r.ProducerType === "Pumpjack") Buildings.push(NewExtractor(r));
-   if (r && r.ProducerType === "WaterPump") */
