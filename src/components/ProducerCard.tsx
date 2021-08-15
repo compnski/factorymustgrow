@@ -26,8 +26,6 @@ export type ProducerCardProps = {
   buildingIdx: number;
   mainBus: MainBus;
   regionalOre: Map<string, EntityStack>;
-  handleDrag: (evt: SyntheticEvent) => void;
-  handleDrop: (evt: SyntheticEvent) => void;
 };
 
 const ProducerTypeIconMap: { [key: string]: string } = {
@@ -47,42 +45,9 @@ export const ProducerCard = ({
   buildingIdx,
   dispatch,
   uiDispatch,
-  handleDrag,
-  handleDrop,
   mainBus,
   regionalOre,
 }: ProducerCardProps) => {
-  const [dragging, setDragging] = useState(false);
-
-  const handleDragOver = (e: SyntheticEvent) => {
-    //console.log("drag over");
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const moveUp = () => {
-    GameDispatch({
-      type: "ReorderBuildings",
-      buildingIdx: buildingIdx,
-      dropBuildingIdx: buildingIdx - 1,
-    });
-  };
-
-  const moveDown = () => {
-    GameDispatch({
-      type: "ReorderBuildings",
-      buildingIdx: buildingIdx,
-      dropBuildingIdx: buildingIdx + 1,
-    });
-  };
-
-  const removeBuilding = () => {
-    GameDispatch({
-      type: "RemoveBuilding",
-      buildingIdx: buildingIdx,
-    });
-  };
-
   var recipeInput = producer.inputBuffers;
 
   if (producer.kind === "Extractor" && producer.inputBuffers) {
@@ -161,40 +126,14 @@ export const ProducerCard = ({
   };
   const selectRecipe = useIconSelector();
   return (
-    <div
-      className="producerCard"
-      draggable={dragging}
-      id={`b-${buildingIdx}`}
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      onDragStart={handleDrag}
-    >
-      <div
-        className="dragArea"
-        onMouseDown={() => setDragging(true)}
-        onMouseUp={() => setDragging(false)}
-        onMouseLeave={() => setDragging(false)}
-        onTouchStart={() => setDragging(true)}
-        onTouchEnd={() => setDragging(false)}
-      >
-        <span onClick={moveUp} className="material-icons arrow">
-          arrow_upward
-        </span>
-        <span className="material-icons">reorder</span>
-        <span onClick={moveDown} className="material-icons arrow">
-          arrow_downward
-        </span>
-        <span onDoubleClick={removeBuilding} className="material-icons arrow">
-          close
-        </span>
-      </div>
-      <div className="mainArea">
-        <div className="topArea">
+    <div className="producer-card" id={`b-${buildingIdx}`}>
+      <div className="main-area">
+        <div className="top-area">
           <div className="title">{producer.RecipeId /* TODO Fix name */}</div>
-          <div className="producerCountArea">
+          <div className="producer-count-area">
             <span className={`icon ${ProducerIcon(producer)}`} />
             <div
-              className="plusMinus"
+              className="plus-minus"
               onClick={() =>
                 dispatch({
                   type: "DecreaseProducerCount",
