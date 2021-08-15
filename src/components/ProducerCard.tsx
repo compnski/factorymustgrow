@@ -16,6 +16,8 @@ import {
   ProducerHasOutput,
 } from "../utils";
 import { UIAction } from "../uiState";
+import { showChangeProducerRecipeSelector } from "./selectors";
+import { useIconSelector } from "../IconSelectorProvider";
 
 export type ProducerCardProps = {
   producer: Producer;
@@ -157,7 +159,7 @@ export const ProducerCard = ({
       });
     }
   };
-
+  const selectRecipe = useIconSelector();
   return (
     <div
       className="producerCard"
@@ -218,16 +220,13 @@ export const ProducerCard = ({
         </div>
         <div className="bottomArea">
           <div
-            onClick={() =>
-              uiDispatch({
-                type: "ShowRecipeSelector",
-                filterFunc: function filterRecipes(r: Recipe): boolean {
-                  return r.ProducerType === producer.ProducerType;
-                },
-                callback: (recipeId: string) =>
-                  dispatch({ type: "ChangeRecipe", buildingIdx, recipeId }),
-              })
-            }
+            onClick={async () => {
+              const recipe = await showChangeProducerRecipeSelector(
+                producer.ProducerType,
+                buildingIdx,
+                selectRecipe
+              );
+            }}
             className="change-recipe clickable"
           >
             Change Recipe

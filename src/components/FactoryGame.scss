@@ -91,10 +91,14 @@
   border: 2px black solid;
   z-index: 1;
   padding: 10px;
-  > p {
+  .title {
     font-size: 24px;
+    line-height: 1;
     color: black;
-    margin: 0;
+    margin: auto;
+    padding-left: 12px;
+    height: 100%;
+    vertical-align: top;
   }
   .recipeList {
     display: flex;
@@ -109,6 +113,9 @@
       //margin-right: -8px;
     }
   }
+}
+
+.close-button {
 }
 
 .modal {
