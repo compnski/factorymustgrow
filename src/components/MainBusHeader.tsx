@@ -87,13 +87,13 @@ export const MainBusHeader = ({
       <div onClick={addLane} className="clickable addLaneButton">
         Add Lane
       </div>
-      {showItemSelector
-        ? RecipeSelector({
-            title: "Select Item",
-            recipes: availableItems(researchState),
-            onClick: addMainBusLane,
+      {/* {showItemSelector
+          ? RecipeSelector({
+          title: "Select Item",
+          recipes: availableItems(researchState),
+          onClick: addMainBusLane,
           })
-        : null}
+          : null} */}
       <div style={{ width: 400, height: 100 }}>
         <div className="lane-header-counts">{lanes}</div>
         <svg>

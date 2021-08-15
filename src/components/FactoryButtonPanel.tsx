@@ -1,7 +1,18 @@
 import { SyntheticEvent } from "react";
-import { GameAction } from "../factoryGame";
+import { GameAction, GameDispatch, GameState } from "../factoryGame";
+import { IconSelectorConfig, useIconSelector } from "../IconSelectorProvider";
+import {
+  availableItems,
+  availableRecipes,
+  availableResearch,
+} from "../research";
 import { UIAction } from "../uiState";
 import { ButtonPanel } from "./ButtonPanel";
+import {
+  showAddProducerSelector,
+  showDebugAddItemSelector,
+  showResearchSelector,
+} from "./selectors";
 
 export type FactoryButtonPanelProps = {
   uiDispatch(e: UIAction): void;
@@ -12,6 +23,8 @@ export function FactoryButtonPanel({
   uiDispatch,
   gameDispatch,
 }: FactoryButtonPanelProps) {
+  // ...
+  const selectRecipe = useIconSelector();
   const factoryButtons = [
     {
       clickHandler: () =>
@@ -21,11 +34,11 @@ export function FactoryButtonPanel({
       title: "Add Lab",
     },
     {
-      clickHandler: (evt: SyntheticEvent) =>
-        uiDispatch({
-          type: "ShowResearchSelector",
-          evt,
-        }),
+      clickHandler: () => showResearchSelector(selectRecipe),
+      /* uiDispatch({
+       *     type: "ShowResearchSelector",
+       *     evt,
+       * }), */
       title: "Choose Research",
     },
 
@@ -48,19 +61,11 @@ export function FactoryButtonPanel({
       title: "Complete Research (DEBUG)",
     },
     {
-      clickHandler: () =>
-        uiDispatch({
-          type: "ShowDebugInventorySelector",
-        }),
+      clickHandler: () => showDebugAddItemSelector(selectRecipe),
       title: "Add To Inventory (DEBUG)",
     },
     {
-      clickHandler: (evt: SyntheticEvent) =>
-        uiDispatch({
-          type: "ShowRecipeSelector",
-          callback: (recipeId: string) =>
-            gameDispatch({ type: "NewProducer", producerName: recipeId }),
-        }),
+      clickHandler: () => showAddProducerSelector(selectRecipe),
       title: "Add Producer",
     },
   ];
