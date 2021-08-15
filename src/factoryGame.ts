@@ -130,10 +130,15 @@ type AddBuildingAction = {
   type: "AddBuilding";
 } & Pick<Building, "kind" | "subkind">;
 
-type LaneAction = {
-  type: "RemoveLane";
-  laneId: number;
-};
+type LaneAction =
+  | {
+      type: "RemoveLane";
+      laneId: number;
+    }
+  | {
+      type: "AddLane";
+      entity: string;
+    };
 
 type RegionAction = {
   type: "ClaimRegion" | "ChangeRegion";
@@ -239,6 +244,10 @@ export const GameDispatch = (action: GameAction) => {
     case "RemoveLane":
       const stack = currentRegion.Bus.RemoveLane(action.laneId);
       if (stack) GameState.Inventory.Add(stack, Infinity, true);
+      break;
+
+    case "AddLane":
+      currentRegion.Bus.AddLane(action.entity);
       break;
 
     case "ChangeResearch":

@@ -35,7 +35,7 @@ export const RecipeSelector = ({
           close
         </span>
         <span className="title">{title}</span>
-        <div className="recipeList">{recipeIcons}</div>
+        <div className="recipe-list">{recipeIcons}</div>
       </div>
     )) || <> </>
   );

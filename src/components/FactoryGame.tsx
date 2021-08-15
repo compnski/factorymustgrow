@@ -26,45 +26,6 @@ export const FactoryGame = ({
   uiDispatch,
 }: FactoryGameProps) => {
   try {
-    /* const recipeSelector = uiState.dialogs.recipeSelectorOpen ? (
-       *   <RecipeSelector
-       *     title="Select Recipe"
-       *     recipes={availableRecipes(gameState.Research, uiState.filterFunc)}
-       *     onClick={(evt: SyntheticEvent, r: string) => {
-       *       uiDispatch({ type: "CloseDialog", evt });
-       *       uiState.dialogCallback && uiState.dialogCallback(r);
-       *     }}
-       *   />
-       * ) : null;
-
-       * const researchSelector = uiState.dialogs.researchSelectorOpen && (
-       *   <RecipeSelector
-       *     title="Select Research"
-       *     recipes={availableResearch(gameState.Research)}
-       *     onClick={(evt: SyntheticEvent, r: string) => {
-       *       uiDispatch({ type: "CloseDialog", evt });
-       *       GameDispatch({ type: "ChangeResearch", producerName: r });
-       *     }}
-       *     entityIconLookup={entityIconLookupByKind("Lab")}
-       *   />
-       * );
-
-       * const debugInventorySelector = uiState.dialogs
-       *   .debugInventorySelectorOpen && (
-       *   <RecipeSelector
-       *     title="Select Item"
-       *     recipes={availableItems(gameState.Research)}
-       *     onClick={(evt: SyntheticEvent, r: string) => {
-       *       uiDispatch({ type: "CloseDialog", evt });
-       *       GameDispatch({
-       *         type: "TransferToInventory",
-       *         otherStackKind: "Void",
-       *         entity: r,
-       *       });
-       *     }}
-       *   />
-       * );
-       */
     const regionIds = [...gameState.Regions.keys()];
     const regionSelector = uiState.dialogs.regionSelectorOpen && (
       <RegionSelector
@@ -78,7 +39,7 @@ export const FactoryGame = ({
     const currentRegion = gameState.Regions.get(gameState.CurrentRegionId)!;
 
     return (
-      <div className="factoryGame">
+      <div className="factory-game">
         {/* {recipeSelector ||
               researchSelector ||
               debugInventorySelector ||*/}

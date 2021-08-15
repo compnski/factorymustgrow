@@ -1,17 +1,16 @@
 @import "./_constants";
 
-.factoryGame {
+.factory-game {
   font-size: 0;
 }
 
-.mainBusHeader,
 .main-bus-header {
   background-color: orange;
   width: $appWidth;
   height: 100px;
   display: flex;
   justify-content: flex-end;
-  .addLaneButton,
+
   .add-lane-button {
     font-size: 16px;
     color: black;
@@ -28,7 +27,7 @@
     color: black;
     line-height: 20px;
   }
-  .mainBusSegment,
+
   .main-bus-segment {
     height: 70px;
   }

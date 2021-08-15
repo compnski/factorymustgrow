@@ -23,22 +23,22 @@ export function ProducerBufferDisplay({
   ) => void;
 }) {
   return (
-    <div className="recipeDisplay">
+    <div className="recipe-display">
       {inputBuffers &&
         [...inputBuffers.entries()].map(([Entity, entityStack]) => {
           return (
             <div
               key={Entity}
-              className="recipeItem"
+              className="recipe-item"
               onDoubleClick={
                 doubleClickHandler &&
                 ((evt) => doubleClickHandler(evt, entityStack))
               }
             >
-              <div className="quantityText">
+              <div className="quantity-text">
                 {Math.floor(entityStack.Count)}
               </div>
-              <div className="iconFrame">
+              <div className="icon-frame">
                 {outputBuffers?.has(Entity) ? (
                   <div className={`icon landfill`} />
                 ) : null}
@@ -47,21 +47,21 @@ export function ProducerBufferDisplay({
             </div>
           );
         })}
-      <div className="equalsSign">=&gt;</div>
+      <div className="equals-sign">=&gt;</div>
       {outputBuffers &&
         [...outputBuffers.values()].map((outputBuffer) => (
           <div
             key={outputBuffer.Entity}
-            className="recipeItem"
+            className="recipe-item"
             onDoubleClick={
               doubleClickHandler &&
               ((evt) => doubleClickHandler(evt, outputBuffer))
             }
           >
-            <div className="quantityText">
+            <div className="quantity-text">
               {Math.floor(outputBuffer?.Count || 0)}
             </div>
-            <div className="iconFrame item-icon-progress">
+            <div className="icon-frame item-icon-progress">
               <progress
                 max={1}
                 value={(outputBuffer?.Count || 0) % 1}

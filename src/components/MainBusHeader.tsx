@@ -5,6 +5,8 @@ import { RecipeSelector } from "./RecipeSelector";
 import { SyntheticEvent, useState } from "react";
 import { MainBusConst } from "./uiConstants";
 import { availableItems } from "../research";
+import { showAddLaneItemSelector } from "./selectors";
+import { useIconSelector } from "../IconSelectorProvider";
 
 const entityIconDoubleClickHandler = (
   evt: {
@@ -48,16 +50,12 @@ export const MainBusHeader = ({
   mainBus: MainBus;
   researchState: ResearchState;
 }) => {
-  const [showItemSelector, setShowItemSelector] = useState(false);
+  const selectRecipe = useIconSelector();
 
-  const addLane = (evt: SyntheticEvent) => {
-    setShowItemSelector(true);
+  async function addLane(evt: SyntheticEvent) {
+    showAddLaneItemSelector(selectRecipe);
     evt.stopPropagation();
-  };
-  const addMainBusLane = (evt: SyntheticEvent, entity: string) => {
-    mainBus.AddLane(entity);
-    setShowItemSelector(false);
-  };
+  }
   const lanes = [];
   for (var entry of mainBus.lanes.entries()) {
     const [laneId, lane] = entry;
@@ -83,17 +81,10 @@ export const MainBusHeader = ({
   };
 
   return (
-    <div className="mainBusHeader" onClick={() => setShowItemSelector(false)}>
-      <div onClick={addLane} className="clickable addLaneButton">
+    <div className="main-bus-header">
+      <div onClick={addLane} className="clickable add-lane-button">
         Add Lane
       </div>
-      {/* {showItemSelector
-          ? RecipeSelector({
-          title: "Select Item",
-          recipes: availableItems(researchState),
-          onClick: addMainBusLane,
-          })
-          : null} */}
       <div style={{ width: 400, height: 100 }}>
         <div className="lane-header-counts">{lanes}</div>
         <svg>
