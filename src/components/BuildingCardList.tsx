@@ -1,9 +1,9 @@
-import { ProducerCard } from "./ProducerCard";
+import { BuildingCard } from "./BuildingCard";
 import { GameDispatch } from "../factoryGame";
 import { EntityStack, MainBus, Producer } from "../types";
 import { UIAction } from "../uiState";
 
-export const ProducerCardList = ({
+export const BuildingCardList = ({
   buildings,
   mainBus,
   regionalOre,
@@ -16,7 +16,7 @@ export const ProducerCardList = ({
 }) => {
   const cards = buildings.map((ep, idx) => {
     return (
-      <ProducerCard
+      <BuildingCard
         key={idx}
         buildingIdx={idx}
         producer={ep}
