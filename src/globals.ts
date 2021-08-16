@@ -1,4 +1,5 @@
-import { FactoryGameState, GameAction, GameDispatch } from "./factoryGame";
+import { GameAction, GameDispatch } from "./factoryGame";
+import { FactoryGameState } from "./useGameState";
 
 import { UIAction } from "./uiState";
 import { MacroName } from "./macro_def";

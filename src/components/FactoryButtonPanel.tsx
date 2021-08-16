@@ -1,16 +1,12 @@
 import { SyntheticEvent } from "react";
-import { GameAction, GameDispatch, GameState } from "../factoryGame";
-import { IconSelectorConfig, useIconSelector } from "../IconSelectorProvider";
-import {
-  availableItems,
-  availableRecipes,
-  availableResearch,
-} from "../research";
+import { GameAction } from "../factoryGame";
+import { GameState } from "../useGameState";
+import { useIconSelector } from "../IconSelectorProvider";
 import { UIAction } from "../uiState";
 import { ButtonPanel } from "./ButtonPanel";
 import {
-  showAddProducerSelector,
   showDebugAddItemSelector,
+  showPlaceBuildingSelector,
   showResearchSelector,
 } from "./selectors";
 
@@ -23,22 +19,16 @@ export function FactoryButtonPanel({
   uiDispatch,
   gameDispatch,
 }: FactoryButtonPanelProps) {
-  // ...
   const selectRecipe = useIconSelector();
   const factoryButtons = [
     {
       clickHandler: () =>
-        gameDispatch({
-          type: "NewLab",
-        }),
-      title: "Add Lab",
+        showPlaceBuildingSelector(selectRecipe, GameState.Inventory),
+      title: "Place Building",
     },
+
     {
       clickHandler: () => showResearchSelector(selectRecipe),
-      /* uiDispatch({
-       *     type: "ShowResearchSelector",
-       *     evt,
-       * }), */
       title: "Choose Research",
     },
 
@@ -50,6 +40,7 @@ export function FactoryButtonPanel({
         }),
       title: "Claim Region",
     },
+
     {
       clickHandler: () => {
         gameDispatch({
@@ -60,13 +51,10 @@ export function FactoryButtonPanel({
 
       title: "Complete Research (DEBUG)",
     },
+
     {
       clickHandler: () => showDebugAddItemSelector(selectRecipe),
       title: "Add To Inventory (DEBUG)",
-    },
-    {
-      clickHandler: () => showAddProducerSelector(selectRecipe),
-      title: "Add Producer",
     },
   ];
 

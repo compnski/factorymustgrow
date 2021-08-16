@@ -1,6 +1,7 @@
 import { EntityStack, FillEntityStack, MainBus } from "../types";
 
-import { GameDispatch, ResearchState } from "../factoryGame";
+import { GameDispatch } from "../factoryGame";
+import { ResearchState } from "../useGameState";
 import { RecipeSelector } from "./RecipeSelector";
 import { SyntheticEvent, useState } from "react";
 import { MainBusConst } from "./uiConstants";

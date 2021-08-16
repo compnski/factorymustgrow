@@ -1,4 +1,4 @@
-import { FactoryGameState } from "./factoryGame";
+import { FactoryGameState } from "./useGameState";
 import { Inventory } from "./inventory";
 import { MainBus } from "./types";
 

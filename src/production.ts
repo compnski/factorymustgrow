@@ -6,12 +6,13 @@ import {
   Region,
   OutputStatus,
   Entity,
+  ProducerType,
 } from "./types";
 import { stackTransfer } from "./movement";
 import { TicksPerSecond } from "./constants";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { ProducerHasInput, ProducerHasOutput } from "./utils";
-import { GameState } from "./factoryGame";
+import { GameState } from "./useGameState";
 
 // Extractor
 export type Extractor = {
@@ -79,17 +80,17 @@ export function UpdateBuildingRecipe(
 }
 
 export function NewExtractor(
-  r: Recipe,
+  { subkind }: Pick<Extractor, "subkind">,
   initialProduceCount: number = 0
 ): Extractor {
   return {
     kind: "Extractor",
-    subkind: "electric-mining-drill",
-    ProducerType: r.ProducerType,
-    inputBuffers: inputBuffersForExtractor(r),
-    outputBuffers: outputBuffersForExtractor(r),
+    subkind: subkind,
+    ProducerType: ProducerTypeFromEntity(subkind),
+    inputBuffers: new Map(),
+    outputBuffers: new Map(),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
-    RecipeId: r.Id,
+    RecipeId: "",
     ProducerCount: initialProduceCount,
   };
 }
@@ -162,19 +163,38 @@ function EntityStackForEntity(
   return NewEntityStack(entity, 0, e?.StackSize || Infinity);
 }
 
+const entityToProducerTypeMap: { [key: string]: ProducerType } = {
+  "assembling-machine-1": "Assembler",
+  "electric-mining-drill": "Miner",
+  "burner-mining-drill": "Miner",
+  "stone-furnace": "Smelter",
+  "chemical-plant": "ChemPlant",
+  "rocket-silo": "RocketSilo",
+  lab: "Lab",
+};
+
+export function IsBuilding(entity: string): boolean {
+  return entity in entityToProducerTypeMap;
+}
+
+export function ProducerTypeFromEntity(entity: string): ProducerType {
+  const producerType = entityToProducerTypeMap[entity];
+  if (producerType) return producerType;
+  throw new Error("Failed to get ProducerTypeFromEntity " + entity);
+}
+
 export function NewFactory(
-  r: Recipe,
-  initialProduceCount: number = 0,
-  getEntity: (e: string) => Entity = GetEntity
+  entity: string,
+  initialProduceCount: number = 0
 ): Factory {
   return {
     kind: "Factory",
-    ProducerType: r.ProducerType,
+    ProducerType: ProducerTypeFromEntity(entity),
     subkind: "assembling-machine-1",
-    outputBuffers: outputBuffersForFactory(r, getEntity),
-    inputBuffers: inputBuffersForFactory(r, getEntity),
+    outputBuffers: new Map(), //outputBuffersForFactory(r, getEntity),
+    inputBuffers: new Map(), //inputBuffersForFactory(r, getEntity),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
-    RecipeId: r.Id,
+    RecipeId: "",
     ProducerCount: initialProduceCount,
   };
 }

@@ -1,4 +1,5 @@
-import { GameState, GameDispatch } from "./factoryGame";
+import { GameDispatch } from "./factoryGame";
+import { GameState } from "./useGameState";
 import { GameWindow } from "./globals";
 
 export type MacroName = "redsci";

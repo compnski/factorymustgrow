@@ -2,6 +2,7 @@ import { BuildingCard } from "./BuildingCard";
 import { GameDispatch } from "../factoryGame";
 import { EntityStack, MainBus, Producer } from "../types";
 import { UIAction } from "../uiState";
+import { Building } from "../building";
 
 export const BuildingCardList = ({
   buildings,
@@ -9,7 +10,7 @@ export const BuildingCardList = ({
   regionalOre,
   uiDispatch,
 }: {
-  buildings: Producer[];
+  buildings: Building[];
   mainBus: MainBus;
   regionalOre: Map<string, EntityStack>;
   uiDispatch: (a: UIAction) => void;
@@ -19,7 +20,7 @@ export const BuildingCardList = ({
       <BuildingCard
         key={idx}
         buildingIdx={idx}
-        producer={ep}
+        building={ep}
         mainBus={mainBus}
         dispatch={GameDispatch}
         uiDispatch={uiDispatch}
