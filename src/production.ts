@@ -34,9 +34,11 @@ export type Extractor = {
 export function UpdateBuildingRecipe(
   b: Producer | Extractor,
   recipeId: string,
-  getEntity: (e: string) => Entity = GetEntity
+  getEntity: (e: string) => Entity | undefined = GetEntity,
+  getRecipe: (e: string) => Recipe | undefined = GetRecipe
 ) {
-  const recipe = GetRecipe(recipeId);
+  const recipe = getRecipe(recipeId);
+  if (!recipe) throw new Error("No recipe found for " + recipeId);
   const oldInputBuffers = b.inputBuffers,
     oldOutputBuffers = b.outputBuffers;
 
@@ -201,7 +203,7 @@ export function NewFactory(
 
 function inputBuffersForFactory(
   r: Recipe,
-  getEntity: (e: string) => Entity
+  getEntity: (e: string) => Entity | undefined
 ): Map<string, EntityStack> {
   return new Map(
     r.Input.map((input) => [
@@ -212,7 +214,7 @@ function inputBuffersForFactory(
 }
 function outputBuffersForFactory(
   r: Recipe,
-  getEntity: (e: string) => Entity
+  getEntity: (e: string) => Entity | undefined
 ): Map<string, EntityStack> {
   return new Map(
     r.Output.map((output) => [
