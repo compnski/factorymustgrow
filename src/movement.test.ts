@@ -1,13 +1,36 @@
-import { NewExtractor, NewFactory } from "./production";
-import { MainBus, EntityStack, NewEntityStack } from "./types";
+import { NewExtractor, NewFactory, UpdateBuildingRecipe } from "./production";
+import { MainBus, EntityStack, NewEntityStack, Producer } from "./types";
 
 import {
   TestRecipe,
   TestOreRecipe,
   TestItemConsumerRecipe,
+  TestRecipeBook,
 } from "./test_recipe_defs";
 import { PushPullFromMainBus, PushToOtherProducer } from "./movement";
 import { TestEntityList } from "./test_entity_defs";
+
+function NewTestFactory(r: string, count: number = 1): Producer {
+  const factory = NewFactory({ subkind: "assembling-machine-1" }, count);
+  UpdateBuildingRecipe(
+    factory,
+    r,
+    TestEntityList.get.bind(TestEntityList),
+    TestRecipeBook.get.bind(TestRecipeBook)
+  );
+  return factory;
+}
+
+function NewTestExtractor(r: string, count: number = 1): Producer {
+  const factory = NewExtractor({ subkind: "burner-mining-drill" }, count);
+  UpdateBuildingRecipe(
+    factory,
+    r,
+    TestEntityList.get.bind(TestEntityList),
+    TestRecipeBook.get.bind(TestRecipeBook)
+  );
+  return factory;
+}
 
 describe("PushToOtherProducer", () => {
   function TestMovement(
@@ -35,12 +58,8 @@ describe("PushToOtherProducer", () => {
   }
 
   it("Moves between Extractor and Factory", () => {
-    const extractor = NewExtractor(TestOreRecipe, 1),
-      factory = NewFactory(
-        TestRecipe,
-        1,
-        TestEntityList.get.bind(TestEntityList)
-      );
+    const extractor = NewTestExtractor("test-ore", 1),
+      factory = NewTestFactory("test-item", 1);
     extractor.outputBuffers.get("test-ore")!.Count = 5;
 
     TestMovement(extractor, factory, 3, {
@@ -53,16 +72,9 @@ describe("PushToOtherProducer", () => {
   });
 
   it("Moves between Factory and Factory", () => {
-    const fromFactory = NewFactory(
-        TestRecipe,
-        1,
-        TestEntityList.get.bind(TestEntityList)
-      ),
-      toFactory = NewFactory(
-        TestItemConsumerRecipe,
-        1,
-        TestEntityList.get.bind(TestEntityList)
-      );
+    const fromFactory = NewTestFactory("test-item", 1),
+      toFactory = NewTestFactory("test-item-consumer", 1);
+
     fromFactory.outputBuffers.get("test-item")!.Count = 5;
 
     TestMovement(fromFactory, toFactory, 3, {
@@ -72,16 +84,8 @@ describe("PushToOtherProducer", () => {
   });
 
   it("Moves uncapped amounts between Factory and Factory", () => {
-    const fromFactory = NewFactory(
-        TestRecipe,
-        1,
-        TestEntityList.get.bind(TestEntityList)
-      ),
-      toFactory = NewFactory(
-        TestItemConsumerRecipe,
-        1,
-        TestEntityList.get.bind(TestEntityList)
-      );
+    const fromFactory = NewTestFactory("test-item", 1),
+      toFactory = NewTestFactory("test-item-consumer", 1);
     fromFactory.outputBuffers.get("test-item")!.Count = 5;
 
     TestMovement(fromFactory, toFactory, Infinity, {
@@ -91,16 +95,8 @@ describe("PushToOtherProducer", () => {
   });
 
   it("Won't overflow target input", () => {
-    const fromFactory = NewFactory(
-        TestRecipe,
-        1,
-        TestEntityList.get.bind(TestEntityList)
-      ),
-      toFactory = NewFactory(
-        TestItemConsumerRecipe,
-        1,
-        TestEntityList.get.bind(TestEntityList)
-      );
+    const fromFactory = NewTestFactory("test-item", 1),
+      toFactory = NewTestFactory("test-item-consumer", 1);
     fromFactory.outputBuffers.get("test-item")!.Count = 55;
 
     TestMovement(fromFactory, toFactory, Infinity, {
@@ -149,11 +145,7 @@ describe("PushPullFromMainBus", () => {
     mb.AddLane("test-item", 0);
     mb.AddLane("test-ore", 5);
     mb.AddLane("test-slow-ore", 10);
-    const factory = NewFactory(
-      TestRecipe,
-      1,
-      TestEntityList.get.bind(TestEntityList)
-    );
+    const factory = NewTestFactory("test-item", 1);
 
     factory.outputBuffers.get("test-item")!.Count = 5;
 

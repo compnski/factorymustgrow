@@ -5,6 +5,7 @@ import {
   NewFactory,
   ProduceFromExtractor,
   ProduceFromFactory,
+  UpdateBuildingRecipe,
 } from "./production";
 import {
   EntityStack,
@@ -22,6 +23,28 @@ import {
 } from "./test_recipe_defs";
 import { TicksPerSecond } from "./constants";
 import { TestEntityList } from "./test_entity_defs";
+
+function NewTestFactory(r: string, count: number = 1): Factory {
+  const factory = NewFactory({ subkind: "assembling-machine-1" }, count);
+  UpdateBuildingRecipe(
+    factory,
+    r,
+    TestEntityList.get.bind(TestEntityList),
+    TestRecipeBook.get.bind(TestRecipeBook)
+  );
+  return factory;
+}
+
+function NewTestExtractor(r: string, count: number = 1): Extractor {
+  const factory = NewExtractor({ subkind: "burner-mining-drill" }, count);
+  UpdateBuildingRecipe(
+    factory,
+    r,
+    TestEntityList.get.bind(TestEntityList),
+    TestRecipeBook.get.bind(TestRecipeBook)
+  );
+  return factory;
+}
 
 describe("Factories", () => {
   function TestFactory(
@@ -49,11 +72,8 @@ describe("Factories", () => {
   }
 
   it("Produces a single item", () => {
-    const factory = NewFactory(
-      TestRecipe,
-      1,
-      TestEntityList.get.bind(TestEntityList)
-    );
+    const factory = NewTestFactory("test-item");
+
     factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
     factory.outputBuffers.get("test-item")!.Count = 1;
 
@@ -67,11 +87,7 @@ describe("Factories", () => {
   });
 
   it("Produces three item", () => {
-    const factory = NewFactory(
-      TestRecipe,
-      3,
-      TestEntityList.get.bind(TestEntityList)
-    );
+    const factory = NewTestFactory("test-item", 3);
     factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
 
     TestFactory(factory, {
@@ -84,11 +100,7 @@ describe("Factories", () => {
   });
 
   it("Produces 1.5 items", () => {
-    const factory = NewFactory(
-      TestSlowRecipe,
-      3,
-      TestEntityList.get.bind(TestEntityList)
-    );
+    const factory = NewTestFactory("test-slow-item", 3);
     factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
 
     TestFactory(factory, {
@@ -102,11 +114,7 @@ describe("Factories", () => {
   });
 
   it("Requires 1 full set of materials to start", () => {
-    const factory = NewFactory(
-      TestSlowRecipe,
-      3,
-      TestEntityList.get.bind(TestEntityList)
-    );
+    const factory = NewTestFactory("test-slow-item", 3);
     factory.inputBuffers.forEach((input) => FillEntityStack(input, 2));
 
     TestFactory(factory, {
@@ -119,11 +127,7 @@ describe("Factories", () => {
   });
 
   it("Won't overfill inventory", () => {
-    const factory = NewFactory(
-      TestRecipe,
-      1,
-      TestEntityList.get.bind(TestEntityList)
-    );
+    const factory = NewTestFactory("test-item", 1);
     factory.inputBuffers.forEach((input) => FillEntityStack(input, 10));
     factory.outputBuffers.get("test-item")!.Count =
       factory.outputBuffers.get("test-item")!.MaxCount;
@@ -167,7 +171,7 @@ describe("Extractors", () => {
   }
 
   it("Produces a single item", () => {
-    const extractor = NewExtractor(TestOreRecipe, 1);
+    const extractor = NewTestExtractor("test-ore", 1);
     extractor.outputBuffers.get("test-ore")!.Count = 1;
     const region = NewRegion("start", 0, 0, [NewEntityStack("test-ore", 10)]);
 
@@ -178,7 +182,7 @@ describe("Extractors", () => {
   });
 
   it("Produces 1.5 items", () => {
-    const extractor = NewExtractor(TestSlowOreRecipe, 3);
+    const extractor = NewTestExtractor("test-slow-ore", 3);
     extractor.outputBuffers.get("test-ore")!.Count = 1;
     const region = NewRegion("start", 0, 0, [NewEntityStack("test-ore", 10)]);
 
@@ -189,7 +193,7 @@ describe("Extractors", () => {
   });
 
   it("Produces three items", () => {
-    const extractor = NewExtractor(TestOreRecipe, 3);
+    const extractor = NewTestExtractor("test-ore", 3);
     const region = NewRegion("start", 0, 0, [NewEntityStack("test-ore", 10)]);
 
     TestExtractor(extractor, region, {
@@ -199,7 +203,7 @@ describe("Extractors", () => {
   });
 
   it("Produces only as much ore is left", () => {
-    const extractor = NewExtractor(TestOreRecipe, 5);
+    const extractor = NewTestExtractor("test-ore", 5);
     const region = NewRegion("start", 0, 0, [NewEntityStack("test-ore", 3)]);
 
     TestExtractor(extractor, region, {
