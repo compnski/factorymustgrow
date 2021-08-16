@@ -1,12 +1,15 @@
-import { GameDispatch, GameState } from "../factoryGame";
+import { GameDispatch } from "../factoryGame";
+import { GameState } from "../useGameState";
 import { GetRecipe } from "../gen/entities";
 import { IconSelectorConfig } from "../IconSelectorProvider";
+import { Inventory } from "../inventory";
 import {
   availableItems,
   availableRecipes,
   availableResearch,
 } from "../research";
 import { entityIconLookupByKind } from "../utils";
+import { IsBuilding } from "../production";
 
 export async function showResearchSelector(
   selectRecipe: (c: IconSelectorConfig) => Promise<string | false>
@@ -48,16 +51,6 @@ export async function showAddLaneItemSelector(
     });
 }
 
-export async function showAddProducerSelector(
-  selectRecipe: (c: IconSelectorConfig) => Promise<string | false>
-): Promise<void> {
-  const recipe = await selectRecipe({
-    title: "Choose Recipe",
-    recipes: availableRecipes(GameState.Research),
-  });
-  if (recipe) GameDispatch({ type: "NewProducer", producerName: recipe });
-}
-
 export async function showChangeProducerRecipeSelector(
   producerType: string,
   buildingIdx: number,
@@ -73,4 +66,19 @@ export async function showChangeProducerRecipeSelector(
     }),
   });
   if (recipeId) GameDispatch({ type: "ChangeRecipe", buildingIdx, recipeId });
+}
+
+export async function showPlaceBuildingSelector(
+  selectRecipe: (c: IconSelectorConfig) => Promise<string | false>,
+  inventory: Inventory
+) {
+  const item = await selectRecipe({
+    title: "Place Building",
+    recipes: inventory.Slots.map((s) => s.Entity).filter((e) => IsBuilding(e)),
+  });
+  if (item)
+    GameDispatch({
+      type: "PlaceBuilding",
+      entity: item,
+    });
 }

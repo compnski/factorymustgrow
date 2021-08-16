@@ -1,5 +1,5 @@
 import { TicksPerSecond } from "./constants";
-import { ResearchState } from "./factoryGame";
+import { ResearchState } from "./useGameState";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { GetResearch, ResearchMap } from "./gen/research";
 import {
@@ -13,7 +13,7 @@ import {
 
 export type Lab = {
   kind: "Lab";
-  subkind: "";
+  subkind: "lab";
   RecipeId: string;
   ProducerType: string;
   inputBuffers: Map<string, EntityStack>;
@@ -36,7 +36,7 @@ const initialLabInput = [
 export function NewLab(initialProduceCount: number = 0): Lab {
   return {
     kind: "Lab",
-    subkind: "",
+    subkind: "lab",
     ProducerType: "Lab",
     outputBuffers: new Map(),
     inputBuffers: new Map(

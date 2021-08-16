@@ -2,7 +2,7 @@ import { EntityStack, FillEntityStack, NewEntityStack } from "./types";
 import { TicksPerSecond } from "./constants";
 import { Lab, NewLab, ResearchInLab } from "./research";
 import { TestResearchBook } from "./test_research_defs";
-import { ResearchState } from "./factoryGame";
+import { ResearchState } from "./useGameState";
 
 describe("Labs", () => {
   function TestLab(

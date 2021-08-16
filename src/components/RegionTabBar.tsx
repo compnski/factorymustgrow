@@ -1,5 +1,6 @@
 import { SyntheticEvent } from "react";
-import { GameAction, GameDispatch, GameState } from "../factoryGame";
+import { GameAction, GameDispatch } from "../factoryGame";
+import { GameState } from "../useGameState";
 
 // TODO Dispatch event to region change
 //

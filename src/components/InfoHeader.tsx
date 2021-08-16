@@ -1,4 +1,4 @@
-import { ResearchState } from "../factoryGame";
+import { ResearchState } from "../useGameState";
 import { Region } from "../types";
 import { UIAction } from "../uiState";
 import { entityIconLookupByKind } from "../utils";

@@ -2,7 +2,8 @@ import "./icons.scss";
 import "./technology.css";
 import "./App.scss";
 
-import { GameState, useGameState, UpdateGameState } from "./factoryGame";
+import { UpdateGameState } from "./factoryGame";
+import { GameState, useGameState } from "./useGameState";
 import { saveStateToLocalStorage } from "./localstorage";
 import { useInterval } from "./reactUtils";
 import { useUIState } from "./uiState";

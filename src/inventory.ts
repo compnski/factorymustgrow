@@ -27,6 +27,13 @@ export class Inventory {
     );
   }
 
+  EntityCount(entity: string): number {
+    return this.Slots.reduce(
+      (accum, stack) => accum + (stack.Entity === entity ? stack.Count : 0),
+      0
+    );
+  }
+
   // Add X of this stack to the inventory. Defaults to 1 stack
   Add(fromStack: EntityStack, count?: number, exceedCapacity: boolean = false) {
     const entity = this.getEntity(fromStack.Entity);
@@ -65,16 +72,12 @@ export class Inventory {
     this.Slots.sort((a, b) => a.Entity.localeCompare(b.Entity));
   }
 
-  // Add X of this stack to the inventory. Defaults to 1 stack
+  // Remove X of this stack to the inventory. Defaults to 1 stack
   Remove(toStack: EntityStack, count?: number) {
     const entity = this.getEntity(toStack.Entity);
     if (!entity) console.error(`Failed to find entity  ${toStack.Entity}`);
     const stackSize = entity.StackSize,
-      totalAmountInInventory = this.Slots.reduce(
-        (accum, stack) =>
-          accum + (stack.Entity === toStack.Entity ? stack.Count : 0),
-        0
-      );
+      totalAmountInInventory = this.EntityCount(toStack.Entity);
     var transferAmount = Math.min(
       totalAmountInInventory,
       count ?? stackSize,

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Extractor,
   Factory,
@@ -6,6 +5,7 @@ import {
   NewFactory,
   ProduceFromExtractor,
   ProduceFromFactory,
+  ProducerTypeFromEntity,
   UpdateBuildingRecipe,
 } from "./production";
 import {
@@ -16,55 +16,20 @@ import {
   MainBus,
   EntityStack,
   RegionInfo,
+  ProducerType,
+  NewRegionFromInfo,
 } from "./types";
-import { GetEntity, GetRecipe } from "./gen/entities";
+import { GetRecipe } from "./gen/entities";
 import { CanPushTo, PushPullFromMainBus, PushToNeighbors } from "./movement";
-import { loadStateFromLocalStorage } from "./localstorage";
 import { IsResearchComplete, Lab, NewLab, ResearchInLab } from "./research";
 import { GetResearch } from "./gen/research";
 import { ProducerHasInput, ProducerHasOutput } from "./utils";
 import { UIAction } from "./uiState";
 import { GameWindow } from "./globals";
-import { Inventory } from "./inventory";
 import { GetRegionInfo } from "./region";
 import { Building } from "./building";
-
-export const useGameState = () => useState<FactoryGameState>(GameState);
-
-export type ResearchState = {
-  CurrentResearchId: string;
-  Progress: Map<string, EntityStack>;
-};
-
-export type FactoryGameState = {
-  CurrentRegionId: string;
-  Research: ResearchState;
-  Inventory: Inventory;
-  Regions: Map<string, Region>;
-};
-
-function NewRegionFromInfo(info: RegionInfo): Region {
-  return NewRegion(info.Id, info.Capacity, info.MainBusCapacity, [
-    ...info.Provides,
-  ]);
-}
-
-const initialInventorySize = 8;
-export const initialFactoryGameState = () => ({
-  Research: {
-    Progress: new Map([["start", NewEntityStack("start", 0, 0)]]),
-    CurrentResearchId: "",
-  },
-  CurrentRegionId: "start",
-  Inventory: new Inventory(initialInventorySize, [
-    NewEntityStack(GetEntity("burner-mining-drill"), 5),
-    NewEntityStack(GetEntity("assembling-machine-1"), 5),
-    NewEntityStack(GetEntity("stone-furnace"), 5),
-  ]),
-  Regions: new Map([["start", NewRegionFromInfo(GetRegionInfo("start"))]]),
-});
-
-export var GameState = loadStateFromLocalStorage(initialFactoryGameState());
+import { GameState, initialFactoryGameState } from "./useGameState";
+import { ResetGameState } from "./useGameState";
 
 export const UpdateGameState = (
   tick: number,
@@ -119,7 +84,6 @@ export type GameAction =
   | BasicAction
   | ProducerAction
   | BuildingAction
-  | DragBuildingAction
   | InventoryTransferAction
   | LaneAction
   | RegionAction
@@ -154,26 +118,25 @@ type BasicAction = {
   type: "NewLab" | "CompleteResearch" | "Reset";
 };
 
-type BuildingAction = {
-  type:
-    | "RemoveBuilding"
-    | "IncreaseProducerCount"
-    | "DecreaseProducerCount"
-    | "ToggleUpperOutputState"
-    | "ToggleLowerOutputState";
-  buildingIdx: number;
-};
+type BuildingAction =
+  | {
+      type:
+        | "RemoveBuilding"
+        | "IncreaseProducerCount"
+        | "DecreaseProducerCount"
+        | "ToggleUpperOutputState"
+        | "ToggleLowerOutputState";
+      buildingIdx: number;
+    }
+  | {
+      type: "PlaceBuilding";
+      entity: string;
+    };
 
 type ChangeRecipeAction = {
   type: "ChangeRecipe";
   buildingIdx: number;
   recipeId: string;
-};
-
-type DragBuildingAction = {
-  type: "ReorderBuildings";
-  buildingIdx: number;
-  dropBuildingIdx?: number;
 };
 
 type InventoryTransferAction =
@@ -195,7 +158,7 @@ type InventoryTransferAction =
       otherStackKind: "Void";
     };
 
-function building(action: { buildingIdx: number }): Producer | undefined {
+function building(action: { buildingIdx: number }): Building | undefined {
   const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
 
   return action.buildingIdx !== undefined
@@ -209,7 +172,7 @@ export const GameDispatch = (action: GameAction) => {
   const Buildings = currentRegion?.Buildings;
   switch (action.type) {
     case "Reset":
-      GameState = initialFactoryGameState();
+      ResetGameState();
       break;
 
     case "ChangeRecipe":
@@ -226,7 +189,7 @@ export const GameDispatch = (action: GameAction) => {
 
     case "RemoveBuilding":
       (() => {
-        const b = building(action);
+        const b = building(action) as Producer;
         if (b) {
           currentRegion.Buildings.splice(action.buildingIdx, 1);
           if (ProducerHasInput(b.kind))
@@ -237,6 +200,10 @@ export const GameDispatch = (action: GameAction) => {
             b.outputBuffers.forEach((s: EntityStack) =>
               GameState.Inventory.Add(s, Infinity, true)
             );
+          GameState.Inventory.Add(
+            NewEntityStack(b.subkind, b.ProducerCount),
+            b.ProducerCount
+          );
         }
       })();
       break;
@@ -284,32 +251,35 @@ export const GameDispatch = (action: GameAction) => {
       Buildings.push(NewLab());
       break;
 
-    case "NewProducer":
-      if (action.producerName) {
-        const r = GetRecipe(action.producerName);
-        if (r && r.ProducerType === "RocketSilo") Buildings.push(NewFactory(r));
-        if (r && r.ProducerType === "Assembler") Buildings.push(NewFactory(r));
-        if (r && r.ProducerType === "Smelter") Buildings.push(NewFactory(r));
-        if (r && r.ProducerType === "Miner") Buildings.push(NewExtractor(r));
-        if (r && r.ProducerType === "ChemPlant") Buildings.push(NewFactory(r));
-        if (r && r.ProducerType === "Refinery") Buildings.push(NewFactory(r));
-        if (r && r.ProducerType === "Pumpjack") Buildings.push(NewExtractor(r));
-        if (r && r.ProducerType === "WaterPump")
-          Buildings.push(NewExtractor(r));
+    case "PlaceBuilding":
+      if (GameState.Inventory.EntityCount(action.entity) <= 0) {
+        break;
       }
+      Buildings.push(NewBuilding(action.entity));
+      GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 1);
       break;
 
     case "IncreaseProducerCount":
       (() => {
-        const b = building(action);
+        const b = building(action) as Producer;
+        if (GameState.Inventory.EntityCount(b.subkind) <= 0) {
+          return;
+        }
+        GameState.Inventory.Remove(NewEntityStack(b.subkind, 0, 1), 1);
+
         if (b) b.ProducerCount = Math.min(50, b.ProducerCount + 1);
       })();
       break;
 
     case "DecreaseProducerCount":
       (() => {
-        const b = building(action);
-        if (b) b.ProducerCount = Math.max(0, b.ProducerCount - 1);
+        const b = building(action) as Producer;
+        if (b) {
+          if (b.ProducerCount > 0) {
+            GameState.Inventory.Add(NewEntityStack(b.subkind, 1, 1), 1);
+            b.ProducerCount = Math.max(0, b.ProducerCount - 1);
+          }
+        }
       })();
       break;
 
@@ -344,21 +314,6 @@ export const GameDispatch = (action: GameAction) => {
           CanPushTo(b, Buildings[action.buildingIdx + 1])
             ? "OUT"
             : "NONE";
-      })();
-      break;
-
-    case "ReorderBuildings":
-      (() => {
-        const b = building(action);
-
-        if (
-          action.buildingIdx !== undefined &&
-          action.dropBuildingIdx !== undefined
-        ) {
-          Buildings.splice(action.buildingIdx, 1);
-          Buildings.splice(action.dropBuildingIdx, 0, b as Producer);
-          fixOutputStatus(Buildings);
-        }
       })();
       break;
 
@@ -424,7 +379,7 @@ function inventoryTransferStack(
   return;
 }
 
-function fixBeltConnections(buildings: Producer[], bus: MainBus) {
+function fixBeltConnections(buildings: Building[], bus: MainBus) {
   buildings.forEach((p) => {
     p.outputStatus.beltConnections.forEach((beltConn, idx) => {
       if (!bus.HasLane(beltConn.beltId))
@@ -433,7 +388,7 @@ function fixBeltConnections(buildings: Producer[], bus: MainBus) {
   });
 }
 
-function fixOutputStatus(buildings: Producer[]) {
+function fixOutputStatus(buildings: Building[]) {
   buildings.forEach((p, idx) => {
     if (p.outputStatus.above === "OUT" && !CanPushTo(p, buildings[idx - 1]))
       p.outputStatus.above = "NONE";
@@ -444,3 +399,26 @@ function fixOutputStatus(buildings: Producer[]) {
 
 (window as unknown as GameWindow).GameState = () => GameState;
 (window as unknown as GameWindow).GameDispatch = GameDispatch;
+
+function NewBuilding(entity: string): Building {
+  switch (ProducerTypeFromEntity(entity)) {
+    case "Assembler":
+    case "Smelter":
+    case "ChemPlant":
+    case "RocketSilo":
+    case "Refinery":
+      return NewFactory(entity, 1);
+
+    case "Miner":
+    case "Pumpjack":
+    case "WaterPump":
+      return NewExtractor({ subkind: entity } as any, 1);
+
+    case "Lab":
+      return NewLab(1);
+
+    case "Boiler":
+    case "Centrifuge":
+      throw new Error("Can't build this entity yet. " + entity);
+  }
+}

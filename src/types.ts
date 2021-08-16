@@ -1,3 +1,5 @@
+import { Building } from "./building";
+
 export interface Producer {
   kind: string;
   subkind: string;
@@ -117,7 +119,7 @@ export type Region = {
   Ore: Map<string, EntityStack>;
   BuildingCapacity: number;
   MainBusCapacity: number;
-  Buildings: Producer[];
+  Buildings: Building[];
   Bus: MainBus;
 };
 
@@ -126,7 +128,7 @@ export const NewRegion = (
   BuildingCapacity: number,
   MainBusCapacity: number,
   ore: EntityStack[],
-  Buildings: Producer[] = []
+  Buildings: Building[] = []
 ): Region => ({
   Id: id,
   BuildingCapacity,
@@ -135,6 +137,12 @@ export const NewRegion = (
   Buildings,
   Bus: new MainBus(),
 });
+
+export function NewRegionFromInfo(info: RegionInfo): Region {
+  return NewRegion(info.Id, info.Capacity, info.MainBusCapacity, [
+    ...info.Provides,
+  ]);
+}
 
 export type BusLane = {
   Id: number;

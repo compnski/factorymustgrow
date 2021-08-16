@@ -26,23 +26,23 @@ export function PushToNeighbors(
   from: {
     outputBuffers: Map<string, EntityStack>;
     outputStatus: OutputStatus;
-    ProducerCount: number;
+    ProducerCount?: number;
   },
   toAbove: {
     inputBuffers: Map<string, EntityStack>;
-    ProducerCount: number;
+    ProducerCount?: number;
   } | null,
   toBelow: {
     inputBuffers: Map<string, EntityStack>;
-    ProducerCount: number;
+    ProducerCount?: number;
   } | null
 ) {
   const maxTransferAbove = Math.min(
-      from.ProducerCount,
+      from?.ProducerCount || 0,
       toAbove?.ProducerCount || 0
     ),
     maxTransferBelow = Math.min(
-      from.ProducerCount,
+      from?.ProducerCount || 0,
       toBelow?.ProducerCount || 0
     );
   if (from.outputStatus.above === "OUT" && toAbove) {
@@ -68,7 +68,8 @@ interface MainBusConnector {
   outputStatus: OutputStatus;
   inputBuffers: Map<string, EntityStack>;
   outputBuffers: Map<string, EntityStack>;
-  ProducerCount: number;
+  ProducerCount?: number;
+  // TransferStackSize/Speed/etc
 }
 
 export type MainBusConnection = {
@@ -78,8 +79,8 @@ export type MainBusConnection = {
   attachedBuffer: EntityStack;
 };
 
-export function PushPullFromMainBus(producer: MainBusConnector, mb: MainBus) {
-  for (var laneConnection of producer.outputStatus.beltConnections) {
+export function PushPullFromMainBus(building: MainBusConnector, mb: MainBus) {
+  for (var laneConnection of building.outputStatus.beltConnections) {
     const busLane = mb.lanes.get(laneConnection.beltId);
     if (!busLane) {
       throw new Error(
@@ -90,13 +91,13 @@ export function PushPullFromMainBus(producer: MainBusConnector, mb: MainBus) {
     }
     const producerBuffer =
         laneConnection.direction === "TO_BUS"
-          ? producer.outputBuffers.get(busLane.Entity)
-          : producer?.inputBuffers.get(busLane.Entity),
-      maxTransferToFromBelt = producer.ProducerCount;
+          ? building.outputBuffers.get(busLane.Entity)
+          : building?.inputBuffers.get(busLane.Entity),
+      maxTransferToFromBelt = building.ProducerCount || 1;
     if (!producerBuffer)
       throw new Error(
         `Failed to find producer buffer for ${JSON.stringify(
-          producer
+          building
         )} for connection ${JSON.stringify(laneConnection)}`
       );
     PushPullLaneFromMainBus(
