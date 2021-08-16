@@ -2,6 +2,7 @@ import { ResearchState } from "../useGameState";
 import { Region } from "../types";
 import { UIAction } from "../uiState";
 import { entityIconLookupByKind } from "../utils";
+import { RemainingRegionBuildingCapacity } from "../region";
 
 export type InfoHeaderProps = {
   currentRegion: Region;
@@ -22,7 +23,7 @@ export const InfoHeader = ({
     </div>
   ));
 
-  const remainingSpace = currentRegion.BuildingCapacity,
+  const remainingSpace = RemainingRegionBuildingCapacity(currentRegion),
     currentResarch = researchState.CurrentResearchId,
     researchIcon =
       entityIconLookupByKind("Lab")(currentResarch) ||

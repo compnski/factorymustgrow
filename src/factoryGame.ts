@@ -26,7 +26,7 @@ import { GetResearch } from "./gen/research";
 import { ProducerHasInput, ProducerHasOutput } from "./utils";
 import { UIAction } from "./uiState";
 import { GameWindow } from "./globals";
-import { GetRegionInfo } from "./region";
+import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
 import { Building } from "./building";
 import { GameState, initialFactoryGameState } from "./useGameState";
 import { ResetGameState } from "./useGameState";
@@ -175,39 +175,6 @@ export const GameDispatch = (action: GameAction) => {
       ResetGameState();
       break;
 
-    case "ChangeRecipe":
-      (() => {
-        const b = building(action);
-        console.log("Change recipe for ", b, "to", action.recipeId);
-        // Change Recipe
-        // Move any Input / Output that no longer matches a buffer into inventory
-        // Update input/output buffers
-        if (b && (b.kind === "Factory" || b.kind === "Extractor"))
-          UpdateBuildingRecipe(b, action.recipeId);
-      })();
-      break;
-
-    case "RemoveBuilding":
-      (() => {
-        const b = building(action) as Producer;
-        if (b) {
-          currentRegion.Buildings.splice(action.buildingIdx, 1);
-          if (ProducerHasInput(b.kind))
-            b.inputBuffers.forEach((s: EntityStack) =>
-              GameState.Inventory.Add(s, Infinity, true)
-            );
-          if (ProducerHasOutput(b.kind))
-            b.outputBuffers.forEach((s: EntityStack) =>
-              GameState.Inventory.Add(s, Infinity, true)
-            );
-          GameState.Inventory.Add(
-            NewEntityStack(b.subkind, b.ProducerCount),
-            b.ProducerCount
-          );
-        }
-      })();
-      break;
-
     case "RemoveLane":
       const stack = currentRegion.Bus.RemoveLane(action.laneId);
       if (stack) GameState.Inventory.Add(stack, Infinity, true);
@@ -251,18 +218,59 @@ export const GameDispatch = (action: GameAction) => {
       Buildings.push(NewLab());
       break;
 
+    case "ChangeRecipe":
+      (() => {
+        const b = building(action);
+        console.log("Change recipe for ", b, "to", action.recipeId);
+        // Change Recipe
+        // Move any Input / Output that no longer matches a buffer into inventory
+        // Update input/output buffers
+        if (b && (b.kind === "Factory" || b.kind === "Extractor"))
+          UpdateBuildingRecipe(b, action.recipeId);
+      })();
+      break;
+
+    case "RemoveBuilding":
+      (() => {
+        const b = building(action) as Producer;
+        if (b) {
+          currentRegion.Buildings.splice(action.buildingIdx, 1);
+          if (ProducerHasInput(b.kind))
+            b.inputBuffers.forEach((s: EntityStack) =>
+              GameState.Inventory.Add(s, Infinity, true)
+            );
+          if (ProducerHasOutput(b.kind))
+            b.outputBuffers.forEach((s: EntityStack) =>
+              GameState.Inventory.Add(s, Infinity, true)
+            );
+          GameState.Inventory.Add(
+            NewEntityStack(b.subkind, b.ProducerCount),
+            b.ProducerCount
+          );
+          // Return space
+        }
+      })();
+      break;
+
     case "PlaceBuilding":
-      if (GameState.Inventory.EntityCount(action.entity) <= 0) {
+      if (
+        GameState.Inventory.EntityCount(action.entity) <= 0 ||
+        RemainingRegionBuildingCapacity(currentRegion) <= 0
+      ) {
         break;
       }
       Buildings.push(NewBuilding(action.entity));
       GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 1);
+      // Consume Space
       break;
 
     case "IncreaseProducerCount":
       (() => {
         const b = building(action) as Producer;
-        if (GameState.Inventory.EntityCount(b.subkind) <= 0) {
+        if (
+          GameState.Inventory.EntityCount(b.subkind) <= 0 ||
+          RemainingRegionBuildingCapacity(currentRegion) <= 0
+        ) {
           return;
         }
         GameState.Inventory.Remove(NewEntityStack(b.subkind, 0, 1), 1);
@@ -407,7 +415,7 @@ function NewBuilding(entity: string): Building {
     case "ChemPlant":
     case "RocketSilo":
     case "Refinery":
-      return NewFactory(entity, 1);
+      return NewFactory({ subkind: entity } as any, 1);
 
     case "Miner":
     case "Pumpjack":

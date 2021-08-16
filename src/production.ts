@@ -184,13 +184,13 @@ export function ProducerTypeFromEntity(entity: string): ProducerType {
 }
 
 export function NewFactory(
-  entity: string,
+  { subkind }: Pick<Factory, "subkind">,
   initialProduceCount: number = 0
 ): Factory {
   return {
     kind: "Factory",
-    ProducerType: ProducerTypeFromEntity(entity),
-    subkind: "assembling-machine-1",
+    ProducerType: ProducerTypeFromEntity(subkind),
+    subkind,
     outputBuffers: new Map(), //outputBuffersForFactory(r, getEntity),
     inputBuffers: new Map(), //inputBuffersForFactory(r, getEntity),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
