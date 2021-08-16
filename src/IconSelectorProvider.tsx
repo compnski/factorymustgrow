@@ -1,7 +1,6 @@
 import { SyntheticEvent, useState } from "react";
 import React from "react";
 import { RecipeSelector } from "./components/RecipeSelector";
-import { entityIconLookupByKind } from "./utils";
 
 const IconSelectorContext = React.createContext<{
   openIconSelector(c: IconSelectorConfig): void;
@@ -9,7 +8,7 @@ const IconSelectorContext = React.createContext<{
 
 export type IconSelectorConfig = {
   actionCallback?: (recipe: string | false) => void;
-  recipes: string[];
+  recipes: { map(f: (r: string) => any): any };
   title: string;
   entityIconLookup?: (entity: string) => string;
 };

@@ -74,7 +74,11 @@ export async function showPlaceBuildingSelector(
 ) {
   const item = await selectRecipe({
     title: "Place Building",
-    recipes: inventory.Slots.map((s) => s.Entity).filter((e) => IsBuilding(e)),
+    recipes: [
+      ...new Set(
+        inventory.Slots.map((s) => s.Entity).filter((e) => IsBuilding(e))
+      ),
+    ],
   });
   if (item)
     GameDispatch({

@@ -2,7 +2,7 @@ import { SyntheticEvent } from "react";
 
 export type RecipeSelectorProps = {
   onConfirm: (evt: SyntheticEvent, recipe: string) => void;
-  recipes: string[];
+  recipes: { map(f: (r: string) => any): any };
   title: string;
   entityIconLookup?: (entity: string) => string;
   open: boolean;
@@ -15,7 +15,7 @@ export const RecipeSelector = ({
   open,
   entityIconLookup = (entity: string): string => entity,
 }: RecipeSelectorProps) => {
-  const recipeIcons = recipes.map((r) => {
+  const recipeIcons = recipes.map((r: string): JSX.Element => {
     return (
       <div
         key={r}
