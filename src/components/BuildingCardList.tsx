@@ -1,6 +1,7 @@
 import { BuildingCard } from "./BuildingCard";
 import { GameDispatch } from "../factoryGame";
 import { EntityStack, MainBus, Producer } from "../types";
+import { SyntheticEvent, useState } from "react";
 import { UIAction } from "../uiState";
 import { Building } from "../building";
 
@@ -15,6 +16,26 @@ export const BuildingCardList = ({
   regionalOre: Map<string, EntityStack>;
   uiDispatch: (a: UIAction) => void;
 }) => {
+  const [dragIdx, setDragIdx] = useState(-1);
+
+  const handleDrag = (buildingIdx: number) => (e: SyntheticEvent) => {
+    console.log("drag start");
+    setDragIdx(buildingIdx);
+    //e.preventDefault();
+    //e.stopPropagation();
+  };
+
+  const handleDrop = (dropIdx: number) => (e: SyntheticEvent) => {
+    console.log(dragIdx, dropIdx);
+    GameDispatch({
+      type: "ReorderBuildings",
+      buildingIdx: dragIdx,
+      dropBuildingIdx: dropIdx,
+    });
+    //e.preventDefault();
+    //e.stopPropagation();
+  };
+
   const cards = buildings.map((ep, idx) => {
     return (
       <BuildingCard
@@ -25,9 +46,11 @@ export const BuildingCardList = ({
         dispatch={GameDispatch}
         uiDispatch={uiDispatch}
         regionalOre={regionalOre}
+        handleDrag={handleDrag(idx)}
+        handleDrop={handleDrop(idx)}
       />
     );
   });
 
-  return <div className="producer-card-list">{cards}</div>;
+  return <div className="producerCardList">{cards}</div>;
 };

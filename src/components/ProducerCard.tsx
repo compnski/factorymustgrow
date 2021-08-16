@@ -19,16 +19,6 @@ import { UIAction } from "../uiState";
 import { showChangeProducerRecipeSelector } from "./selectors";
 import { useIconSelector } from "../IconSelectorProvider";
 
-const BuildingTypeIconMap: { [key: string]: string } = {
-  Factory: "assembling-machine-1",
-  Smelter: "stone-furnace",
-  Extractor: "electric-mining-drill",
-  ChemFactory: "",
-  Refinery: "",
-  Pumpjack: "",
-  Lab: "lab",
-};
-
 const ProducerIcon = (p: Producer): string => p.subkind;
 
 export type ProducerCardProps = {

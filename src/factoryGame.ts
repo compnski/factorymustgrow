@@ -88,6 +88,7 @@ export type GameAction =
   | LaneAction
   | RegionAction
   | AddBuildingAction
+  | DragBuildingAction
   | ChangeRecipeAction;
 
 type AddBuildingAction = {
@@ -107,6 +108,12 @@ type LaneAction =
 type RegionAction = {
   type: "ClaimRegion" | "ChangeRegion";
   regionId: string;
+};
+
+type DragBuildingAction = {
+  type: "ReorderBuildings";
+  buildingIdx: number;
+  dropBuildingIdx?: number;
 };
 
 type ProducerAction = {
@@ -227,6 +234,21 @@ export const GameDispatch = (action: GameAction) => {
         // Update input/output buffers
         if (b && (b.kind === "Factory" || b.kind === "Extractor"))
           UpdateBuildingRecipe(b, action.recipeId);
+      })();
+      break;
+
+    case "ReorderBuildings":
+      (() => {
+        const b = building(action);
+
+        if (
+          action.buildingIdx !== undefined &&
+          action.dropBuildingIdx !== undefined
+        ) {
+          Buildings.splice(action.buildingIdx, 1);
+          Buildings.splice(action.dropBuildingIdx, 0, b as Building);
+          fixOutputStatus(Buildings);
+        }
       })();
       break;
 
