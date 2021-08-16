@@ -1,4 +1,14 @@
-import { NewEntityStack, RegionInfo } from "./types";
+import { NewEntityStack, Producer, Region, RegionInfo } from "./types";
+
+export function RemainingRegionBuildingCapacity(region: Region): number {
+  return (
+    region.BuildingCapacity -
+    region.Buildings.reduce(
+      (accum, b) => accum + (b as Producer).ProducerCount || 0,
+      0
+    )
+  );
+}
 
 const Regions = new Map([
   [
