@@ -28,6 +28,8 @@ export type BuildingCardProps = {
   buildingIdx: number;
   mainBus: MainBus;
   regionalOre: Map<string, EntityStack>;
+  handleDrag: (evt: SyntheticEvent) => void;
+  handleDrop: (evt: SyntheticEvent) => void;
 };
 
 export const BuildingCard = ({
@@ -37,6 +39,8 @@ export const BuildingCard = ({
   uiDispatch,
   mainBus,
   regionalOre,
+  handleDrag,
+  handleDrop,
 }: BuildingCardProps) => {
   const busLaneClicked = (laneId: number, entity: string) => {
     if (
@@ -68,6 +72,29 @@ export const BuildingCard = ({
     );
     building.outputStatus.beltConnections.splice(connectIdx, 1);
   };
+  const [dragging, setDragging] = useState(false);
+
+  const handleDragOver = (e: SyntheticEvent) => {
+    //console.log("drag over");
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const moveUp = () => {
+    GameDispatch({
+      type: "ReorderBuildings",
+      buildingIdx: buildingIdx,
+      dropBuildingIdx: buildingIdx - 1,
+    });
+  };
+
+  const moveDown = () => {
+    GameDispatch({
+      type: "ReorderBuildings",
+      buildingIdx: buildingIdx,
+      dropBuildingIdx: buildingIdx + 1,
+    });
+  };
 
   const removeBuilding = () => {
     GameDispatch({
@@ -77,10 +104,33 @@ export const BuildingCard = ({
   };
 
   return (
-    <div className="producer-card" id={`b-${buildingIdx}`}>
-      <span onDoubleClick={removeBuilding} className="material-icons arrow">
-        close
-      </span>
+    <div
+      className="producer-card"
+      draggable={dragging}
+      id={`b-${buildingIdx}`}
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      onDragStart={handleDrag}
+    >
+      <div
+        className="drag-area"
+        onMouseDown={() => setDragging(true)}
+        onMouseUp={() => setDragging(false)}
+        onMouseLeave={() => setDragging(false)}
+        onTouchStart={() => setDragging(true)}
+        onTouchEnd={() => setDragging(false)}
+      >
+        <span onClick={moveUp} className="material-icons arrow">
+          arrow_upward
+        </span>
+        <span className="material-icons">reorder</span>
+        <span onClick={moveDown} className="material-icons arrow">
+          arrow_downward
+        </span>
+        <span onDoubleClick={removeBuilding} className="material-icons arrow">
+          close
+        </span>
+      </div>
 
       <ProducerCard
         producer={building as Producer}
