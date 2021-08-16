@@ -1,4 +1,56 @@
 #+TITLE: Todo
+* Next Ideas
+** Transport
+*** Belt transport
+Array of stacks
+Pointer to each end
+Pointers move, like ring buffer
+**** Direct connects two regions
+*** Pipe transport
+Fluids are instantaneous?
+**** Direct connects two regions
+*** Train transport
+Move large quantities every interval
+**** Connects to rail grid
+** Fuel
+*** Gotta pay for smelters, power plants, etc
+*** "fuel slot" holds any fuel
+Consumed to power building
+Buildings have an interal power buffer charged by fuel / electicity
+Each step of recipe takes some amount of fuel/power
+*** Cost to wire region for power?
+** Power
+*** Each region has separate power
+*** Can generate in region, or export/import
+*** Regions have limited size interconnect
+*** day/night for solar?
+*** Can built accumulator packs
+** Liquids
+*** Pipes are underground, under factory
+*** Can't go on main belt
+*** Lay out pipes in some fixed-width area
+*** Connect extrators, factories, pipelines
+** MainBus
+*** Pay for building
+**** To add new lane
+**** When extending
+*** Allow belts to have variable height (not top-to-bottom)
+** Transfer speed
+*** Each transfer point has defined speed (Items/second)
+*** Can upgrade or build more transferers to incresae rate
+*** Needs UX to show rate and to allow upgrading
+** Different Building stats
+*** Different buildings have different speeds / power consumption
+** Regions
+*** Cost to claim
+*** Info UX
+*** Distanace between cost to expand
+*** Better differentiation
+** Starter Building
+*** Producers basic miner/smelter/assembler
+In case you delete yours
+*** Provides some basic power?
+
 * UI
 ** Fix Liquid stack sizes
 ** Tabs
