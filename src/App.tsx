@@ -13,6 +13,7 @@ import { TicksPerSecond } from "./constants";
 import { GameWindow } from "./globals";
 import "./macro_def";
 import { IconSelectorProvider } from "./IconSelectorProvider";
+import { GeneralDialogProvider } from "./GeneralDialogProvider";
 
 function App() {
   const [gameState, setGameState] = useGameState();
@@ -48,25 +49,27 @@ function App() {
   ) : null;
 
   return (
-    <IconSelectorProvider>
-      <div
-        className="App"
-        onClick={(evt) => {
-          if ((evt.target as Element).classList.contains("clickable")) return;
-          uiDispatch({ type: "CloseDialog", evt });
-        }}
-      >
-        {exploreGame}
-        <FactoryGame
-          gameState={gameState}
-          uiState={uiState}
-          uiDispatch={uiDispatch}
-        />
-        <p>
-          <a href="https://github.com/compnski/factorymustgrow">Github</a>
-        </p>
-      </div>
-    </IconSelectorProvider>
+    <GeneralDialogProvider>
+      <IconSelectorProvider>
+        <div
+          className="App"
+          onClick={(evt) => {
+            if ((evt.target as Element).classList.contains("clickable")) return;
+            uiDispatch({ type: "CloseDialog", evt });
+          }}
+        >
+          {exploreGame}
+          <FactoryGame
+            gameState={gameState}
+            uiState={uiState}
+            uiDispatch={uiDispatch}
+          />
+          <p>
+            <a href="https://github.com/compnski/factorymustgrow">Github</a>
+          </p>
+        </div>
+      </IconSelectorProvider>
+    </GeneralDialogProvider>
   );
 }
 

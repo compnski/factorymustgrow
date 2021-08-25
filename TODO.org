@@ -36,6 +36,7 @@ Each step of recipe takes some amount of fuel/power
 **** When extending
 *** Allow belts to have variable height (not top-to-bottom)
 ** Transfer speed
+*** Show inserters between factories, maybe between factory and mainbus
 *** Each transfer point has defined speed (Items/second)
 *** Can upgrade or build more transferers to incresae rate
 *** Needs UX to show rate and to allow upgrading
