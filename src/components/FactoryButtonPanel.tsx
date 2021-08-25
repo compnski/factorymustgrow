@@ -1,5 +1,5 @@
 import { SyntheticEvent } from "react";
-import { GameAction } from "../factoryGame";
+import { GameAction, GameDispatch } from "../factoryGame";
 import { GameState } from "../useGameState";
 import { useIconSelector } from "../IconSelectorProvider";
 import { UIAction } from "../uiState";
@@ -9,6 +9,12 @@ import {
   showPlaceBuildingSelector,
   showResearchSelector,
 } from "./selectors";
+import {
+  GeneralDialogConfig,
+  useGeneralDialog,
+} from "../GeneralDialogProvider";
+import { Inventory } from "../inventory";
+import { PlaceBeltLinePanel } from "./PlaceBeltLinePanel";
 
 export type FactoryButtonPanelProps = {
   uiDispatch(e: UIAction): void;
@@ -19,16 +25,17 @@ export function FactoryButtonPanel({
   uiDispatch,
   gameDispatch,
 }: FactoryButtonPanelProps) {
-  const selectRecipe = useIconSelector();
+  const iconSelector = useIconSelector();
+  const generalDialog = useGeneralDialog();
   const factoryButtons = [
     {
       clickHandler: () =>
-        showPlaceBuildingSelector(selectRecipe, GameState.Inventory),
+        showPlaceBuildingSelector(iconSelector, GameState.Inventory),
       title: "Place Building",
     },
 
     {
-      clickHandler: () => showResearchSelector(selectRecipe),
+      clickHandler: () => showResearchSelector(iconSelector),
       title: "Choose Research",
     },
 
@@ -53,8 +60,14 @@ export function FactoryButtonPanel({
     },
 
     {
-      clickHandler: () => showDebugAddItemSelector(selectRecipe),
+      clickHandler: () => showDebugAddItemSelector(iconSelector),
       title: "Add To Inventory (DEBUG)",
+    },
+
+    {
+      clickHandler: () =>
+        showPlaceBeltLineSelector(generalDialog, GameState.Inventory),
+      title: "Add Belt Line",
     },
   ];
 
@@ -63,4 +76,25 @@ export function FactoryButtonPanel({
       <ButtonPanel buttons={factoryButtons} />
     </div>
   );
+}
+
+export async function showPlaceBeltLineSelector(
+  showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
+  inventory: Inventory
+) {
+  const result = await showDialog({
+    title: "Place Belt Line",
+    component: (onConfirm) => (
+      <PlaceBeltLinePanel
+        title="Place Belt Line"
+        inventory={inventory}
+        onConfirm={onConfirm}
+      />
+    ),
+  });
+  if (result) {
+    const [targetRegion, beltType] = result;
+    console.log(result);
+    console.log(targetRegion, beltType);
+  }
 }

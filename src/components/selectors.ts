@@ -10,11 +10,12 @@ import {
 } from "../research";
 import { entityIconLookupByKind } from "../utils";
 import { IsBuilding } from "../production";
+import { GeneralDialogConfig } from "../GeneralDialogProvider";
 
 export async function showResearchSelector(
-  selectRecipe: (c: IconSelectorConfig) => Promise<string | false>
+  showIconSelector: (c: IconSelectorConfig) => Promise<string | false>
 ): Promise<void> {
-  const recipe = await selectRecipe({
+  const recipe = await showIconSelector({
     title: "Choose Research",
     recipes: availableResearch(GameState.Research),
     entityIconLookup: entityIconLookupByKind("Lab"),
