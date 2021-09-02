@@ -55,7 +55,6 @@ export const UpdateGameState = (
 function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
   fixOutputStatus(currentRegion.Buildings);
   fixBeltConnections(currentRegion.Buildings, currentRegion.Bus);
-
   currentRegion.Buildings.forEach((p) => {
     switch (p.kind) {
       case "Factory":
@@ -69,7 +68,6 @@ function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
         break;
     }
   });
-
   currentRegion.Buildings.forEach((p, idx) => {
     PushToNeighbors(
       p,

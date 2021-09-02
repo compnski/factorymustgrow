@@ -15,6 +15,7 @@ import {
 } from "../GeneralDialogProvider";
 import { Inventory } from "../inventory";
 import { PlaceBeltLinePanel } from "./PlaceBeltLinePanel";
+import { Region } from "../types";
 
 export type FactoryButtonPanelProps = {
   uiDispatch(e: UIAction): void;
@@ -66,7 +67,11 @@ export function FactoryButtonPanel({
 
     {
       clickHandler: () =>
-        showPlaceBeltLineSelector(generalDialog, GameState.Inventory),
+        showPlaceBeltLineSelector(
+          generalDialog,
+          GameState.Inventory,
+          GameState.Regions
+        ),
       title: "Add Belt Line",
     },
   ];
@@ -80,7 +85,8 @@ export function FactoryButtonPanel({
 
 export async function showPlaceBeltLineSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
-  inventory: Inventory
+  inventory: Inventory,
+  regions: Map<string, Region>
 ) {
   const result = await showDialog({
     title: "Place Belt Line",
@@ -88,6 +94,7 @@ export async function showPlaceBeltLineSelector(
       <PlaceBeltLinePanel
         title="Place Belt Line"
         inventory={inventory}
+        regions={regions}
         onConfirm={onConfirm}
       />
     ),
