@@ -247,16 +247,17 @@ export function ProduceFromFactory(
     availableInputs = producableItemsForInput(f.inputBuffers, recipe.Input),
     availableInventorySpace = recipe.Output.reduce((accum, entityStack) => {
       const outputStack = f.outputBuffers.get(entityStack.Entity);
-      return Math.min(
-        accum,
-        (outputStack?.MaxCount || Infinity) - (outputStack?.Count || 0)
-      );
+      var spaceInOutputStack =
+        (outputStack?.MaxCount || Infinity) - (outputStack?.Count || 0);
+      if (spaceInOutputStack < entityStack.Count) spaceInOutputStack = 0;
+      return Math.min(accum, spaceInOutputStack);
     }, Infinity),
     actualProduction = Math.min(
       maxProduction,
       availableInputs,
       availableInventorySpace
     );
+
   for (var input of recipe.Input) {
     const inputItem = f.inputBuffers.get(input.Entity);
     if (inputItem) inputItem.Count -= input.Count * actualProduction;
