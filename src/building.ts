@@ -1,13 +1,13 @@
 import { Extractor, Factory, TrainStation } from "./production";
 import { Lab } from "./research";
-import { BeltLine } from "./transport";
+import { BeltLine, BeltLineDepot } from "./transport";
 import { EntityStack, OutputStatus } from "./types";
 
 export type Building =
   | Factory
   | Extractor
   | Lab
-  | BeltLine
+  | BeltLineDepot
   | TrainStation
   | Chest;
 // Roboport

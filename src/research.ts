@@ -18,7 +18,7 @@ export type Lab = {
   ProducerType: string;
   inputBuffers: Map<string, EntityStack>;
   outputBuffers: Map<string, EntityStack>;
-  ProducerCount: number;
+  BuildingCount: number;
   outputStatus: OutputStatus;
 };
 
@@ -47,12 +47,12 @@ export function NewLab(initialProduceCount: number = 0): Lab {
     ),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     RecipeId: "",
-    ProducerCount: initialProduceCount,
+    BuildingCount: initialProduceCount,
   };
 }
 
 function productionPerTick(p: Producer, r: Research): number {
-  return (p.ProducerCount * r.ProductionPerTick) / TicksPerSecond;
+  return (p.BuildingCount * r.ProductionPerTick) / TicksPerSecond;
 }
 
 // Requires at least Input items to produce anything

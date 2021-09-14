@@ -4,7 +4,7 @@ export function RemainingRegionBuildingCapacity(region: Region): number {
   return (
     region.BuildingCapacity -
     region.Buildings.reduce(
-      (accum, b) => accum + (b as Producer).ProducerCount || 0,
+      (accum, b) => accum + (b as Producer).BuildingCount || 0,
       0
     )
   );

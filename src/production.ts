@@ -11,7 +11,7 @@ import {
 import { stackTransfer } from "./movement";
 import { TicksPerSecond } from "./constants";
 import { GetEntity, GetRecipe } from "./gen/entities";
-import { ProducerHasInput, ProducerHasOutput } from "./utils";
+import { BuildingHasInput, BuildingHasOutput } from "./utils";
 import { GameState } from "./useGameState";
 
 // Extractor
@@ -28,7 +28,7 @@ export type Extractor = {
   outputBuffers: Map<string, EntityStack>;
   outputStatus: OutputStatus;
   RecipeId: string;
-  ProducerCount: number;
+  BuildingCount: number;
 };
 
 export function UpdateBuildingRecipe(
@@ -55,7 +55,7 @@ export function UpdateBuildingRecipe(
   b.RecipeId = recipeId;
 
   // Remove from input buffers
-  if (ProducerHasInput(b.kind)) {
+  if (BuildingHasInput(b.kind)) {
     oldInputBuffers.forEach((stack, entity) => {
       if (recipe.Input.findIndex((e) => e.Entity === entity) < 0) {
         //Not in input, remove
@@ -68,7 +68,7 @@ export function UpdateBuildingRecipe(
   }
 
   // Remove from output buffers
-  if (ProducerHasOutput(b.kind)) {
+  if (BuildingHasOutput(b.kind)) {
     oldOutputBuffers.forEach((stack, entity) => {
       if (recipe.Output.findIndex((e) => e.Entity === entity) < 0) {
         //Not in output, remove
@@ -93,7 +93,7 @@ export function NewExtractor(
     outputBuffers: new Map(),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     RecipeId: "",
-    ProducerCount: initialProduceCount,
+    BuildingCount: initialProduceCount,
   };
 }
 
@@ -109,7 +109,7 @@ function outputBuffersForExtractor(r: Recipe): Map<string, EntityStack> {
 }
 
 function productionPerTick(p: Producer, r: Recipe): number {
-  return (p.ProducerCount * r.ProductionPerTick) / TicksPerSecond;
+  return (p.BuildingCount * r.ProductionPerTick) / TicksPerSecond;
 }
 
 export function ProduceFromExtractor(
@@ -152,7 +152,7 @@ export type Factory = {
   inputBuffers: Map<string, EntityStack>;
   outputBuffers: Map<string, EntityStack>;
   RecipeId: string;
-  ProducerCount: number;
+  BuildingCount: number;
   outputStatus: OutputStatus;
 };
 
@@ -197,7 +197,7 @@ export function NewFactory(
     inputBuffers: new Map(), //inputBuffersForFactory(r, getEntity),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     RecipeId: "",
-    ProducerCount: initialProduceCount,
+    BuildingCount: initialProduceCount,
   };
 }
 

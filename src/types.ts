@@ -1,5 +1,10 @@
 import { Building } from "./building";
 
+export interface InputOutputBuffer {
+  Accepts(entity: string, count?: number): boolean;
+  Contains(entity: string, count?: number): boolean;
+}
+
 export interface Producer {
   kind: string;
   subkind: string;
@@ -7,7 +12,7 @@ export interface Producer {
   ProducerType: string;
   inputBuffers: Map<string, EntityStack>;
   outputBuffers: Map<string, EntityStack>;
-  ProducerCount: number;
+  BuildingCount: number;
   outputStatus: OutputStatus;
 }
 
@@ -37,7 +42,8 @@ export type ProducerType =
   | "WaterPump"
   | "Boiler"
   | "Lab"
-  | "RocketSilo";
+  | "RocketSilo"
+  | "Depot";
 
 export type Recipe = {
   //  Name: string;

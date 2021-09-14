@@ -23,13 +23,14 @@ import { GetRecipe } from "./gen/entities";
 import { CanPushTo, PushPullFromMainBus, PushToNeighbors } from "./movement";
 import { IsResearchComplete, Lab, NewLab, ResearchInLab } from "./research";
 import { GetResearch } from "./gen/research";
-import { ProducerHasInput, ProducerHasOutput } from "./utils";
+import { BuildingHasInput, BuildingHasOutput } from "./utils";
 import { UIAction } from "./uiState";
 import { GameWindow } from "./globals";
 import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
 import { Building } from "./building";
 import { GameState, initialFactoryGameState } from "./useGameState";
 import { ResetGameState } from "./useGameState";
+import { NewBeltLinePair, UpdateBeltLineItem } from "./transport";
 
 export const UpdateGameState = (
   tick: number,
@@ -87,7 +88,8 @@ export type GameAction =
   | RegionAction
   | AddBuildingAction
   | DragBuildingAction
-  | ChangeRecipeAction;
+  | ChangeRecipeAction
+  | ChangeBeltLineItemAction;
 
 type AddBuildingAction = {
   type: "AddBuilding";
@@ -127,8 +129,8 @@ type BuildingAction =
   | {
       type:
         | "RemoveBuilding"
-        | "IncreaseProducerCount"
-        | "DecreaseProducerCount"
+        | "IncreaseBuildingCount"
+        | "DecreaseBuildingCount"
         | "ToggleUpperOutputState"
         | "ToggleLowerOutputState";
       buildingIdx: number;
@@ -136,12 +138,27 @@ type BuildingAction =
   | {
       type: "PlaceBuilding";
       entity: string;
+    }
+  | {
+      type: "PlaceBeltLine";
+      entity:
+        | "transport-belt"
+        | "fast-transport-belt"
+        | "express-transport-belt";
+      beltLength: number;
+      targetRegion: string;
     };
 
 type ChangeRecipeAction = {
   type: "ChangeRecipe";
   buildingIdx: number;
   recipeId: string;
+};
+
+type ChangeBeltLineItemAction = {
+  type: "ChangeBeltLineItem";
+  buildingIdx: number;
+  entity: string;
 };
 
 type InventoryTransferAction =
@@ -255,21 +272,64 @@ export const GameDispatch = (action: GameAction) => {
         const b = building(action) as Producer;
         if (b) {
           currentRegion.Buildings.splice(action.buildingIdx, 1);
-          if (ProducerHasInput(b.kind))
+          if (BuildingHasInput(b.kind))
             b.inputBuffers.forEach((s: EntityStack) =>
               GameState.Inventory.Add(s, Infinity, true)
             );
-          if (ProducerHasOutput(b.kind))
+          if (BuildingHasOutput(b.kind))
             b.outputBuffers.forEach((s: EntityStack) =>
               GameState.Inventory.Add(s, Infinity, true)
             );
           GameState.Inventory.Add(
-            NewEntityStack(b.subkind, b.ProducerCount),
-            b.ProducerCount
+            NewEntityStack(b.subkind, b.BuildingCount),
+            b.BuildingCount
           );
           // Return space
         }
       })();
+      break;
+
+    case "ChangeBeltLineItem":
+      (() => {
+        const b = building(action);
+        console.log("Change belt line item for ", b, "to", action.entity);
+        // Change Recipe
+        // Move any Input / Output that no longer matches a buffer into inventory
+        // Update input/output buffers
+        if (b && b.kind === "BeltLineDepot")
+          UpdateBeltLineItem(b, action.entity);
+      })();
+
+      break;
+
+    case "PlaceBeltLine":
+      console.log("place belt line");
+      const targetRegion = GameState.Regions.get(action.targetRegion);
+
+      if (
+        targetRegion === undefined ||
+        GameState.Inventory.EntityCount(action.entity) < action.beltLength ||
+        RemainingRegionBuildingCapacity(currentRegion) <= 0 ||
+        RemainingRegionBuildingCapacity(targetRegion) <= 0
+      ) {
+        console.log("Not enough belts");
+        break;
+      }
+      const fromRegion = currentRegion,
+        toRegion = targetRegion;
+      // Add to list of belt lines
+      // Add building to each region's list of buildings
+      const [beltLine, fromDepot, toDepot] = NewBeltLinePair(
+        fromRegion,
+        toRegion,
+        action.entity,
+        100
+      );
+      console.log(beltLine);
+      fromRegion.Buildings.push(fromDepot);
+      toRegion.Buildings.push(toDepot);
+      GameState.BeltLines.set(beltLine.beltLineId, beltLine);
+      GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 100);
       break;
 
     case "PlaceBuilding":
@@ -284,7 +344,7 @@ export const GameDispatch = (action: GameAction) => {
       // Consume Space
       break;
 
-    case "IncreaseProducerCount":
+    case "IncreaseBuildingCount":
       (() => {
         const b = building(action) as Producer;
         if (
@@ -295,17 +355,17 @@ export const GameDispatch = (action: GameAction) => {
         }
         GameState.Inventory.Remove(NewEntityStack(b.subkind, 0, 1), 1);
 
-        if (b) b.ProducerCount = Math.min(50, b.ProducerCount + 1);
+        if (b) b.BuildingCount = Math.min(50, b.BuildingCount + 1);
       })();
       break;
 
-    case "DecreaseProducerCount":
+    case "DecreaseBuildingCount":
       (() => {
         const b = building(action) as Producer;
         if (b) {
-          if (b.ProducerCount > 0) {
+          if (b.BuildingCount > 0) {
             GameState.Inventory.Add(NewEntityStack(b.subkind, 1, 1), 1);
-            b.ProducerCount = Math.max(0, b.ProducerCount - 1);
+            b.BuildingCount = Math.max(0, b.BuildingCount - 1);
           }
         }
       })();
@@ -315,7 +375,7 @@ export const GameDispatch = (action: GameAction) => {
       (() => {
         const b = building(action);
         if (
-          !ProducerHasOutput(b?.kind) ||
+          !BuildingHasOutput(b?.kind) ||
           !b ||
           action.buildingIdx === undefined
         )
@@ -332,7 +392,7 @@ export const GameDispatch = (action: GameAction) => {
       (() => {
         const b = building(action);
         if (
-          !ProducerHasOutput(b?.kind) ||
+          !BuildingHasOutput(b?.kind) ||
           !b ||
           action.buildingIdx === undefined
         )
@@ -396,10 +456,10 @@ function inventoryTransferStack(
     case "Building":
       const b = building(action);
       if (b) {
-        if (ProducerHasOutput(b.kind) && b.outputBuffers.has(action.entity)) {
+        if (BuildingHasOutput(b.kind) && b.outputBuffers.has(action.entity)) {
           return b.outputBuffers.get(action.entity);
         }
-        if (ProducerHasInput(b.kind) && b?.inputBuffers.has(action.entity)) {
+        if (BuildingHasInput(b.kind) && b?.inputBuffers.has(action.entity)) {
           return b.inputBuffers.get(action.entity);
         }
       }
@@ -448,5 +508,7 @@ function NewBuilding(entity: string): Building {
     case "Boiler":
     case "Centrifuge":
       throw new Error("Can't build this entity yet. " + entity);
+    case "Depot":
+      throw new Error("Wrong constructor for " + entity);
   }
 }
