@@ -43,10 +43,10 @@ export function entityIconLookupByKind(
   };
 }
 
-export function ProducerHasOutput(kind?: string): boolean {
+export function BuildingHasOutput(kind?: string): boolean {
   return kind !== "Lab";
 }
 
-export function ProducerHasInput(kind?: string): boolean {
+export function BuildingHasInput(kind?: string): boolean {
   return kind !== "Extractor";
 }

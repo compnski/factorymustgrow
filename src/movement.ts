@@ -1,13 +1,13 @@
 import { OutputStatus, EntityStack, MainBus } from "./types";
-import { ProducerHasInput, ProducerHasOutput } from "./utils";
+import { BuildingHasInput, BuildingHasOutput } from "./utils";
 
 export function CanPushTo(
   from: { kind: string; outputBuffers: Map<string, EntityStack> },
   to: { kind: string; inputBuffers: Map<string, EntityStack> } | null
 ): boolean {
   return (
-    ProducerHasInput(to?.kind) &&
-    ProducerHasOutput(from?.kind) &&
+    BuildingHasInput(to?.kind) &&
+    BuildingHasOutput(from?.kind) &&
     (to?.inputBuffers || false) &&
     hasIntersection(to.inputBuffers.keys(), from.outputBuffers.keys())
     //to.inputBuffers.has(from.outputBuffer.Entity)
@@ -26,24 +26,24 @@ export function PushToNeighbors(
   from: {
     outputBuffers: Map<string, EntityStack>;
     outputStatus: OutputStatus;
-    ProducerCount?: number;
+    BuildingCount?: number;
   },
   toAbove: {
     inputBuffers: Map<string, EntityStack>;
-    ProducerCount?: number;
+    BuildingCount?: number;
   } | null,
   toBelow: {
     inputBuffers: Map<string, EntityStack>;
-    ProducerCount?: number;
+    BuildingCount?: number;
   } | null
 ) {
   const maxTransferAbove = Math.min(
-      from?.ProducerCount || 0,
-      toAbove?.ProducerCount || 0
+      from?.BuildingCount || 0,
+      toAbove?.BuildingCount || 0
     ),
     maxTransferBelow = Math.min(
-      from?.ProducerCount || 0,
-      toBelow?.ProducerCount || 0
+      from?.BuildingCount || 0,
+      toBelow?.BuildingCount || 0
     );
   if (from.outputStatus.above === "OUT" && toAbove) {
     PushToOtherProducer(from, toAbove, maxTransferAbove);
@@ -68,7 +68,7 @@ interface MainBusConnector {
   outputStatus: OutputStatus;
   inputBuffers: Map<string, EntityStack>;
   outputBuffers: Map<string, EntityStack>;
-  ProducerCount?: number;
+  BuildingCount?: number;
   // TransferStackSize/Speed/etc
 }
 
@@ -93,7 +93,7 @@ export function PushPullFromMainBus(building: MainBusConnector, mb: MainBus) {
         laneConnection.direction === "TO_BUS"
           ? building.outputBuffers.get(busLane.Entity)
           : building?.inputBuffers.get(busLane.Entity),
-      maxTransferToFromBelt = building.ProducerCount || 1;
+      maxTransferToFromBelt = building.BuildingCount || 1;
     if (!producerBuffer)
       throw new Error(
         `Failed to find producer buffer for ${JSON.stringify(

@@ -9,6 +9,7 @@ import { GetEntity } from "./gen/entities";
 import { loadStateFromLocalStorage } from "./localstorage";
 import { Inventory } from "./inventory";
 import { GetRegionInfo } from "./region";
+import { BeltLine } from "./transport";
 
 export const useGameState = () => useState<FactoryGameState>(GameState);
 
@@ -22,6 +23,7 @@ export type FactoryGameState = {
   Research: ResearchState;
   Inventory: Inventory;
   Regions: Map<string, Region>;
+  BeltLines: Map<number, BeltLine>;
 };
 const initialInventorySize = 8;
 export const initialFactoryGameState = () => ({
@@ -37,6 +39,7 @@ export const initialFactoryGameState = () => ({
     NewEntityStack(GetEntity("lab"), 5),
   ]),
   Regions: new Map([["start", NewRegionFromInfo(GetRegionInfo("start"))]]),
+  BeltLines: new Map(),
 });
 
 export function ResetGameState() {

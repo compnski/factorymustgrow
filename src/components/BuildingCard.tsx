@@ -12,14 +12,15 @@ import { MainBusSegment } from "./MainBusSegment";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import {
   entityIconLookupByKind,
-  ProducerHasInput,
-  ProducerHasOutput,
+  BuildingHasInput,
+  BuildingHasOutput,
 } from "../utils";
 import { UIAction } from "../uiState";
 import { showChangeProducerRecipeSelector } from "./selectors";
 import { useIconSelector } from "../IconSelectorProvider";
 import { ProducerCard } from "./ProducerCard";
 import { Building } from "../building";
+import { BeltLineCard } from "./BeltLineCard";
 
 export type BuildingCardProps = {
   building: Building;
@@ -50,7 +51,7 @@ export const BuildingCard = ({
       return;
 
     if (
-      ProducerHasOutput(building.kind) &&
+      BuildingHasOutput(building.kind) &&
       building.outputBuffers.has(entity)
     ) {
       building.outputStatus.beltConnections.push({
@@ -58,7 +59,7 @@ export const BuildingCard = ({
         beltId: laneId,
       });
     }
-    if (ProducerHasInput(building.kind) && building.inputBuffers)
+    if (BuildingHasInput(building.kind) && building.inputBuffers)
       if (building.inputBuffers.has(entity)) {
         building.outputStatus.beltConnections.push({
           direction: "FROM_BUS",
@@ -103,6 +104,17 @@ export const BuildingCard = ({
     });
   };
 
+  const card =
+    building.kind === "BeltLineDepot" ? (
+      <BeltLineCard building={building} buildingIdx={buildingIdx} />
+    ) : (
+      <ProducerCard
+        producer={building as Producer}
+        buildingIdx={buildingIdx}
+        regionalOre={regionalOre}
+      />
+    );
+
   return (
     <div
       className="producer-card"
@@ -132,11 +144,7 @@ export const BuildingCard = ({
         </span>
       </div>
 
-      <ProducerCard
-        producer={building as Producer}
-        buildingIdx={buildingIdx}
-        regionalOre={regionalOre}
-      />
+      {card}
 
       <div className="output-area">
         <div

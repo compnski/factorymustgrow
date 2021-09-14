@@ -38,6 +38,22 @@ export async function showDebugAddItemSelector(
     });
 }
 
+export async function showChangeBeltLineItemSelector(
+  buildingIdx: number,
+  selectRecipe: (c: IconSelectorConfig) => Promise<string | false>
+): Promise<void> {
+  const entity = await selectRecipe({
+    title: "Select Item Type",
+    recipes: availableItems(GameState.Research),
+  });
+  if (entity)
+    GameDispatch({
+      type: "ChangeBeltLineItem",
+      buildingIdx,
+      entity,
+    });
+}
+
 export async function showAddLaneItemSelector(
   selectRecipe: (c: IconSelectorConfig) => Promise<string | false>
 ): Promise<void> {

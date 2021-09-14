@@ -49,7 +49,7 @@ function addProducers(
     }
 
     GameDispatch({
-      type: "IncreaseProducerCount",
+      type: "IncreaseBuildingCount",
       buildingIdx: buildingIdx,
     });
     if (connect.above) upperToggles.push(buildingIdx);

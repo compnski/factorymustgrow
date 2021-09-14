@@ -12,12 +12,13 @@ import { MainBusSegment } from "./MainBusSegment";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import {
   entityIconLookupByKind,
-  ProducerHasInput,
-  ProducerHasOutput,
+  BuildingHasInput,
+  BuildingHasOutput,
 } from "../utils";
 import { UIAction } from "../uiState";
 import { showChangeProducerRecipeSelector } from "./selectors";
 import { useIconSelector } from "../IconSelectorProvider";
+import { getEntityIconDoubleClickHandler } from "./events";
 
 const ProducerIcon = (p: Producer): string => p.subkind;
 
@@ -29,42 +30,6 @@ export type ProducerCardProps = {
   //  mainBus: MainBus;
   regionalOre: Map<string, EntityStack>;
 };
-
-function getEntityIconDoubleClickHandler(buildingIdx: number) {
-  return (
-    evt: {
-      clientX: number;
-      clientY: number;
-      shiftKey: boolean;
-      //target: { hasOwnProperty(p: string): boolean };
-      nativeEvent: { offsetX: number; offsetY: number };
-    },
-    stack: EntityStack
-  ): void => {
-    if (evt.shiftKey) {
-      FillEntityStack(stack, 1);
-      return;
-    }
-    const clickY = evt.nativeEvent.offsetY;
-    if (clickY < 20) {
-      GameDispatch({
-        type: "TransferFromInventory",
-        entity: stack.Entity,
-        otherStackKind: "Building",
-        buildingIdx: buildingIdx,
-      });
-    }
-
-    if (clickY > 30) {
-      GameDispatch({
-        type: "TransferToInventory",
-        entity: stack.Entity,
-        otherStackKind: "Building",
-        buildingIdx: buildingIdx,
-      });
-    }
-  };
-}
 
 export function ProducerCard({
   producer,
@@ -93,19 +58,19 @@ export function ProducerCard({
             className="plus-minus"
             onClick={() =>
               GameDispatch({
-                type: "DecreaseProducerCount",
+                type: "DecreaseBuildingCount",
                 buildingIdx,
               })
             }
           >
             -
           </div>
-          <div className="producer-count">{producer.ProducerCount}</div>
+          <div className="producer-count">{producer.BuildingCount}</div>
           <div
             className="plus-minus"
             onClick={() =>
               GameDispatch({
-                type: "IncreaseProducerCount",
+                type: "IncreaseBuildingCount",
                 buildingIdx,
               })
             }
