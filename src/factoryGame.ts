@@ -468,7 +468,7 @@ function inventoryTransferStack(
 
   switch (action.otherStackKind) {
     case "Void":
-      const stackSize = GetEntity(action.entity).StackSize;
+      const stackSize = GetEntity(action.entity).StackSize || 50;
       return NewEntityStack(action.entity, stackSize, Infinity);
 
     case "MainBus":

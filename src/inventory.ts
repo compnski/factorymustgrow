@@ -40,7 +40,7 @@ export class Inventory {
     const count = IsItemBuffer(fromStack)
       ? (fromStack as ItemBuffer).Count(entity)
       : (fromStack as EntityStack).Count;
-    const stackSize = GetEntity(entity).StackSize;
+    const stackSize = this.getEntity(entity).StackSize;
     const availableSlots = this.Capacity - this.Slots.length;
     var amountToFit = count;
 
@@ -135,7 +135,7 @@ export class Inventory {
     itemCount?: number,
     exceedCapacity: boolean = false
   ): number {
-    const stackSize = GetEntity(entity).StackSize;
+    const stackSize = this.getEntity(entity).StackSize;
 
     const existingSlotIdx = this.unfilledSlotForEntity(entity),
       existingSlot = this.Slots[existingSlotIdx],
