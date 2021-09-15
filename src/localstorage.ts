@@ -1,6 +1,6 @@
 import { FactoryGameState } from "./useGameState";
 import { Inventory } from "./inventory";
-import { MainBus } from "./types";
+import { MainBus } from "./mainbus";
 
 const replacer = (key: string, value: any): any =>
   value instanceof Map
@@ -24,6 +24,7 @@ const replacer = (key: string, value: any): any =>
         dataType: "Inventory",
         maxCapacity: value.Capacity,
         slots: value.Slots,
+        immutableSlots: value.immutableSlots,
       }
     : value === Infinity
     ? "Infinity"
@@ -41,7 +42,7 @@ const reviver = (key: string, value: any): any => {
     : value.dataType === "MainBus"
     ? new MainBus(value.nextId, value.lanes)
     : value.dataType === "Inventory"
-    ? new Inventory(value.maxCapacity, value.slots)
+    ? new Inventory(value.maxCapacity, value.slots, value.immutableSlots)
     : value;
 };
 

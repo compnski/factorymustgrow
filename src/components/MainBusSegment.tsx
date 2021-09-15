@@ -1,7 +1,8 @@
-import { BeltConnection, MainBus } from "../types";
+import { BeltConnection } from "../types";
 import { Icon } from "../gen/svgIcons";
 import { MainBusConst } from "./uiConstants";
 import { entityIconLookupByKind } from "../utils";
+import { MainBus } from "../mainbus";
 
 const connectionHeight = 5,
   connectionOffset = 20,
@@ -49,16 +50,15 @@ export function MainBusSegment({
   const laneIdxByBeltId: { [key: number]: number } = {};
   const entityIconLookup = entityIconLookupByKind("MainBus");
 
-  for (var [id, lane] of mainBus.lanes.entries()) {
+  for (var [laneId, lane] of mainBus.lanes.entries()) {
     const laneX =
       MainBusConst.laneOffset +
       idx * (MainBusConst.laneWidth + MainBusConst.interLaneWidth);
-    laneIdxByBeltId[id] = idx;
-    const entity = lane.Entity;
-    const laneId = id;
-    const iconName = entityIconLookup(entity);
+    laneIdxByBeltId[laneId] = idx;
+    const entity = lane.Entities()[0][0],
+      iconName = entityIconLookup(entity);
     lanes.push(
-      <g key={`lane${id}`}>
+      <g key={`lane${laneId}`}>
         <rect
           width={MainBusConst.laneWidth}
           height={segmentHeight}
@@ -66,7 +66,7 @@ export function MainBusSegment({
           fill="black"
           onDoubleClick={() => busLaneClicked(laneId, entity)}
         >
-          <title>{lane.Entity}</title>
+          <title>{entity}</title>
         </rect>
         {Icon(iconName)}
         <use href={`#${iconName}`} width="16" height="16" x={laneX + 4} y={0}>
@@ -80,13 +80,7 @@ export function MainBusSegment({
             repeatCount="indefinite"
           />
         </use>
-        <use
-          href={`#${lane.Entity}`}
-          width="16"
-          height="16"
-          x={laneX + 4}
-          y={0}
-        >
+        <use href={`#${entity}`} width="16" height="16" x={laneX + 4} y={0}>
           <animateTransform
             attributeName="transform"
             type="translate"
