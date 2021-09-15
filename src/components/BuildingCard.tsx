@@ -1,26 +1,14 @@
 import { GameAction, GameDispatch } from "../factoryGame";
-import {
-  EntityStack,
-  FillEntityStack,
-  MainBus,
-  Producer,
-  Recipe,
-} from "../types";
+import { EntityStack, Producer } from "../types";
 import "./BuildingCard.scss";
 import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
-import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
-import {
-  entityIconLookupByKind,
-  BuildingHasInput,
-  BuildingHasOutput,
-} from "../utils";
+import { BuildingHasInput, BuildingHasOutput } from "../utils";
 import { UIAction } from "../uiState";
-import { showChangeProducerRecipeSelector } from "./selectors";
-import { useIconSelector } from "../IconSelectorProvider";
 import { ProducerCard } from "./ProducerCard";
 import { Building } from "../building";
 import { BeltLineCard } from "./BeltLineCard";
+import { MainBus } from "../mainbus";
 
 export type BuildingCardProps = {
   building: Building;

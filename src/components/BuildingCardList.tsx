@@ -1,9 +1,10 @@
 import { BuildingCard } from "./BuildingCard";
 import { GameDispatch } from "../factoryGame";
-import { EntityStack, MainBus, Producer } from "../types";
+import { EntityStack } from "../types";
 import { SyntheticEvent, useState } from "react";
 import { UIAction } from "../uiState";
 import { Building } from "../building";
+import { MainBus } from "../mainbus";
 
 export const BuildingCardList = ({
   buildings,

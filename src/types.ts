@@ -1,8 +1,25 @@
 import { Building } from "./building";
+import { FixedInventory, Inventory } from "./inventory";
+import { MainBus } from "./mainbus";
 
-export interface InputOutputBuffer {
-  Accepts(entity: string, count?: number): boolean;
-  Contains(entity: string, count?: number): boolean;
+export function IsItemBuffer(i: ItemBuffer | EntityStack): boolean {
+  return (i as ItemBuffer).CanFit !== undefined;
+}
+
+export interface ItemBuffer {
+  CanFit(entity: EntityStack | ItemBuffer): boolean;
+  //Contains(entity: string, count?: number): boolean;
+  Count(entity: string): number;
+  Add(fromStack: EntityStack, count?: number, exceedCapacity?: boolean): number;
+  AddFromItemBuffer(
+    from: ItemBuffer,
+    entity: string,
+    itemCount?: number,
+    exceedCapacity?: boolean
+  ): number;
+
+  Remove(toStack: EntityStack, count?: number): number;
+  Entities(): [entity: string, count: number][];
 }
 
 export interface Producer {
@@ -148,51 +165,4 @@ export function NewRegionFromInfo(info: RegionInfo): Region {
   return NewRegion(info.Id, info.Capacity, info.MainBusCapacity, [
     ...info.Provides,
   ]);
-}
-
-export type BusLane = {
-  Id: number;
-  Count: number;
-  Entity: string;
-  MaxCount?: number;
-};
-
-export const NewBusLane = (
-  Id: number,
-  Entity: string,
-  initialCount: number = 0
-): BusLane => ({
-  Id,
-  Entity,
-  Count: initialCount,
-  MaxCount: 50,
-});
-
-export class MainBus {
-  lanes: Map<number, EntityStack>;
-  nextLaneId: number = 1;
-
-  constructor(
-    firstLaneId: number = 1,
-    lanes: Map<number, EntityStack> = new Map()
-  ) {
-    this.lanes = lanes;
-    this.nextLaneId = firstLaneId;
-  }
-
-  AddLane(Entity: string, initialCount: number = 0): number {
-    const laneId = this.nextLaneId++;
-    this.lanes.set(laneId, NewBusLane(laneId, Entity, initialCount));
-    return laneId;
-  }
-
-  RemoveLane(id: number): EntityStack | null {
-    const contents = this.lanes.get(id);
-    this.lanes.delete(id);
-    return contents || null;
-  }
-
-  HasLane(id: number): boolean {
-    return this.lanes.has(id);
-  }
 }

@@ -1,13 +1,17 @@
-import { EntityStack, FillEntityStack, MainBus } from "../types";
+import {
+  EntityStack,
+  FillEntityStack,
+  ItemBuffer,
+  NewEntityStack,
+} from "../types";
 
 import { GameDispatch } from "../factoryGame";
 import { ResearchState } from "../useGameState";
-import { RecipeSelector } from "./RecipeSelector";
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent } from "react";
 import { MainBusConst } from "./uiConstants";
-import { availableItems } from "../research";
 import { showAddLaneItemSelector } from "./selectors";
 import { useIconSelector } from "../IconSelectorProvider";
+import { MainBus } from "../mainbus";
 
 const entityIconDoubleClickHandler = (
   evt: {
@@ -18,17 +22,18 @@ const entityIconDoubleClickHandler = (
     nativeEvent: { offsetX: number; offsetY: number };
   },
   laneId: number,
-  stack: EntityStack
+  entity: string,
+  lane: ItemBuffer
 ): void => {
   if (evt.shiftKey) {
-    FillEntityStack(stack, 1);
+    lane.Add(NewEntityStack(entity, 1));
     return;
   }
   const clickY = evt.nativeEvent.offsetY;
   if (clickY < 20) {
     GameDispatch({
       type: "TransferFromInventory",
-      entity: stack.Entity,
+      entity: entity,
       otherStackKind: "MainBus",
       laneId,
     });
@@ -37,7 +42,7 @@ const entityIconDoubleClickHandler = (
   if (clickY > 30) {
     GameDispatch({
       type: "TransferToInventory",
-      entity: stack.Entity,
+      entity: entity,
       otherStackKind: "MainBus",
       laneId,
     });
@@ -59,16 +64,20 @@ export const MainBusHeader = ({
   }
   const lanes = [];
   for (var entry of mainBus.lanes.entries()) {
-    const [laneId, lane] = entry;
+    const [laneId, lane] = entry,
+      entity = lane.Entities()[0][0],
+      count = lane.Count(entity);
     lanes.push(
       <div
-        onDoubleClick={(evt) => entityIconDoubleClickHandler(evt, laneId, lane)}
+        onDoubleClick={(evt) =>
+          entityIconDoubleClickHandler(evt, laneId, entity, lane)
+        }
         key={laneId}
         className="lane-header-item-stack"
       >
-        <div className={`icon ${lane.Entity}`} />
+        <div className={`icon ${entity}`} />
         <div className="item-stack-count-text">
-          <span>{lane.Count}</span>
+          <span>{count}</span>
         </div>
       </div>
     );

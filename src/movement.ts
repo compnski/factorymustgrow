@@ -1,4 +1,5 @@
-import { OutputStatus, EntityStack, MainBus } from "./types";
+import { MainBus } from "./mainbus";
+import { OutputStatus, EntityStack, ItemBuffer } from "./types";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
 
 export function CanPushTo(
@@ -89,10 +90,11 @@ export function PushPullFromMainBus(building: MainBusConnector, mb: MainBus) {
         } from main bus ${JSON.stringify(mb)}`
       );
     }
+    const busLaneEntity = busLane.Entities()[0][0];
     const producerBuffer =
         laneConnection.direction === "TO_BUS"
-          ? building.outputBuffers.get(busLane.Entity)
-          : building?.inputBuffers.get(busLane.Entity),
+          ? building.outputBuffers.get(busLaneEntity)
+          : building?.inputBuffers.get(busLaneEntity),
       maxTransferToFromBelt = building.BuildingCount || 1;
     if (!producerBuffer)
       throw new Error(
@@ -110,23 +112,18 @@ export function PushPullFromMainBus(building: MainBusConnector, mb: MainBus) {
 }
 
 function PushPullLaneFromMainBus(
-  busLane: EntityStack,
+  busLane: ItemBuffer,
   producerBuffer: EntityStack,
   direction: "TO_BUS" | "FROM_BUS",
   maxTransfered: number
 ): number {
-  var toStack: EntityStack, fromStack: EntityStack;
   switch (direction) {
     case "TO_BUS":
-      toStack = busLane;
-      fromStack = producerBuffer;
-      break;
+      return busLane.Add(producerBuffer, maxTransfered);
+
     case "FROM_BUS":
-      toStack = producerBuffer;
-      fromStack = busLane;
-      break;
+      return busLane.Remove(producerBuffer, maxTransfered);
   }
-  return stackTransfer(fromStack, toStack, maxTransfered);
 }
 
 export function StackCapacity(stack: EntityStack): number {

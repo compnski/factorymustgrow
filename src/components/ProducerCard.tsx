@@ -1,21 +1,8 @@
-import { GameAction, GameDispatch } from "../factoryGame";
-import {
-  EntityStack,
-  FillEntityStack,
-  MainBus,
-  Producer,
-  Recipe,
-} from "../types";
+import { GameDispatch } from "../factoryGame";
+import { EntityStack, Producer } from "../types";
 import "./BuildingCard.scss";
-import { SyntheticEvent, useState } from "react";
-import { MainBusSegment } from "./MainBusSegment";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
-import {
-  entityIconLookupByKind,
-  BuildingHasInput,
-  BuildingHasOutput,
-} from "../utils";
-import { UIAction } from "../uiState";
+import { entityIconLookupByKind } from "../utils";
 import { showChangeProducerRecipeSelector } from "./selectors";
 import { useIconSelector } from "../IconSelectorProvider";
 import { getEntityIconDoubleClickHandler } from "./events";

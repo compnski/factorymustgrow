@@ -9,17 +9,15 @@ import {
   UpdateBuildingRecipe,
 } from "./production";
 import {
-  NewRegion,
   NewEntityStack,
   Region,
   Producer,
-  MainBus,
   EntityStack,
-  RegionInfo,
-  ProducerType,
   NewRegionFromInfo,
+  ItemBuffer,
+  IsItemBuffer,
 } from "./types";
-import { GetRecipe } from "./gen/entities";
+import { GetEntity, GetRecipe } from "./gen/entities";
 import { CanPushTo, PushPullFromMainBus, PushToNeighbors } from "./movement";
 import { IsResearchComplete, Lab, NewLab, ResearchInLab } from "./research";
 import { GetResearch } from "./gen/research";
@@ -28,9 +26,10 @@ import { UIAction } from "./uiState";
 import { GameWindow } from "./globals";
 import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
 import { Building } from "./building";
-import { GameState, initialFactoryGameState } from "./useGameState";
+import { GameState } from "./useGameState";
 import { ResetGameState } from "./useGameState";
 import { NewBeltLinePair, UpdateBeltLineItem } from "./transport";
+import { MainBus } from "./mainbus";
 
 export const UpdateGameState = (
   tick: number,
@@ -198,8 +197,11 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "RemoveLane":
-      const stack = currentRegion.Bus.RemoveLane(action.laneId);
-      if (stack) GameState.Inventory.Add(stack, Infinity, true);
+      const lane = currentRegion.Bus.RemoveLane(action.laneId),
+        laneEntity = lane?.Entities()[0][0];
+
+      if (lane && laneEntity)
+        GameState.Inventory.AddFromItemBuffer(lane, laneEntity, Infinity, true);
       break;
 
     case "AddLane":
@@ -308,7 +310,7 @@ export const GameDispatch = (action: GameAction) => {
 
       if (
         targetRegion === undefined ||
-        GameState.Inventory.EntityCount(action.entity) < action.beltLength ||
+        GameState.Inventory.Count(action.entity) < action.beltLength ||
         RemainingRegionBuildingCapacity(currentRegion) <= 0 ||
         RemainingRegionBuildingCapacity(targetRegion) <= 0
       ) {
@@ -334,7 +336,7 @@ export const GameDispatch = (action: GameAction) => {
 
     case "PlaceBuilding":
       if (
-        GameState.Inventory.EntityCount(action.entity) <= 0 ||
+        GameState.Inventory.Count(action.entity) <= 0 ||
         RemainingRegionBuildingCapacity(currentRegion) <= 0
       ) {
         break;
@@ -348,7 +350,7 @@ export const GameDispatch = (action: GameAction) => {
       (() => {
         const b = building(action) as Producer;
         if (
-          GameState.Inventory.EntityCount(b.subkind) <= 0 ||
+          GameState.Inventory.Count(b.subkind) <= 0 ||
           RemainingRegionBuildingCapacity(currentRegion) <= 0
         ) {
           return;
@@ -410,7 +412,15 @@ export const GameDispatch = (action: GameAction) => {
         const fromStack = inventoryTransferStack(action);
         if (fromStack)
           if (GameState.Inventory.CanFit(fromStack)) {
-            GameState.Inventory.Add(fromStack);
+            if (IsItemBuffer(fromStack)) {
+              const fromStackEntity = (
+                fromStack as ItemBuffer
+              ).Entities()[0][0];
+              GameState.Inventory.AddFromItemBuffer(
+                fromStack as ItemBuffer,
+                fromStackEntity
+              );
+            } else GameState.Inventory.Add(fromStack as EntityStack);
           }
       })();
       break;
@@ -418,7 +428,17 @@ export const GameDispatch = (action: GameAction) => {
     case "TransferFromInventory":
       (() => {
         const toStack = inventoryTransferStack(action);
-        if (toStack) GameState.Inventory.Remove(toStack);
+        if (toStack) {
+          if (IsItemBuffer(toStack)) {
+            const toItemEntity = (toStack as ItemBuffer).Entities()[0][0];
+            (toStack as ItemBuffer).AddFromItemBuffer(
+              GameState.Inventory,
+              toItemEntity
+            );
+          } else {
+            GameState.Inventory.Remove(toStack as EntityStack);
+          }
+        }
       })();
       break;
 
@@ -443,12 +463,13 @@ export const GameDispatch = (action: GameAction) => {
 
 function inventoryTransferStack(
   action: InventoryTransferAction
-): EntityStack | undefined {
+): EntityStack | ItemBuffer | undefined {
   const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
 
   switch (action.otherStackKind) {
     case "Void":
-      return NewEntityStack(action.entity, Infinity, Infinity);
+      const stackSize = GetEntity(action.entity).StackSize;
+      return NewEntityStack(action.entity, stackSize, Infinity);
 
     case "MainBus":
       return currentRegion.Bus.lanes.get(action.laneId);
