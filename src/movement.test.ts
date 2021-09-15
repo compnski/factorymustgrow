@@ -1,5 +1,5 @@
 import { NewExtractor, NewFactory, UpdateBuildingRecipe } from "./production";
-import { MainBus, EntityStack, NewEntityStack, Producer } from "./types";
+import { EntityStack, NewEntityStack, Producer } from "./types";
 
 import {
   TestRecipe,
@@ -9,6 +9,7 @@ import {
 } from "./test_recipe_defs";
 import { PushPullFromMainBus, PushToOtherProducer } from "./movement";
 import { TestEntityList } from "./test_entity_defs";
+import { MainBus } from "./mainbus";
 
 function NewTestFactory(r: string, count: number = 1): Producer {
   const factory = NewFactory({ subkind: "assembling-machine-1" }, count);
@@ -128,7 +129,9 @@ describe("PushPullFromMainBus", () => {
     }
 
     for (var [beltId, count] of expected.busCounts) {
-      expect(bus.lanes.get(beltId)?.Count).toBe(count);
+      const lane = bus.lanes.get(beltId),
+        entity = lane?.Entities()[0][0];
+      expect(lane?.Count(entity)).toBe(count);
     }
 
     for (var expectedInput of expected.inputBuffers) {
@@ -142,6 +145,7 @@ describe("PushPullFromMainBus", () => {
 
   it("Moves between Factory and MainBus", () => {
     const mb = new MainBus();
+    mb.getEntity = TestEntityList.get.bind(TestEntityList);
     mb.AddLane("test-item", 0);
     mb.AddLane("test-ore", 5);
     mb.AddLane("test-slow-ore", 10);
