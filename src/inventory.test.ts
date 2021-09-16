@@ -15,12 +15,48 @@ describe("CanFit", () => {
 describe("Remove", () => {
   it.todo("ignores when entity not in inventory");
   describe("when target is capacity limited", () => {
-    it.todo("Removes properly from a single stack");
-    it.todo("Removes properly from multiple stacks");
+    it("Removes properly from a single stack", () => {
+      const targetStack = NewEntityStack("iron-ore", 0, 10);
+      const inv = new Inventory(1, [NewEntityStack("iron-ore", 20, 50)]);
+      const removed = inv.Remove(targetStack, 20);
+      expect(removed).toBe(10);
+      expect(inv.Count("iron-ore")).toBe(10);
+      expect(targetStack.Count).toBe(10);
+    });
+    it("Removes properly from multiple stacks", () => {
+      const targetStack = NewEntityStack("iron-ore", 0, 60);
+      const inv = new Inventory(2, [
+        NewEntityStack("iron-ore", 50, 50),
+        NewEntityStack("iron-ore", 20, 50),
+      ]);
+      const removed = inv.Remove(targetStack, 70);
+      expect(removed).toBe(60);
+      expect(inv.Count("iron-ore")).toBe(10);
+      expect(targetStack.Count).toBe(60);
+    });
   });
+
   describe("when target capacity is unlimited", () => {
-    it.todo("Removes properly from a single stack");
-    it.todo("Removes properly from multiple stacks");
+    it("Removes properly from a single stack", () => {
+      const targetStack = NewEntityStack("iron-ore", 0, Infinity);
+      const inv = new Inventory(1, [NewEntityStack("iron-ore", 20, 50)]);
+      const removed = inv.Remove(targetStack, 20);
+      expect(removed).toBe(20);
+      expect(inv.Count("iron-ore")).toBe(0);
+      expect(targetStack.Count).toBe(20);
+    });
+
+    it("Removes properly from multiple stacks", () => {
+      const targetStack = NewEntityStack("iron-ore", 0, Infinity);
+      const inv = new Inventory(2, [
+        NewEntityStack("iron-ore", 50, 50),
+        NewEntityStack("iron-ore", 20, 50),
+      ]);
+      const removed = inv.Remove(targetStack, 70);
+      expect(removed).toBe(70);
+      expect(inv.Count("iron-ore")).toBe(0);
+      expect(targetStack.Count).toBe(70);
+    });
   });
 });
 describe("Add", () => {

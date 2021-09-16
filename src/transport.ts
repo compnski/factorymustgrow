@@ -1,4 +1,5 @@
-import { EntityStack, OutputStatus, Region } from "./types";
+import { Inventory } from "./inventory";
+import { EntityStack, ItemBuffer, OutputStatus, Region } from "./types";
 import { GameState } from "./useGameState";
 
 // Thoughts
@@ -8,8 +9,8 @@ export type BeltLineDepot = {
   kind: "BeltLineDepot";
   subkind: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
   ProducerType: "Depot";
-  inputBuffers: Map<string, EntityStack>;
-  outputBuffers: Map<string, EntityStack>;
+  inputBuffers: ItemBuffer;
+  outputBuffers: ItemBuffer;
   outputStatus: OutputStatus;
   otherRegionId: string;
   length: number;
@@ -35,10 +36,9 @@ export type BeltLine = {
 export function UpdateBeltLineItem(belt: BeltLineDepot, entity: string) {
   // Move input buffers into inventory
   // Update InputBuffers to new item type
-
-  for (var [, stack] of belt.inputBuffers) {
-    GameState.Inventory.Add(stack, Infinity, true);
-  }
+  // for (var [, stack] of belt.Entities()) {
+  //   GameState.Inventory.Add(stack, Infinity, true);
+  // }
 }
 
 var nextBeltLineId = 1;
@@ -74,8 +74,8 @@ export function NewBeltLinePair(
     ProducerType: "Depot",
     subkind: subkind,
     BuildingCount: initialLaneCount,
-    inputBuffers: new Map(),
-    outputBuffers: new Map(),
+    inputBuffers: new Inventory(1),
+    outputBuffers: new Inventory(1),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     otherRegionId: fromRegion.Id,
     direction: "TO_REGION",
@@ -88,8 +88,8 @@ export function NewBeltLinePair(
     ProducerType: "Depot",
     subkind: subkind,
     BuildingCount: initialLaneCount,
-    inputBuffers: new Map(),
-    outputBuffers: new Map(),
+    inputBuffers: new Inventory(1),
+    outputBuffers: new Inventory(1),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     otherRegionId: toRegion.Id,
     direction: "FROM_REGION",
@@ -112,12 +112,12 @@ export function NewBeltLinePair(
   return [beltLine, fromBeltLine, toBeltLine];
 }
 
-export type TrainStation = {
-  kind: "TrainStation";
-  subkind: "";
-  ProducerType: string;
-  inputBuffers: Map<string, EntityStack>;
-  outputBuffers: Map<string, EntityStack>;
-  outputStatus: OutputStatus;
-  routeId: string;
-};
+// export type TrainStation = {
+//   kind: "TrainStation";
+//   subkind: "";
+//   ProducerType: string;
+//   inputBuffers: Map<string, EntityStack>;
+//   outputBuffers: Map<string, EntityStack>;
+//   outputStatus: OutputStatus;
+//   routeId: string;
+// };

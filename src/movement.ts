@@ -3,38 +3,41 @@ import { OutputStatus, EntityStack, ItemBuffer } from "./types";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
 
 export function CanPushTo(
-  from: { kind: string; outputBuffers: Map<string, EntityStack> },
-  to: { kind: string; inputBuffers: Map<string, EntityStack> } | null
+  from: { kind: string; outputBuffers: ItemBuffer },
+  to: { kind: string; inputBuffers: ItemBuffer } | null
 ): boolean {
-  return (
+  return Boolean(
     BuildingHasInput(to?.kind) &&
-    BuildingHasOutput(from?.kind) &&
-    (to?.inputBuffers || false) &&
-    hasIntersection(to.inputBuffers.keys(), from.outputBuffers.keys())
+      BuildingHasOutput(from?.kind) &&
+      to &&
+      from.outputBuffers
+        .Entities()
+        .reduce<boolean>((accum: boolean, [entity]): boolean => {
+          return (
+            (accum ?? true) &&
+            (to.inputBuffers.Accepts(entity) ||
+              to.inputBuffers.Count(entity) > 0)
+          );
+        }, true)
+
+    //(to?.inputBuffers || false)
+    //hasIntersection(to.inputBuffers.keys(), from.outputBuffers.keys())
     //to.inputBuffers.has(from.outputBuffer.Entity)
   );
 }
 
-function hasIntersection(
-  a: string[] | IterableIterator<string>,
-  b: string[] | IterableIterator<string>
-): boolean {
-  const setB = new Set(b);
-  return [...a].filter((x) => setB.has(x)).length > 0;
-}
-
 export function PushToNeighbors(
   from: {
-    outputBuffers: Map<string, EntityStack>;
+    outputBuffers: ItemBuffer;
     outputStatus: OutputStatus;
     BuildingCount?: number;
   },
   toAbove: {
-    inputBuffers: Map<string, EntityStack>;
+    inputBuffers: ItemBuffer;
     BuildingCount?: number;
   } | null,
   toBelow: {
-    inputBuffers: Map<string, EntityStack>;
+    inputBuffers: ItemBuffer;
     BuildingCount?: number;
   } | null
 ) {
@@ -55,20 +58,21 @@ export function PushToNeighbors(
 }
 
 export function PushToOtherProducer(
-  { outputBuffers }: { outputBuffers: Map<string, EntityStack> },
-  { inputBuffers }: { inputBuffers: Map<string, EntityStack> },
+  { outputBuffers }: { outputBuffers: ItemBuffer },
+  { inputBuffers }: { inputBuffers: ItemBuffer },
   maxTransferred: number
 ) {
-  outputBuffers.forEach((outputBuffer) => {
-    var toStack = inputBuffers.get(outputBuffer.Entity);
-    if (toStack) stackTransfer(outputBuffer, toStack, maxTransferred);
+  outputBuffers.Entities().forEach(([entity]) => {
+    if (inputBuffers.Accepts(entity)) {
+      inputBuffers.AddFromItemBuffer(outputBuffers, entity, maxTransferred);
+    }
   });
 }
 
 interface MainBusConnector {
   outputStatus: OutputStatus;
-  inputBuffers: Map<string, EntityStack>;
-  outputBuffers: Map<string, EntityStack>;
+  inputBuffers: ItemBuffer;
+  outputBuffers: ItemBuffer;
   BuildingCount?: number;
   // TransferStackSize/Speed/etc
 }
@@ -93,8 +97,8 @@ export function PushPullFromMainBus(building: MainBusConnector, mb: MainBus) {
     const busLaneEntity = busLane.Entities()[0][0];
     const producerBuffer =
         laneConnection.direction === "TO_BUS"
-          ? building.outputBuffers.get(busLaneEntity)
-          : building?.inputBuffers.get(busLaneEntity),
+          ? building.outputBuffers
+          : building?.inputBuffers,
       maxTransferToFromBelt = building.BuildingCount || 1;
     if (!producerBuffer)
       throw new Error(
@@ -103,6 +107,7 @@ export function PushPullFromMainBus(building: MainBusConnector, mb: MainBus) {
         )} for connection ${JSON.stringify(laneConnection)}`
       );
     PushPullLaneFromMainBus(
+      busLaneEntity,
       busLane,
       producerBuffer,
       laneConnection.direction,
@@ -112,17 +117,18 @@ export function PushPullFromMainBus(building: MainBusConnector, mb: MainBus) {
 }
 
 function PushPullLaneFromMainBus(
+  entity: string,
   busLane: ItemBuffer,
-  producerBuffer: EntityStack,
+  producerBuffer: ItemBuffer,
   direction: "TO_BUS" | "FROM_BUS",
   maxTransfered: number
 ): number {
   switch (direction) {
     case "TO_BUS":
-      return busLane.Add(producerBuffer, maxTransfered);
+      return busLane.AddFromItemBuffer(producerBuffer, entity, maxTransfered);
 
     case "FROM_BUS":
-      return busLane.Remove(producerBuffer, maxTransfered);
+      return producerBuffer.AddFromItemBuffer(busLane, entity, maxTransfered);
   }
 }
 

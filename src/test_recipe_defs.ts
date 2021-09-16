@@ -61,3 +61,7 @@ export const TestRecipeBook = new Map<string, Recipe>([
   ["test-slow-item", TestSlowRecipe],
   ["test-item-consumer", TestItemConsumerRecipe],
 ]);
+
+export function GetTestRecipe(name: string): Recipe {
+  return TestRecipeBook.get(name)!;
+}

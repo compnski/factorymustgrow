@@ -1,5 +1,5 @@
 import { GameDispatch } from "../factoryGame";
-import { EntityStack, FillEntityStack } from "../types";
+import { ItemBuffer, NewEntityStack } from "../types";
 
 export function getEntityIconDoubleClickHandler(buildingIdx: number) {
   return (
@@ -10,17 +10,18 @@ export function getEntityIconDoubleClickHandler(buildingIdx: number) {
       //target: { hasOwnProperty(p: string): boolean };
       nativeEvent: { offsetX: number; offsetY: number };
     },
-    stack: EntityStack
+    buffer: ItemBuffer,
+    entity: string
   ): void => {
     if (evt.shiftKey) {
-      FillEntityStack(stack, 1);
+      buffer.Add(NewEntityStack(entity, 1));
       return;
     }
     const clickY = evt.nativeEvent.offsetY;
     if (clickY < 20) {
       GameDispatch({
         type: "TransferFromInventory",
-        entity: stack.Entity,
+        entity: entity,
         otherStackKind: "Building",
         buildingIdx: buildingIdx,
       });
@@ -29,7 +30,7 @@ export function getEntityIconDoubleClickHandler(buildingIdx: number) {
     if (clickY > 30) {
       GameDispatch({
         type: "TransferToInventory",
-        entity: stack.Entity,
+        entity: entity,
         otherStackKind: "Building",
         buildingIdx: buildingIdx,
       });

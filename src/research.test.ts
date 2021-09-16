@@ -3,6 +3,7 @@ import { TicksPerSecond } from "./constants";
 import { Lab, NewLab, ResearchInLab } from "./research";
 import { TestResearchBook } from "./test_research_defs";
 import { ResearchState } from "./useGameState";
+import { AddItemsToFixedBuffer } from "./test_utils";
 
 describe("Labs", () => {
   function TestLab(
@@ -16,7 +17,7 @@ describe("Labs", () => {
     }
   ) {
     for (var i = 0; i < TicksPerSecond; i++) {
-      ResearchInLab(
+      const produced = ResearchInLab(
         lab,
         researchState,
         TestResearchBook.get.bind(TestResearchBook)
@@ -24,12 +25,12 @@ describe("Labs", () => {
     }
     expect(lab.RecipeId).toBe(expected.recipeId);
     for (var expectedOutput of expected.outputBuffers) {
-      expect(lab.outputBuffers.get(expectedOutput.Entity)?.Count).toBe(
+      expect(lab.outputBuffers.Count(expectedOutput.Entity)).toBe(
         expectedOutput.Count
       );
     }
     for (var expectedInput of expected.inputBuffers) {
-      expect(lab.inputBuffers.get(expectedInput.Entity)?.Count).toBe(
+      expect(lab.inputBuffers.Count(expectedInput.Entity)).toBe(
         expectedInput.Count
       );
     }
@@ -40,10 +41,10 @@ describe("Labs", () => {
     Progress: new Map(),
   });
 
-  it("Produces a single item", () => {
+  fit("Produces a single item", () => {
     const lab = NewLab(1);
 
-    lab.inputBuffers.forEach((input) => FillEntityStack(input, 10));
+    AddItemsToFixedBuffer(lab.inputBuffers, 10);
 
     TestLab(lab, testResearchState(), {
       outputBuffers: [NewEntityStack("test-research", 1)],
@@ -60,11 +61,7 @@ describe("Labs", () => {
   it("Requires the correct types of science", () => {
     const lab = NewLab(1);
     lab.RecipeId = "test-research";
-    FillEntityStack(
-      lab.inputBuffers.get("automation-science-pack") ??
-        NewEntityStack("never"),
-      1
-    );
+    lab.inputBuffers.Add(NewEntityStack("automation-science-pack", 1));
 
     TestLab(lab, testResearchState(), {
       outputBuffers: [NewEntityStack("test-research", 0)],
