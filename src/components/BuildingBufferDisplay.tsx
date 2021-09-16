@@ -1,5 +1,4 @@
-import { SyntheticEvent } from "react";
-import { EntityStack, FillEntityStack } from "../types";
+import { ItemBuffer } from "../types";
 
 export function BuildingBufferDisplay({
   inputBuffers,
@@ -7,8 +6,8 @@ export function BuildingBufferDisplay({
   doubleClickHandler,
   entityIconLookup = (entity: string): string => entity,
 }: {
-  inputBuffers: Map<string, EntityStack> | undefined;
-  outputBuffers: Map<string, EntityStack> | undefined;
+  inputBuffers: ItemBuffer;
+  outputBuffers: ItemBuffer;
   entityIconLookup?: (entity: string) => string;
   doubleClickHandler?: (
     evt: {
@@ -18,59 +17,54 @@ export function BuildingBufferDisplay({
       //target: { hasOwnProperty(p: string): boolean }; //unknown; //{ getBoundingClientRect(): DOMRect };
       nativeEvent: { offsetX: number; offsetY: number };
     },
-
-    s: EntityStack
+    itemBuffer: ItemBuffer,
+    entity: string
   ) => void;
 }) {
   return (
     <div className="recipe-display">
       {inputBuffers &&
-        [...inputBuffers.entries()].map(([Entity, entityStack]) => {
+        inputBuffers.Entities().map(([entity, count]) => {
           return (
             <div
-              key={Entity}
+              key={entity}
               className="recipe-item"
               onDoubleClick={
                 doubleClickHandler &&
-                ((evt) => doubleClickHandler(evt, entityStack))
+                ((evt) => doubleClickHandler(evt, inputBuffers, entity))
               }
             >
-              <div className="quantity-text">
-                {Math.floor(entityStack.Count)}
-              </div>
+              <div className="quantity-text">{Math.floor(count)}</div>
               <div className="icon-frame">
-                {outputBuffers?.has(Entity) ? (
+                {outputBuffers?.Count(entity) > 0 ? (
                   <div className={`icon landfill`} />
                 ) : null}
-                <div className={`icon ${entityIconLookup(Entity)}`} />
+                <div className={`icon ${entityIconLookup(entity)}`} />
               </div>
             </div>
           );
         })}
       <div className="equals-sign">=&gt;</div>
       {outputBuffers &&
-        [...outputBuffers.values()].map((outputBuffer) => (
+        outputBuffers.Entities().map(([entity, count]) => (
           <div
-            key={outputBuffer.Entity}
+            key={entity}
             className="recipe-item"
             onDoubleClick={
               doubleClickHandler &&
-              ((evt) => doubleClickHandler(evt, outputBuffer))
+              ((evt) => doubleClickHandler(evt, outputBuffers, entity))
             }
           >
-            <div className="quantity-text">
-              {Math.floor(outputBuffer?.Count || 0)}
-            </div>
+            <div className="quantity-text">{Math.floor(count)}</div>
             <div className="icon-frame item-icon-progress">
               <progress
                 max={1}
-                value={(outputBuffer?.Count || 0) % 1}
-                className={`icon ${entityIconLookup(outputBuffer.Entity)}`}
+                value={count % 1}
+                className={`icon ${entityIconLookup(entity)}`}
               />
             </div>
           </div>
         ))}
-      ;
     </div>
   );
 }

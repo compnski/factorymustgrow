@@ -1,11 +1,12 @@
 import { GameDispatch } from "../factoryGame";
-import { EntityStack, Producer } from "../types";
+import { EntityStack, ItemBuffer, NewEntityStack, Producer } from "../types";
 import "./BuildingCard.scss";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import { entityIconLookupByKind } from "../utils";
 import { showChangeProducerRecipeSelector } from "./selectors";
 import { useIconSelector } from "../IconSelectorProvider";
 import { getEntityIconDoubleClickHandler } from "./events";
+import { Inventory } from "../inventory";
 
 const ProducerIcon = (p: Producer): string => p.subkind;
 
@@ -15,7 +16,7 @@ export type ProducerCardProps = {
    * uiDispatch: (a: UIAction) => void; */
   buildingIdx: number;
   //  mainBus: MainBus;
-  regionalOre: Map<string, EntityStack>;
+  regionalOre: ItemBuffer;
 };
 
 export function ProducerCard({
@@ -28,10 +29,10 @@ export function ProducerCard({
   var recipeInput = producer.inputBuffers;
 
   if (producer.kind === "Extractor" && producer.inputBuffers) {
-    recipeInput = new Map();
-    for (var [entity] of producer.inputBuffers) {
-      const ore = regionalOre.get(entity);
-      if (ore) recipeInput.set(entity, ore);
+    recipeInput = new Inventory(Infinity);
+    for (var [entity] of producer.inputBuffers.Entities()) {
+      const ore = regionalOre.Count(entity);
+      if (ore) recipeInput.Add(NewEntityStack(entity, ore));
     }
   }
 

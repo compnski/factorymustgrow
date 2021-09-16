@@ -7,18 +7,28 @@ export function IsItemBuffer(i: ItemBuffer | EntityStack): boolean {
 }
 
 export interface ItemBuffer {
+  Accepts(entity: string): boolean;
+  // How many of this item can fit
+  AvailableSpace(entity: string): number;
+
   CanFit(entity: EntityStack | ItemBuffer): boolean;
   //Contains(entity: string, count?: number): boolean;
   Count(entity: string): number;
-  Add(fromStack: EntityStack, count?: number, exceedCapacity?: boolean): number;
+  Add(
+    fromStack: EntityStack,
+    count?: number,
+    exceedCapacity?: boolean,
+    integersOnly?: boolean
+  ): number;
   AddFromItemBuffer(
     from: ItemBuffer,
     entity: string,
     itemCount?: number,
-    exceedCapacity?: boolean
+    exceedCapacity?: boolean,
+    integersOnly?: boolean
   ): number;
 
-  Remove(toStack: EntityStack, count?: number): number;
+  Remove(toStack: EntityStack, count?: number, integersOnly?: boolean): number;
   Entities(): [entity: string, count: number][];
 }
 
@@ -27,8 +37,8 @@ export interface Producer {
   subkind: string;
   RecipeId: string;
   ProducerType: string;
-  inputBuffers: Map<string, EntityStack>;
-  outputBuffers: Map<string, EntityStack>;
+  inputBuffers: ItemBuffer;
+  outputBuffers: ItemBuffer;
   BuildingCount: number;
   outputStatus: OutputStatus;
 }
@@ -139,7 +149,7 @@ export type RegionInfo = {
 
 export type Region = {
   Id: string;
-  Ore: Map<string, EntityStack>;
+  Ore: ItemBuffer;
   BuildingCapacity: number;
   MainBusCapacity: number;
   Buildings: Building[];
@@ -151,12 +161,13 @@ export const NewRegion = (
   BuildingCapacity: number,
   MainBusCapacity: number,
   ore: EntityStack[],
-  Buildings: Building[] = []
+  Buildings: Building[] = [],
+  getEntity?: (e: string) => Entity
 ): Region => ({
   Id: id,
   BuildingCapacity,
   MainBusCapacity,
-  Ore: new Map(ore.map((es) => [es.Entity, es])),
+  Ore: FixedInventory(ore, getEntity),
   Buildings,
   Bus: new MainBus(),
 });

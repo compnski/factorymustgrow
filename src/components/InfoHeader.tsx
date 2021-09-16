@@ -16,7 +16,7 @@ export const InfoHeader = ({
   uiDispatch,
 }: InfoHeaderProps) => {
   const oreInfo = currentRegion.Ore;
-  const infoCards = [...oreInfo.values()].map(({ Entity, Count }) => (
+  const infoCards = oreInfo.Entities().map(([Entity, Count]) => (
     <div key={Entity} className="top-info">
       <div className={`icon ${Entity}`} />
       <div className="ore-text">{Math.floor(Count)}</div>

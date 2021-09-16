@@ -1,6 +1,7 @@
 import { FactoryGameState } from "./useGameState";
 import { Inventory } from "./inventory";
 import { MainBus } from "./mainbus";
+import { ResearchOutput } from "./research";
 
 const replacer = (key: string, value: any): any =>
   value instanceof Map
@@ -26,6 +27,13 @@ const replacer = (key: string, value: any): any =>
         slots: value.Slots,
         immutableSlots: value.immutableSlots,
       }
+    : value instanceof ResearchOutput
+    ? {
+        dataType: "ResearchOutput",
+        researchId: value.researchId,
+        progress: value.progress,
+        maxProgress: value.maxProgress,
+      }
     : value === Infinity
     ? "Infinity"
     : value;
@@ -43,6 +51,8 @@ const reviver = (key: string, value: any): any => {
     ? new MainBus(value.nextId, value.lanes)
     : value.dataType === "Inventory"
     ? new Inventory(value.maxCapacity, value.slots, value.immutableSlots)
+    : value.dataType === "ResearchOutput"
+    ? new ResearchOutput(value.researchId, value.progress, value.maxProgress)
     : value;
 };
 

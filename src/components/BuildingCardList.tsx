@@ -1,6 +1,6 @@
 import { BuildingCard } from "./BuildingCard";
 import { GameDispatch } from "../factoryGame";
-import { EntityStack } from "../types";
+import { EntityStack, ItemBuffer } from "../types";
 import { SyntheticEvent, useState } from "react";
 import { UIAction } from "../uiState";
 import { Building } from "../building";
@@ -14,7 +14,7 @@ export const BuildingCardList = ({
 }: {
   buildings: Building[];
   mainBus: MainBus;
-  regionalOre: Map<string, EntityStack>;
+  regionalOre: ItemBuffer;
   uiDispatch: (a: UIAction) => void;
 }) => {
   const [dragIdx, setDragIdx] = useState(-1);

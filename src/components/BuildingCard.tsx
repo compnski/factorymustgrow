@@ -1,5 +1,5 @@
 import { GameAction, GameDispatch } from "../factoryGame";
-import { EntityStack, Producer } from "../types";
+import { EntityStack, ItemBuffer, Producer } from "../types";
 import "./BuildingCard.scss";
 import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
@@ -16,7 +16,7 @@ export type BuildingCardProps = {
   uiDispatch: (a: UIAction) => void;
   buildingIdx: number;
   mainBus: MainBus;
-  regionalOre: Map<string, EntityStack>;
+  regionalOre: ItemBuffer;
   handleDrag: (evt: SyntheticEvent) => void;
   handleDrop: (evt: SyntheticEvent) => void;
 };
@@ -31,6 +31,7 @@ export const BuildingCard = ({
   handleDrag,
   handleDrop,
 }: BuildingCardProps) => {
+  // TOOD: Change to use Events
   const busLaneClicked = (laneId: number, entity: string) => {
     if (
       building.outputStatus.beltConnections.filter((v) => v.beltId === laneId)
@@ -40,7 +41,8 @@ export const BuildingCard = ({
 
     if (
       BuildingHasOutput(building.kind) &&
-      building.outputBuffers.has(entity)
+      (building.outputBuffers.Accepts(entity) ||
+        building.outputBuffers.Count(entity) > 0)
     ) {
       building.outputStatus.beltConnections.push({
         direction: "TO_BUS",
@@ -48,7 +50,7 @@ export const BuildingCard = ({
       });
     }
     if (BuildingHasInput(building.kind) && building.inputBuffers)
-      if (building.inputBuffers.has(entity)) {
+      if (building.inputBuffers.Accepts(entity)) {
         building.outputStatus.beltConnections.push({
           direction: "FROM_BUS",
           beltId: laneId,

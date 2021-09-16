@@ -30,6 +30,7 @@ import { GameState } from "./useGameState";
 import { ResetGameState } from "./useGameState";
 import { NewBeltLinePair, UpdateBeltLineItem } from "./transport";
 import { MainBus } from "./mainbus";
+import { FixedInventory } from "./inventory";
 
 export const UpdateGameState = (
   tick: number,
@@ -116,7 +117,7 @@ type DragBuildingAction = {
 };
 
 type ProducerAction = {
-  type: "NewProducer" | "ChangeResearch";
+  type: "ChangeResearch";
   producerName: string;
 };
 
@@ -177,6 +178,7 @@ type InventoryTransferAction =
       type: "TransferToInventory" | "TransferFromInventory";
       entity: string;
       otherStackKind: "Void";
+      count?: number;
     };
 
 function building(action: { buildingIdx: number }): Building | undefined {
@@ -275,13 +277,28 @@ export const GameDispatch = (action: GameAction) => {
         if (b) {
           currentRegion.Buildings.splice(action.buildingIdx, 1);
           if (BuildingHasInput(b.kind))
-            b.inputBuffers.forEach((s: EntityStack) =>
-              GameState.Inventory.Add(s, Infinity, true)
-            );
+            b.inputBuffers
+              .Entities()
+              .forEach(([entity, count]) =>
+                GameState.Inventory.AddFromItemBuffer(
+                  b.inputBuffers,
+                  entity,
+                  count,
+                  true
+                )
+              );
           if (BuildingHasOutput(b.kind))
-            b.outputBuffers.forEach((s: EntityStack) =>
-              GameState.Inventory.Add(s, Infinity, true)
-            );
+            b.outputBuffers
+              .Entities()
+              .forEach(([entity, count]) =>
+                GameState.Inventory.AddFromItemBuffer(
+                  b.outputBuffers,
+                  entity,
+                  count,
+                  true
+                )
+              );
+
           GameState.Inventory.Add(
             NewEntityStack(b.subkind, b.BuildingCount),
             b.BuildingCount
@@ -327,7 +344,6 @@ export const GameDispatch = (action: GameAction) => {
         action.entity,
         100
       );
-      console.log(beltLine);
       fromRegion.Buildings.push(fromDepot);
       toRegion.Buildings.push(toDepot);
       GameState.BeltLines.set(beltLine.beltLineId, beltLine);
@@ -420,7 +436,10 @@ export const GameDispatch = (action: GameAction) => {
                 fromStack as ItemBuffer,
                 fromStackEntity
               );
-            } else GameState.Inventory.Add(fromStack as EntityStack);
+            } else
+              throw new Error(
+                "Unsupported transfer target " + JSON.stringify(fromStack)
+              );
           }
       })();
       break;
@@ -435,9 +454,10 @@ export const GameDispatch = (action: GameAction) => {
               GameState.Inventory,
               toItemEntity
             );
-          } else {
-            GameState.Inventory.Remove(toStack as EntityStack);
-          }
+          } else
+            throw new Error(
+              "Unsupported transfer target " + JSON.stringify(toStack)
+            );
         }
       })();
       break;
@@ -463,13 +483,19 @@ export const GameDispatch = (action: GameAction) => {
 
 function inventoryTransferStack(
   action: InventoryTransferAction
-): EntityStack | ItemBuffer | undefined {
+): ItemBuffer | undefined {
   const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
 
   switch (action.otherStackKind) {
     case "Void":
       const stackSize = GetEntity(action.entity).StackSize || 50;
-      return NewEntityStack(action.entity, stackSize, Infinity);
+      return FixedInventory([
+        NewEntityStack(
+          action.entity,
+          action.count ?? stackSize,
+          action.count ?? Infinity
+        ),
+      ]);
 
     case "MainBus":
       return currentRegion.Bus.lanes.get(action.laneId);
@@ -477,11 +503,17 @@ function inventoryTransferStack(
     case "Building":
       const b = building(action);
       if (b) {
-        if (BuildingHasOutput(b.kind) && b.outputBuffers.has(action.entity)) {
-          return b.outputBuffers.get(action.entity);
+        if (
+          BuildingHasOutput(b.kind) &&
+          b.outputBuffers.Count(action.entity) > 0
+        ) {
+          return b.outputBuffers;
         }
-        if (BuildingHasInput(b.kind) && b?.inputBuffers.has(action.entity)) {
-          return b.inputBuffers.get(action.entity);
+        if (
+          BuildingHasInput(b.kind) &&
+          b?.inputBuffers.Count(action.entity) > 0
+        ) {
+          return b.inputBuffers;
         }
       }
   }

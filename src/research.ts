@@ -4,20 +4,24 @@ import { GetEntity, GetRecipe } from "./gen/entities";
 import { GetResearch, ResearchMap } from "./gen/research";
 import {
   EntityStack,
+  IsItemBuffer,
+  ItemBuffer,
   NewEntityStack,
   OutputStatus,
   Producer,
   Recipe,
   Research,
 } from "./types";
+import { FixedInventory, Inventory } from "./inventory";
+import { productionPerTick, producableItemsForInput } from "./productionUtils";
 
 export type Lab = {
   kind: "Lab";
   subkind: "lab";
   RecipeId: string;
   ProducerType: string;
-  inputBuffers: Map<string, EntityStack>;
-  outputBuffers: Map<string, EntityStack>;
+  inputBuffers: ItemBuffer;
+  outputBuffers: ResearchOutput;
   BuildingCount: number;
   outputStatus: OutputStatus;
 };
@@ -33,38 +37,95 @@ const initialLabInput = [
   //  { Entity: "space-science-pack", Count: 0 },
 ];
 
+export class ResearchOutput {
+  researchId: string = "";
+  progress: number = 0;
+  maxProgress: number = 0;
+
+  constructor(
+    researchId: string = "",
+    progress: number = 0,
+    maxProgress: number = 0
+  ) {
+    this.SetResearch(researchId, progress, maxProgress);
+  }
+
+  SetProgress(progress: number) {
+    this.progress = progress;
+  }
+
+  SetResearch(researchId: string, progress: number, maxProgress: number) {
+    this.researchId = researchId;
+    this.progress = progress;
+    this.maxProgress = maxProgress;
+  }
+
+  Accepts(entity: string): boolean {
+    return entity === this.researchId;
+  }
+
+  // How many of this item can fit
+  AvailableSpace(entity: string): number {
+    if (!this.Accepts(entity)) return 0;
+    return this.maxProgress - this.progress;
+  }
+
+  CanFit(fromStack: EntityStack | ItemBuffer): boolean {
+    const entity = IsItemBuffer(fromStack)
+      ? (fromStack as ItemBuffer).Entities()[0][0]
+      : (fromStack as EntityStack).Entity;
+    const count = IsItemBuffer(fromStack)
+      ? (fromStack as ItemBuffer).Count(entity)
+      : (fromStack as EntityStack).Count;
+
+    return this.AvailableSpace(entity) >= count;
+  }
+
+  Count(entity: string): number {
+    if (!this.Accepts(entity)) return 0;
+    return this.progress;
+  }
+
+  Add(
+    fromStack: EntityStack,
+    count?: number,
+    exceedCapacity?: boolean,
+    integersOnly?: boolean
+  ): number {
+    throw new Error("NYI");
+  }
+  AddFromItemBuffer(
+    from: ItemBuffer,
+    entity: string,
+    itemCount?: number,
+    exceedCapacity?: boolean,
+    integersOnly?: boolean
+  ): number {
+    throw new Error("NYI");
+  }
+
+  Remove(toStack: EntityStack, count?: number, integersOnly?: boolean): number {
+    throw new Error("NYI");
+  }
+
+  Entities(): [entity: string, count: number][] {
+    return [[this.researchId, this.progress]];
+  }
+}
+
 export function NewLab(initialProduceCount: number = 0): Lab {
   return {
     kind: "Lab",
     subkind: "lab",
     ProducerType: "Lab",
-    outputBuffers: new Map(),
-    inputBuffers: new Map(
-      initialLabInput.map((input) => [
-        input.Entity,
-        NewEntityStack(input.Entity, 0, 50),
-      ])
+    outputBuffers: new ResearchOutput(),
+    inputBuffers: FixedInventory(
+      initialLabInput.map((input) => NewEntityStack(input.Entity, 0, 50))
     ),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     RecipeId: "",
     BuildingCount: initialProduceCount,
   };
-}
-
-function productionPerTick(p: Producer, r: Research): number {
-  return (p.BuildingCount * r.ProductionPerTick) / TicksPerSecond;
-}
-
-// Requires at least Input items to produce anything
-function producableItemsForInput(
-  inputBuffers: Map<string, EntityStack>,
-  recipeInputs: EntityStack[]
-): number {
-  return Math.min(
-    ...recipeInputs.map(({ Entity, Count }) =>
-      Math.floor((inputBuffers.get(Entity)?.Count || 0) / Count)
-    )
-  );
 }
 
 export function IsResearchComplete(researchState: ResearchState): boolean {
@@ -84,7 +145,7 @@ export function ResearchInLab(
   const currentResearchId = (l.RecipeId = researchState.CurrentResearchId);
   const research = GetResearch(l.RecipeId);
   if (!research) {
-    l.outputBuffers = new Map();
+    l.outputBuffers.SetResearch("", 0, 0);
     return 0;
   }
   if (!researchState.Progress.has(currentResearchId))
@@ -97,36 +158,36 @@ export function ResearchInLab(
       )
     );
   const currentProgress = researchState.Progress.get(currentResearchId);
-  if (
-    l.outputBuffers.size > 1 ||
-    (l.outputBuffers.size > 0 && !l.outputBuffers.has(currentResearchId))
-  ) {
-    l.outputBuffers.clear();
-  }
-  if (currentProgress) l.outputBuffers.set(currentResearchId, currentProgress);
+  l.outputBuffers.SetResearch(
+    currentResearchId,
+    currentProgress?.Count || 0,
+    research.ProductionRequiredForCompletion
+  );
 
   const maxProduction = productionPerTick(l, research),
     availableInputs = producableItemsForInput(l.inputBuffers, research.Input),
-    availableInventorySpace = [...l.outputBuffers.values()].reduce(
-      (accum, entityStack) => {
-        const outputStack = l.outputBuffers.get(entityStack.Entity);
-        return Math.min(
-          accum,
-          (outputStack?.MaxCount || Infinity) - (outputStack?.Count || 0)
-        );
-      },
-      Infinity
-    ),
+    availableInventorySpace = l.outputBuffers.AvailableSpace(currentResearchId),
     actualProduction = Math.min(
       maxProduction,
       availableInputs,
       availableInventorySpace
     );
   for (var input of research.Input) {
-    const inputItem = l.inputBuffers.get(input.Entity);
-    if (inputItem) inputItem.Count -= input.Count * actualProduction;
+    const removed = l.inputBuffers.Remove(
+      NewEntityStack(input.Entity, 0, Infinity),
+      input.Count * actualProduction,
+      false
+    );
+    if (removed !== input.Count * actualProduction) {
+      console.error(l.inputBuffers.Entities());
+      throw new Error(
+        `Produced without enough input. Missing ${removed} ${input.Entity}`
+      );
+    }
   }
   currentProgress!.Count += actualProduction;
+  l.outputBuffers.SetProgress(currentProgress?.Count || 0);
+
   return actualProduction;
 }
 

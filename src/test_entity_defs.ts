@@ -45,3 +45,7 @@ export const TestEntityList = new Map<string, Entity>([
   ["test-slow-item", TestSlowItemEntity],
   //   ["test-item-consumer", TestItemConsumerRecipe],
 ]);
+
+export function GetTestEntity(name: string): Entity {
+  return TestEntityList.get(name)!;
+}
