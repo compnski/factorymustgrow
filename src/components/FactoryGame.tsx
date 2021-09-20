@@ -9,6 +9,8 @@ import { FactoryButtonPanel } from "./FactoryButtonPanel";
 import { InventoryDisplay } from "./InventoryDisplay";
 import { RegionSelector } from "./RegionSelector";
 import { RegionTabBar } from "./RegionTabBar";
+import { ItemBuffer } from "../types";
+import { IsBuilding } from "../production";
 
 type FactoryGameProps = {
   gameState: FactoryGameState;
@@ -59,7 +61,10 @@ export const FactoryGame = ({
             uiDispatch={uiDispatch}
           />
         </div>
-        <InventoryDisplay inventory={gameState.Inventory} />
+        <InventoryDisplay
+          inventory={gameState.Inventory}
+          doubleClickHandler={inventoryDoubleClickHandler}
+        />
         <FactoryButtonPanel
           gameDispatch={GameDispatch}
           uiDispatch={uiDispatch}
@@ -76,3 +81,24 @@ export const FactoryGame = ({
     );
   }
 };
+
+function inventoryDoubleClickHandler(
+  evt: { shiftKey: boolean },
+  itemBuffer: ItemBuffer,
+  entity: string
+) {
+  if (evt.shiftKey) {
+    GameDispatch({
+      type: "TransferFromInventory",
+      entity,
+      otherStackKind: "Void",
+    });
+  } else {
+    // Place Item
+    if (IsBuilding(entity))
+      GameDispatch({
+        type: "PlaceBuilding",
+        entity,
+      });
+  }
+}

@@ -2,7 +2,7 @@
 
 .producer-card {
   width: $appWidth;
-  height: 100px;
+  height: $cardHeight;
   //border: 1px black solid;
   display: flex;
   background: lightgrey;
@@ -72,18 +72,7 @@
     display: flex;
     width: 100%;
     justify-content: flex-end;
-    line-height: 32px;
-
-    .quantity-text {
-      font-size: 16px;
-      width: 40px;
-    }
-
-    .recipe-item {
-      display: flex;
-      flex-direction: column;
-      padding: 0 0px;
-    }
+    //line-height: 32px;
 
     .equals-sign {
       margin: auto 0;
@@ -92,16 +81,10 @@
       font-size: 32px;
     }
 
-    .icon-frame {
-      .icon {
-        margin: -25px;
-        transform: scale(0.4);
-      }
-      .icon.landfill {
-        margin-right: -40px;
-        transform: scale(0.7);
-        opacity: 80%;
-      }
+    .icon.landfill {
+      margin-right: -40px;
+      transform: scale(0.7);
+      opacity: 80%;
     }
   }
 
@@ -125,20 +108,6 @@
       line-height: 38px;
       height: 38px;
     }
-  }
-}
-
-.item-icon-progress {
-  progress[value]::-webkit-progress-bar {
-    border-radius: 2px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
-    background: inherit;
-  }
-  progress[value]::-webkit-progress-value {
-    background-color: #33333333;
-  }
-  progress {
-    appearance: none;
   }
 }
 
