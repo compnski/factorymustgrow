@@ -223,7 +223,7 @@ export class Inventory {
         integersOnly
       );
       // Delete empty slots unless inventory is immutable.
-      if (!this.immutableSlots && slot.Count === 0) {
+      if (!this.immutableSlots && Math.floor(slot.Count) === 0) {
         this.slots.splice(idx, 1);
       }
     }

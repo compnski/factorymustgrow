@@ -68,18 +68,20 @@ export function ProducerCard({
         </div>
       </div>
       <div className="bottom-area">
-        <div
-          onClick={async () => {
-            const recipe = await showChangeProducerRecipeSelector(
-              producer.ProducerType,
-              buildingIdx,
-              selectRecipe
-            );
-          }}
-          className="change-recipe clickable"
-        >
-          Change Recipe
-        </div>
+        {producer.ProducerType != "Lab" && (
+          <div
+            onClick={async () => {
+              const recipe = await showChangeProducerRecipeSelector(
+                producer.ProducerType,
+                buildingIdx,
+                selectRecipe
+              );
+            }}
+            className="change-recipe clickable"
+          >
+            Change Recipe
+          </div>
+        )}
         <BuildingBufferDisplay
           inputBuffers={recipeInput}
           outputBuffers={producer.outputBuffers}

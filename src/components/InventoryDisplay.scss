@@ -1,11 +1,11 @@
 @import "./constants";
 .inventory-display {
-  width: 450px;
+  max-width: 450px;
   font-size: 10px;
   display: flex;
   flex-wrap: wrap;
   background: lightgray;
-  padding: 12px 110px 12px 40px;
+  //padding: 12px 11px 12px 40px;
   border-top: 2px black inset;
 }
 
@@ -13,6 +13,9 @@
   border: 4px darkgray inset;
   width: 48px;
   height: 48px;
+  > * {
+    pointer-events: none;
+  }
   .icon {
     transform: scale(0.6);
     margin: -6px;
@@ -36,4 +39,16 @@
 .inventory-slot-over-capacity {
   background-color: lightpink;
   border-color: indianred;
+}
+
+progress[value]::-webkit-progress-bar {
+  border-radius: 2px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+  background: inherit;
+}
+progress[value]::-webkit-progress-value {
+  background-color: #33333333;
+}
+progress {
+  appearance: none;
 }
