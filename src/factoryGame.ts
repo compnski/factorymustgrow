@@ -12,10 +12,8 @@ import {
   NewEntityStack,
   Region,
   Producer,
-  EntityStack,
   NewRegionFromInfo,
   ItemBuffer,
-  IsItemBuffer,
 } from "./types";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { CanPushTo, PushPullFromMainBus, PushToNeighbors } from "./movement";
@@ -28,7 +26,11 @@ import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
 import { Building } from "./building";
 import { GameState } from "./useGameState";
 import { ResetGameState } from "./useGameState";
-import { NewBeltLinePair, UpdateBeltLineItem } from "./transport";
+import {
+  BeltLineDepot,
+  FindDepotForBeltLine,
+  NewBeltLinePair,
+} from "./transport";
 import { MainBus } from "./mainbus";
 import { FixedInventory } from "./inventory";
 
@@ -88,8 +90,8 @@ export type GameAction =
   | RegionAction
   | AddBuildingAction
   | DragBuildingAction
-  | ChangeRecipeAction
-  | ChangeBeltLineItemAction;
+  | ChangeRecipeAction;
+//| ChangeBeltLineItemAction;
 
 type AddBuildingAction = {
   type: "AddBuilding";
@@ -153,12 +155,6 @@ type ChangeRecipeAction = {
   type: "ChangeRecipe";
   buildingIdx: number;
   recipeId: string;
-};
-
-type ChangeBeltLineItemAction = {
-  type: "ChangeBeltLineItem";
-  buildingIdx: number;
-  entity: string;
 };
 
 type InventoryTransferAction =
@@ -273,8 +269,10 @@ export const GameDispatch = (action: GameAction) => {
 
     case "RemoveBuilding":
       (() => {
-        const b = building(action) as Producer;
+        const b = building(action); // as Producer;
+        console.log(b?.kind);
         if (b) {
+          console.log(b.kind);
           currentRegion.Buildings.splice(action.buildingIdx, 1);
           if (BuildingHasInput(b.kind))
             b.inputBuffers
@@ -298,30 +296,48 @@ export const GameDispatch = (action: GameAction) => {
                   true
                 )
               );
-
-          GameState.Inventory.Add(
-            NewEntityStack(b.subkind, b.BuildingCount),
-            b.BuildingCount
-          );
+          if (b.kind === "BeltLineDepot") {
+            const depot = b as BeltLineDepot,
+              otherDepot = FindDepotForBeltLine(
+                GameState.Regions.get(depot.otherRegionId)!,
+                depot.beltLineId,
+                depot.direction === "TO_REGION" ? "FROM_REGION" : "TO_REGION"
+              );
+            // Have to remove both depots to remove beltline
+            if (!otherDepot) {
+              // Remove BeltLine
+              const beltLine = GameState.BeltLines.get(depot.beltLineId);
+              if (!beltLine) {
+                console.error(
+                  "No beltline to delete when deleting depot for ",
+                  depot.beltLineId
+                );
+                return;
+              }
+              GameState.Inventory.Add(
+                NewEntityStack(b.subkind, b.BuildingCount * beltLine.length),
+                b.BuildingCount
+              );
+              beltLine.sharedBeltBuffer.forEach((es) => {
+                if (es && es.Entity)
+                  GameState.Inventory.Add(es, Infinity, true);
+              });
+              GameState.BeltLines.delete(beltLine.beltLineId);
+            }
+          } else {
+            GameState.Inventory.Add(
+              NewEntityStack(b.subkind, b.BuildingCount),
+              b.BuildingCount,
+              true
+            );
+          }
           // Return space
         }
       })();
       break;
 
-    case "ChangeBeltLineItem":
-      (() => {
-        const b = building(action);
-        console.log("Change belt line item for ", b, "to", action.entity);
-        // Change Recipe
-        // Move any Input / Output that no longer matches a buffer into inventory
-        // Update input/output buffers
-        if (b && b.kind === "BeltLineDepot")
-          UpdateBeltLineItem(b, action.entity);
-      })();
-
-      break;
-
     case "PlaceBeltLine":
+      // TODO: Check for any orphan beltlines that could connect here.
       console.log("place belt line");
       const targetRegion = GameState.Regions.get(action.targetRegion);
 
@@ -428,18 +444,14 @@ export const GameDispatch = (action: GameAction) => {
         const fromStack = inventoryTransferStack(action);
         if (fromStack)
           if (GameState.Inventory.CanFit(fromStack)) {
-            if (IsItemBuffer(fromStack)) {
-              const fromStackEntity = (
-                fromStack as ItemBuffer
-              ).Entities()[0][0];
-              GameState.Inventory.AddFromItemBuffer(
-                fromStack as ItemBuffer,
-                fromStackEntity
-              );
-            } else
-              throw new Error(
-                "Unsupported transfer target " + JSON.stringify(fromStack)
-              );
+            const fromStackEntity = fromStack.Entities()[0][0];
+            GameState.Inventory.AddFromItemBuffer(
+              fromStack,
+              fromStackEntity,
+              undefined,
+              false,
+              false
+            );
           }
       })();
       break;
@@ -448,16 +460,7 @@ export const GameDispatch = (action: GameAction) => {
       (() => {
         const toStack = inventoryTransferStack(action);
         if (toStack) {
-          if (IsItemBuffer(toStack)) {
-            const toItemEntity = (toStack as ItemBuffer).Entities()[0][0];
-            (toStack as ItemBuffer).AddFromItemBuffer(
-              GameState.Inventory,
-              toItemEntity
-            );
-          } else
-            throw new Error(
-              "Unsupported transfer target " + JSON.stringify(toStack)
-            );
+          toStack.AddFromItemBuffer(GameState.Inventory, action.entity);
         }
       })();
       break;

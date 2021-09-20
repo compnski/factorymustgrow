@@ -6,10 +6,7 @@ import {
   BuildingHasInput,
   BuildingHasOutput,
 } from "../utils";
-import {
-  showChangeBeltLineItemSelector,
-  showChangeProducerRecipeSelector,
-} from "./selectors";
+import { showChangeProducerRecipeSelector } from "./selectors";
 import { BeltLine, BeltLineDepot } from "../transport";
 import { getEntityIconDoubleClickHandler } from "./events";
 import { useIconSelector } from "../IconSelectorProvider";
@@ -30,13 +27,17 @@ function direction(d: "FROM_REGION" | "TO_REGION"): string {
 
 export function BeltLineCard(props: BeltLineCardProps) {
   const { building, buildingIdx } = props;
-  const selectItem = useIconSelector();
+
+  const inputBuffersForDisplay = building.inputBuffers,
+    outputBuffersForDisplay = building.outputBuffers;
 
   return (
     <div className="main-area">
       <div className="top-area">
         <div className="title">
           {`Belt line ` +
+            building.beltLineId +
+            ` ` +
             direction(building.direction) +
             ` ` +
             building.otherRegionId}
@@ -69,17 +70,9 @@ export function BeltLineCard(props: BeltLineCardProps) {
         </div>
       </div>
       <div className="bottom-area">
-        <div
-          onClick={async () => {
-            await showChangeBeltLineItemSelector(buildingIdx, selectItem);
-          }}
-          className="change-recipe clickable"
-        >
-          Change Recipe
-        </div>
         <BuildingBufferDisplay
-          inputBuffers={building.inputBuffers}
-          outputBuffers={building.outputBuffers}
+          inputBuffers={inputBuffersForDisplay}
+          outputBuffers={outputBuffersForDisplay}
           doubleClickHandler={getEntityIconDoubleClickHandler(buildingIdx)}
           entityIconLookup={entityIconLookupByKind(building.kind)}
         />

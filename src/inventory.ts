@@ -19,7 +19,7 @@ export function FixedInventory(
 }
 
 export class Inventory {
-  Slots: EntityStack[];
+  slots: EntityStack[];
   Capacity: number;
   // ImmutableSlots is used for fixed inventories. Slots won't be added on overflow or removed when empty.
   immutableSlots: boolean;
@@ -32,15 +32,15 @@ export class Inventory {
     getEntity: (e: string) => Entity = GetEntity
   ) {
     this.Capacity = maxCapacity;
-    this.Slots = slots;
+    this.slots = slots;
     this.getEntity = getEntity;
     this.immutableSlots = immutableSlots;
   }
 
   AvailableSpace(entity: string): number {
     const stackSize = this.getEntity(entity).StackSize,
-      availableSlots = this.Capacity - this.Slots.length,
-      existingSlot = this.Slots[this.unfilledSlotForEntity(entity)];
+      availableSlots = this.Capacity - this.slots.length,
+      existingSlot = this.slots[this.unfilledSlotForEntity(entity)];
     if (existingSlot)
       return availableSlots * stackSize + StackCapacity(existingSlot);
     return availableSlots * stackSize;
@@ -62,13 +62,13 @@ export class Inventory {
   }
 
   unfilledSlotForEntity(entity: string) {
-    return this.Slots.findIndex(
+    return this.slots.findIndex(
       (s: EntityStack) => s.Entity === entity && StackCapacity(s) > 0
     );
   }
 
   Count(entity: string): number {
-    return this.Slots.reduce(
+    return this.slots.reduce(
       (accum, stack) => accum + (stack.Entity === entity ? stack.Count : 0),
       0
     );
@@ -77,7 +77,7 @@ export class Inventory {
   Entities(): [string, number][] {
     const entityToIdx: { [key: string]: number } = {};
     const entityCountList: [string, number][] = [];
-    this.Slots.forEach((s: EntityStack) => {
+    this.slots.forEach((s: EntityStack) => {
       var idx = entityToIdx[s.Entity];
       if (idx !== undefined) {
         entityCountList[idx][1] += s.Count;
@@ -86,6 +86,10 @@ export class Inventory {
       }
     });
     return entityCountList;
+  }
+
+  Slots(): [string, number][] {
+    return this.slots.map((s) => [s.Entity, s.Count]);
   }
 
   // Add X of this stack to the inventory. Defaults to 1 stack
@@ -100,7 +104,7 @@ export class Inventory {
     if (!entity) console.error(`Failed to find entity  ${fromStack.Entity}`);
     const stackSize = entity.StackSize,
       existingSlotIdx = this.unfilledSlotForEntity(fromStack.Entity),
-      existingSlot = this.Slots[existingSlotIdx];
+      existingSlot = this.slots[existingSlotIdx];
 
     var transferAmount = Math.min(fromStack.Count, itemCount ?? stackSize);
 
@@ -122,11 +126,11 @@ export class Inventory {
     }
     while (
       Math.floor(transferAmount) > 0 &&
-      (exceedCapacity || this.Slots.length < this.Capacity)
+      (exceedCapacity || this.slots.length < this.Capacity)
     ) {
       var transferToNewSlotAmount = Math.min(transferAmount, stackSize);
       const toStack = NewEntityStack(fromStack.Entity, 0, stackSize);
-      this.Slots.push(toStack);
+      this.slots.push(toStack);
 
       transferAmount -= stackTransfer(
         fromStack,
@@ -135,7 +139,7 @@ export class Inventory {
         integersOnly
       );
     }
-    this.Slots.sort((a, b) => a.Entity.localeCompare(b.Entity));
+    this.slots.sort((a, b) => a.Entity.localeCompare(b.Entity));
     return transferAmount;
   }
 
@@ -151,7 +155,7 @@ export class Inventory {
     const stackSize = this.getEntity(entity).StackSize;
 
     const existingSlotIdx = this.unfilledSlotForEntity(entity),
-      existingSlot = this.Slots[existingSlotIdx],
+      existingSlot = this.slots[existingSlotIdx],
       fromItemCount = from.Count(entity);
 
     var transferAmount = Math.min(fromItemCount, itemCount || stackSize);
@@ -171,13 +175,14 @@ export class Inventory {
         return transferAmount;
       }
     }
+
     while (
       Math.floor(transferAmount) > 0 &&
-      (exceedCapacity || this.Slots.length < this.Capacity)
+      (exceedCapacity || this.slots.length < this.Capacity)
     ) {
       var transferToNewSlotAmount = Math.min(transferAmount, stackSize);
       const toStack = NewEntityStack(entity, 0, stackSize);
-      this.Slots.push(toStack);
+      this.slots.push(toStack);
 
       transferAmount -= from.Remove(
         toStack,
@@ -185,7 +190,7 @@ export class Inventory {
         integersOnly
       );
     }
-    this.Slots.sort((a, b) => a.Entity.localeCompare(b.Entity));
+    this.slots.sort((a, b) => a.Entity.localeCompare(b.Entity));
     return transferAmount;
   }
 
@@ -208,8 +213,8 @@ export class Inventory {
     );
     const initialTransferAmount = transferAmount;
     //console.log(`Remove ${transferAmount} of ${toStack.Entity}`);
-    for (var idx = this.Slots.length - 1; idx >= 0; idx--) {
-      const slot = this.Slots[idx];
+    for (var idx = this.slots.length - 1; idx >= 0; idx--) {
+      const slot = this.slots[idx];
       if (transferAmount <= 0 || slot.Entity !== toStack.Entity) continue;
       transferAmount -= stackTransfer(
         slot,
@@ -219,7 +224,7 @@ export class Inventory {
       );
       // Delete empty slots unless inventory is immutable.
       if (!this.immutableSlots && slot.Count === 0) {
-        this.Slots.splice(idx, 1);
+        this.slots.splice(idx, 1);
       }
     }
     return initialTransferAmount - transferAmount;

@@ -258,7 +258,7 @@ export function ProduceFromFactory(
         entityStack.Entity
       );
 
-      if (spaceInOutputStack < entityStack.Count) spaceInOutputStack = 0;
+      //if (spaceInOutputStack < entityStack.Count) spaceInOutputStack = 0;
       return Math.min(accum, spaceInOutputStack);
     }, Infinity),
     actualProduction = Math.min(

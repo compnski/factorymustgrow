@@ -20,6 +20,10 @@ export function PlaceBeltLinePanel(props: PlaceBeltLineProps) {
     regions.keys().next().value
   );
 
+  const cost = 100,
+    entity = "transport-belt";
+
+  const enoughBeltsInInventory = inventory.Count(entity) >= cost;
   return (
     <div className="place-belt-line modal">
       <span
@@ -37,10 +41,10 @@ export function PlaceBeltLinePanel(props: PlaceBeltLineProps) {
           onChange={(evt) => setSelectValue(evt.target.value)}
         >
           {[...regions.entries()].map(([regionName, region]) => {
-            const cost = "20 Yellow Belts";
+            const costTxt = `${cost} Yellow Belts`;
             return (
               <option key={regionName} value={regionName}>
-                {regionName} - {cost}
+                {regionName} - {costTxt}
               </option>
             );
           })}
@@ -48,8 +52,13 @@ export function PlaceBeltLinePanel(props: PlaceBeltLineProps) {
       </p>
       <div className="place-belt-line-button-row">
         <div
-          onClick={(evt) => onConfirm(evt, selectValue, "transport-belt")}
-          className="clickable place-belt-line-build-button"
+          onClick={(evt) =>
+            enoughBeltsInInventory &&
+            onConfirm(evt, selectValue, "transport-belt")
+          }
+          className={`clickable place-belt-line-build-button ${
+            enoughBeltsInInventory ? "disabled" : ""
+          }`}
         >
           Build!
         </div>

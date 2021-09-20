@@ -30,6 +30,8 @@ export interface ItemBuffer {
 
   Remove(toStack: EntityStack, count?: number, integersOnly?: boolean): number;
   Entities(): [entity: string, count: number][];
+  Slots(): [entity: string, count: number][];
+  Capacity: number;
 }
 
 export interface Producer {

@@ -38,22 +38,6 @@ export async function showDebugAddItemSelector(
     });
 }
 
-export async function showChangeBeltLineItemSelector(
-  buildingIdx: number,
-  selectRecipe: (c: IconSelectorConfig) => Promise<string | false>
-): Promise<void> {
-  const entity = await selectRecipe({
-    title: "Select Item Type",
-    recipes: availableItems(GameState.Research),
-  });
-  if (entity)
-    GameDispatch({
-      type: "ChangeBeltLineItem",
-      buildingIdx,
-      entity,
-    });
-}
-
 export async function showAddLaneItemSelector(
   selectRecipe: (c: IconSelectorConfig) => Promise<string | false>
 ): Promise<void> {
@@ -93,7 +77,10 @@ export async function showPlaceBuildingSelector(
     title: "Place Building",
     recipes: [
       ...new Set(
-        inventory.Slots.map((s) => s.Entity).filter((e) => IsBuilding(e))
+        inventory
+          .Slots()
+          .map((s) => s[0])
+          .filter((e) => IsBuilding(e))
       ),
     ],
   });
