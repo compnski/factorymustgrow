@@ -70,6 +70,11 @@ export class ResearchOutput {
     return this.maxProgress - this.progress;
   }
 
+  Count(entity: string): number {
+    if (!this.Accepts(entity)) return 0;
+    return this.progress;
+  }
+
   CanFit(fromStack: EntityStack | ItemBuffer): boolean {
     const entity = IsItemBuffer(fromStack)
       ? (fromStack as ItemBuffer).Entities()[0][0]
@@ -81,11 +86,6 @@ export class ResearchOutput {
     return this.AvailableSpace(entity) >= count;
   }
 
-  Count(entity: string): number {
-    if (!this.Accepts(entity)) return 0;
-    return this.progress;
-  }
-
   Add(
     fromStack: EntityStack,
     count?: number,
@@ -94,6 +94,7 @@ export class ResearchOutput {
   ): number {
     throw new Error("NYI");
   }
+
   AddFromItemBuffer(
     from: ItemBuffer,
     entity: string,
@@ -111,6 +112,12 @@ export class ResearchOutput {
   Entities(): [entity: string, count: number][] {
     return [[this.researchId, this.progress]];
   }
+
+  Slots(): [entity: string, count: number][] {
+    return this.Entities();
+  }
+
+  Capacity: number = 0;
 }
 
 export function NewLab(initialProduceCount: number = 0): Lab {

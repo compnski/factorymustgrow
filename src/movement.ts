@@ -19,10 +19,6 @@ export function CanPushTo(
               to.inputBuffers.Count(entity) > 0)
           );
         }, true)
-
-    //(to?.inputBuffers || false)
-    //hasIntersection(to.inputBuffers.keys(), from.outputBuffers.keys())
-    //to.inputBuffers.has(from.outputBuffer.Entity)
   );
 }
 

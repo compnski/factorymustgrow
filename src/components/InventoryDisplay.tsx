@@ -1,20 +1,22 @@
 import "./InventoryDisplay.scss";
 import { Inventory } from "../inventory";
-import { EntityStack } from "../types";
+import { EntityStack, ItemBuffer } from "../types";
 import { GameDispatch } from "../factoryGame";
 import { SyntheticEvent } from "react";
 import { IsBuilding } from "../production";
 
 export type InventoryDisplayProps = {
-  inventory: Inventory;
+  inventory: ItemBuffer;
 };
 
 function InventorySlot({
-  stack,
+  entity,
+  count,
   isOverCapacity,
   doubleClickHandler = () => {},
 }: {
-  stack: EntityStack | undefined;
+  entity: string;
+  count: number;
   isOverCapacity: boolean;
   doubleClickHandler: (s: string, evt: { shiftKey: boolean }) => void;
 }) {
@@ -23,11 +25,11 @@ function InventorySlot({
       className={`inventory-slot ${
         isOverCapacity && "inventory-slot-over-capacity"
       }`}
-      onDoubleClick={stack && ((evt) => doubleClickHandler(stack.Entity, evt))}
+      onDoubleClick={(evt) => doubleClickHandler(entity, evt)}
     >
-      <div className={`icon ${stack?.Entity}`} />
+      <div className={`icon ${entity}`} />
       <div className="item-stack-count-text">
-        <span>{stack?.Count}</span>
+        <span>{count}</span>
       </div>
     </div>
   );
@@ -35,7 +37,7 @@ function InventorySlot({
 
 export function InventoryDisplay({ inventory }: InventoryDisplayProps) {
   const slots: JSX.Element[] = [];
-  const numSlots = Math.max(inventory.Capacity, inventory.Slots.length);
+  const numSlots = Math.max(inventory.Capacity, inventory.Slots().length);
 
   const doubleClickHandler = (entity: string, evt: { shiftKey: boolean }) => {
     if (evt.shiftKey) {
@@ -55,13 +57,16 @@ export function InventoryDisplay({ inventory }: InventoryDisplayProps) {
   };
 
   for (var i = 0; i < numSlots; i++) {
-    const stack = inventory.Slots[i];
+    const slotData = inventory.Slots()[i];
+    if (!slotData) continue;
+    const [entity, count] = slotData;
     slots.push(
       <InventorySlot
         doubleClickHandler={doubleClickHandler}
         key={i}
         isOverCapacity={i >= inventory.Capacity}
-        stack={stack}
+        entity={entity}
+        count={count}
       />
     );
   }

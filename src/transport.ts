@@ -5,6 +5,22 @@ import { GameState } from "./useGameState";
 // Thoughts
 // Beltline has two BeltLineDepots
 
+export function FindDepotForBeltLine(
+  r: Region,
+  beltLineId: number,
+  direction: string
+): BeltLineDepot | undefined {
+  for (const b of r.Buildings) {
+    if (b.kind === "BeltLineDepot") {
+      const depot = b as BeltLineDepot;
+      if (depot.beltLineId === beltLineId && depot.direction === direction) {
+        return depot;
+      }
+    }
+  }
+  return undefined;
+}
+
 export type BeltLineDepot = {
   kind: "BeltLineDepot";
   subkind: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
@@ -32,14 +48,6 @@ export type BeltLine = {
   length: number;
   sharedBeltBuffer: Array<EntityStack>;
 };
-
-export function UpdateBeltLineItem(belt: BeltLineDepot, entity: string) {
-  // Move input buffers into inventory
-  // Update InputBuffers to new item type
-  // for (var [, stack] of belt.Entities()) {
-  //   GameState.Inventory.Add(stack, Infinity, true);
-  // }
-}
 
 var nextBeltLineId = 1;
 
@@ -100,15 +108,14 @@ export function NewBeltLinePair(
   const beltLine = {
     beltLineId: beltLineId,
     BuildingCount: initialLaneCount,
-    toDepot: toBeltLine,
-    fromDepot: fromBeltLine,
+    //    toDepot: toBeltLine,
+    //    fromDepot: fromBeltLine,
     toRegionId: toRegion.Id,
     fromRegionId: fromRegion.Id,
     length: length,
     sharedBeltBuffer: sharedBeltBuffer,
   };
-  //fromBeltLine.BeltLine = beltLine;
-  //toBeltLine.BeltLine = beltLine;
+
   return [beltLine, fromBeltLine, toBeltLine];
 }
 

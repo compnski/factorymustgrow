@@ -24,7 +24,7 @@ const replacer = (key: string, value: any): any =>
     ? {
         dataType: "Inventory",
         maxCapacity: value.Capacity,
-        slots: value.Slots,
+        slots: value.slots,
         immutableSlots: value.immutableSlots,
       }
     : value instanceof ResearchOutput
