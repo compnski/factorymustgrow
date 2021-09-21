@@ -1,4 +1,13 @@
 #+TITLE: Todo
+* In progress
+** Lab output when no resarch selected
+** Spacing on inventory display in all areas
+** BeltLine
+*** Linked AddBuilding
+*** Fix cost
+*** Load from neighbor
+*** Transport to other wise
+*** Push to neighbor
 * Next Ideas
 ** Transport
 *** Belt transport
@@ -12,6 +21,9 @@ Fluids are instantaneous?
 *** Train transport
 Move large quantities every interval
 **** Connects to rail grid
+** Inserters
+*** Move items between areas
+*** Build more to increase the rate of transfer
 ** Fuel
 *** Gotta pay for smelters, power plants, etc
 *** "fuel slot" holds any fuel
