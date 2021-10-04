@@ -17,7 +17,6 @@ export function getEntityIconDoubleClickHandler(buildingIdx: number) {
       buffer.Add(NewEntityStack(entity, 1));
       return;
     }
-    console.log(evt.nativeEvent.offsetY);
     const clickY = evt.nativeEvent.offsetY;
     if (clickY < 20) {
       GameDispatch({
