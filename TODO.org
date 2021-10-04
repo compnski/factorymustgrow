@@ -1,29 +1,20 @@
 #+TITLE: Todo
 * In progress
-** Lab output when no resarch selected
-** Spacing on inventory display in all areas
+** EntityId
+*** Store 'nextId' in GameState
+*** Add Id to many/most/all? entities
 ** BeltLine
-*** Linked AddBuilding
-*** Fix cost
-*** Load from neighbor
-*** Transport to other wise
-*** Push to neighbor
+*** Re-Connect when rebuilding
+** Spacing on inventory display in all areas
 * Next Ideas
-** Transport
-*** Belt transport
-Array of stacks
-Pointer to each end
-Pointers move, like ring buffer
-**** Direct connects two regions
-*** Pipe transport
-Fluids are instantaneous?
-**** Direct connects two regions
-*** Train transport
-Move large quantities every interval
-**** Connects to rail grid
 ** Inserters
 *** Move items between areas
 *** Build more to increase the rate of transfer
+*** Transfer speed
+**** Show inserters between factories, maybe between factory and mainbus
+**** Each transfer point has defined speed (Items/second)
+**** Can upgrade or build more transferers to incresae rate
+**** Needs UX to show rate and to allow upgrading
 ** Fuel
 *** Gotta pay for smelters, power plants, etc
 *** "fuel slot" holds any fuel
@@ -42,16 +33,23 @@ Each step of recipe takes some amount of fuel/power
 *** Can't go on main belt
 *** Lay out pipes in some fixed-width area
 *** Connect extrators, factories, pipelines
+** Transport
+*** DONE Belt transport
+Array of stacks
+Pointer to each end
+Pointers move, like ring buffer
+**** Direct connects two regions
+*** Pipe transport
+Fluids are instantaneous?
+**** Direct connects two regions
+*** Train transport
+Move large quantities every interval
+**** Connects to rail grid
 ** MainBus
 *** Pay for building
 **** To add new lane
 **** When extending
 *** Allow belts to have variable height (not top-to-bottom)
-** Transfer speed
-*** Show inserters between factories, maybe between factory and mainbus
-*** Each transfer point has defined speed (Items/second)
-*** Can upgrade or build more transferers to incresae rate
-*** Needs UX to show rate and to allow upgrading
 ** Different Building stats
 *** Different buildings have different speeds / power consumption
 ** Regions
