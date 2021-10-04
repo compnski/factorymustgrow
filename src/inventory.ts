@@ -37,6 +37,14 @@ export class Inventory {
     this.immutableSlots = immutableSlots;
   }
 
+  NextEntityStack(): EntityStack | undefined {
+    for (var slot of this.slots) {
+      if (slot && slot.Count > 0) {
+        return slot;
+      }
+    }
+  }
+
   AvailableSpace(entity: string): number {
     const stackSize = this.getEntity(entity).StackSize,
       availableSlots = this.Capacity - this.slots.length,

@@ -1,3 +1,4 @@
+import { Inventory } from "./inventory";
 import { MainBus } from "./mainbus";
 import { OutputStatus, EntityStack, ItemBuffer } from "./types";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
@@ -140,6 +141,9 @@ export function stackTransfer(
   maxTransferred: number,
   integersOnly: boolean = true
 ): number {
+  if (toStack.Entity !== "" && toStack.Entity !== fromStack.Entity) {
+    return 0;
+  }
   const availableItems = fromStack.Count,
     availableSpace = StackCapacity(toStack);
   var amountToTransfer = Math.min(
