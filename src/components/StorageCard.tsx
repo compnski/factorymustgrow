@@ -67,7 +67,7 @@ export function StorageCard({ storage, buildingIdx }: StorageCardProps) {
           }}
           className="change-recipe clickable"
         >
-          Store
+          From Inventory
         </div>
         <BuildingBufferDisplay
           inputBuffers={storage.outputBuffers}
