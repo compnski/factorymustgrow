@@ -107,7 +107,5 @@ export async function showPlaceBeltLineSelector(
       entity: beltType,
       beltLength: 100,
     });
-    console.log(result);
-    console.log(targetRegion, beltType);
   }
 }

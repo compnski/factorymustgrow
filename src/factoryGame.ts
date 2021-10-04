@@ -281,9 +281,7 @@ export const GameDispatch = (action: GameAction) => {
     case "RemoveBuilding":
       (() => {
         const b = building(action); // as Producer;
-        console.log(b?.kind);
         if (b) {
-          console.log(b.kind);
           currentRegion.Buildings.splice(action.buildingIdx, 1);
           if (BuildingHasInput(b.kind))
             b.inputBuffers
@@ -349,7 +347,6 @@ export const GameDispatch = (action: GameAction) => {
 
     case "PlaceBeltLine":
       // TODO: Check for any orphan beltlines that could connect here.
-      console.log("place belt line");
       const targetRegion = GameState.Regions.get(action.targetRegion);
 
       if (
