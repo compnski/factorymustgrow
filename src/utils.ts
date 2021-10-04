@@ -28,7 +28,7 @@ export function entityIconLookupByKind(
         if (entity.endsWith("science-pack")) return entity;
         const research = GetResearch(entity);
         if (research) return "sprite-technology-" + research.Icon;
-        return "";
+        return "sprite-technology-no-science";
       };
     case "MainBus":
       return (entity: string) => {

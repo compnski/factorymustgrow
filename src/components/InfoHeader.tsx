@@ -25,9 +25,7 @@ export const InfoHeader = ({
 
   const remainingSpace = RemainingRegionBuildingCapacity(currentRegion),
     currentResarch = researchState.CurrentResearchId,
-    researchIcon =
-      entityIconLookupByKind("Lab")(currentResarch) ||
-      "sprite-technology-no-science",
+    researchIcon = entityIconLookupByKind("Lab")(currentResarch),
     researchProgress = researchState.Progress.get(currentResarch),
     researchProgressPercent =
       ((researchProgress?.Count || 0) / (researchProgress?.MaxCount || 1)) *
