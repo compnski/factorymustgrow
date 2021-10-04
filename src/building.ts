@@ -1,18 +1,10 @@
-import { Extractor, Factory, TrainStation } from "./production";
+import { Extractor, Factory } from "./production";
 import { Lab } from "./research";
-import { BeltLine, BeltLineDepot } from "./transport";
-import { EntityStack, OutputStatus } from "./types";
+import { Chest } from "./storage";
+import { BeltLineDepot } from "./transport";
 
-export type Building = Factory | Extractor | Lab | BeltLineDepot;
+export type Building = Factory | Extractor | Lab | BeltLineDepot | Chest;
 //| TrainStation;
 //| Chest;
 // Roboport
 // // // //
-// export type Chest = {
-//   kind: "Chest";
-//   subkind: "iron-chest" | "steel-chest";
-//   ProducerType: string;
-//   inputBuffers: Map<string, EntityStack>;
-//   outputBuffers: Map<string, EntityStack>;
-//   outputStatus: OutputStatus;
-// };

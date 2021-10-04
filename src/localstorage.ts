@@ -2,6 +2,7 @@ import { FactoryGameState } from "./useGameState";
 import { Inventory } from "./inventory";
 import { MainBus } from "./mainbus";
 import { ResearchOutput } from "./research";
+import { NewChest } from "./storage";
 
 const replacer = (key: string, value: any): any =>
   value instanceof Map
@@ -53,6 +54,8 @@ const reviver = (key: string, value: any): any => {
     ? new Inventory(value.maxCapacity, value.slots, value.immutableSlots)
     : value.dataType === "ResearchOutput"
     ? new ResearchOutput(value.researchId, value.progress, value.maxProgress)
+    : value.kind == "Chest"
+    ? NewChest(value, value.BuildingCount, value.inputBuffers.slots)
     : value;
 };
 

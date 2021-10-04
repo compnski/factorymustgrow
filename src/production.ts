@@ -6,7 +6,7 @@ import {
   Region,
   OutputStatus,
   Entity,
-  ProducerType,
+  BuildingType,
   ItemBuffer,
 } from "./types";
 import { stackTransfer } from "./movement";
@@ -189,7 +189,7 @@ function EntityStackForEntity(
   return NewEntityStack(entity, 0, e?.StackSize || Infinity);
 }
 
-const entityToProducerTypeMap: { [key: string]: ProducerType } = {
+const entityToProducerTypeMap: { [key: string]: BuildingType } = {
   "assembling-machine-1": "Assembler",
   "electric-mining-drill": "Miner",
   "burner-mining-drill": "Miner",
@@ -197,15 +197,37 @@ const entityToProducerTypeMap: { [key: string]: ProducerType } = {
   "chemical-plant": "ChemPlant",
   "rocket-silo": "RocketSilo",
   lab: "Lab",
+  "iron-chest": "Chest",
+  "steel-chest": "Chest",
 };
 
 export function IsBuilding(entity: string): boolean {
   return entity in entityToProducerTypeMap;
 }
 
-export function ProducerTypeFromEntity(entity: string): ProducerType {
-  const producerType = entityToProducerTypeMap[entity];
-  if (producerType) return producerType;
+export function ProducerTypeFromEntity(entity: string): BuildingType {
+  switch (entity) {
+    case "assembling-machine-1":
+      return "Assembler";
+    case "electric-mining-drill":
+      return "Miner";
+    case "burner-mining-drill":
+      return "Miner";
+    case "stone-furnace":
+      return "Smelter";
+    case "chemical-plant":
+      return "ChemPlant";
+    case "rocket-silo":
+      return "RocketSilo";
+    case "lab":
+      return "Lab";
+    case "iron-chest":
+      return "Chest";
+    case "steel-chest":
+      return "Chest";
+  }
+  // const producerType = entityToProducerTypeMap[entity];
+  // if (producerType) return producerType;
   throw new Error("Failed to get ProducerTypeFromEntity " + entity);
 }
 

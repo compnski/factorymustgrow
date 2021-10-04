@@ -18,6 +18,7 @@ export function getEntityIconDoubleClickHandler(buildingIdx: number) {
       return;
     }
     const clickY = evt.nativeEvent.offsetY;
+    console.log(clickY);
     if (clickY < 20) {
       GameDispatch({
         type: "TransferFromInventory",

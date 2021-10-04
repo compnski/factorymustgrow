@@ -11,6 +11,7 @@ import {
 import { entityIconLookupByKind } from "../utils";
 import { IsBuilding } from "../production";
 import { GeneralDialogConfig } from "../GeneralDialogProvider";
+import { ItemBuffer } from "../types";
 
 export async function showResearchSelector(
   showIconSelector: (c: IconSelectorConfig) => Promise<string | false>
@@ -23,19 +24,36 @@ export async function showResearchSelector(
   if (recipe) GameDispatch({ type: "ChangeResearch", producerName: recipe });
 }
 
-export async function showDebugAddItemSelector(
-  selectRecipe: (c: IconSelectorConfig) => Promise<string | false>
+export async function showMoveItemToFromInventorySelector(
+  selectIcon: (c: IconSelectorConfig) => Promise<string | false>,
+  direction: "TransferToInventory" | "TransferFromInventory",
+  buildingIdx?: number,
+  filter?: (entity: string) => boolean
 ): Promise<void> {
-  const recipe = await selectRecipe({
+  if (!filter && direction === "TransferFromInventory")
+    filter = (e) => GameState.Inventory.Count(e) > 0;
+  var recipes = availableItems(GameState.Research);
+  if (filter) recipes = recipes.filter(filter);
+  const recipe = await selectIcon({
     title: "Add Stack",
-    recipes: availableItems(GameState.Research),
+    recipes: recipes,
   });
+  console.log(recipe);
   if (recipe)
-    GameDispatch({
-      type: "TransferToInventory",
-      otherStackKind: "Void",
-      entity: recipe,
-    });
+    GameDispatch(
+      buildingIdx === undefined
+        ? {
+            type: direction,
+            entity: recipe,
+            otherStackKind: "Void",
+          }
+        : {
+            type: direction,
+            entity: recipe,
+            otherStackKind: "Building",
+            buildingIdx: buildingIdx,
+          }
+    );
 }
 
 export async function showAddLaneItemSelector(

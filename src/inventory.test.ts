@@ -1,10 +1,10 @@
 import { Inventory } from "./inventory";
 import { NewEntityStack } from "./types";
 
-describe("CanFit", () => {
+describe("AvailableSpace", () => {
   it("Allows when there is extra slot capacity", () => {
     const inventory = new Inventory(1);
-    expect(inventory.CanFit(NewEntityStack("iron-ore", 10))).toBe(true);
+    expect(inventory.AvailableSpace("iron-ore")).toBe(50);
   });
   it.todo(
     "Allows when there is no slot slot capacity but existing slot has capacity"
@@ -12,6 +12,7 @@ describe("CanFit", () => {
   it.todo("Denies when totally full");
   it.todo("Denies when some other object has some capacity");
 });
+
 describe("Remove", () => {
   it.todo("ignores when entity not in inventory");
   describe("when target is capacity limited", () => {

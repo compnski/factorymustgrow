@@ -40,6 +40,7 @@ import {
 } from "./transport";
 import { MainBus } from "./mainbus";
 import { FixedInventory } from "./inventory";
+import { NewChest } from "./storage";
 
 export const UpdateGameState = (
   tick: number,
@@ -453,9 +454,9 @@ export const GameDispatch = (action: GameAction) => {
     case "TransferToInventory":
       (() => {
         const fromStack = inventoryTransferStack(action);
-        if (fromStack)
-          if (GameState.Inventory.CanFit(fromStack)) {
-            const fromStackEntity = fromStack.Entities()[0][0];
+        if (fromStack) {
+          const fromStackEntity = fromStack.Entities()[0][0];
+          if (GameState.Inventory.AvailableSpace(fromStackEntity) > 0) {
             GameState.Inventory.AddFromItemBuffer(
               fromStack,
               fromStackEntity,
@@ -464,6 +465,7 @@ export const GameDispatch = (action: GameAction) => {
               false
             );
           }
+        }
       })();
       break;
 
@@ -525,7 +527,7 @@ function inventoryTransferStack(
         }
         if (
           BuildingHasInput(b.kind) &&
-          b?.inputBuffers.Count(action.entity) > 0
+          b?.inputBuffers.AvailableSpace(action.entity) > 0
         ) {
           return b.inputBuffers;
         }
@@ -571,6 +573,9 @@ function NewBuilding(entity: string): Building {
 
     case "Lab":
       return NewLab(1);
+
+    case "Chest":
+      return NewChest({ subkind: entity } as any);
 
     case "Boiler":
     case "Centrifuge":
