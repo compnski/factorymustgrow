@@ -1,11 +1,18 @@
 import { Inventory } from "./inventory";
-import { EntityStack, ItemBuffer, OutputStatus, Region } from "./types";
+import { stackTransfer } from "./movement";
+import {
+  EntityStack,
+  ItemBuffer,
+  NewEntityStack,
+  OutputStatus,
+  Region,
+} from "./types";
 import { GameState } from "./useGameState";
 
 // Thoughts
 // Beltline has two BeltLineDepots
 
-export function FindDepotForBeltLine(
+export function FindDepotForBeltLineInRegion(
   r: Region,
   beltLineId: number,
   direction: string
@@ -19,6 +26,63 @@ export function FindDepotForBeltLine(
     }
   }
   return undefined;
+}
+
+export function UpdateBeltLine(
+  tick: number,
+  regions: { get(s: string): Region | undefined },
+  currentBeltLine: BeltLine
+) {
+  const toRegion = regions.get(currentBeltLine.toRegionId)!,
+    fromRegion = regions.get(currentBeltLine.fromRegionId)!,
+    toDepot = FindDepotForBeltLineInRegion(
+      toRegion,
+      currentBeltLine.beltLineId,
+      "TO_REGION"
+    ),
+    fromDepot = FindDepotForBeltLineInRegion(
+      fromRegion,
+      currentBeltLine.beltLineId,
+      "FROM_REGION"
+    ),
+    lastBufferIdx = currentBeltLine.sharedBeltBuffer.length - 1;
+  // Move from end of buffer into toDepot
+  if (toDepot) {
+    const lastBelt = currentBeltLine.sharedBeltBuffer[lastBufferIdx];
+    if (lastBelt.Count > 0)
+      toDepot.outputBuffers.Add(lastBelt, Infinity, false, true);
+    if (lastBelt.Count === 0) lastBelt.Entity = "";
+  }
+  // Move all items, coalescing toward the end
+  for (var idx = lastBufferIdx; idx > 0; idx--) {
+    const fromBelt = currentBeltLine.sharedBeltBuffer[idx - 1],
+      toBelt = currentBeltLine.sharedBeltBuffer[idx];
+    if (toBelt.Entity === "" || toBelt.Entity === fromBelt.Entity) {
+      if (
+        fromBelt.Count > 0 &&
+        stackTransfer(fromBelt, toBelt, Infinity, false) > 0
+      ) {
+        toBelt.Entity = fromBelt.Entity;
+      }
+    }
+    if (fromBelt.Count === 0) {
+      fromBelt.Entity = "";
+    }
+  }
+  // Move from input buffer of fromDepot into start of beltline
+  if (fromDepot) {
+    const ents = fromDepot.inputBuffers.Entities()[0],
+      [fromEntity] = ents ? ents : [""],
+      firstBelt = currentBeltLine.sharedBeltBuffer[0];
+
+    if (fromEntity) {
+      if (firstBelt.Entity === "" || firstBelt.Entity === fromEntity) {
+        firstBelt.Entity = fromEntity;
+        fromDepot.inputBuffers.Remove(firstBelt, Infinity, true);
+      }
+    }
+  }
+  // console.log(currentBeltLine.sharedBeltBuffer.map((es) => es.Count).join(" "));
 }
 
 export type BeltLineDepot = {
@@ -49,8 +113,6 @@ export type BeltLine = {
   sharedBeltBuffer: Array<EntityStack>;
 };
 
-var nextBeltLineId = 1;
-
 export function NewBeltLinePair(
   fromRegion: Region,
   toRegion: Region,
@@ -59,9 +121,12 @@ export function NewBeltLinePair(
   initialLaneCount = 1
 ): [BeltLine, BeltLineDepot, BeltLineDepot] {
   const sharedBeltBuffer = Array<EntityStack>(length);
+  for (var idx = 0; idx < sharedBeltBuffer.length; idx++)
+    // TODO Size based on speed?
+    sharedBeltBuffer[idx] = NewEntityStack("", 0, 16);
 
-  // todo: Static increasing id
-  const beltLineId = nextBeltLineId++;
+  // TODO: Static increasing id, stored someplace in state
+  const beltLineId = new Date().getTime() % 100000;
 
   // Belt should be thought of as a chain of EntityStacks,
   // each with a small StackSize.
@@ -82,7 +147,7 @@ export function NewBeltLinePair(
     ProducerType: "Depot",
     subkind: subkind,
     BuildingCount: initialLaneCount,
-    inputBuffers: new Inventory(1),
+    inputBuffers: new Inventory(0),
     outputBuffers: new Inventory(1),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     otherRegionId: fromRegion.Id,
@@ -97,7 +162,7 @@ export function NewBeltLinePair(
     subkind: subkind,
     BuildingCount: initialLaneCount,
     inputBuffers: new Inventory(1),
-    outputBuffers: new Inventory(1),
+    outputBuffers: new Inventory(0),
     outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
     otherRegionId: toRegion.Id,
     direction: "FROM_REGION",

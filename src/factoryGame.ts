@@ -16,7 +16,12 @@ import {
   ItemBuffer,
 } from "./types";
 import { GetEntity, GetRecipe } from "./gen/entities";
-import { CanPushTo, PushPullFromMainBus, PushToNeighbors } from "./movement";
+import {
+  CanPushTo,
+  PushPullFromMainBus,
+  PushToNeighbors,
+  stackTransfer,
+} from "./movement";
 import { IsResearchComplete, Lab, NewLab, ResearchInLab } from "./research";
 import { GetResearch } from "./gen/research";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
@@ -27,9 +32,11 @@ import { Building } from "./building";
 import { GameState } from "./useGameState";
 import { ResetGameState } from "./useGameState";
 import {
+  BeltLine,
   BeltLineDepot,
-  FindDepotForBeltLine,
+  FindDepotForBeltLineInRegion,
   NewBeltLinePair,
+  UpdateBeltLine,
 } from "./transport";
 import { MainBus } from "./mainbus";
 import { FixedInventory } from "./inventory";
@@ -40,6 +47,9 @@ export const UpdateGameState = (
 ) => {
   try {
     //const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
+    for (var [, currentBeltLine] of GameState.BeltLines) {
+      UpdateBeltLine(tick, GameState.Regions, currentBeltLine);
+    }
     for (var [, currentRegion] of GameState.Regions) {
       UpdateGameStateForRegion(tick, currentRegion);
     }
@@ -192,6 +202,7 @@ export const GameDispatch = (action: GameAction) => {
   switch (action.type) {
     case "Reset":
       ResetGameState();
+      window.scrollTo(0, 0);
       break;
 
     case "RemoveLane":
@@ -298,7 +309,7 @@ export const GameDispatch = (action: GameAction) => {
               );
           if (b.kind === "BeltLineDepot") {
             const depot = b as BeltLineDepot,
-              otherDepot = FindDepotForBeltLine(
+              otherDepot = FindDepotForBeltLineInRegion(
                 GameState.Regions.get(depot.otherRegionId)!,
                 depot.beltLineId,
                 depot.direction === "TO_REGION" ? "FROM_REGION" : "TO_REGION"
@@ -360,6 +371,9 @@ export const GameDispatch = (action: GameAction) => {
         action.entity,
         100
       );
+      if (GameState.BeltLines.has(beltLine.beltLineId)) {
+        throw new Error("Duplicate BeltLine ID");
+      }
       fromRegion.Buildings.push(fromDepot);
       toRegion.Buildings.push(toDepot);
       GameState.BeltLines.set(beltLine.beltLineId, beltLine);
