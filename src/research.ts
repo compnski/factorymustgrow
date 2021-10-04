@@ -75,17 +75,6 @@ export class ResearchOutput {
     return this.progress;
   }
 
-  CanFit(fromStack: EntityStack | ItemBuffer): boolean {
-    const entity = IsItemBuffer(fromStack)
-      ? (fromStack as ItemBuffer).Entities()[0][0]
-      : (fromStack as EntityStack).Entity;
-    const count = IsItemBuffer(fromStack)
-      ? (fromStack as ItemBuffer).Count(entity)
-      : (fromStack as EntityStack).Count;
-
-    return this.AvailableSpace(entity) >= count;
-  }
-
   Add(
     fromStack: EntityStack,
     count?: number,

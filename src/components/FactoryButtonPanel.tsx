@@ -5,7 +5,7 @@ import { useIconSelector } from "../IconSelectorProvider";
 import { UIAction } from "../uiState";
 import { ButtonPanel } from "./ButtonPanel";
 import {
-  showDebugAddItemSelector,
+  showMoveItemToFromInventorySelector,
   showPlaceBuildingSelector,
   showResearchSelector,
 } from "./selectors";
@@ -61,7 +61,11 @@ export function FactoryButtonPanel({
     },
 
     {
-      clickHandler: () => showDebugAddItemSelector(iconSelector),
+      clickHandler: () =>
+        showMoveItemToFromInventorySelector(
+          iconSelector,
+          "TransferToInventory"
+        ),
       title: "Add To Inventory (DEBUG)",
     },
 

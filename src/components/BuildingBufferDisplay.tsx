@@ -7,8 +7,8 @@ export function BuildingBufferDisplay({
   doubleClickHandler,
   entityIconLookup = (entity: string): string => entity,
 }: {
-  inputBuffers: ItemBuffer;
-  outputBuffers: ItemBuffer;
+  inputBuffers?: ItemBuffer;
+  outputBuffers?: ItemBuffer;
   entityIconLookup?: (entity: string) => string;
   doubleClickHandler?: (
     evt: {
@@ -32,7 +32,9 @@ export function BuildingBufferDisplay({
           entityIconLookup={entityIconLookup}
         />
       )}
-      <div className="equals-sign">=&gt;</div>
+      {inputBuffers && outputBuffers && (
+        <div className="equals-sign">=&gt;</div>
+      )}
       {outputBuffers && (
         <InventoryDisplay
           inventory={outputBuffers}

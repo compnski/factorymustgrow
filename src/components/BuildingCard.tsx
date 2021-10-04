@@ -9,6 +9,7 @@ import { ProducerCard } from "./ProducerCard";
 import { Building } from "../building";
 import { BeltLineCard } from "./BeltLineCard";
 import { MainBus } from "../mainbus";
+import { StorageCard } from "./StorageCard";
 
 export type BuildingCardProps = {
   building: Building;
@@ -97,6 +98,8 @@ export const BuildingCard = ({
   const card =
     building.kind === "BeltLineDepot" ? (
       <BeltLineCard building={building} buildingIdx={buildingIdx} />
+    ) : building.kind === "Chest" ? (
+      <StorageCard storage={building} buildingIdx={buildingIdx} />
     ) : (
       <ProducerCard
         producer={building as Producer}

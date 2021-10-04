@@ -3,7 +3,7 @@ import { FixedInventory, Inventory } from "./inventory";
 import { MainBus } from "./mainbus";
 
 export function IsItemBuffer(i: ItemBuffer | EntityStack): boolean {
-  return (i as ItemBuffer).CanFit !== undefined;
+  return (i as ItemBuffer).AvailableSpace !== undefined;
 }
 
 export interface ItemBuffer {
@@ -11,8 +11,6 @@ export interface ItemBuffer {
   // How many of this item can fit
   AvailableSpace(entity: string): number;
 
-  CanFit(entity: EntityStack | ItemBuffer): boolean;
-  //Contains(entity: string, count?: number): boolean;
   Count(entity: string): number;
   Add(
     fromStack: EntityStack,
@@ -60,7 +58,7 @@ export type Research = {
   Effects: string[];
 };
 
-export type ProducerType =
+export type BuildingType =
   | "Assembler"
   | "Smelter"
   | "Miner"
@@ -72,13 +70,14 @@ export type ProducerType =
   | "Boiler"
   | "Lab"
   | "RocketSilo"
-  | "Depot";
+  | "Depot"
+  | "Chest";
 
 export type Recipe = {
   //  Name: string;
   Icon: string;
   Id: string;
-  ProducerType: ProducerType;
+  ProducerType: BuildingType;
   DurationSeconds: number;
   Input: EntityStack[];
   Output: EntityStack[];

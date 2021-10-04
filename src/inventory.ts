@@ -58,17 +58,6 @@ export class Inventory {
     return this.AvailableSpace(entity) > 0;
   }
 
-  CanFit(fromStack: EntityStack | ItemBuffer): boolean {
-    const entity = IsItemBuffer(fromStack)
-      ? (fromStack as ItemBuffer).Entities()[0][0]
-      : (fromStack as EntityStack).Entity;
-    const count = IsItemBuffer(fromStack)
-      ? (fromStack as ItemBuffer).Count(entity)
-      : (fromStack as EntityStack).Count;
-
-    return this.AvailableSpace(entity) >= count;
-  }
-
   unfilledSlotForEntity(entity: string) {
     return this.slots.findIndex(
       (s: EntityStack) => s.Entity === entity && StackCapacity(s) > 0
