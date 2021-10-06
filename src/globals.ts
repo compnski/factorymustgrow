@@ -1,4 +1,5 @@
-import { GameAction, GameDispatch } from "./factoryGame";
+import { GameDispatch } from "./factoryGame";
+import { GameAction } from "./GameAction";
 import { FactoryGameState } from "./useGameState";
 
 import { UIAction } from "./uiState";

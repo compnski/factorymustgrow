@@ -5,7 +5,7 @@ import "./RegionSelector.scss";
 
 import { ReactComponent as RegionMapSVG } from "../gen/regionmap.svg";
 import { SyntheticEvent } from "react";
-import { GameAction } from "../factoryGame";
+import { GameAction } from "../GameAction";
 import { useProperties } from "../explore/svg";
 
 export type RegionSelectorProps = {

@@ -1,5 +1,6 @@
 import { SyntheticEvent } from "react";
-import { GameAction, GameDispatch } from "../factoryGame";
+import { GameDispatch } from "../factoryGame";
+import { GameAction } from "../GameAction";
 import { GameState } from "../useGameState";
 import { useIconSelector } from "../IconSelectorProvider";
 import { UIAction } from "../uiState";
