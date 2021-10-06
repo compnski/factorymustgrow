@@ -356,7 +356,18 @@ function RemoveBuilding(
 ) {
   const b = building(action); // as Producer;
   if (b) {
-    currentRegion.Buildings.splice(action.buildingIdx, 1, NewEmptyLane());
+    if (
+      // Removing the last building and it's an empty lane.
+      b.kind === "Empty" &&
+      action.buildingIdx === currentRegion.Buildings.length - 1
+    ) {
+      // Remove last empty lane
+      currentRegion.Buildings.splice(action.buildingIdx, 1);
+    } else {
+      // Replace with Empty Lane
+      currentRegion.Buildings.splice(action.buildingIdx, 1, NewEmptyLane());
+    }
+
     if (BuildingHasInput(b.kind))
       b.inputBuffers
         .Entities()
