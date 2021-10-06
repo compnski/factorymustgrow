@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { GameDispatch } from "./factoryGame";
+import { GameDispatch } from "./GameDispatch";
 
 if (window.location.hash === "#reset") {
   localStorage.clear();

@@ -1,5 +1,5 @@
 import { BuildingCard } from "./BuildingCard";
-import { GameDispatch } from "../factoryGame";
+import { GameDispatch } from "../GameDispatch";
 import { EntityStack, ItemBuffer } from "../types";
 import { SyntheticEvent, useState } from "react";
 import { UIAction } from "../uiState";

@@ -1,4 +1,4 @@
-import { GameDispatch } from "./factoryGame";
+import { GameDispatch } from "./GameDispatch";
 import { GameState } from "./useGameState";
 import { GameWindow } from "./globals";
 

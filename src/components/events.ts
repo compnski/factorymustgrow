@@ -1,4 +1,4 @@
-import { GameDispatch } from "../factoryGame";
+import { GameDispatch } from "../GameDispatch";
 import { ItemBuffer, NewEntityStack } from "../types";
 
 export function getEntityIconDoubleClickHandler(buildingIdx: number) {

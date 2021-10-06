@@ -1,4 +1,5 @@
-import { GameAction, GameDispatch } from "../factoryGame";
+import { GameAction } from "../GameAction";
+import { GameDispatch } from "../GameDispatch";
 import { EntityStack, ItemBuffer, Producer } from "../types";
 import "./BuildingCard.scss";
 import { SyntheticEvent, useState } from "react";
