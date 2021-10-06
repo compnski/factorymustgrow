@@ -1,17 +1,11 @@
 import { GameDispatch } from "../GameDispatch";
-import { EntityStack, ItemBuffer, NewEntityStack, Producer } from "../types";
 import "./BuildingCard.scss";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import { entityIconLookupByKind } from "../utils";
-import {
-  showChangeProducerRecipeSelector,
-  showMoveItemToFromInventorySelector,
-} from "./selectors";
-import { useIconSelector } from "../IconSelectorProvider";
+import { showMoveItemToFromInventorySelector } from "./selectors";
 import { getEntityIconDoubleClickHandler } from "./events";
-import { Inventory } from "../inventory";
-import { Building } from "../building";
 import { Chest } from "../storage";
+import { useGeneralDialog } from "../GeneralDialogProvider";
 
 export type StorageCardProps = {
   storage: Chest;
@@ -22,9 +16,7 @@ export type StorageCardProps = {
 };
 
 export function StorageCard({ storage, buildingIdx }: StorageCardProps) {
-  const iconSelector = useIconSelector();
-
-  var recipeInput = storage.inputBuffers;
+  const generalDialog = useGeneralDialog();
 
   return (
     <div className="main-area">
@@ -61,7 +53,7 @@ export function StorageCard({ storage, buildingIdx }: StorageCardProps) {
         <div
           onClick={async () => {
             const recipe = await showMoveItemToFromInventorySelector(
-              iconSelector,
+              generalDialog,
               "TransferFromInventory",
               buildingIdx
             );

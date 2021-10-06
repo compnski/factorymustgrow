@@ -1,9 +1,9 @@
-import { useIconSelector } from "../IconSelectorProvider";
+import { useGeneralDialog } from "../GeneralDialogProvider";
 import { GameState } from "../useGameState";
 import { showPlaceBuildingSelector } from "./selectors";
 
 export function EmptyLaneCard(props: { buildingIdx: number }) {
-  const iconSelector = useIconSelector();
+  const generalDialog = useGeneralDialog();
 
   return (
     <div className="main-area">
@@ -14,7 +14,7 @@ export function EmptyLaneCard(props: { buildingIdx: number }) {
         <div
           onClick={async () => {
             showPlaceBuildingSelector(
-              iconSelector,
+              generalDialog,
               GameState.Inventory,
               props.buildingIdx
             );

@@ -10,8 +10,8 @@ import { ResearchState } from "../useGameState";
 import { SyntheticEvent } from "react";
 import { MainBusConst } from "./uiConstants";
 import { showAddLaneItemSelector } from "./selectors";
-import { useIconSelector } from "../IconSelectorProvider";
 import { MainBus } from "../mainbus";
+import { useGeneralDialog } from "../GeneralDialogProvider";
 
 const entityIconDoubleClickHandler = (
   evt: {
@@ -56,10 +56,10 @@ export const MainBusHeader = ({
   mainBus: MainBus;
   researchState: ResearchState;
 }) => {
-  const selectRecipe = useIconSelector();
+  const generalDialog = useGeneralDialog();
 
   async function addLane(evt: SyntheticEvent) {
-    showAddLaneItemSelector(selectRecipe);
+    showAddLaneItemSelector(generalDialog);
     evt.stopPropagation();
   }
   const lanes = [];
