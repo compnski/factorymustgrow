@@ -22,17 +22,17 @@ export function FactoryButtonPanel({
 }: FactoryButtonPanelProps) {
   const generalDialog = useGeneralDialog();
   const factoryButtons = [
-    {
-      clickHandler: () =>
-        showPlaceBuildingSelector(generalDialog, GameState.Inventory),
-      title: "Place Building",
-    },
+    /* {
+       *   clickHandler: () =>
+       *     showPlaceBuildingSelector(generalDialog, GameState.Inventory),
+       *   title: "Place Building",
+       * },
 
-    {
-      clickHandler: () => showResearchSelector(generalDialog),
-      title: "Choose Research",
-    },
-
+       * {
+       *   clickHandler: () => showResearchSelector(generalDialog),
+       *   title: "Choose Research",
+       * },
+       */
     {
       clickHandler: (evt: SyntheticEvent) =>
         uiDispatch({
@@ -62,15 +62,15 @@ export function FactoryButtonPanel({
       title: "Add To Inventory (DEBUG)",
     },
 
-    {
-      clickHandler: () =>
-        showPlaceBeltLineSelector(
-          generalDialog,
-          GameState.Inventory,
-          GameState.Regions
-        ),
-      title: "Add Belt Line",
-    },
+    /* {
+     *   clickHandler: () =>
+     *     showPlaceBeltLineSelector(
+     *       generalDialog,
+     *       GameState.Inventory,
+     *       GameState.Regions
+     *     ),
+     *   title: "Add Belt Line",
+     * }, */
   ];
 
   return (
