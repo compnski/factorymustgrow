@@ -1,4 +1,4 @@
-import { GameDispatch } from "../factoryGame";
+import { GameDispatch } from "../GameDispatch";
 import { GameState } from "../useGameState";
 import { GetRecipe } from "../gen/entities";
 import { IconSelectorConfig } from "../IconSelectorProvider";

@@ -1,4 +1,5 @@
-import { GameAction, GameDispatch } from "../factoryGame";
+import { GameAction } from "../GameAction";
+import { GameDispatch } from "../GameDispatch";
 import "./BuildingCard.scss";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import {

@@ -5,7 +5,7 @@ import {
   NewEntityStack,
 } from "../types";
 
-import { GameDispatch } from "../factoryGame";
+import { GameDispatch } from "../GameDispatch";
 import { ResearchState } from "../useGameState";
 import { SyntheticEvent } from "react";
 import { MainBusConst } from "./uiConstants";

@@ -1,4 +1,4 @@
-import { GameDispatch } from "../factoryGame";
+import { GameDispatch } from "../GameDispatch";
 import { EntityStack, ItemBuffer, NewEntityStack, Producer } from "../types";
 import "./BuildingCard.scss";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";

@@ -10,6 +10,7 @@ import { loadStateFromLocalStorage } from "./localstorage";
 import { Inventory } from "./inventory";
 import { GetRegionInfo } from "./region";
 import { BeltLine } from "./transport";
+import { GameWindow } from "./globals";
 
 export const useGameState = () => useState<FactoryGameState>(GameState);
 
@@ -49,3 +50,5 @@ export function ResetGameState() {
 }
 
 export var GameState = loadStateFromLocalStorage(initialFactoryGameState());
+
+(window as unknown as GameWindow).GameState = () => GameState;

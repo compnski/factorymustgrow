@@ -1,4 +1,4 @@
-import { GameDispatch } from "../factoryGame";
+import { GameDispatch } from "../GameDispatch";
 import { FactoryGameState } from "../useGameState";
 import { UIAction, UIState } from "../uiState";
 import { BuildingCardList } from "./BuildingCardList";

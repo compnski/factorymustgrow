@@ -1,5 +1,5 @@
 import { SyntheticEvent } from "react";
-import { GameDispatch } from "../factoryGame";
+import { GameDispatch } from "../GameDispatch";
 import { GameAction } from "../GameAction";
 import { GameState } from "../useGameState";
 
