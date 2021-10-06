@@ -11,6 +11,8 @@ import { RegionSelector } from "./RegionSelector";
 import { RegionTabBar } from "./RegionTabBar";
 import { ItemBuffer } from "../types";
 import { IsBuilding } from "../production";
+import { useGeneralDialog } from "../GeneralDialogProvider";
+import { showPlaceBeltLineSelector } from "./selectors";
 
 type FactoryGameProps = {
   gameState: FactoryGameState;
@@ -24,6 +26,8 @@ export const FactoryGame = ({
   uiDispatch,
 }: FactoryGameProps) => {
   try {
+    const generalDialog = useGeneralDialog();
+
     const regionIds = [...gameState.Regions.keys()];
     const regionSelector = uiState.dialogs.regionSelectorOpen && (
       <RegionSelector
@@ -35,6 +39,33 @@ export const FactoryGame = ({
     );
 
     const currentRegion = gameState.Regions.get(gameState.CurrentRegionId)!;
+
+    const inventoryDoubleClickHandler = function inventoryDoubleClickHandler(
+      evt: { shiftKey: boolean },
+      itemBuffer: ItemBuffer,
+      entity: string
+    ) {
+      if (evt.shiftKey) {
+        GameDispatch({
+          type: "TransferFromInventory",
+          entity,
+          otherStackKind: "Void",
+        });
+      } else {
+        // Place Item
+        if (entity === "transport-belt")
+          showPlaceBeltLineSelector(
+            generalDialog,
+            gameState.Inventory,
+            gameState.Regions
+          );
+        else if (IsBuilding(entity))
+          GameDispatch({
+            type: "PlaceBuilding",
+            entity,
+          });
+      }
+    };
 
     return (
       <div className="factory-game">
@@ -81,24 +112,3 @@ export const FactoryGame = ({
     );
   }
 };
-
-function inventoryDoubleClickHandler(
-  evt: { shiftKey: boolean },
-  itemBuffer: ItemBuffer,
-  entity: string
-) {
-  if (evt.shiftKey) {
-    GameDispatch({
-      type: "TransferFromInventory",
-      entity,
-      otherStackKind: "Void",
-    });
-  } else {
-    // Place Item
-    if (IsBuilding(entity))
-      GameDispatch({
-        type: "PlaceBuilding",
-        entity,
-      });
-  }
-}
