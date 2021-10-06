@@ -64,12 +64,23 @@ const parse = (s: string): any => JSON.parse(s, reviver);
 
 export const saveStateToLocalStorage = (gs: FactoryGameState) => {
   localStorage.setItem("FactoryGameState", serialize(gs));
+  localStorage.setItem("FactoryGameStateVersion", CurrentGameStateVersion);
 };
+
+// NOTE: Editing this contants will INVALIDATE ALL SAVED DATA EVERYWHERE.
+export const CurrentGameStateVersion = "0.1.1";
+
+function AcceptableStoredVersion(): boolean {
+  return (
+    localStorage.getItem("FactoryGameStateVersion") === CurrentGameStateVersion
+  );
+}
 
 export const loadStateFromLocalStorage = (
   defaultState: FactoryGameState
 ): FactoryGameState => {
   try {
+    if (!AcceptableStoredVersion()) return defaultState;
     return (
       parse(localStorage.getItem("FactoryGameState") || "false") || defaultState
     );
