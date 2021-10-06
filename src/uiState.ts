@@ -1,5 +1,4 @@
 import { useReducer, SyntheticEvent } from "react";
-import { Recipes } from "./gen/entities";
 import { Recipe } from "./types";
 
 export const useUIState = () =>

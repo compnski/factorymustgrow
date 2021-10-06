@@ -54,7 +54,7 @@ const reviver = (key: string, value: any): any => {
     ? new Inventory(value.maxCapacity, value.slots, value.immutableSlots)
     : value.dataType === "ResearchOutput"
     ? new ResearchOutput(value.researchId, value.progress, value.maxProgress)
-    : value.kind == "Chest"
+    : value.kind === "Chest"
     ? NewChest(value, value.BuildingCount, value.inputBuffers.slots)
     : value;
 };

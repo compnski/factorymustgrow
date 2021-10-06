@@ -1,4 +1,4 @@
-import { EntityStack, Recipe, ItemBuffer } from "./types";
+import { EntityStack, ItemBuffer } from "./types";
 import { TicksPerSecond } from "./constants";
 
 // Requires at least Input items to produce anything

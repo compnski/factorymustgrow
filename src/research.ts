@@ -1,18 +1,15 @@
-import { TicksPerSecond } from "./constants";
 import { ResearchState } from "./useGameState";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { GetResearch, ResearchMap } from "./gen/research";
 import {
   EntityStack,
-  IsItemBuffer,
   ItemBuffer,
   NewEntityStack,
   OutputStatus,
-  Producer,
   Recipe,
   Research,
 } from "./types";
-import { FixedInventory, Inventory } from "./inventory";
+import { FixedInventory } from "./inventory";
 import { productionPerTick, producableItemsForInput } from "./productionUtils";
 
 export type Lab = {

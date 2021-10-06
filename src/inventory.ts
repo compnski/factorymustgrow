@@ -1,12 +1,6 @@
 import { GetEntity } from "./gen/entities";
 import { StackCapacity, stackTransfer } from "./movement";
-import {
-  Entity,
-  EntityStack,
-  IsItemBuffer,
-  ItemBuffer,
-  NewEntityStack,
-} from "./types";
+import { Entity, EntityStack, ItemBuffer, NewEntityStack } from "./types";
 
 export function FixedInventory(
   slotTemplate: EntityStack[],

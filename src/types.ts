@@ -1,5 +1,5 @@
 import { Building } from "./building";
-import { FixedInventory, Inventory } from "./inventory";
+import { FixedInventory } from "./inventory";
 import { MainBus } from "./mainbus";
 
 export function IsItemBuffer(i: ItemBuffer | EntityStack): boolean {

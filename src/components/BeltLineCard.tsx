@@ -1,14 +1,8 @@
-import { GameAction } from "../GameAction";
 import { GameDispatch } from "../GameDispatch";
 import "./BuildingCard.scss";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
-import {
-  entityIconLookupByKind,
-  BuildingHasInput,
-  BuildingHasOutput,
-} from "../utils";
-import { showChangeProducerRecipeSelector } from "./selectors";
-import { BeltLine, BeltLineDepot } from "../transport";
+import { entityIconLookupByKind } from "../utils";
+import { BeltLineDepot } from "../transport";
 import { getEntityIconDoubleClickHandler } from "./events";
 
 export type BeltLineCardProps = {

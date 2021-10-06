@@ -1,5 +1,5 @@
 import { GameDispatch } from "../GameDispatch";
-import { EntityStack, ItemBuffer, NewEntityStack, Producer } from "../types";
+import { ItemBuffer, NewEntityStack, Producer } from "../types";
 import "./BuildingCard.scss";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import { entityIconLookupByKind } from "../utils";
@@ -68,10 +68,10 @@ export function ProducerCard({
         </div>
       </div>
       <div className="bottom-area">
-        {producer.ProducerType != "Lab" && (
+        {producer.ProducerType !== "Lab" && (
           <div
             onClick={async () => {
-              const recipe = await showChangeProducerRecipeSelector(
+              await showChangeProducerRecipeSelector(
                 producer.ProducerType,
                 buildingIdx,
                 generalDialog
