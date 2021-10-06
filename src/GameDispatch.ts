@@ -118,6 +118,11 @@ export const GameDispatch = (action: GameAction) => {
     case "IncreaseBuildingCount":
       (() => {
         const b = building(action) as Producer;
+        // TODO: Handle belt lines
+        if (b?.kind === "BeltLineDepot") {
+          console.log("Can't add lanes to beltlines");
+          return;
+        }
         if (
           GameState.Inventory.Count(b.subkind) <= 0 ||
           RemainingRegionBuildingCapacity(currentRegion) <= 0
@@ -133,6 +138,12 @@ export const GameDispatch = (action: GameAction) => {
     case "DecreaseBuildingCount":
       (() => {
         const b = building(action) as Producer;
+        // TODO: Handle belt lines
+        if (b?.kind === "BeltLineDepot") {
+          console.log("Can't remove lanes to beltlines");
+          return;
+        }
+
         if (b) {
           if (b.BuildingCount > 0) {
             GameState.Inventory.Add(NewEntityStack(b.subkind, 1, 1), 1);
