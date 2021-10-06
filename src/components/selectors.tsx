@@ -10,7 +10,9 @@ import {
 import { entityIconLookupByKind } from "../utils";
 import { IsBuilding } from "../production";
 import { RecipeSelector } from "./RecipeSelector";
+import { PlaceBeltLinePanel } from "./PlaceBeltLinePanel";
 import { GeneralDialogConfig } from "../GeneralDialogProvider";
+import { Region } from "../types";
 
 export async function showResearchSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>
@@ -125,10 +127,46 @@ export async function showPlaceBuildingSelector(
     ),
   ]);
 
-  if (item)
+  if (item === "transport-belt") {
+    showPlaceBeltLineSelector(
+      showDialog,
+      inventory,
+      GameState.Regions,
+      buildingIdx
+    );
+  } else if (item)
     GameDispatch({
       type: "PlaceBuilding",
       entity: item,
       buildingIdx,
     });
+}
+
+export async function showPlaceBeltLineSelector(
+  showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
+  inventory: Inventory,
+  regions: Map<string, Region>,
+  buildingIdx?: number
+) {
+  const result = await showDialog({
+    title: "Place Belt Line",
+    component: (onConfirm) => (
+      <PlaceBeltLinePanel
+        title="Place Belt Line"
+        inventory={inventory}
+        regions={regions}
+        onConfirm={onConfirm}
+      />
+    ),
+  });
+  if (result) {
+    const [targetRegion, beltType] = result;
+    GameDispatch({
+      type: "PlaceBeltLine",
+      targetRegion,
+      entity: beltType,
+      beltLength: 100,
+      buildingIdx,
+    });
+  }
 }

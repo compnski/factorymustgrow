@@ -239,12 +239,7 @@ function PlaceBuilding(
   }
   // if buildingIdx, and buildingIDx is empty, then build it here.
   const newBuilding = NewBuilding(action.entity);
-
-  if (action.buildingIdx !== undefined && building(action)?.kind === "Empty") {
-    Buildings[action.buildingIdx] = newBuilding;
-  } else {
-    Buildings.push(newBuilding);
-  }
+  AddBuildingOverEmptyOrAtEnd(Buildings, newBuilding, action.buildingIdx);
 
   GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 1);
 }
@@ -255,6 +250,7 @@ function PlaceBeltLine(
     entity: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
     beltLength: number;
     targetRegion: string;
+    buildingIdx?: number;
   },
   currentRegion: Region
 ) {
@@ -284,10 +280,32 @@ function PlaceBeltLine(
   if (GameState.BeltLines.has(beltLine.beltLineId)) {
     throw new Error("Duplicate BeltLine ID");
   }
-  fromRegion.Buildings.push(fromDepot);
-  toRegion.Buildings.push(toDepot);
+  // If buildingIdx is set, and points to an Empty Lane, replace it.
+  AddBuildingOverEmptyOrAtEnd(
+    fromRegion.Buildings,
+    fromDepot,
+    action.buildingIdx
+  );
+  AddBuildingOverEmptyOrAtEnd(
+    toRegion.Buildings,
+    toDepot,
+    (action.buildingIdx || 0) + 1
+  );
+
   GameState.BeltLines.set(beltLine.beltLineId, beltLine);
   GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 100);
+}
+
+function AddBuildingOverEmptyOrAtEnd(
+  buildings: Building[],
+  b: Building,
+  buildingIdx?: number
+) {
+  if (buildingIdx !== undefined && buildings[buildingIdx]?.kind === "Empty") {
+    buildings[buildingIdx] = b;
+  } else {
+    buildings.push(b);
+  }
 }
 
 function ReorderBuildings(

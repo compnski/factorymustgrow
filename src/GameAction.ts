@@ -63,6 +63,7 @@ type BuildingAction =
         | "express-transport-belt";
       beltLength: number;
       targetRegion: string;
+      buildingIdx?: number;
     };
 type ChangeRecipeAction = {
   type: "ChangeRecipe";

@@ -1,5 +1,4 @@
 import { SyntheticEvent } from "react";
-import { GameDispatch } from "../GameDispatch";
 import { GameAction } from "../GameAction";
 import { GameState } from "../useGameState";
 import { UIAction } from "../uiState";
@@ -8,14 +7,9 @@ import {
   showMoveItemToFromInventorySelector,
   showPlaceBuildingSelector,
   showResearchSelector,
+  showPlaceBeltLineSelector,
 } from "./selectors";
-import {
-  GeneralDialogConfig,
-  useGeneralDialog,
-} from "../GeneralDialogProvider";
-import { Inventory } from "../inventory";
-import { PlaceBeltLinePanel } from "./PlaceBeltLinePanel";
-import { Region } from "../types";
+import { useGeneralDialog } from "../GeneralDialogProvider";
 
 export type FactoryButtonPanelProps = {
   uiDispatch(e: UIAction): void;
@@ -84,31 +78,4 @@ export function FactoryButtonPanel({
       <ButtonPanel buttons={factoryButtons} />
     </div>
   );
-}
-
-export async function showPlaceBeltLineSelector(
-  showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
-  inventory: Inventory,
-  regions: Map<string, Region>
-) {
-  const result = await showDialog({
-    title: "Place Belt Line",
-    component: (onConfirm) => (
-      <PlaceBeltLinePanel
-        title="Place Belt Line"
-        inventory={inventory}
-        regions={regions}
-        onConfirm={onConfirm}
-      />
-    ),
-  });
-  if (result) {
-    const [targetRegion, beltType] = result;
-    GameDispatch({
-      type: "PlaceBeltLine",
-      targetRegion,
-      entity: beltType,
-      beltLength: 100,
-    });
-  }
 }
