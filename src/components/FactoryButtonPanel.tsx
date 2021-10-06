@@ -2,7 +2,6 @@ import { SyntheticEvent } from "react";
 import { GameDispatch } from "../GameDispatch";
 import { GameAction } from "../GameAction";
 import { GameState } from "../useGameState";
-import { useIconSelector } from "../IconSelectorProvider";
 import { UIAction } from "../uiState";
 import { ButtonPanel } from "./ButtonPanel";
 import {
@@ -27,17 +26,16 @@ export function FactoryButtonPanel({
   uiDispatch,
   gameDispatch,
 }: FactoryButtonPanelProps) {
-  const iconSelector = useIconSelector();
   const generalDialog = useGeneralDialog();
   const factoryButtons = [
     {
       clickHandler: () =>
-        showPlaceBuildingSelector(iconSelector, GameState.Inventory),
+        showPlaceBuildingSelector(generalDialog, GameState.Inventory),
       title: "Place Building",
     },
 
     {
-      clickHandler: () => showResearchSelector(iconSelector),
+      clickHandler: () => showResearchSelector(generalDialog),
       title: "Choose Research",
     },
 
@@ -64,7 +62,7 @@ export function FactoryButtonPanel({
     {
       clickHandler: () =>
         showMoveItemToFromInventorySelector(
-          iconSelector,
+          generalDialog,
           "TransferToInventory"
         ),
       title: "Add To Inventory (DEBUG)",

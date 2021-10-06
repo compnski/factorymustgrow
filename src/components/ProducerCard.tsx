@@ -4,9 +4,9 @@ import "./BuildingCard.scss";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import { entityIconLookupByKind } from "../utils";
 import { showChangeProducerRecipeSelector } from "./selectors";
-import { useIconSelector } from "../IconSelectorProvider";
 import { getEntityIconDoubleClickHandler } from "./events";
 import { Inventory } from "../inventory";
+import { useGeneralDialog } from "../GeneralDialogProvider";
 
 const ProducerIcon = (p: Producer): string => p.subkind;
 
@@ -24,7 +24,7 @@ export function ProducerCard({
   buildingIdx,
   regionalOre,
 }: ProducerCardProps) {
-  const selectRecipe = useIconSelector();
+  const generalDialog = useGeneralDialog();
 
   var recipeInput = producer.inputBuffers;
 
@@ -74,7 +74,7 @@ export function ProducerCard({
               const recipe = await showChangeProducerRecipeSelector(
                 producer.ProducerType,
                 buildingIdx,
-                selectRecipe
+                generalDialog
               );
             }}
             className="change-recipe clickable"

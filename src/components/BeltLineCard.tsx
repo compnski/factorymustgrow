@@ -10,7 +10,6 @@ import {
 import { showChangeProducerRecipeSelector } from "./selectors";
 import { BeltLine, BeltLineDepot } from "../transport";
 import { getEntityIconDoubleClickHandler } from "./events";
-import { useIconSelector } from "../IconSelectorProvider";
 
 export type BeltLineCardProps = {
   building: BeltLineDepot;

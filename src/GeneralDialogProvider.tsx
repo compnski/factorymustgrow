@@ -1,6 +1,5 @@
 import { SyntheticEvent, useState } from "react";
 import React from "react";
-import { Inventory } from "./inventory";
 
 const GeneralDialogContext = React.createContext<{
   openGeneralDialog(c: GeneralDialogConfig): void;
@@ -19,7 +18,6 @@ export const GeneralDialogProvider = ({
 }: {
   children: JSX.Element;
 }) => {
-  const [iconSelectorOpen, setGeneralDialogOpen] = useState(false);
   const [generalDialogConfig, setGeneralDialogConfig] =
     useState<GeneralDialogConfig>({
       title: "",
@@ -30,7 +28,6 @@ export const GeneralDialogProvider = ({
     component,
     actionCallback,
   }: GeneralDialogConfig) => {
-    setGeneralDialogOpen(true);
     setGeneralDialogConfig({
       title,
       component,
@@ -39,7 +36,6 @@ export const GeneralDialogProvider = ({
   };
 
   const resetGeneralDialog = () => {
-    setGeneralDialogOpen(false);
     setGeneralDialogConfig({
       title: "",
     });

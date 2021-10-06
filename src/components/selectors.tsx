@@ -1,7 +1,6 @@
 import { GameDispatch } from "../GameDispatch";
 import { GameState } from "../useGameState";
 import { GetRecipe } from "../gen/entities";
-import { IconSelectorConfig } from "../IconSelectorProvider";
 import { Inventory } from "../inventory";
 import {
   availableItems,
@@ -10,20 +9,48 @@ import {
 } from "../research";
 import { entityIconLookupByKind } from "../utils";
 import { IsBuilding } from "../production";
+import { RecipeSelector } from "./RecipeSelector";
+import { GeneralDialogConfig } from "../GeneralDialogProvider";
 
 export async function showResearchSelector(
-  showIconSelector: (c: IconSelectorConfig) => Promise<string | false>
+  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>
 ): Promise<void> {
-  const recipe = await showIconSelector({
-    title: "Choose Research",
-    recipes: availableResearch(GameState.Research),
-    entityIconLookup: entityIconLookupByKind("Lab"),
-  });
+  const recipe = await showIconSelector(
+    showDialog,
+    "Choose Research",
+    availableResearch(GameState.Research),
+    entityIconLookupByKind("Lab")
+  );
+
   if (recipe) GameDispatch({ type: "ChangeResearch", producerName: recipe });
 }
 
+async function showIconSelector(
+  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
+  title: string,
+  recipes: { map(f: (r: string) => any): any },
+  entityIconLookup?: (entity: string) => string
+): Promise<string> {
+  const results = await showDialog({
+    title: title,
+    component: (onConfirm) => (
+      <RecipeSelector
+        title={title}
+        recipes={recipes}
+        entityIconLookup={entityIconLookup}
+        onConfirm={onConfirm}
+      />
+    ),
+  });
+  if (results) {
+    const [recipe] = results;
+    return recipe;
+  }
+  return "";
+}
+
 export async function showMoveItemToFromInventorySelector(
-  selectIcon: (c: IconSelectorConfig) => Promise<string | false>,
+  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
   direction: "TransferToInventory" | "TransferFromInventory",
   buildingIdx?: number,
   filter?: (entity: string) => boolean
@@ -32,11 +59,8 @@ export async function showMoveItemToFromInventorySelector(
     filter = (e) => GameState.Inventory.Count(e) > 0;
   var recipes = availableItems(GameState.Research);
   if (filter) recipes = recipes.filter(filter);
-  const recipe = await selectIcon({
-    title: "Add Stack",
-    recipes: recipes,
-  });
-  console.log(recipe);
+  const recipe = await showIconSelector(showDialog, "Add Stack", recipes);
+
   if (recipe)
     GameDispatch(
       buildingIdx === undefined
@@ -55,12 +79,13 @@ export async function showMoveItemToFromInventorySelector(
 }
 
 export async function showAddLaneItemSelector(
-  selectRecipe: (c: IconSelectorConfig) => Promise<string | false>
+  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>
 ): Promise<void> {
-  const item = await selectRecipe({
-    title: "Add Bus Lane",
-    recipes: availableItems(GameState.Research),
-  });
+  const item = await showIconSelector(
+    showDialog,
+    "Add Bus Lane",
+    availableItems(GameState.Research)
+  );
   if (item)
     GameDispatch({
       type: "AddLane",
@@ -71,36 +96,34 @@ export async function showAddLaneItemSelector(
 export async function showChangeProducerRecipeSelector(
   producerType: string,
   buildingIdx: number,
-  selectRecipe: (c: IconSelectorConfig) => Promise<string | false>
+  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>
 ): Promise<void> {
-  const recipeId = await selectRecipe({
-    title: "Choose Recipe",
-    recipes: availableRecipes(GameState.Research).filter(function filterRecipes(
+  const recipeId = await showIconSelector(
+    showDialog,
+    "Choose Recipe",
+    availableRecipes(GameState.Research).filter(function filterRecipes(
       recipeId: string
     ): boolean {
       const r = GetRecipe(recipeId);
       return r.ProducerType === producerType;
-    }),
-  });
+    })
+  );
   if (recipeId) GameDispatch({ type: "ChangeRecipe", buildingIdx, recipeId });
 }
 
 export async function showPlaceBuildingSelector(
-  selectRecipe: (c: IconSelectorConfig) => Promise<string | false>,
+  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
   inventory: Inventory,
   buildingIdx?: number
 ) {
-  const item = await selectRecipe({
-    title: "Place Building",
-    recipes: [
-      ...new Set(
-        inventory
-          .Slots()
-          .map((s) => s[0])
-          .filter((e) => IsBuilding(e))
-      ),
-    ],
-  });
+  const item = await showIconSelector(showDialog, "Place Building", [
+    ...new Set(
+      inventory
+        .Slots()
+        .map((s) => s[0])
+        .filter((e) => IsBuilding(e))
+    ),
+  ]);
 
   if (item)
     GameDispatch({

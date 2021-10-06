@@ -5,14 +5,12 @@ export type RecipeSelectorProps = {
   recipes: { map(f: (r: string) => any): any };
   title: string;
   entityIconLookup?: (entity: string) => string;
-  open: boolean;
 };
 
 export const RecipeSelector = ({
   recipes,
   onConfirm,
   title,
-  open,
   entityIconLookup = (entity: string): string => entity,
 }: RecipeSelectorProps) => {
   const recipeIcons = recipes.map((r: string): JSX.Element => {
@@ -26,7 +24,7 @@ export const RecipeSelector = ({
     );
   });
   return (
-    (open && (
+    (
       <div className="recipe-selector modal">
         <span
           className="material-icons close-icon clickable"
@@ -37,6 +35,6 @@ export const RecipeSelector = ({
         <span className="title">{title}</span>
         <div className="recipe-list">{recipeIcons}</div>
       </div>
-    )) || <> </>
+    ) || <> </>
   );
 };
