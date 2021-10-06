@@ -52,6 +52,7 @@ type BuildingAction =
   | {
       type: "PlaceBuilding";
       entity: string;
+      buildingIdx?: number;
     }
   | {
       type: "PlaceBeltLine";

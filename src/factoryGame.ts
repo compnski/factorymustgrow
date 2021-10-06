@@ -15,11 +15,11 @@ import {
 import { IsResearchComplete, Lab, ResearchInLab } from "./research";
 import { GetResearch } from "./gen/research";
 import { UIAction } from "./uiState";
-import { Building } from "./building";
 import { GameState } from "./useGameState";
 import { BeltLine, UpdateBeltLine } from "./transport";
 import { MainBus } from "./mainbus";
 import { GameDispatch } from "./GameDispatch";
+import { Building } from "./building";
 
 export const UpdateGameState = (
   tick: number,

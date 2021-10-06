@@ -11,6 +11,7 @@ import { Building } from "../building";
 import { BeltLineCard } from "./BeltLineCard";
 import { MainBus } from "../mainbus";
 import { StorageCard } from "./StorageCard";
+import { EmptyLaneCard } from "./EmptyLaneCard";
 
 export type BuildingCardProps = {
   building: Building;
@@ -36,6 +37,7 @@ export const BuildingCard = ({
   // TOOD: Change to use Events
   const busLaneClicked = (laneId: number, entity: string) => {
     if (
+      building.outputStatus &&
       building.outputStatus.beltConnections.filter((v) => v.beltId === laneId)
         .length > 0
     )
@@ -43,6 +45,7 @@ export const BuildingCard = ({
 
     if (
       BuildingHasOutput(building.kind) &&
+      building.outputStatus &&
       (building.outputBuffers.Accepts(entity) ||
         building.outputBuffers.Count(entity) > 0)
     ) {
@@ -51,7 +54,12 @@ export const BuildingCard = ({
         beltId: laneId,
       });
     }
-    if (BuildingHasInput(building.kind) && building.inputBuffers)
+
+    if (
+      BuildingHasInput(building.kind) &&
+      building.outputStatus &&
+      building.inputBuffers
+    )
       if (building.inputBuffers.Accepts(entity)) {
         building.outputStatus.beltConnections.push({
           direction: "FROM_BUS",
@@ -59,7 +67,9 @@ export const BuildingCard = ({
         });
       }
   };
+
   const beltConnectionClicked = (laneId: number) => {
+    if (!building.outputStatus) return;
     const connectIdx = building.outputStatus.beltConnections.findIndex(
       (v) => v.beltId === laneId
     );
@@ -101,6 +111,8 @@ export const BuildingCard = ({
       <BeltLineCard building={building} buildingIdx={buildingIdx} />
     ) : building.kind === "Chest" ? (
       <StorageCard storage={building} buildingIdx={buildingIdx} />
+    ) : building.kind === "Empty" ? (
+      <EmptyLaneCard buildingIdx={buildingIdx} />
     ) : (
       <ProducerCard
         producer={building as Producer}
@@ -150,7 +162,7 @@ export const BuildingCard = ({
             })
           }
         >
-          {building.outputStatus.above === "OUT" ? "^" : "-"}
+          {building.outputStatus?.above === "OUT" ? "^" : "-"}
         </div>
         <div className="output-arrow right">&gt;</div>
         <div
@@ -162,7 +174,7 @@ export const BuildingCard = ({
             })
           }
         >
-          {building.outputStatus.below === "OUT" ? "v" : "-"}
+          {building.outputStatus?.below === "OUT" ? "v" : "-"}
         </div>
       </div>
       <MainBusSegment
@@ -170,7 +182,7 @@ export const BuildingCard = ({
         busLaneClicked={busLaneClicked}
         beltConnectionClicked={beltConnectionClicked}
         segmentHeight={100}
-        beltConnections={building.outputStatus.beltConnections}
+        beltConnections={building.outputStatus?.beltConnections}
       />
     </div>
   );

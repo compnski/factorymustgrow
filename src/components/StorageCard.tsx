@@ -11,9 +11,10 @@ import { useIconSelector } from "../IconSelectorProvider";
 import { getEntityIconDoubleClickHandler } from "./events";
 import { Inventory } from "../inventory";
 import { Building } from "../building";
+import { Chest } from "../storage";
 
 export type StorageCardProps = {
-  storage: Building;
+  storage: Chest;
   /* dispatch: (a: GameAction) => void;
    * uiDispatch: (a: UIAction) => void; */
   buildingIdx: number;

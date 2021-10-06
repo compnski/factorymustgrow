@@ -71,7 +71,8 @@ export type BuildingType =
   | "Lab"
   | "RocketSilo"
   | "Depot"
-  | "Chest";
+  | "Chest"
+  | "Empty";
 
 export type Recipe = {
   Icon: string;

@@ -17,7 +17,7 @@ import { GetResearch } from "./gen/research";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
 import { GameWindow } from "./globals";
 import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
-import { Building } from "./building";
+import { Building, NewEmptyLane } from "./building";
 import { GameState } from "./useGameState";
 import { ResetGameState } from "./useGameState";
 import {
@@ -117,7 +117,7 @@ export const GameDispatch = (action: GameAction) => {
       (() => {
         const b = building(action); // as Producer;
         if (b) {
-          currentRegion.Buildings.splice(action.buildingIdx, 1);
+          currentRegion.Buildings.splice(action.buildingIdx, 1, NewEmptyLane());
           if (BuildingHasInput(b.kind))
             b.inputBuffers
               .Entities()
@@ -219,7 +219,18 @@ export const GameDispatch = (action: GameAction) => {
       ) {
         break;
       }
-      Buildings.push(NewBuilding(action.entity));
+      // if buildingIdx, and buildingIDx is empty, then build it here.
+      const newBuilding = NewBuilding(action.entity);
+
+      if (
+        action.buildingIdx !== undefined &&
+        building(action)?.kind === "Empty"
+      ) {
+        Buildings[action.buildingIdx] = newBuilding;
+      } else {
+        Buildings.push(newBuilding);
+      }
+
       GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 1);
       // Consume Space
       break;
@@ -330,6 +341,7 @@ export const GameDispatch = (action: GameAction) => {
       break;
   }
 };
+
 function inventoryTransferStack(
   action: InventoryTransferAction
 ): ItemBuffer | undefined {
@@ -368,6 +380,7 @@ function inventoryTransferStack(
   }
   return;
 }
+
 function NewBuilding(entity: string): Building {
   switch (ProducerTypeFromEntity(entity)) {
     case "Assembler":
@@ -388,6 +401,9 @@ function NewBuilding(entity: string): Building {
     case "Chest":
       return NewChest({ subkind: entity } as any);
 
+    case "Empty":
+      return NewEmptyLane();
+
     case "Boiler":
     case "Centrifuge":
       throw new Error("Can't build this entity yet. " + entity);
@@ -395,7 +411,8 @@ function NewBuilding(entity: string): Building {
       throw new Error("Wrong constructor for " + entity);
   }
 }
-function building(action: { buildingIdx: number }): Building | undefined {
+
+function building(action: { buildingIdx?: number }): Building | undefined {
   const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
 
   return action.buildingIdx !== undefined
