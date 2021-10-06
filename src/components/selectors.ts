@@ -10,8 +10,6 @@ import {
 } from "../research";
 import { entityIconLookupByKind } from "../utils";
 import { IsBuilding } from "../production";
-import { GeneralDialogConfig } from "../GeneralDialogProvider";
-import { ItemBuffer } from "../types";
 
 export async function showResearchSelector(
   showIconSelector: (c: IconSelectorConfig) => Promise<string | false>

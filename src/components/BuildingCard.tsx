@@ -21,7 +21,7 @@ export type BuildingCardProps = {
   mainBus: MainBus;
   regionalOre: ItemBuffer;
   handleDrag: (evt: SyntheticEvent) => void;
-  handleDrop: (evt: SyntheticEvent) => void;
+  handleDrop: undefined | ((evt: SyntheticEvent) => void);
 };
 
 export const BuildingCard = ({
@@ -84,19 +84,21 @@ export const BuildingCard = ({
   };
 
   const moveUp = () => {
-    GameDispatch({
-      type: "ReorderBuildings",
-      buildingIdx: buildingIdx,
-      dropBuildingIdx: buildingIdx - 1,
-    });
+    return;
+    /* GameDispatch({
+     *   type: "ReorderBuildings",
+     *   buildingIdx: buildingIdx,
+     *   dropBuildingIdx: buildingIdx - 1,
+     * }); */
   };
 
   const moveDown = () => {
-    GameDispatch({
-      type: "ReorderBuildings",
-      buildingIdx: buildingIdx,
-      dropBuildingIdx: buildingIdx + 1,
-    });
+    return;
+    /* GameDispatch({
+     *   type: "ReorderBuildings",
+     *   buildingIdx: buildingIdx,
+     *   dropBuildingIdx: buildingIdx + 1,
+     * }); */
   };
 
   const removeBuilding = () => {
@@ -124,7 +126,7 @@ export const BuildingCard = ({
   return (
     <div
       className="producer-card"
-      draggable={dragging}
+      draggable={building.kind !== "Empty" && dragging}
       id={`b-${buildingIdx}`}
       onDrop={handleDrop}
       onDragOver={handleDragOver}

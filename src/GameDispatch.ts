@@ -9,6 +9,7 @@ import {
   Producer,
   NewRegionFromInfo,
   ItemBuffer,
+  Region,
 } from "./types";
 import { GetEntity } from "./gen/entities";
 import { CanPushTo } from "./movement";
@@ -99,140 +100,19 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "ReorderBuildings":
-      (() => {
-        const b = building(action);
-
-        if (
-          action.buildingIdx !== undefined &&
-          action.dropBuildingIdx !== undefined
-        ) {
-          Buildings.splice(action.buildingIdx, 1);
-          Buildings.splice(action.dropBuildingIdx, 0, b as Building);
-          fixOutputStatus(Buildings);
-        }
-      })();
+      ReorderBuildings(action, Buildings);
       break;
 
     case "RemoveBuilding":
-      (() => {
-        const b = building(action); // as Producer;
-        if (b) {
-          currentRegion.Buildings.splice(action.buildingIdx, 1, NewEmptyLane());
-          if (BuildingHasInput(b.kind))
-            b.inputBuffers
-              .Entities()
-              .forEach(([entity, count]) =>
-                GameState.Inventory.AddFromItemBuffer(
-                  b.inputBuffers,
-                  entity,
-                  count,
-                  true
-                )
-              );
-          if (BuildingHasOutput(b.kind))
-            b.outputBuffers
-              .Entities()
-              .forEach(([entity, count]) =>
-                GameState.Inventory.AddFromItemBuffer(
-                  b.outputBuffers,
-                  entity,
-                  count,
-                  true
-                )
-              );
-          if (b.kind === "BeltLineDepot") {
-            const depot = b as BeltLineDepot,
-              otherDepot = FindDepotForBeltLineInRegion(
-                GameState.Regions.get(depot.otherRegionId)!,
-                depot.beltLineId,
-                depot.direction === "TO_REGION" ? "FROM_REGION" : "TO_REGION"
-              );
-            // Have to remove both depots to remove beltline
-            if (!otherDepot) {
-              // Remove BeltLine
-              const beltLine = GameState.BeltLines.get(depot.beltLineId);
-              if (!beltLine) {
-                console.error(
-                  "No beltline to delete when deleting depot for ",
-                  depot.beltLineId
-                );
-                return;
-              }
-              GameState.Inventory.Add(
-                NewEntityStack(b.subkind, b.BuildingCount * beltLine.length),
-                b.BuildingCount
-              );
-              beltLine.sharedBeltBuffer.forEach((es) => {
-                if (es && es.Entity)
-                  GameState.Inventory.Add(es, Infinity, true);
-              });
-              GameState.BeltLines.delete(beltLine.beltLineId);
-            }
-          } else {
-            GameState.Inventory.Add(
-              NewEntityStack(b.subkind, b.BuildingCount),
-              b.BuildingCount,
-              true
-            );
-          }
-          // Return space
-        }
-      })();
+      RemoveBuilding(action, currentRegion);
       break;
 
     case "PlaceBeltLine":
-      // TODO: Check for any orphan beltlines that could connect here.
-      const targetRegion = GameState.Regions.get(action.targetRegion);
-
-      if (
-        targetRegion === undefined ||
-        GameState.Inventory.Count(action.entity) < action.beltLength ||
-        RemainingRegionBuildingCapacity(currentRegion) <= 0 ||
-        RemainingRegionBuildingCapacity(targetRegion) <= 0
-      ) {
-        console.log("Not enough belts");
-        break;
-      }
-      const fromRegion = currentRegion,
-        toRegion = targetRegion;
-      // Add to list of belt lines
-      // Add building to each region's list of buildings
-      const [beltLine, fromDepot, toDepot] = NewBeltLinePair(
-        fromRegion,
-        toRegion,
-        action.entity,
-        100
-      );
-      if (GameState.BeltLines.has(beltLine.beltLineId)) {
-        throw new Error("Duplicate BeltLine ID");
-      }
-      fromRegion.Buildings.push(fromDepot);
-      toRegion.Buildings.push(toDepot);
-      GameState.BeltLines.set(beltLine.beltLineId, beltLine);
-      GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 100);
+      PlaceBeltLine(action, currentRegion);
       break;
 
     case "PlaceBuilding":
-      if (
-        GameState.Inventory.Count(action.entity) <= 0 ||
-        RemainingRegionBuildingCapacity(currentRegion) <= 0
-      ) {
-        break;
-      }
-      // if buildingIdx, and buildingIDx is empty, then build it here.
-      const newBuilding = NewBuilding(action.entity);
-
-      if (
-        action.buildingIdx !== undefined &&
-        building(action)?.kind === "Empty"
-      ) {
-        Buildings[action.buildingIdx] = newBuilding;
-      } else {
-        Buildings.push(newBuilding);
-      }
-
-      GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 1);
-      // Consume Space
+      PlaceBuilding(action, currentRegion, Buildings);
       break;
 
     case "IncreaseBuildingCount":
@@ -341,6 +221,184 @@ export const GameDispatch = (action: GameAction) => {
       break;
   }
 };
+
+function PlaceBuilding(
+  action: {
+    type: "PlaceBuilding";
+    entity: string;
+    buildingIdx?: number | undefined;
+  },
+  currentRegion: Region,
+  Buildings: Building[]
+) {
+  if (
+    GameState.Inventory.Count(action.entity) <= 0 ||
+    RemainingRegionBuildingCapacity(currentRegion) <= 0
+  ) {
+    return;
+  }
+  // if buildingIdx, and buildingIDx is empty, then build it here.
+  const newBuilding = NewBuilding(action.entity);
+
+  if (action.buildingIdx !== undefined && building(action)?.kind === "Empty") {
+    Buildings[action.buildingIdx] = newBuilding;
+  } else {
+    Buildings.push(newBuilding);
+  }
+
+  GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 1);
+}
+
+function PlaceBeltLine(
+  action: {
+    type: "PlaceBeltLine";
+    entity: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
+    beltLength: number;
+    targetRegion: string;
+  },
+  currentRegion: Region
+) {
+  // TODO: Check for any orphan beltlines that could connect here.
+
+  const targetRegion = GameState.Regions.get(action.targetRegion);
+
+  if (
+    targetRegion === undefined ||
+    GameState.Inventory.Count(action.entity) < action.beltLength ||
+    RemainingRegionBuildingCapacity(currentRegion) <= 0 ||
+    RemainingRegionBuildingCapacity(targetRegion) <= 0
+  ) {
+    console.log("Not enough belts");
+    return;
+  }
+  const fromRegion = currentRegion,
+    toRegion = targetRegion;
+  // Add to list of belt lines
+  // Add building to each region's list of buildings
+  const [beltLine, fromDepot, toDepot] = NewBeltLinePair(
+    fromRegion,
+    toRegion,
+    action.entity,
+    100
+  );
+  if (GameState.BeltLines.has(beltLine.beltLineId)) {
+    throw new Error("Duplicate BeltLine ID");
+  }
+  fromRegion.Buildings.push(fromDepot);
+  toRegion.Buildings.push(toDepot);
+  GameState.BeltLines.set(beltLine.beltLineId, beltLine);
+  GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 100);
+}
+
+function ReorderBuildings(
+  action: {
+    type: "ReorderBuildings";
+    buildingIdx: number;
+    dropBuildingIdx: number;
+    isDropOnLastBuilding: boolean;
+  },
+  Buildings: Building[]
+) {
+  (() => {
+    const b = building(action);
+    if (!b) return;
+    // if dropBuilding is the last building AND it's not an empty lane,
+    //  then move building to end
+    // Otherwise, if not an empty lane, skip (it should never be)
+    // If it is an empty lane, swap with the building
+    //
+    const targetBuilding = building({
+        buildingIdx: action.dropBuildingIdx,
+      }),
+      targetIsEmptyLane = targetBuilding?.kind === "Empty",
+      targetIsLastBuilding = action.isDropOnLastBuilding;
+
+    if (targetIsEmptyLane) {
+      Buildings[action.dropBuildingIdx] = b;
+      Buildings[action.buildingIdx] = NewEmptyLane();
+    } else if (targetIsLastBuilding) {
+      Buildings[action.buildingIdx] = NewEmptyLane();
+      Buildings.push(b);
+    }
+    fixOutputStatus(Buildings);
+  })();
+}
+
+function RemoveBuilding(
+  action: {
+    type:
+      | "RemoveBuilding"
+      | "IncreaseBuildingCount"
+      | "DecreaseBuildingCount"
+      | "ToggleUpperOutputState"
+      | "ToggleLowerOutputState";
+    buildingIdx: number;
+  },
+  currentRegion: Region
+) {
+  const b = building(action); // as Producer;
+  if (b) {
+    currentRegion.Buildings.splice(action.buildingIdx, 1, NewEmptyLane());
+    if (BuildingHasInput(b.kind))
+      b.inputBuffers
+        .Entities()
+        .forEach(([entity, count]) =>
+          GameState.Inventory.AddFromItemBuffer(
+            b.inputBuffers,
+            entity,
+            count,
+            true
+          )
+        );
+    if (BuildingHasOutput(b.kind))
+      b.outputBuffers
+        .Entities()
+        .forEach(([entity, count]) =>
+          GameState.Inventory.AddFromItemBuffer(
+            b.outputBuffers,
+            entity,
+            count,
+            true
+          )
+        );
+    if (b.kind === "BeltLineDepot") {
+      const depot = b as BeltLineDepot,
+        otherDepot = FindDepotForBeltLineInRegion(
+          GameState.Regions.get(depot.otherRegionId)!,
+          depot.beltLineId,
+          depot.direction === "TO_REGION" ? "FROM_REGION" : "TO_REGION"
+        );
+      // Have to remove both depots to remove beltline
+      if (!otherDepot) {
+        // Remove BeltLine
+        const beltLine = GameState.BeltLines.get(depot.beltLineId);
+        if (!beltLine) {
+          console.error(
+            "No beltline to delete when deleting depot for ",
+            depot.beltLineId
+          );
+          return;
+        }
+        GameState.Inventory.Add(
+          NewEntityStack(b.subkind, b.BuildingCount * beltLine.length),
+          b.BuildingCount
+        );
+        beltLine.sharedBeltBuffer.forEach((es) => {
+          if (es && es.Entity) GameState.Inventory.Add(es, Infinity, true);
+        });
+        GameState.BeltLines.delete(beltLine.beltLineId);
+      }
+    } else {
+      if (b.BuildingCount > 0)
+        GameState.Inventory.Add(
+          NewEntityStack(b.subkind, b.BuildingCount),
+          b.BuildingCount,
+          true
+        );
+    }
+    // Return space
+  }
+}
 
 function inventoryTransferStack(
   action: InventoryTransferAction

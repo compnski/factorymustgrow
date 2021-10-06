@@ -26,18 +26,23 @@ export const BuildingCardList = ({
     //e.stopPropagation();
   };
 
-  const handleDrop = (dropIdx: number) => (e: SyntheticEvent) => {
-    console.log(dragIdx, dropIdx);
-    GameDispatch({
-      type: "ReorderBuildings",
-      buildingIdx: dragIdx,
-      dropBuildingIdx: dropIdx,
-    });
-    //e.preventDefault();
-    //e.stopPropagation();
-  };
+  const handleDrop =
+    (dropIdx: number, isDropOnLastBuilding: boolean) => (e: SyntheticEvent) => {
+      console.log(dragIdx, dropIdx);
+      GameDispatch({
+        type: "ReorderBuildings",
+        buildingIdx: dragIdx,
+        dropBuildingIdx: dropIdx,
+        isDropOnLastBuilding,
+      });
+      e.preventDefault();
+      //e.stopPropagation();
+    };
 
   const cards = buildings.map((ep, idx) => {
+    const isLastBuilding = idx === buildings.length - 1,
+      allowsDrop = ep.kind === "Empty" || isLastBuilding;
+
     return (
       <BuildingCard
         key={idx}
@@ -48,7 +53,7 @@ export const BuildingCardList = ({
         uiDispatch={uiDispatch}
         regionalOre={regionalOre}
         handleDrag={handleDrag(idx)}
-        handleDrop={handleDrop(idx)}
+        handleDrop={allowsDrop ? handleDrop(idx, isLastBuilding) : undefined}
       />
     );
   });

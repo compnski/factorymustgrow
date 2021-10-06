@@ -30,7 +30,8 @@ type RegionAction = {
 type DragBuildingAction = {
   type: "ReorderBuildings";
   buildingIdx: number;
-  dropBuildingIdx?: number;
+  dropBuildingIdx: number;
+  isDropOnLastBuilding: boolean;
 };
 type ProducerAction = {
   type: "ChangeResearch";
