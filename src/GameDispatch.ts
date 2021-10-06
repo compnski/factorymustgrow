@@ -293,7 +293,7 @@ function PlaceBeltLine(
   );
 
   GameState.BeltLines.set(beltLine.beltLineId, beltLine);
-  GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 100);
+  GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 100), 100);
 }
 
 function AddBuildingOverEmptyOrAtEnd(
@@ -410,7 +410,7 @@ function RemoveBuilding(
         }
         GameState.Inventory.Add(
           NewEntityStack(b.subkind, b.BuildingCount * beltLine.length),
-          b.BuildingCount
+          b.BuildingCount * beltLine.length
         );
         beltLine.sharedBeltBuffer.forEach((es) => {
           if (es && es.Entity) GameState.Inventory.Add(es, Infinity, true);
