@@ -74,7 +74,6 @@ export type BuildingType =
   | "Chest";
 
 export type Recipe = {
-  //  Name: string;
   Icon: string;
   Id: string;
   ProducerType: BuildingType;

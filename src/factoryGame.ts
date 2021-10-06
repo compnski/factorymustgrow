@@ -41,6 +41,7 @@ import {
 import { MainBus } from "./mainbus";
 import { FixedInventory } from "./inventory";
 import { NewChest } from "./storage";
+import { GameAction, InventoryTransferAction } from "./GameAction";
 
 export const UpdateGameState = (
   tick: number,
@@ -91,102 +92,6 @@ function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
     PushPullFromMainBus(p, currentRegion.Bus);
   });
 }
-
-export type GameAction =
-  | BasicAction
-  | ProducerAction
-  | BuildingAction
-  | InventoryTransferAction
-  | LaneAction
-  | RegionAction
-  | AddBuildingAction
-  | DragBuildingAction
-  | ChangeRecipeAction;
-//| ChangeBeltLineItemAction;
-
-type AddBuildingAction = {
-  type: "AddBuilding";
-} & Pick<Building, "kind" | "subkind">;
-
-type LaneAction =
-  | {
-      type: "RemoveLane";
-      laneId: number;
-    }
-  | {
-      type: "AddLane";
-      entity: string;
-    };
-
-type RegionAction = {
-  type: "ClaimRegion" | "ChangeRegion";
-  regionId: string;
-};
-
-type DragBuildingAction = {
-  type: "ReorderBuildings";
-  buildingIdx: number;
-  dropBuildingIdx?: number;
-};
-
-type ProducerAction = {
-  type: "ChangeResearch";
-  producerName: string;
-};
-
-type BasicAction = {
-  type: "NewLab" | "CompleteResearch" | "Reset";
-};
-
-type BuildingAction =
-  | {
-      type:
-        | "RemoveBuilding"
-        | "IncreaseBuildingCount"
-        | "DecreaseBuildingCount"
-        | "ToggleUpperOutputState"
-        | "ToggleLowerOutputState";
-      buildingIdx: number;
-    }
-  | {
-      type: "PlaceBuilding";
-      entity: string;
-    }
-  | {
-      type: "PlaceBeltLine";
-      entity:
-        | "transport-belt"
-        | "fast-transport-belt"
-        | "express-transport-belt";
-      beltLength: number;
-      targetRegion: string;
-    };
-
-type ChangeRecipeAction = {
-  type: "ChangeRecipe";
-  buildingIdx: number;
-  recipeId: string;
-};
-
-type InventoryTransferAction =
-  | {
-      type: "TransferToInventory" | "TransferFromInventory";
-      entity: string;
-      otherStackKind: "MainBus";
-      laneId: number;
-    }
-  | {
-      type: "TransferToInventory" | "TransferFromInventory";
-      entity: string;
-      otherStackKind: "Building";
-      buildingIdx: number;
-    }
-  | {
-      type: "TransferToInventory" | "TransferFromInventory";
-      entity: string;
-      otherStackKind: "Void";
-      count?: number;
-    };
 
 function building(action: { buildingIdx: number }): Building | undefined {
   const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
