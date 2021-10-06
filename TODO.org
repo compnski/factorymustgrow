@@ -1,12 +1,10 @@
 #+TITLE: Todo
 * In progress
-** EntityId
-*** Store 'nextId' in GameState
-*** Add Id to many/most/all? entities
 ** BeltLine
 *** Re-Connect when rebuilding
-** Spacing on inventory display in all areas
-* Next Ideas
+** UI
+*** Fix Up / Down arrow to move to next empty lane in that direction.
+*** Make Region Selector use GeneralDialog
 ** Inserters
 *** Move items between areas
 *** Build more to increase the rate of transfer
@@ -15,6 +13,11 @@
 **** Each transfer point has defined speed (Items/second)
 **** Can upgrade or build more transferers to incresae rate
 **** Needs UX to show rate and to allow upgrading
+
+* Next Ideas
+** EntityId
+*** Store 'nextId' in GameState
+*** Add Id to many/most/all? entities
 ** Fuel
 *** Gotta pay for smelters, power plants, etc
 *** "fuel slot" holds any fuel
