@@ -89,7 +89,8 @@ export async function showChangeProducerRecipeSelector(
 
 export async function showPlaceBuildingSelector(
   selectRecipe: (c: IconSelectorConfig) => Promise<string | false>,
-  inventory: Inventory
+  inventory: Inventory,
+  buildingIdx?: number
 ) {
   const item = await selectRecipe({
     title: "Place Building",
@@ -102,9 +103,11 @@ export async function showPlaceBuildingSelector(
       ),
     ],
   });
+
   if (item)
     GameDispatch({
       type: "PlaceBuilding",
       entity: item,
+      buildingIdx,
     });
 }
