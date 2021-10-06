@@ -1,5 +1,4 @@
 import {
-  Producer,
   NewEntityStack,
   EntityStack,
   Recipe,
@@ -9,7 +8,6 @@ import {
   BuildingType,
   ItemBuffer,
 } from "./types";
-import { stackTransfer } from "./movement";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
 import { GameState } from "./useGameState";

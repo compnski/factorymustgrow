@@ -6,17 +6,12 @@ import {
 } from "./production";
 import { Region } from "./types";
 import { GetRecipe } from "./gen/entities";
-import {
-  CanPushTo,
-  PushPullFromMainBus,
-  PushToNeighbors,
-  stackTransfer,
-} from "./movement";
+import { CanPushTo, PushPullFromMainBus, PushToNeighbors } from "./movement";
 import { IsResearchComplete, Lab, ResearchInLab } from "./research";
 import { GetResearch } from "./gen/research";
 import { UIAction } from "./uiState";
 import { GameState } from "./useGameState";
-import { BeltLine, UpdateBeltLine } from "./transport";
+import { UpdateBeltLine } from "./transport";
 import { MainBus } from "./mainbus";
 import { GameDispatch } from "./GameDispatch";
 import { Building } from "./building";

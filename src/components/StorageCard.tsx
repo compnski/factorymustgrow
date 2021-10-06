@@ -52,7 +52,7 @@ export function StorageCard({ storage, buildingIdx }: StorageCardProps) {
       <div className="bottom-area">
         <div
           onClick={async () => {
-            const recipe = await showMoveItemToFromInventorySelector(
+            await showMoveItemToFromInventorySelector(
               generalDialog,
               "TransferFromInventory",
               buildingIdx

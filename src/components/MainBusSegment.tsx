@@ -50,7 +50,8 @@ export function MainBusSegment({
   const laneIdxByBeltId: { [key: number]: number } = {};
   const entityIconLookup = entityIconLookupByKind("MainBus");
 
-  for (var [laneId, lane] of mainBus.lanes.entries()) {
+  for (var [_laneId, lane] of mainBus.lanes.entries()) {
+    const laneId = _laneId;
     const laneX =
       MainBusConst.laneOffset +
       idx * (MainBusConst.laneWidth + MainBusConst.interLaneWidth);

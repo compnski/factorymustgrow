@@ -1,4 +1,3 @@
-import { Inventory } from "./inventory";
 import { MainBus } from "./mainbus";
 import { OutputStatus, EntityStack, ItemBuffer } from "./types";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
