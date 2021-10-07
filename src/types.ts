@@ -135,8 +135,6 @@ export type BeltConnection = {
   direction: "TO_BUS" | "FROM_BUS";
 };
 export type OutputStatus = {
-  above: "OUT" | "NONE";
-  below: "OUT" | "NONE";
   beltConnections: BeltConnection[];
 };
 

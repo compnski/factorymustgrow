@@ -217,40 +217,6 @@ export const GameDispatch = (action: GameAction) => {
       })();
       break;
 
-    case "ToggleUpperOutputState":
-      (() => {
-        const b = building(action);
-        if (
-          !BuildingHasOutput(b?.kind) ||
-          !b ||
-          action.buildingIdx === undefined
-        )
-          return;
-        b.outputStatus.above =
-          b.outputStatus.above === "NONE" &&
-          CanPushTo(b, Buildings[action.buildingIdx - 1])
-            ? "OUT"
-            : "NONE";
-      })();
-      break;
-
-    case "ToggleLowerOutputState":
-      (() => {
-        const b = building(action);
-        if (
-          !BuildingHasOutput(b?.kind) ||
-          !b ||
-          action.buildingIdx === undefined
-        )
-          return;
-        b.outputStatus.below =
-          b.outputStatus.below === "NONE" &&
-          CanPushTo(b, Buildings[action.buildingIdx + 1])
-            ? "OUT"
-            : "NONE";
-      })();
-      break;
-
     case "TransferToInventory":
       (() => {
         const fromStack = inventoryTransferStack(action);
@@ -414,12 +380,7 @@ function ReorderBuildings(
 
 function RemoveBuilding(
   action: {
-    type:
-      | "RemoveBuilding"
-      | "IncreaseBuildingCount"
-      | "DecreaseBuildingCount"
-      | "ToggleUpperOutputState"
-      | "ToggleLowerOutputState";
+    type: "RemoveBuilding" | "IncreaseBuildingCount" | "DecreaseBuildingCount";
     buildingIdx: number;
   },
   currentRegion: Region

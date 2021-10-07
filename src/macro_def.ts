@@ -81,20 +81,12 @@ function addProducers(
 
   lowerToggles.forEach((buildingIdx) => {
     GameDispatch({
-      type: "ToggleLowerOutputState",
-      buildingIdx: buildingIdx,
-    });
-    GameDispatch({
       type: "ToggleInserterDirection",
       inserterIdx: buildingIdx,
     });
   });
 
   upperToggles.forEach((buildingIdx) => {
-    GameDispatch({
-      type: "ToggleUpperOutputState",
-      buildingIdx: buildingIdx,
-    });
     GameDispatch({
       type: "ToggleInserterDirection",
       inserterIdx: buildingIdx - 1,

@@ -26,6 +26,6 @@ export function NewChest(
     BuildingCount: size,
     inputBuffers: sharedStorage,
     outputBuffers: sharedStorage,
-    outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
+    outputStatus: { beltConnections: [] },
   };
 }

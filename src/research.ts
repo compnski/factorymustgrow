@@ -115,7 +115,7 @@ export function NewLab(initialProduceCount: number = 0): Lab {
     inputBuffers: FixedInventory(
       initialLabInput.map((input) => NewEntityStack(input.Entity, 0, 50))
     ),
-    outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
+    outputStatus: { beltConnections: [] },
     RecipeId: "",
     BuildingCount: initialProduceCount,
   };

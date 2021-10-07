@@ -31,7 +31,7 @@ export function NewEmptyLane(): EmptyLane {
     inputBuffers: new Inventory(0),
     outputBuffers: new Inventory(0),
     BuildingCount: 0,
-    outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
+    outputStatus: { beltConnections: [] },
   };
 }
 

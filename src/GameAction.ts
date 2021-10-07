@@ -46,9 +46,7 @@ type BuildingAction =
       type:
         | "RemoveBuilding"
         | "IncreaseBuildingCount"
-        | "DecreaseBuildingCount"
-        | "ToggleUpperOutputState"
-        | "ToggleLowerOutputState";
+        | "DecreaseBuildingCount";
       buildingIdx: number;
     }
   | {

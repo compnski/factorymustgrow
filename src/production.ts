@@ -115,7 +115,7 @@ export function NewExtractor(
     ProducerType: ProducerTypeFromEntity(subkind),
     inputBuffers: FixedInventory([]),
     outputBuffers: FixedInventory([]),
-    outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
+    outputStatus: { beltConnections: [] },
     RecipeId: "",
     BuildingCount: initialProduceCount,
   };
@@ -242,7 +242,7 @@ export function NewFactory(
     subkind,
     outputBuffers: FixedInventory([]),
     inputBuffers: FixedInventory([]),
-    outputStatus: { above: "NONE", below: "NONE", beltConnections: [] },
+    outputStatus: { beltConnections: [] },
     RecipeId: "",
     BuildingCount: initialProduceCount,
   };

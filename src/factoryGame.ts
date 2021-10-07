@@ -9,7 +9,6 @@ import { GetRecipe } from "./gen/entities";
 import {
   CanPushTo,
   PushPullFromMainBus,
-  PushToNeighbors,
   PushToOtherProducer,
 } from "./movement";
 import { IsResearchComplete, Lab, ResearchInLab } from "./research";
@@ -20,7 +19,7 @@ import { UpdateBeltLine } from "./transport";
 import { MainBus } from "./mainbus";
 import { GameDispatch } from "./GameDispatch";
 import { Building } from "./building";
-import { InserterTransferRate } from "./inserter";
+import { Inserter, InserterTransferRate } from "./inserter";
 
 export const UpdateGameState = (
   tick: number,
@@ -98,17 +97,21 @@ function fixBeltConnections(buildings: Building[], bus: MainBus) {
   });
 }
 
-export function fixOutputStatus(region: { Buildings: Building[] }) {
-  region.Buildings.forEach((p, idx) => {
+export function fixOutputStatus(region: {
+  Buildings: Building[];
+  Inserters: Inserter[];
+}) {
+  // TODO: Fix Inserters
+  region.Inserters.forEach((i, idx) => {
     if (
-      p.outputStatus.above === "OUT" &&
-      !CanPushTo(p, region.Buildings[idx - 1])
+      i.direction === "DOWN" &&
+      !CanPushTo(region.Buildings[idx], region.Buildings[idx + 1])
     )
-      p.outputStatus.above = "NONE";
+      i.direction = "NONE";
     if (
-      p.outputStatus.below === "OUT" &&
-      !CanPushTo(p, region.Buildings[idx + 1])
+      i.direction === "UP" &&
+      !CanPushTo(region.Buildings[idx + 1], region.Buildings[idx])
     )
-      p.outputStatus.below = "NONE";
+      i.direction = "NONE";
   });
 }

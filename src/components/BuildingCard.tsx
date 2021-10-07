@@ -159,29 +159,7 @@ export const BuildingCard = ({
       {card}
 
       <div className="output-area">
-        <div
-          className="output-arrow up"
-          onClick={() =>
-            dispatch({
-              type: "ToggleUpperOutputState",
-              buildingIdx,
-            })
-          }
-        >
-          {building.outputStatus?.above === "OUT" ? "^" : "-"}
-        </div>
         <div className="output-arrow right">&gt;</div>
-        <div
-          className="output-arrow down"
-          onClick={() =>
-            dispatch({
-              type: "ToggleLowerOutputState",
-              buildingIdx,
-            })
-          }
-        >
-          {building.outputStatus?.below === "OUT" ? "v" : "-"}
-        </div>
       </div>
       <MainBusSegment
         mainBus={mainBus}

@@ -22,37 +22,6 @@ export function CanPushTo(
   );
 }
 
-export function PushToNeighbors(
-  from: {
-    outputBuffers: ItemBuffer;
-    outputStatus: OutputStatus;
-    BuildingCount?: number;
-  },
-  toAbove: {
-    inputBuffers: ItemBuffer;
-    BuildingCount?: number;
-  } | null,
-  toBelow: {
-    inputBuffers: ItemBuffer;
-    BuildingCount?: number;
-  } | null
-) {
-  const maxTransferAbove = Math.min(
-      from?.BuildingCount || 0,
-      toAbove?.BuildingCount || 0
-    ),
-    maxTransferBelow = Math.min(
-      from?.BuildingCount || 0,
-      toBelow?.BuildingCount || 0
-    );
-  if (from.outputStatus.above === "OUT" && toAbove) {
-    PushToOtherProducer(from, toAbove, maxTransferAbove);
-  }
-  if (from.outputStatus.below === "OUT" && toBelow) {
-    PushToOtherProducer(from, toBelow, maxTransferBelow);
-  }
-}
-
 export function PushToOtherProducer(
   { outputBuffers }: { outputBuffers: ItemBuffer },
   { inputBuffers }: { inputBuffers: ItemBuffer },
