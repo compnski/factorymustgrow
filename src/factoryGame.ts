@@ -6,7 +6,12 @@ import {
 } from "./production";
 import { Region } from "./types";
 import { GetRecipe } from "./gen/entities";
-import { CanPushTo, PushPullFromMainBus, PushToNeighbors } from "./movement";
+import {
+  CanPushTo,
+  PushPullFromMainBus,
+  PushToNeighbors,
+  PushToOtherProducer,
+} from "./movement";
 import { IsResearchComplete, Lab, ResearchInLab } from "./research";
 import { GetResearch } from "./gen/research";
 import { UIAction } from "./uiState";
@@ -15,6 +20,7 @@ import { UpdateBeltLine } from "./transport";
 import { MainBus } from "./mainbus";
 import { GameDispatch } from "./GameDispatch";
 import { Building } from "./building";
+import { InserterTransferRate } from "./inserter";
 
 export const UpdateGameState = (
   tick: number,
@@ -56,12 +62,29 @@ function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
         break;
     }
   });
+
+  currentRegion.Inserters.forEach((i, idx) => {
+    if (InserterTransferRate(i) <= 0) return;
+    if (i.direction === "DOWN") {
+      PushToOtherProducer(
+        currentRegion.Buildings[idx],
+        currentRegion.Buildings[idx + 1],
+        InserterTransferRate(i)
+      );
+    } else if (i.direction === "UP") {
+      PushToOtherProducer(
+        currentRegion.Buildings[idx + 1],
+        currentRegion.Buildings[idx],
+        InserterTransferRate(i)
+      );
+    }
+  });
   currentRegion.Buildings.forEach((p, idx) => {
-    PushToNeighbors(
-      p,
-      currentRegion.Buildings[idx - 1],
-      currentRegion.Buildings[idx + 1]
-    );
+    //   PushToNeighbors(
+    //     p,
+    //     currentRegion.Buildings[idx - 1],
+    //     currentRegion.Buildings[idx + 1]
+    //   );
     PushPullFromMainBus(p, currentRegion.Bus);
   });
 }

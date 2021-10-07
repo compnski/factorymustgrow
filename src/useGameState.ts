@@ -41,6 +41,7 @@ export const initialFactoryGameState = () => ({
     NewEntityStack(GetEntity("stone-furnace"), 5),
     NewEntityStack(GetEntity("lab"), 5),
     NewEntityStack(GetEntity("transport-belt"), 100),
+    NewEntityStack(GetEntity("inserter"), 50),
     NewEntityStack(GetEntity("iron-chest"), 5),
   ]),
   Regions: new Map([["start", NewRegionFromInfo(GetRegionInfo("start"))]]),

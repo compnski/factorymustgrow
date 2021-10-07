@@ -16,3 +16,7 @@ export function NewInserter(
     direction: "NONE",
   };
 }
+
+export function InserterTransferRate(i: Inserter): number {
+  return i.BuildingCount;
+}

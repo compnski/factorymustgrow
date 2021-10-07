@@ -50,6 +50,12 @@ function addProducers(
       otherStackKind: "Void",
       count: 1,
     });
+    GameDispatch({
+      type: "TransferToInventory",
+      entity: "inserter",
+      otherStackKind: "Void",
+      count: 1,
+    });
 
     GameDispatch({ type: "PlaceBuilding", entity: kind });
 
@@ -58,6 +64,11 @@ function addProducers(
     if (buildingIdx === nextBuildingIdx) {
       throw new Error(`Failed to add producer ${kind} for ${recipe}`);
     }
+    if (buildingIdx > 0)
+      GameDispatch({
+        type: "IncreaseInserterCount",
+        inserterIdx: buildingIdx - 1,
+      });
 
     GameDispatch({
       type: "ChangeRecipe",
@@ -73,12 +84,20 @@ function addProducers(
       type: "ToggleLowerOutputState",
       buildingIdx: buildingIdx,
     });
+    GameDispatch({
+      type: "ToggleInserterDirection",
+      inserterIdx: buildingIdx,
+    });
   });
 
   upperToggles.forEach((buildingIdx) => {
     GameDispatch({
       type: "ToggleUpperOutputState",
       buildingIdx: buildingIdx,
+    });
+    GameDispatch({
+      type: "ToggleInserterDirection",
+      inserterIdx: buildingIdx - 1,
     });
   });
 }
