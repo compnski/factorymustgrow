@@ -7,6 +7,7 @@ import { showChangeProducerRecipeSelector } from "./selectors";
 import { getEntityIconDoubleClickHandler } from "./events";
 import { Inventory } from "../inventory";
 import { useGeneralDialog } from "../GeneralDialogProvider";
+import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
 
 const ProducerIcon = (p: Producer): string => p.subkind;
 
@@ -40,32 +41,22 @@ export function ProducerCard({
     <div className="main-area">
       <div className="top-area">
         <div className="title">{producer.RecipeId /* TODO Fix name */}</div>
-        <div className="producer-count-area">
-          <span className={`icon ${ProducerIcon(producer)}`} />
-          <div
-            className="plus-minus"
-            onClick={() =>
-              GameDispatch({
-                type: "DecreaseBuildingCount",
-                buildingIdx,
-              })
-            }
-          >
-            -
-          </div>
-          <div className="producer-count">{producer.BuildingCount}</div>
-          <div
-            className="plus-minus"
-            onClick={() =>
-              GameDispatch({
-                type: "IncreaseBuildingCount",
-                buildingIdx,
-              })
-            }
-          >
-            +
-          </div>
-        </div>
+        <span className={`icon ${ProducerIcon(producer)}`} />
+        <CounterWithPlusMinusButtons
+          count={producer.BuildingCount}
+          minusClickHandler={() =>
+            GameDispatch({
+              type: "DecreaseBuildingCount",
+              buildingIdx,
+            })
+          }
+          plusClickHandler={() =>
+            GameDispatch({
+              type: "IncreaseBuildingCount",
+              buildingIdx,
+            })
+          }
+        />
       </div>
       <div className="bottom-area">
         <div

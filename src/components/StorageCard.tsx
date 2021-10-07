@@ -6,6 +6,7 @@ import { showMoveItemToFromInventorySelector } from "./selectors";
 import { getEntityIconDoubleClickHandler } from "./events";
 import { Chest } from "../storage";
 import { useGeneralDialog } from "../GeneralDialogProvider";
+import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
 
 export type StorageCardProps = {
   storage: Chest;
@@ -22,32 +23,22 @@ export function StorageCard({ storage, buildingIdx }: StorageCardProps) {
     <div className="main-area">
       <div className="top-area">
         <div className="title">{storage.subkind /* TODO Fix name */}</div>
-        <div className="producer-count-area">
-          <span className={`icon ${storage.subkind}`} />
-          <div
-            className="plus-minus"
-            onClick={() =>
-              GameDispatch({
-                type: "DecreaseBuildingCount",
-                buildingIdx,
-              })
-            }
-          >
-            -
-          </div>
-          <div className="producer-count">{storage.BuildingCount}</div>
-          <div
-            className="plus-minus"
-            onClick={() =>
-              GameDispatch({
-                type: "IncreaseBuildingCount",
-                buildingIdx,
-              })
-            }
-          >
-            +
-          </div>
-        </div>
+        <span className={`icon ${storage.subkind}`} />
+        <CounterWithPlusMinusButtons
+          count={storage.BuildingCount}
+          minusClickHandler={() =>
+            GameDispatch({
+              type: "DecreaseBuildingCount",
+              buildingIdx,
+            })
+          }
+          plusClickHandler={() =>
+            GameDispatch({
+              type: "IncreaseBuildingCount",
+              buildingIdx,
+            })
+          }
+        />
       </div>
       <div className="bottom-area">
         <div

@@ -4,6 +4,7 @@ import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import { entityIconLookupByKind } from "../utils";
 import { BeltLineDepot } from "../transport";
 import { getEntityIconDoubleClickHandler } from "./events";
+import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
 
 export type BeltLineCardProps = {
   building: BeltLineDepot;
@@ -36,32 +37,22 @@ export function BeltLineCard(props: BeltLineCardProps) {
             ` ` +
             building.otherRegionId}
         </div>
-        <div className="producer-count-area">
-          <span className={`icon ${building.subkind}`} />
-          <div
-            className="plus-minus"
-            onClick={() =>
-              GameDispatch({
-                type: "DecreaseBuildingCount",
-                buildingIdx,
-              })
-            }
-          >
-            -
-          </div>
-          <div className="producer-count">{building.BuildingCount}</div>
-          <div
-            className="plus-minus"
-            onClick={() =>
-              GameDispatch({
-                type: "IncreaseBuildingCount",
-                buildingIdx,
-              })
-            }
-          >
-            +
-          </div>
-        </div>
+        <span className={`icon ${building.subkind}`} />
+        <CounterWithPlusMinusButtons
+          count={building.BuildingCount}
+          minusClickHandler={() =>
+            GameDispatch({
+              type: "DecreaseBuildingCount",
+              buildingIdx,
+            })
+          }
+          plusClickHandler={() =>
+            GameDispatch({
+              type: "IncreaseBuildingCount",
+              buildingIdx,
+            })
+          }
+        />
       </div>
       <div className="bottom-area">
         <BuildingBufferDisplay
