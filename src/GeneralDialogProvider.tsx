@@ -57,8 +57,8 @@ export const GeneralDialogProvider = ({
     generalDialogConfig.component && generalDialogConfig.component(onConfirm);
   return (
     <GeneralDialogContext.Provider value={{ openGeneralDialog }}>
-      {dialog}
       {children}
+      <div className="dialog">{dialog}</div>
     </GeneralDialogContext.Provider>
   );
 };
