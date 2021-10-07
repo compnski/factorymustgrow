@@ -1,7 +1,8 @@
+import "./BuildingCard.scss";
+
 import { GameAction } from "../GameAction";
 import { GameDispatch } from "../GameDispatch";
 import { ItemBuffer, Producer } from "../types";
-import "./BuildingCard.scss";
 import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
 import { BuildingHasInput, BuildingHasOutput } from "../utils";
