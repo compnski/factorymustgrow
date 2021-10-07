@@ -1,4 +1,4 @@
-import { FactoryGameState } from "./useGameState";
+import { CurrentGameStateVersion, FactoryGameState } from "./useGameState";
 import { Inventory } from "./inventory";
 import { MainBus } from "./mainbus";
 import { ResearchOutput } from "./research";
@@ -68,7 +68,6 @@ export const saveStateToLocalStorage = (gs: FactoryGameState) => {
 };
 
 // NOTE: Editing this contants will INVALIDATE ALL SAVED DATA EVERYWHERE.
-export const CurrentGameStateVersion = "0.1.1";
 
 function AcceptableStoredVersion(): boolean {
   return (
