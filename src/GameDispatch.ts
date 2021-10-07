@@ -30,6 +30,7 @@ import { FixedInventory } from "./inventory";
 import { NewChest } from "./storage";
 import { GameAction, InventoryTransferAction } from "./GameAction";
 import { fixOutputStatus } from "./factoryGame";
+import { Inserter, NewInserter } from "./inserter";
 
 export const GameDispatch = (action: GameAction) => {
   const currentRegion = GameState?.Regions?.get(GameState.CurrentRegionId)!;
@@ -149,6 +150,69 @@ export const GameDispatch = (action: GameAction) => {
             GameState.Inventory.Add(NewEntityStack(b.subkind, 1, 1), 1);
             b.BuildingCount = Math.max(0, b.BuildingCount - 1);
           }
+        }
+      })();
+      break;
+
+    case "IncreaseInserterCount":
+      (() => {
+        const i = currentRegion.Inserters[action.inserterIdx];
+        // TODO: Handle belt lines
+        if (
+          GameState.Inventory.Count(i.subkind) <= 0
+          //RemainingRegionInserterCapacity(currentRegion) <= 0
+        ) {
+          return;
+        }
+        GameState.Inventory.Remove(NewEntityStack(i.subkind, 0, 1), 1);
+
+        if (i) i.BuildingCount = Math.min(50, i.BuildingCount + 1);
+      })();
+      break;
+
+    case "DecreaseInserterCount":
+      (() => {
+        const i = currentRegion.Inserters[action.inserterIdx];
+
+        if (i) {
+          if (i.BuildingCount > 0) {
+            GameState.Inventory.Add(NewEntityStack(i.subkind, 1, 1), 1);
+            i.BuildingCount = Math.max(0, i.BuildingCount - 1);
+          }
+        }
+      })();
+      break;
+
+    case "ToggleInserterDirection":
+      (() => {
+        const topB = currentRegion.Buildings[action.inserterIdx],
+          bottomB = currentRegion.Buildings[action.inserterIdx + 1],
+          i = currentRegion.Inserters[action.inserterIdx];
+
+        if (!topB || !bottomB || action.inserterIdx === undefined) return;
+
+        console.log(CanPushTo(bottomB, topB), CanPushTo(topB, bottomB));
+
+        const canGoUp =
+            BuildingHasOutput(bottomB.kind) &&
+            BuildingHasInput(topB.kind) &&
+            CanPushTo(bottomB, topB),
+          canGoDown =
+            BuildingHasOutput(topB.kind) &&
+            BuildingHasInput(bottomB.kind) &&
+            CanPushTo(topB, bottomB);
+
+        if (canGoUp && canGoDown) {
+          i.direction =
+            i.direction === "UP"
+              ? "DOWN"
+              : i.direction === "DOWN"
+              ? "NONE"
+              : "UP";
+        } else if (canGoUp) {
+          i.direction = i.direction === "NONE" ? "UP" : "NONE";
+        } else if (canGoDown) {
+          i.direction = i.direction === "NONE" ? "DOWN" : "NONE";
         }
       })();
       break;
@@ -362,16 +426,23 @@ function RemoveBuilding(
 ) {
   const b = building(action); // as Producer;
   if (b) {
-    if (
+    currentRegion.Buildings.splice(action.buildingIdx, 1, NewEmptyLane());
+    for (var idx = currentRegion.Buildings.length - 1; idx >= 0; idx--) {
       // Removing the last building and it's an empty lane.
-      b.kind === "Empty" &&
-      action.buildingIdx === currentRegion.Buildings.length - 1
-    ) {
-      // Remove last empty lane
-      currentRegion.Buildings.splice(action.buildingIdx, 1);
-    } else {
-      // Replace with Empty Lane
-      currentRegion.Buildings.splice(action.buildingIdx, 1, NewEmptyLane());
+      if (currentRegion.Buildings[idx].kind === "Empty") {
+        currentRegion.Buildings.splice(idx, 1);
+        const [inserter] = currentRegion.Inserters.splice(idx - 1, 1);
+        // Refund inserters
+        if (inserter)
+          GameState.Inventory.Add(
+            NewEntityStack(inserter.subkind, inserter.BuildingCount),
+            inserter.BuildingCount,
+            true
+          );
+      } else {
+        // Until there are no more empty ones
+        break;
+      }
     }
 
     if (BuildingHasInput(b.kind))

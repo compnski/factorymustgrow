@@ -87,7 +87,7 @@ export const FactoryGame = ({
           />
           <BuildingCardList
             mainBus={currentRegion.Bus}
-            buildings={currentRegion.Buildings}
+            region={currentRegion}
             regionalOre={currentRegion.Ore}
             uiDispatch={uiDispatch}
           />

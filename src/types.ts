@@ -1,4 +1,5 @@
 import { Building } from "./building";
+import { Inserter } from "./inserter";
 import { FixedInventory } from "./inventory";
 import { MainBus } from "./mainbus";
 
@@ -154,6 +155,7 @@ export type Region = {
   BuildingCapacity: number;
   MainBusCapacity: number;
   Buildings: Building[];
+  Inserters: Inserter[];
   Bus: MainBus;
 };
 
@@ -163,6 +165,7 @@ export const NewRegion = (
   MainBusCapacity: number,
   ore: EntityStack[],
   Buildings: Building[] = [],
+  Inserters: Inserter[] = [],
   getEntity?: (e: string) => Entity
 ): Region => ({
   Id: id,
@@ -170,6 +173,7 @@ export const NewRegion = (
   MainBusCapacity,
   Ore: FixedInventory(ore, getEntity),
   Buildings,
+  Inserters,
   Bus: new MainBus(),
 });
 

@@ -9,8 +9,9 @@ export type GameAction =
   | RegionAction
   | AddBuildingAction
   | DragBuildingAction
-  | ChangeRecipeAction;
-//| ChangeBeltLineItemAction;
+  | ChangeRecipeAction
+  | InserterAction;
+
 type AddBuildingAction = {
   type: "AddBuilding";
 } & Pick<Building, "kind" | "subkind">;
@@ -65,6 +66,16 @@ type BuildingAction =
       targetRegion: string;
       buildingIdx?: number;
     };
+
+type InserterAction = {
+  type:
+    | "IncreaseInserterCount"
+    | "DecreaseInserterCount"
+    | "ToggleInserterDirection";
+
+  inserterIdx: number;
+};
+
 type ChangeRecipeAction = {
   type: "ChangeRecipe";
   buildingIdx: number;

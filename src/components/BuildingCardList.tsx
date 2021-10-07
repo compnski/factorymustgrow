@@ -5,14 +5,16 @@ import { SyntheticEvent, useState } from "react";
 import { UIAction } from "../uiState";
 import { Building } from "../building";
 import { MainBus } from "../mainbus";
+import { InserterCard } from "./InserterCard";
+import { Inserter } from "../inserter";
 
 export const BuildingCardList = ({
-  buildings,
+  region,
   mainBus,
   regionalOre,
   uiDispatch,
 }: {
-  buildings: Building[];
+  region: { Buildings: Building[]; Inserters: Inserter[] };
   mainBus: MainBus;
   regionalOre: ItemBuffer;
   uiDispatch: (a: UIAction) => void;
@@ -39,22 +41,27 @@ export const BuildingCardList = ({
       //e.stopPropagation();
     };
 
-  const cards = buildings.map((ep, idx) => {
-    const isLastBuilding = idx === buildings.length - 1,
+  const cards = region.Buildings.map((ep, idx) => {
+    const isLastBuilding = idx === region.Buildings.length - 1,
       allowsDrop = ep.kind === "Empty" || isLastBuilding;
 
     return (
-      <BuildingCard
-        key={idx}
-        buildingIdx={idx}
-        building={ep}
-        mainBus={mainBus}
-        dispatch={GameDispatch}
-        uiDispatch={uiDispatch}
-        regionalOre={regionalOre}
-        handleDrag={handleDrag(idx)}
-        handleDrop={allowsDrop ? handleDrop(idx, isLastBuilding) : undefined}
-      />
+      <>
+        <BuildingCard
+          key={idx}
+          buildingIdx={idx}
+          building={ep}
+          mainBus={mainBus}
+          dispatch={GameDispatch}
+          uiDispatch={uiDispatch}
+          regionalOre={regionalOre}
+          handleDrag={handleDrag(idx)}
+          handleDrop={allowsDrop ? handleDrop(idx, isLastBuilding) : undefined}
+        />
+        {!isLastBuilding && (
+          <InserterCard inserter={region.Inserters[idx]} inserterIdx={idx} />
+        )}
+      </>
     );
   });
 
