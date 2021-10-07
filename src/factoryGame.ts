@@ -41,7 +41,7 @@ export const UpdateGameState = (
 };
 
 function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
-  fixOutputStatus(currentRegion.Buildings);
+  fixOutputStatus(currentRegion);
   fixBeltConnections(currentRegion.Buildings, currentRegion.Bus);
   currentRegion.Buildings.forEach((p) => {
     switch (p.kind) {
@@ -75,11 +75,17 @@ function fixBeltConnections(buildings: Building[], bus: MainBus) {
   });
 }
 
-export function fixOutputStatus(buildings: Building[]) {
-  buildings.forEach((p, idx) => {
-    if (p.outputStatus.above === "OUT" && !CanPushTo(p, buildings[idx - 1]))
+export function fixOutputStatus(region: { Buildings: Building[] }) {
+  region.Buildings.forEach((p, idx) => {
+    if (
+      p.outputStatus.above === "OUT" &&
+      !CanPushTo(p, region.Buildings[idx - 1])
+    )
       p.outputStatus.above = "NONE";
-    if (p.outputStatus.below === "OUT" && !CanPushTo(p, buildings[idx + 1]))
+    if (
+      p.outputStatus.below === "OUT" &&
+      !CanPushTo(p, region.Buildings[idx + 1])
+    )
       p.outputStatus.below = "NONE";
   });
 }

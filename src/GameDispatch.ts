@@ -84,7 +84,7 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "NewLab":
-      Buildings.push(NewLab());
+      AddBuildingOverEmptyOrAtEnd(currentRegion, NewLab());
       break;
 
     case "ChangeRecipe":
@@ -100,7 +100,7 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "ReorderBuildings":
-      ReorderBuildings(action, Buildings);
+      ReorderBuildings(action, currentRegion);
       break;
 
     case "RemoveBuilding":
@@ -112,7 +112,7 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "PlaceBuilding":
-      PlaceBuilding(action, currentRegion, Buildings);
+      PlaceBuilding(action, currentRegion);
       break;
 
     case "IncreaseBuildingCount":
@@ -239,8 +239,7 @@ function PlaceBuilding(
     entity: string;
     buildingIdx?: number | undefined;
   },
-  currentRegion: Region,
-  Buildings: Building[]
+  currentRegion: Region
 ) {
   if (
     GameState.Inventory.Count(action.entity) <= 0 ||
@@ -250,7 +249,7 @@ function PlaceBuilding(
   }
   // if buildingIdx, and buildingIDx is empty, then build it here.
   const newBuilding = NewBuilding(action.entity);
-  AddBuildingOverEmptyOrAtEnd(Buildings, newBuilding, action.buildingIdx);
+  AddBuildingOverEmptyOrAtEnd(currentRegion, newBuilding, action.buildingIdx);
 
   GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 1);
 }
@@ -292,30 +291,26 @@ function PlaceBeltLine(
     throw new Error("Duplicate BeltLine ID");
   }
   // If buildingIdx is set, and points to an Empty Lane, replace it.
-  AddBuildingOverEmptyOrAtEnd(
-    fromRegion.Buildings,
-    fromDepot,
-    action.buildingIdx
-  );
-  AddBuildingOverEmptyOrAtEnd(
-    toRegion.Buildings,
-    toDepot,
-    (action.buildingIdx || 0) + 1
-  );
+  AddBuildingOverEmptyOrAtEnd(fromRegion, fromDepot, action.buildingIdx);
+  AddBuildingOverEmptyOrAtEnd(toRegion, toDepot, (action.buildingIdx || 0) + 1);
 
   GameState.BeltLines.set(beltLine.beltLineId, beltLine);
   GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 100), 100);
 }
 
 function AddBuildingOverEmptyOrAtEnd(
-  buildings: Building[],
+  region: { Inserters: Inserter[]; Buildings: Building[] },
   b: Building,
   buildingIdx?: number
 ) {
-  if (buildingIdx !== undefined && buildings[buildingIdx]?.kind === "Empty") {
-    buildings[buildingIdx] = b;
+  if (
+    buildingIdx !== undefined &&
+    region.Buildings[buildingIdx]?.kind === "Empty"
+  ) {
+    region.Buildings[buildingIdx] = b;
   } else {
-    buildings.push(b);
+    region.Buildings.push(b);
+    if (region.Buildings.length > 1) region.Inserters.push(NewInserter());
   }
 }
 
@@ -326,7 +321,7 @@ function ReorderBuildings(
     dropBuildingIdx: number;
     isDropOnLastBuilding: boolean;
   },
-  Buildings: Building[]
+  region: { Inserters: Inserter[]; Buildings: Building[] }
 ) {
   (() => {
     const b = building(action);
@@ -343,13 +338,13 @@ function ReorderBuildings(
       targetIsLastBuilding = action.isDropOnLastBuilding;
 
     if (targetIsEmptyLane) {
-      Buildings[action.dropBuildingIdx] = b;
-      Buildings[action.buildingIdx] = NewEmptyLane();
+      region.Buildings[action.dropBuildingIdx] = b;
+      region.Buildings[action.buildingIdx] = NewEmptyLane();
     } else if (targetIsLastBuilding) {
-      Buildings[action.buildingIdx] = NewEmptyLane();
-      Buildings.push(b);
+      region.Buildings[action.buildingIdx] = NewEmptyLane();
+      AddBuildingOverEmptyOrAtEnd(region, b);
     }
-    fixOutputStatus(Buildings);
+    fixOutputStatus(region);
   })();
 }
 
