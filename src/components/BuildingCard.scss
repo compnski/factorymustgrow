@@ -22,7 +22,7 @@
     flex-direction: column;
   }
   .main-area {
-    width: 525px;
+    width: 505px;
   }
 
   .top-area {
@@ -47,7 +47,6 @@
   }
 
   .icon {
-    height: 64px;
     margin-bottom: -32px;
     transform: scale(0.5) translateY(-50%);
   }
@@ -74,10 +73,12 @@
   }
 
   .output-area {
-    width: 50px;
+    width: 70px;
     height: 100%;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
     margin: auto 0;
     font-size: 16px;
     border-top: 1px solid black;
@@ -115,6 +116,7 @@
 .count-area {
   display: flex;
   user-select: none;
+  align-items: center;
 
   .plus-minus {
     padding: 0px 6px;

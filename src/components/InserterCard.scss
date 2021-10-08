@@ -2,53 +2,97 @@
 
 $inserterColor: #ffff1a;
 .inserter-card {
-  width: $appWidth;
-  height: $inserterCardHeight;
-  border: 1px solid black;
   display: flex;
   user-select: none;
 }
 
-.inserter-diamond {
-  width: 50px;
-  height: 50px;
+.inserter-card.wide {
+  width: $appWidth;
+  height: $inserterCardHeight;
   border: 1px solid black;
-  background-color: $inserterColor;
 
-  left: 490px;
-  top: -10px;
-  position: relative;
-  z-index: 1;
-  .icon {
-    transform: scale(0.7);
-    position: relative;
-    left: -8px;
-    top: -8px;
-  }
-  .icon.side {
-    transform: scale(0.7);
-    opacity: 0.5;
-  }
-  .icon.up {
-    transform: scale(0.7) rotate(90deg);
+  .inserter-diamond {
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
+    background-color: $inserterColor;
+
+    left: ($appWidth/2-30px);
     top: -10px;
+    position: relative;
+    z-index: 1;
+    .icon {
+      transform: scale(0.7);
+      position: relative;
+      left: -8px;
+      top: -8px;
+    }
+    .icon.side {
+      transform: scale(0.7);
+      opacity: 0.5;
+    }
+    .icon.up {
+      transform: scale(0.7) rotate(90deg);
+      top: -10px;
+    }
+    .icon.down {
+      transform: scale(0.7) rotate(-90deg);
+      top: -4px;
+    }
   }
-  .icon.down {
-    transform: scale(0.7) rotate(-90deg);
-    top: -4px;
+
+  .inserter-rectangle {
+    position: relative;
+    background-color: $inserterColor;
+    width: 600px;
+    left: -50px;
+    height: $inserterCardHeight;
+    font-size: 20px;
+
+    .count-area {
+      position: relative;
+      left: 380px;
+    }
   }
 }
 
-.inserter-rectangle {
-  position: relative;
-  background-color: $inserterColor;
-  width: 600px;
-  left: -50px;
-  height: $inserterCardHeight;
-  font-size: 20px;
+.inserter-card.small {
+  display: flex;
+  flex-direction: row;
+  font-size: 0;
+  align-items: center;
+  //transform: scale(0.7);
+  margin-top: 2px;
+  border-top: 1px darkgrey solid;
+
+  .icon {
+    margin-left: -14px;
+    transform: scale(0.5) translateY(-50%);
+  }
+
+  .icon.left {
+  }
+  .icon.right {
+    transform: scaleX(-0.5) scaleY(0.5) translateY(-50%);
+  }
+  .icon.off {
+    opacity: 0.5;
+    transform: scale(-0.5) translateY(40%) rotate(90deg);
+  }
 
   .count-area {
-    position: relative;
-    left: 380px;
+    flex-direction: column;
+    > * {
+      line-height: 10px;
+      font-size: 10px;
+      margin: 0px 0px;
+    }
+    .count {
+    }
+    .plus-minus {
+      padding: 0 2px;
+      width: 5px;
+      height: 8px;
+    }
   }
 }

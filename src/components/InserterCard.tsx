@@ -7,6 +7,7 @@ import "./InserterCard.scss";
 export type InserterCardProps = {
   inserterIdx: number;
   inserter: Inserter;
+  variant?: "wide" | "small";
 };
 
 export function InserterCard(props: InserterCardProps) {
@@ -17,7 +18,7 @@ export function InserterCard(props: InserterCardProps) {
       ? "down"
       : "side";
   return (
-    <div className="inserter-card">
+    <div className={`inserter-card ${props.variant || ""}`}>
       <div
         onClick={() => {
           //

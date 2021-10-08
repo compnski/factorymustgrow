@@ -59,7 +59,11 @@ export const BuildingCardList = ({
           handleDrop={allowsDrop ? handleDrop(idx, isLastBuilding) : undefined}
         />
         {!isLastBuilding && (
-          <InserterCard inserter={region.Inserters[idx]} inserterIdx={idx} />
+          <InserterCard
+            variant="wide"
+            inserter={region.Inserters[idx]}
+            inserterIdx={idx}
+          />
         )}
       </>
     );
