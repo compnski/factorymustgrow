@@ -18,7 +18,7 @@ import { GameState } from "./useGameState";
 import { UpdateBeltLine } from "./transport";
 import { MainBus } from "./mainbus";
 import { GameDispatch } from "./GameDispatch";
-import { Building } from "./building";
+import { Building, BuildingSlot } from "./building";
 import { Inserter, InserterTransferRate } from "./inserter";
 
 export const UpdateGameState = (
@@ -47,70 +47,69 @@ export const UpdateGameState = (
 
 function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
   fixOutputStatus(currentRegion);
-  fixBeltConnections(currentRegion.Buildings, currentRegion.Bus);
-  currentRegion.Buildings.forEach((p) => {
-    switch (p.kind) {
+  fixBeltConnections(currentRegion.BuildingSlots, currentRegion.Bus);
+  currentRegion.BuildingSlots.forEach((slot, idx) => {
+    const building = slot.Building;
+    switch (building.kind) {
       case "Factory":
-        ProduceFromFactory(p as Factory, GetRecipe);
+        ProduceFromFactory(building as Factory, GetRecipe);
         break;
       case "Extractor":
-        ProduceFromExtractor(p as Extractor, currentRegion, GetRecipe);
+        ProduceFromExtractor(building as Extractor, currentRegion, GetRecipe);
         break;
       case "Lab":
-        ResearchInLab(p as Lab, GameState.Research, GetResearch);
+        ResearchInLab(building as Lab, GameState.Research, GetResearch);
         break;
     }
-  });
 
-  currentRegion.Inserters.forEach((i, idx) => {
-    if (InserterTransferRate(i) <= 0) return;
-    if (i.direction === "DOWN") {
-      PushToOtherProducer(
-        currentRegion.Buildings[idx],
-        currentRegion.Buildings[idx + 1],
-        InserterTransferRate(i)
-      );
-    } else if (i.direction === "UP") {
-      PushToOtherProducer(
-        currentRegion.Buildings[idx + 1],
-        currentRegion.Buildings[idx],
-        InserterTransferRate(i)
-      );
+    const i = slot.Inserter;
+    if (InserterTransferRate(i) > 0) {
+      if (i.direction === "DOWN") {
+        PushToOtherProducer(
+          currentRegion.BuildingSlots[idx].Building,
+          currentRegion.BuildingSlots[idx + 1].Building,
+          InserterTransferRate(i)
+        );
+      } else if (i.direction === "UP") {
+        PushToOtherProducer(
+          currentRegion.BuildingSlots[idx + 1].Building,
+          currentRegion.BuildingSlots[idx].Building,
+          InserterTransferRate(i)
+        );
+      }
     }
-  });
-  currentRegion.Buildings.forEach((p, idx) => {
-    //   PushToNeighbors(
-    //     p,
-    //     currentRegion.Buildings[idx - 1],
-    //     currentRegion.Buildings[idx + 1]
-    //   );
-    PushPullFromMainBus(p, currentRegion.Bus);
+    PushPullFromMainBus(slot, currentRegion.Bus);
   });
 }
 
-function fixBeltConnections(buildings: Building[], bus: MainBus) {
-  buildings.forEach((p) => {
-    p.outputStatus.beltConnections.forEach((beltConn, idx) => {
+function fixBeltConnections(BuildingSlots: BuildingSlot[], bus: MainBus) {
+  BuildingSlots.forEach((slot) => {
+    const building = slot.Building;
+    building.outputStatus.beltConnections.forEach((beltConn, idx) => {
       if (!bus.HasLane(beltConn.beltId))
-        p.outputStatus.beltConnections.splice(idx, 1);
+        building.outputStatus.beltConnections.splice(idx, 1);
     });
   });
 }
 
-export function fixOutputStatus(region: {
-  Buildings: Building[];
-  Inserters: Inserter[];
-}) {
+export function fixOutputStatus(region: { BuildingSlots: BuildingSlot[] }) {
   // TODO: Fix Inserters
-  region.Inserters.forEach((i, idx) => {
+  region.BuildingSlots.forEach((slot, idx) => {
+    const i = slot.Inserter;
     if (
       i.direction === "DOWN" &&
-      !CanPushTo(region.Buildings[idx], region.Buildings[idx + 1])
+      !CanPushTo(
+        region.BuildingSlots[idx].Building,
+        region.BuildingSlots[idx + 1].Building
+      )
     )
       i.direction = "NONE";
     if (
       i.direction === "UP" &&
-      !CanPushTo(region.Buildings[idx + 1], region.Buildings[idx])
+      !CanPushTo(
+        region.BuildingSlots[idx + 1].Building,
+        region.BuildingSlots[idx].Building
+      )
     )
       i.direction = "NONE";
   });

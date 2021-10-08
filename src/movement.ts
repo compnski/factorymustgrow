@@ -49,7 +49,11 @@ export type MainBusConnection = {
   attachedBuffer: EntityStack;
 };
 
-export function PushPullFromMainBus(building: MainBusConnector, mb: MainBus) {
+export function PushPullFromMainBus(
+  slot: { Building: MainBusConnector },
+  mb: MainBus
+) {
+  var building = slot.Building;
   for (var laneConnection of building.outputStatus.beltConnections) {
     const busLane = mb.lanes.get(laneConnection.beltId);
     if (!busLane) {

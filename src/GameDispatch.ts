@@ -35,7 +35,6 @@ import { Inserter, NewInserter } from "./inserter";
 export const GameDispatch = (action: GameAction) => {
   const currentRegion = GameState?.Regions?.get(GameState.CurrentRegionId)!;
 
-  const Buildings = currentRegion?.Buildings;
   switch (action.type) {
     case "Reset":
       ResetGameState();
@@ -541,7 +540,7 @@ function building(action: { buildingIdx?: number }): Building | undefined {
   const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
 
   return action.buildingIdx !== undefined
-    ? currentRegion.Buildings[action.buildingIdx]
+    ? currentRegion.BuildingSlots[action.buildingIdx].Building
     : undefined;
 }
 (window as unknown as GameWindow).GameDispatch = GameDispatch;

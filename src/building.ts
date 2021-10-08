@@ -1,9 +1,17 @@
+import { Inserter } from "./inserter";
 import { Inventory } from "./inventory";
 import { Extractor, Factory } from "./production";
 import { Lab } from "./research";
 import { Chest } from "./storage";
 import { BeltLineDepot } from "./transport";
-import { ItemBuffer, OutputStatus } from "./types";
+import { BeltConnection, ItemBuffer, OutputStatus } from "./types";
+
+export type BuildingSlot = {
+  Building: Building;
+  Inserter: Inserter;
+  BeltInserters: Inserter[];
+  BeltConnections: BeltConnection[];
+};
 
 export type Building =
   | Factory

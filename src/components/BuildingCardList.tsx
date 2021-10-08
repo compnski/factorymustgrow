@@ -3,7 +3,7 @@ import { GameDispatch } from "../GameDispatch";
 import { ItemBuffer } from "../types";
 import { SyntheticEvent, useState } from "react";
 import { UIAction } from "../uiState";
-import { Building } from "../building";
+import { Building, BuildingSlot } from "../building";
 import { MainBus } from "../mainbus";
 import { InserterCard } from "./InserterCard";
 import { Inserter } from "../inserter";
@@ -14,7 +14,7 @@ export const BuildingCardList = ({
   regionalOre,
   uiDispatch,
 }: {
-  region: { Buildings: Building[]; Inserters: Inserter[] };
+  region: { BuildingSlots: BuildingSlot[] };
   mainBus: MainBus;
   regionalOre: ItemBuffer;
   uiDispatch: (a: UIAction) => void;
@@ -41,16 +41,16 @@ export const BuildingCardList = ({
       //e.stopPropagation();
     };
 
-  const cards = region.Buildings.map((ep, idx) => {
-    const isLastBuilding = idx === region.Buildings.length - 1,
-      allowsDrop = ep.kind === "Empty" || isLastBuilding;
+  const cards = region.BuildingSlots.map((buildingSlot, idx) => {
+    const isLastBuilding = idx === region.BuildingSlots.length - 1,
+      allowsDrop = buildingSlot.Building.kind === "Empty" || isLastBuilding;
 
     return (
       <>
         <BuildingCard
           key={idx}
           buildingIdx={idx}
-          building={ep}
+          building={buildingSlot.Building}
           mainBus={mainBus}
           dispatch={GameDispatch}
           uiDispatch={uiDispatch}
@@ -59,7 +59,11 @@ export const BuildingCardList = ({
           handleDrop={allowsDrop ? handleDrop(idx, isLastBuilding) : undefined}
         />
         {!isLastBuilding && (
-          <InserterCard inserter={region.Inserters[idx]} inserterIdx={idx} />
+          <InserterCard
+            variant="wide"
+            inserter={buildingSlot.Inserter}
+            inserterIdx={idx}
+          />
         )}
       </>
     );

@@ -1,4 +1,4 @@
-import { Building } from "./building";
+import { Building, BuildingSlot } from "./building";
 import { Inserter } from "./inserter";
 import { FixedInventory } from "./inventory";
 import { MainBus } from "./mainbus";
@@ -152,8 +152,8 @@ export type Region = {
   Ore: ItemBuffer;
   BuildingCapacity: number;
   MainBusCapacity: number;
-  Buildings: Building[];
-  Inserters: Inserter[];
+  BuildingSlots: BuildingSlot[];
+  //Inserters: Inserter[];
   Bus: MainBus;
 };
 

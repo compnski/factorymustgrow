@@ -14,6 +14,9 @@ import { MainBus } from "../mainbus";
 import { StorageCard } from "./StorageCard";
 import { EmptyLaneCard } from "./EmptyLaneCard";
 import { LabCard } from "./LabCard";
+import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
+import { InserterCard } from "./InserterCard";
+import { NewInserter } from "../inserter";
 
 export type BuildingCardProps = {
   building: Building;
@@ -127,6 +130,9 @@ export const BuildingCard = ({
       />
     );
 
+  // TODO: Store inserters on belt connections?
+  // rework output status
+  const i1 = NewInserter("inserter", 7);
   return (
     <div
       className="producer-card"
@@ -157,15 +163,16 @@ export const BuildingCard = ({
       </div>
 
       {card}
-
       <div className="output-area">
-        <div className="output-arrow right">&gt;</div>
+        <InserterCard variant="small" inserter={i1} inserterIdx={0} />
+        <InserterCard variant="small" inserter={i1} inserterIdx={1} />
+        <InserterCard variant="small" inserter={i1} inserterIdx={2} />
       </div>
       <MainBusSegment
         mainBus={mainBus}
         busLaneClicked={busLaneClicked}
         beltConnectionClicked={beltConnectionClicked}
-        segmentHeight={100}
+        segmentHeight={134}
         beltConnections={building.outputStatus?.beltConnections}
       />
     </div>

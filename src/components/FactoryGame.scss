@@ -55,7 +55,7 @@
 .mainBusSegment,
 .main-bus-segment {
   background-color: orange;
-  height: 100px;
+  height: ($cardHeight + $inserterCardHeight + 2);
   width: 400px;
 }
 
