@@ -1,4 +1,4 @@
-import { Inserter } from "./inserter";
+import { Inserter, NewInserter } from "./inserter";
 import { Inventory } from "./inventory";
 import { Extractor, Factory } from "./production";
 import { Lab } from "./research";
@@ -9,9 +9,57 @@ import { BeltConnection, ItemBuffer, OutputStatus } from "./types";
 export type BuildingSlot = {
   Building: Building;
   Inserter: Inserter;
-  BeltInserters: Inserter[];
   BeltConnections: BeltConnection[];
 };
+
+export type InserterId =
+  | {
+      location: "BUILDING";
+      buildingIdx: number;
+    }
+  | {
+      location: "BELT";
+      buildingIdx: number;
+      connectionIdx: number;
+    };
+
+export function InserterIdForBuilding(buildingIdx: number): InserterId {
+  return {
+    location: "BUILDING",
+    buildingIdx,
+  };
+}
+
+export function InserterIdForBelt(
+  buildingIdx: number,
+  connectionIdx: number
+): InserterId {
+  return {
+    location: "BELT",
+    buildingIdx,
+    connectionIdx,
+  };
+}
+
+export function NewBuildingSlot(
+  Building: Building,
+  numBeltConnections: number = 1
+): BuildingSlot {
+  const belts = [...Array(numBeltConnections)].map<BeltConnection>(
+    (): BeltConnection => {
+      return {
+        Inserter: NewInserter(),
+        laneId: undefined,
+        direction: undefined,
+      };
+    }
+  );
+  return {
+    Building,
+    Inserter: NewInserter(),
+    BeltConnections: belts,
+  };
+}
 
 export type Building =
   | Factory

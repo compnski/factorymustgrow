@@ -1,10 +1,10 @@
-import { NewEntityStack, Producer, Region, RegionInfo } from "./types";
+import { NewEntityStack, Region, RegionInfo } from "./types";
 
 export function RemainingRegionBuildingCapacity(region: Region): number {
   return (
     region.BuildingCapacity -
-    region.Buildings.reduce(
-      (accum, b) => accum + (b as Producer).BuildingCount || 0,
+    region.BuildingSlots.reduce(
+      (accum, b) => accum + b.Building.BuildingCount || 0,
       0
     )
   );

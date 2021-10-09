@@ -4,9 +4,9 @@ import { MainBusConst } from "./uiConstants";
 import { entityIconLookupByKind } from "../utils";
 import { MainBus } from "../mainbus";
 
-const connectionHeight = 5,
-  connectionOffset = 20,
-  interConnectionHeight = 7;
+const connectionHeight = 25,
+  connectionOffset = 15,
+  interConnectionHeight = 10;
 
 const Chevron = () => <path d="M0 0 10 0 20 10 10 20 0 20 10 10Z" />;
 
@@ -43,7 +43,7 @@ export function MainBusSegment({
   segmentHeight: number;
   beltConnections?: BeltConnection[];
   busLaneClicked?: (laneId: number, entity: string) => void;
-  beltConnectionClicked?: (laneId: number) => void;
+  beltConnectionClicked?: (connectionIdx: number) => void;
 }) {
   const lanes = [];
   var idx = 0;
@@ -99,10 +99,11 @@ export function MainBusSegment({
 
   const connections: JSX.Element[] = [];
   beltConnections.forEach((beltConn, connIdx) => {
+    if (beltConn.laneId === undefined) return;
     const y =
       connectionOffset + connIdx * (connectionHeight + interConnectionHeight);
 
-    const laneIdx = laneIdxByBeltId[beltConn.beltId],
+    const laneIdx = laneIdxByBeltId[beltConn.laneId],
       laneX =
         MainBusConst.laneOffset +
         laneIdx * (MainBusConst.laneWidth + MainBusConst.interLaneWidth);
@@ -116,8 +117,8 @@ export function MainBusSegment({
             refX="10"
             refY="10"
             markerUnits="userSpaceOnUse"
-            markerWidth="8"
-            markerHeight="8"
+            markerWidth={connectionHeight / 2}
+            markerHeight={connectionHeight}
             orient="auto"
             fill="lightgreen"
           >
@@ -125,11 +126,13 @@ export function MainBusSegment({
           </marker>
         </defs>
         <path
-          onDoubleClick={() => beltConnectionClicked(beltConn.beltId)}
+          onDoubleClick={() =>
+            beltConn.laneId !== undefined && beltConnectionClicked(connIdx)
+          }
           d={getPath(y, laneIdx, laneX, beltConn.direction === "FROM_BUS")}
           fill="none"
           stroke="green"
-          strokeWidth={9}
+          strokeWidth={connectionHeight}
           markerMid="url(#chevron)"
           //markerStart="url(#chevron)"
           //markerEnd="url(#chevron)"

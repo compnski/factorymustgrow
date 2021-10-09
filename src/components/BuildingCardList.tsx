@@ -3,7 +3,7 @@ import { GameDispatch } from "../GameDispatch";
 import { ItemBuffer } from "../types";
 import { SyntheticEvent, useState } from "react";
 import { UIAction } from "../uiState";
-import { Building, BuildingSlot } from "../building";
+import { Building, BuildingSlot, InserterIdForBuilding } from "../building";
 import { MainBus } from "../mainbus";
 import { InserterCard } from "./InserterCard";
 import { Inserter } from "../inserter";
@@ -48,8 +48,9 @@ export const BuildingCardList = ({
     return (
       <>
         <BuildingCard
-          key={idx}
+          key={`b-${idx}`}
           buildingIdx={idx}
+          buildingSlot={buildingSlot}
           building={buildingSlot.Building}
           mainBus={mainBus}
           dispatch={GameDispatch}
@@ -60,9 +61,10 @@ export const BuildingCardList = ({
         />
         {!isLastBuilding && (
           <InserterCard
+            key={`i-${idx}`}
             variant="wide"
             inserter={buildingSlot.Inserter}
-            inserterIdx={idx}
+            inserterId={InserterIdForBuilding(idx)}
           />
         )}
       </>

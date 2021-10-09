@@ -1,3 +1,4 @@
+import { NewBuildingSlot } from "./building";
 import { NewBeltLinePair, UpdateBeltLine } from "./transport";
 import { EntityStack, NewEntityStack, NewRegion, Region } from "./types";
 
@@ -51,8 +52,8 @@ describe("BeltLine", () => {
       3
     );
 
-    fromRegion.Buildings.push(fromDepot);
-    toRegion.Buildings.push(toDepot);
+    fromRegion.BuildingSlots.push(NewBuildingSlot(fromDepot));
+    toRegion.BuildingSlots.push(NewBuildingSlot(toDepot));
 
     fromDepot.inputBuffers.Add(NewEntityStack("iron-ore", 50, 50), Infinity);
     //UpdateBeltLine(0, testRegions, beltLine);
@@ -84,8 +85,8 @@ describe("BeltLine", () => {
       3
     );
 
-    fromRegion.Buildings.push(fromDepot);
-    toRegion.Buildings.push(toDepot);
+    fromRegion.BuildingSlots.push(NewBuildingSlot(fromDepot));
+    toRegion.BuildingSlots.push(NewBuildingSlot(toDepot));
 
     fromDepot.inputBuffers.Add(NewEntityStack("iron-ore", 20, 50), Infinity);
     //UpdateBeltLine(0, testRegions, beltLine);

@@ -5,7 +5,13 @@ import {
   NewFactory,
   UpdateBuildingRecipe,
 } from "./production";
-import { EntityStack, ItemBuffer, NewEntityStack, Producer } from "./types";
+import {
+  BeltConnection,
+  EntityStack,
+  ItemBuffer,
+  NewEntityStack,
+  Producer,
+} from "./types";
 
 import {
   TestRecipe,
@@ -13,9 +19,12 @@ import {
   TestItemConsumerRecipe,
   TestRecipeBook,
 } from "./test_recipe_defs";
-import { PushPullFromMainBus, PushToOtherProducer } from "./movement";
+import { PushToOtherProducer } from "./movement";
+import { PushPullFromMainBus } from "./MainBusMovement";
 import { TestEntityList } from "./test_entity_defs";
 import { MainBus } from "./mainbus";
+import { Building, NewBuildingSlot } from "./building";
+import { NewInserter } from "./inserter";
 
 function AddItemsToFixedBuffer(buffer: ItemBuffer, count: number) {
   buffer
@@ -126,7 +135,7 @@ describe("PushToOtherProducer", () => {
 
 describe("PushPullFromMainBus", () => {
   function TestMovement(
-    producer: any,
+    slot: { Building: Building; BeltConnections: BeltConnection[] },
     bus: MainBus,
     expected: {
       inputBuffers: EntityStack[];
@@ -134,10 +143,11 @@ describe("PushPullFromMainBus", () => {
       busCounts: Map<number, number>;
     }
   ) {
-    PushPullFromMainBus(producer, bus);
+    const building = slot.Building;
+    PushPullFromMainBus(slot, bus);
 
     for (var expectedOutput of expected.outputBuffers) {
-      expect(producer.outputBuffers.Count(expectedOutput.Entity)).toBe(
+      expect(building.outputBuffers.Count(expectedOutput.Entity)).toBe(
         expectedOutput.Count
       );
     }
@@ -149,7 +159,7 @@ describe("PushPullFromMainBus", () => {
     }
 
     for (var expectedInput of expected.inputBuffers) {
-      expect(producer.inputBuffers.Count(expectedInput.Entity)).toBe(
+      expect(building.inputBuffers.Count(expectedInput.Entity)).toBe(
         expectedInput.Count
       );
     }
@@ -164,24 +174,28 @@ describe("PushPullFromMainBus", () => {
     mb.AddLane("test-ore", 5);
     mb.AddLane("test-slow-ore", 10);
     const factory = NewTestFactory("test-item", 1);
+    const slot = NewBuildingSlot(factory, 3);
 
     AddItemsToFixedBuffer(factory.outputBuffers, 5);
 
-    factory.outputStatus.beltConnections = [
+    slot.BeltConnections = [
       {
         direction: "TO_BUS",
-        beltId: 1,
+        laneId: 1,
+        Inserter: NewInserter(1),
       },
       {
         direction: "FROM_BUS",
-        beltId: 2,
+        laneId: 2,
+        Inserter: NewInserter(1),
       },
       {
         direction: "FROM_BUS",
-        beltId: 3,
+        laneId: 3,
+        Inserter: NewInserter(1),
       },
     ];
-    TestMovement(factory, mb, {
+    TestMovement(slot, mb, {
       inputBuffers: [
         NewEntityStack("test-ore", 1),
         NewEntityStack("test-slow-ore", 1),

@@ -8,7 +8,12 @@ import { MainBusSegment } from "./MainBusSegment";
 import { BuildingHasInput, BuildingHasOutput } from "../utils";
 import { UIAction } from "../uiState";
 import { ProducerCard } from "./ProducerCard";
-import { Building } from "../building";
+import {
+  Building,
+  BuildingSlot,
+  InserterIdForBelt,
+  InserterIdForBuilding,
+} from "../building";
 import { BeltLineCard } from "./BeltLineCard";
 import { MainBus } from "../mainbus";
 import { StorageCard } from "./StorageCard";
@@ -20,6 +25,7 @@ import { NewInserter } from "../inserter";
 
 export type BuildingCardProps = {
   building: Building;
+  buildingSlot: BuildingSlot;
   dispatch: (a: GameAction) => void;
   uiDispatch: (a: UIAction) => void;
   buildingIdx: number;
@@ -31,6 +37,7 @@ export type BuildingCardProps = {
 
 export const BuildingCard = ({
   building,
+  buildingSlot,
   buildingIdx,
   dispatch,
   uiDispatch,
@@ -41,44 +48,49 @@ export const BuildingCard = ({
 }: BuildingCardProps) => {
   // TOOD: Change to use Events
   const busLaneClicked = (laneId: number, entity: string) => {
-    if (
-      building.outputStatus &&
-      building.outputStatus.beltConnections.filter((v) => v.beltId === laneId)
-        .length > 0
-    )
-      return;
+    /* if (
+     *   buildingSlot.BeltConnections.filter((v) => v.laneId === laneId).length > 0
+     * )
+     *   return; */
 
     if (
       BuildingHasOutput(building.kind) &&
-      building.outputStatus &&
       (building.outputBuffers.Accepts(entity) ||
         building.outputBuffers.Count(entity) > 0)
     ) {
-      building.outputStatus.beltConnections.push({
+      GameDispatch({
+        type: "AddMainBusConnection",
+        buildingIdx: buildingIdx,
+        laneId,
         direction: "TO_BUS",
-        beltId: laneId,
       });
     }
 
-    if (
-      BuildingHasInput(building.kind) &&
-      building.outputStatus &&
-      building.inputBuffers
-    )
-      if (building.inputBuffers.Accepts(entity)) {
-        building.outputStatus.beltConnections.push({
+    if (BuildingHasInput(building.kind) && building.inputBuffers)
+      if (
+        building.inputBuffers.Accepts(entity) ||
+        building.inputBuffers.Count(entity) > 0
+      ) {
+        GameDispatch({
+          type: "AddMainBusConnection",
+          buildingIdx: buildingIdx,
+          laneId,
           direction: "FROM_BUS",
-          beltId: laneId,
         });
       }
   };
 
-  const beltConnectionClicked = (laneId: number) => {
+  const beltConnectionClicked = (connectionIdx: number) => {
     if (!building.outputStatus) return;
-    const connectIdx = building.outputStatus.beltConnections.findIndex(
-      (v) => v.beltId === laneId
-    );
-    building.outputStatus.beltConnections.splice(connectIdx, 1);
+    GameDispatch({
+      type: "RemoveMainBusConnection",
+      buildingIdx: buildingIdx,
+      connectionIdx,
+    });
+    /* const connectIdx = building.outputStatus.beltConnections.findIndex(
+     *   (v) => v.beltId === laneId
+     * );
+     * building.outputStatus.beltConnections.splice(connectIdx, 1); */
   };
   const [dragging, setDragging] = useState(false);
 
@@ -130,9 +142,14 @@ export const BuildingCard = ({
       />
     );
 
-  // TODO: Store inserters on belt connections?
-  // rework output status
-  const i1 = NewInserter("inserter", 7);
+  const beltInserters = buildingSlot.BeltConnections.map((beltConn, idx) => (
+    <InserterCard
+      key={idx}
+      variant="small"
+      inserter={beltConn.Inserter}
+      inserterId={InserterIdForBelt(buildingIdx, idx)}
+    />
+  ));
   return (
     <div
       className="producer-card"
@@ -163,17 +180,13 @@ export const BuildingCard = ({
       </div>
 
       {card}
-      <div className="output-area">
-        <InserterCard variant="small" inserter={i1} inserterIdx={0} />
-        <InserterCard variant="small" inserter={i1} inserterIdx={1} />
-        <InserterCard variant="small" inserter={i1} inserterIdx={2} />
-      </div>
+      <div className="output-area">{beltInserters}</div>
       <MainBusSegment
         mainBus={mainBus}
         busLaneClicked={busLaneClicked}
         beltConnectionClicked={beltConnectionClicked}
         segmentHeight={134}
-        beltConnections={building.outputStatus?.beltConnections}
+        beltConnections={buildingSlot.BeltConnections}
       />
     </div>
   );

@@ -27,7 +27,7 @@ $inserterColor: #ffff1a;
       left: -8px;
       top: -8px;
     }
-    .icon.side {
+    .icon.off {
       transform: scale(0.7);
       opacity: 0.5;
     }
@@ -58,7 +58,7 @@ $inserterColor: #ffff1a;
 
 .inserter-card.small {
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   font-size: 0;
   align-items: center;
   //transform: scale(0.7);
@@ -66,14 +66,14 @@ $inserterColor: #ffff1a;
   border-top: 1px darkgrey solid;
 
   .icon {
-    margin-left: -14px;
+    margin-left: -8px;
     transform: scale(0.5) translateY(-50%);
   }
 
   .icon.left {
   }
   .icon.right {
-    transform: scaleX(-0.5) scaleY(0.5) translateY(-50%);
+    transform: scaleX(-0.5) scaleY(0.5) translateY(-50%) translateX(-40%);
   }
   .icon.off {
     opacity: 0.5;
@@ -81,7 +81,7 @@ $inserterColor: #ffff1a;
   }
 
   .count-area {
-    flex-direction: column;
+    flex-direction: column-reverse;
     > * {
       line-height: 10px;
       font-size: 10px;

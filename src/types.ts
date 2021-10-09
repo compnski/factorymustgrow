@@ -130,10 +130,18 @@ export type Entity = {
   Col: number;
 };
 
-export type BeltConnection = {
-  beltId: number;
-  direction: "TO_BUS" | "FROM_BUS";
-};
+export type BeltConnection =
+  | {
+      laneId: number;
+      direction: "TO_BUS" | "FROM_BUS";
+      Inserter: Inserter;
+    }
+  | {
+      Inserter: Inserter;
+      laneId: undefined;
+      direction: undefined;
+    };
+
 export type OutputStatus = {
   beltConnections: BeltConnection[];
 };
@@ -162,16 +170,14 @@ export const NewRegion = (
   BuildingCapacity: number,
   MainBusCapacity: number,
   ore: EntityStack[],
-  Buildings: Building[] = [],
-  Inserters: Inserter[] = [],
+  BuildingSlots: BuildingSlot[] = [],
   getEntity?: (e: string) => Entity
 ): Region => ({
   Id: id,
   BuildingCapacity,
   MainBusCapacity,
   Ore: FixedInventory(ore, getEntity),
-  Buildings,
-  Inserters,
+  BuildingSlots,
   Bus: new MainBus(),
 });
 

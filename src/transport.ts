@@ -16,9 +16,9 @@ export function FindDepotForBeltLineInRegion(
   beltLineId: number,
   direction: string
 ): BeltLineDepot | undefined {
-  for (const b of r.Buildings) {
-    if (b.kind === "BeltLineDepot") {
-      const depot = b as BeltLineDepot;
+  for (const slot of r.BuildingSlots) {
+    if (slot.Building.kind === "BeltLineDepot") {
+      const depot = slot.Building;
       if (depot.beltLineId === beltLineId && depot.direction === direction) {
         return depot;
       }

@@ -18,7 +18,13 @@ import { GetResearch } from "./gen/research";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
 import { GameWindow } from "./globals";
 import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
-import { Building, NewEmptyLane } from "./building";
+import {
+  BuildingSlot,
+  Building,
+  NewEmptyLane,
+  NewBuildingSlot,
+  InserterId,
+} from "./building";
 import { GameState } from "./useGameState";
 import { ResetGameState } from "./useGameState";
 import {
@@ -155,12 +161,9 @@ export const GameDispatch = (action: GameAction) => {
 
     case "IncreaseInserterCount":
       (() => {
-        const i = currentRegion.Inserters[action.inserterIdx];
-        // TODO: Handle belt lines
-        if (
-          GameState.Inventory.Count(i.subkind) <= 0
-          //RemainingRegionInserterCapacity(currentRegion) <= 0
-        ) {
+        const i = inserter(action);
+
+        if (!i || GameState.Inventory.Count(i.subkind) <= 0) {
           return;
         }
         GameState.Inventory.Remove(NewEntityStack(i.subkind, 0, 1), 1);
@@ -171,24 +174,24 @@ export const GameDispatch = (action: GameAction) => {
 
     case "DecreaseInserterCount":
       (() => {
-        const i = currentRegion.Inserters[action.inserterIdx];
+        const i = inserter(action);
 
-        if (i) {
-          if (i.BuildingCount > 0) {
-            GameState.Inventory.Add(NewEntityStack(i.subkind, 1, 1), 1);
-            i.BuildingCount = Math.max(0, i.BuildingCount - 1);
-          }
+        if (i && i.BuildingCount > 0) {
+          GameState.Inventory.Add(NewEntityStack(i.subkind, 1, 1), 1);
+          i.BuildingCount = Math.max(0, i.BuildingCount - 1);
         }
       })();
       break;
 
     case "ToggleInserterDirection":
       (() => {
-        const topB = currentRegion.Buildings[action.inserterIdx],
-          bottomB = currentRegion.Buildings[action.inserterIdx + 1],
-          i = currentRegion.Inserters[action.inserterIdx];
+        if (action.location === "BELT") return;
+        const topB = currentRegion.BuildingSlots[action.buildingIdx].Building,
+          bottomB =
+            currentRegion.BuildingSlots[action.buildingIdx + 1].Building,
+          i = currentRegion.BuildingSlots[action.buildingIdx].Inserter;
 
-        if (!topB || !bottomB || action.inserterIdx === undefined) return;
+        if (!topB || !bottomB || action.buildingIdx === undefined) return;
 
         console.log(CanPushTo(bottomB, topB), CanPushTo(topB, bottomB));
 
@@ -214,6 +217,36 @@ export const GameDispatch = (action: GameAction) => {
           i.direction = i.direction === "NONE" ? "DOWN" : "NONE";
         }
       })();
+      break;
+
+    case "RemoveMainBusConnection":
+      const conn = buildingSlot(action)?.BeltConnections[action.connectionIdx];
+      if (conn) {
+        conn.laneId = undefined;
+        conn.direction = undefined;
+        conn.Inserter.direction = "NONE";
+      }
+      break;
+
+    case "AddMainBusConnection":
+      const { laneId, direction } = action;
+      const slot = buildingSlot(action),
+        firstEmptyBeltConn = slot?.BeltConnections.find(
+          (beltConn) => beltConn.direction === undefined
+        );
+      console.log(
+        "Add slot",
+        action,
+        firstEmptyBeltConn,
+        slot?.BeltConnections
+      );
+
+      if (firstEmptyBeltConn) {
+        firstEmptyBeltConn.direction = direction;
+        firstEmptyBeltConn.laneId = laneId;
+        firstEmptyBeltConn.Inserter.direction = direction;
+      }
+
       break;
 
     case "TransferToInventory":
@@ -328,18 +361,17 @@ function PlaceBeltLine(
 }
 
 function AddBuildingOverEmptyOrAtEnd(
-  region: { Inserters: Inserter[]; Buildings: Building[] },
+  region: { BuildingSlots: BuildingSlot[] },
   b: Building,
   buildingIdx?: number
 ) {
   if (
     buildingIdx !== undefined &&
-    region.Buildings[buildingIdx]?.kind === "Empty"
+    region.BuildingSlots[buildingIdx]?.Building.kind === "Empty"
   ) {
-    region.Buildings[buildingIdx] = b;
+    region.BuildingSlots[buildingIdx] = NewBuildingSlot(b, 3);
   } else {
-    region.Buildings.push(b);
-    if (region.Buildings.length > 1) region.Inserters.push(NewInserter());
+    region.BuildingSlots.push(NewBuildingSlot(b, 3));
   }
 }
 
@@ -350,7 +382,7 @@ function ReorderBuildings(
     dropBuildingIdx: number;
     isDropOnLastBuilding: boolean;
   },
-  region: { Inserters: Inserter[]; Buildings: Building[] }
+  region: { BuildingSlots: BuildingSlot[] }
 ) {
   (() => {
     const b = building(action);
@@ -367,10 +399,10 @@ function ReorderBuildings(
       targetIsLastBuilding = action.isDropOnLastBuilding;
 
     if (targetIsEmptyLane) {
-      region.Buildings[action.dropBuildingIdx] = b;
-      region.Buildings[action.buildingIdx] = NewEmptyLane();
+      region.BuildingSlots[action.dropBuildingIdx].Building = b;
+      region.BuildingSlots[action.buildingIdx].Building = NewEmptyLane();
     } else if (targetIsLastBuilding) {
-      region.Buildings[action.buildingIdx] = NewEmptyLane();
+      region.BuildingSlots[action.buildingIdx].Building = NewEmptyLane();
       AddBuildingOverEmptyOrAtEnd(region, b);
     }
     fixOutputStatus(region);
@@ -386,12 +418,12 @@ function RemoveBuilding(
 ) {
   const b = building(action); // as Producer;
   if (b) {
-    currentRegion.Buildings.splice(action.buildingIdx, 1, NewEmptyLane());
-    for (var idx = currentRegion.Buildings.length - 1; idx >= 0; idx--) {
+    currentRegion.BuildingSlots[action.buildingIdx].Building = NewEmptyLane();
+    for (var idx = currentRegion.BuildingSlots.length - 1; idx >= 0; idx--) {
       // Removing the last building and it's an empty lane.
-      if (currentRegion.Buildings[idx].kind === "Empty") {
-        currentRegion.Buildings.splice(idx, 1);
-        const [inserter] = currentRegion.Inserters.splice(idx - 1, 1);
+      if (currentRegion.BuildingSlots[idx].Building.kind === "Empty") {
+        const [slot] = currentRegion.BuildingSlots.splice(idx, 1);
+        const inserter = slot && slot.Inserter;
         // Refund inserters
         if (inserter)
           GameState.Inventory.Add(
@@ -543,4 +575,26 @@ function building(action: { buildingIdx?: number }): Building | undefined {
     ? currentRegion.BuildingSlots[action.buildingIdx].Building
     : undefined;
 }
+
+function inserter(action: InserterId): Inserter | undefined {
+  console.log(JSON.stringify(action));
+  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
+
+  return action.location === "BUILDING"
+    ? currentRegion.BuildingSlots[action.buildingIdx].Inserter
+    : currentRegion.BuildingSlots[action.buildingIdx].BeltConnections[
+        action.connectionIdx
+      ].Inserter;
+}
+
+function buildingSlot(action: {
+  buildingIdx?: number;
+}): BuildingSlot | undefined {
+  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
+
+  return action.buildingIdx !== undefined
+    ? currentRegion.BuildingSlots[action.buildingIdx]
+    : undefined;
+}
+
 (window as unknown as GameWindow).GameDispatch = GameDispatch;

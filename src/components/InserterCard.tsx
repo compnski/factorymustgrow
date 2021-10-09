@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { InserterId } from "../building";
 import { GameDispatch } from "../GameDispatch";
 import { Inserter } from "../inserter";
 import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
 import "./InserterCard.scss";
 
 export type InserterCardProps = {
-  inserterIdx: number;
+  inserterId: InserterId;
   inserter: Inserter;
   variant?: "wide" | "small";
 };
@@ -16,7 +17,11 @@ export function InserterCard(props: InserterCardProps) {
       ? "up"
       : props.inserter.direction === "DOWN"
       ? "down"
-      : "side";
+      : props.inserter.direction === "TO_BUS"
+      ? "left"
+      : props.inserter.direction === "FROM_BUS"
+      ? "right"
+      : "off";
   return (
     <div className={`inserter-card ${props.variant || ""}`}>
       <div
@@ -24,7 +29,7 @@ export function InserterCard(props: InserterCardProps) {
           //
           GameDispatch({
             type: "ToggleInserterDirection",
-            inserterIdx: props.inserterIdx,
+            ...props.inserterId,
           });
         }}
         className="inserter-diamond"
@@ -37,13 +42,13 @@ export function InserterCard(props: InserterCardProps) {
           minusClickHandler={() =>
             GameDispatch({
               type: "DecreaseInserterCount",
-              inserterIdx: props.inserterIdx,
+              ...props.inserterId,
             })
           }
           plusClickHandler={() =>
             GameDispatch({
               type: "IncreaseInserterCount",
-              inserterIdx: props.inserterIdx,
+              ...props.inserterId,
             })
           }
         />

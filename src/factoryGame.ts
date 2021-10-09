@@ -6,11 +6,8 @@ import {
 } from "./production";
 import { Region } from "./types";
 import { GetRecipe } from "./gen/entities";
-import {
-  CanPushTo,
-  PushPullFromMainBus,
-  PushToOtherProducer,
-} from "./movement";
+import { CanPushTo, PushToOtherProducer } from "./movement";
+import { PushPullFromMainBus } from "./MainBusMovement";
 import { IsResearchComplete, Lab, ResearchInLab } from "./research";
 import { GetResearch } from "./gen/research";
 import { UIAction } from "./uiState";
@@ -19,7 +16,7 @@ import { UpdateBeltLine } from "./transport";
 import { MainBus } from "./mainbus";
 import { GameDispatch } from "./GameDispatch";
 import { Building, BuildingSlot } from "./building";
-import { Inserter, InserterTransferRate } from "./inserter";
+import { Inserter, InserterTransferRate, MoveViaInserter } from "./inserter";
 
 export const UpdateGameState = (
   tick: number,
@@ -62,34 +59,25 @@ function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
         break;
     }
 
-    const i = slot.Inserter;
-    if (InserterTransferRate(i) > 0) {
-      if (i.direction === "DOWN") {
-        PushToOtherProducer(
-          currentRegion.BuildingSlots[idx].Building,
-          currentRegion.BuildingSlots[idx + 1].Building,
-          InserterTransferRate(i)
-        );
-      } else if (i.direction === "UP") {
-        PushToOtherProducer(
-          currentRegion.BuildingSlots[idx + 1].Building,
-          currentRegion.BuildingSlots[idx].Building,
-          InserterTransferRate(i)
-        );
-      }
-    }
+    if (idx < currentRegion.BuildingSlots.length - 1)
+      MoveViaInserter(
+        slot.Inserter,
+        currentRegion.BuildingSlots[idx].Building,
+        currentRegion.BuildingSlots[idx + 1].Building
+      );
+
     PushPullFromMainBus(slot, currentRegion.Bus);
   });
 }
 
 function fixBeltConnections(BuildingSlots: BuildingSlot[], bus: MainBus) {
-  BuildingSlots.forEach((slot) => {
-    const building = slot.Building;
-    building.outputStatus.beltConnections.forEach((beltConn, idx) => {
-      if (!bus.HasLane(beltConn.beltId))
-        building.outputStatus.beltConnections.splice(idx, 1);
-    });
-  });
+  // BuildingSlots.forEach((slot) => {
+  //   const building = slot.Building;
+  //   building.outputStatus.beltConnections.forEach((beltConn, idx) => {
+  //     if (beltConn.laneId !== undefined && !bus.HasLane(beltConn.laneId))
+  //       building.outputStatus.beltConnections.splice(idx, 1);
+  //   });
+  // });
 }
 
 export function fixOutputStatus(region: { BuildingSlots: BuildingSlot[] }) {

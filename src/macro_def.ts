@@ -43,7 +43,7 @@ function addProducers(
   const upperToggles: number[] = [],
     lowerToggles: number[] = [];
   producerList.forEach(({ recipe, kind, connect = {} }) => {
-    const buildingIdx = currentRegion.Buildings.length;
+    const buildingIdx = currentRegion.BuildingSlots.length;
     GameDispatch({
       type: "TransferToInventory",
       entity: kind,
@@ -59,7 +59,7 @@ function addProducers(
 
     GameDispatch({ type: "PlaceBuilding", entity: kind });
 
-    const nextBuildingIdx = currentRegion.Buildings.length;
+    const nextBuildingIdx = currentRegion.BuildingSlots.length;
 
     if (buildingIdx === nextBuildingIdx) {
       throw new Error(`Failed to add producer ${kind} for ${recipe}`);
@@ -67,7 +67,8 @@ function addProducers(
     if (buildingIdx > 0)
       GameDispatch({
         type: "IncreaseInserterCount",
-        inserterIdx: buildingIdx - 1,
+        buildingIdx: buildingIdx - 1,
+        location: "BUILDING",
       });
 
     GameDispatch({
@@ -82,14 +83,16 @@ function addProducers(
   lowerToggles.forEach((buildingIdx) => {
     GameDispatch({
       type: "ToggleInserterDirection",
-      inserterIdx: buildingIdx,
+      buildingIdx: buildingIdx,
+      location: "BUILDING",
     });
   });
 
   upperToggles.forEach((buildingIdx) => {
     GameDispatch({
       type: "ToggleInserterDirection",
-      inserterIdx: buildingIdx - 1,
+      buildingIdx: buildingIdx - 1,
+      location: "BUILDING",
     });
   });
 }

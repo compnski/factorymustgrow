@@ -1,4 +1,4 @@
-import { Building } from "./building";
+import { Building, InserterId } from "./building";
 
 export type GameAction =
   | BasicAction
@@ -63,6 +63,17 @@ type BuildingAction =
       beltLength: number;
       targetRegion: string;
       buildingIdx?: number;
+    }
+  | {
+      type: "AddMainBusConnection";
+      buildingIdx: number;
+      laneId: number;
+      direction: "FROM_BUS" | "TO_BUS";
+    }
+  | {
+      type: "RemoveMainBusConnection";
+      buildingIdx: number;
+      connectionIdx: number;
     };
 
 type InserterAction = {
@@ -70,9 +81,10 @@ type InserterAction = {
     | "IncreaseInserterCount"
     | "DecreaseInserterCount"
     | "ToggleInserterDirection";
-
-  inserterIdx: number;
-};
+  // location: "BELT" | "BUILDING";
+  // buildingIdx: number;
+  // connectionIdx?: number;
+} & InserterId;
 
 type ChangeRecipeAction = {
   type: "ChangeRecipe";
