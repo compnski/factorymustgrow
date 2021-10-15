@@ -185,7 +185,46 @@ export const GameDispatch = (action: GameAction) => {
 
     case "ToggleInserterDirection":
       (() => {
-        if (action.location === "BELT") return;
+        if (action.location === "BELT") {
+          const i = inserter(action),
+            b = building(action);
+
+          const beltConn =
+              currentRegion.BuildingSlots[action.buildingIdx].BeltConnections[
+                action.connectionIdx
+              ],
+            mainBusLaneId = beltConn.laneId;
+          if (
+            mainBusLaneId !== undefined &&
+            currentRegion.Bus.HasLane(mainBusLaneId)
+          ) {
+            const busLane = currentRegion.Bus.lanes.get(mainBusLaneId);
+            // Check if the inserter can be toggled
+            // IF so, flip it
+            if (i && b && busLane) {
+              const canGoLeft = BuildingHasInput(b, busLane.Entities()[0][0]),
+                canGoRight = BuildingHasOutput(b, busLane.Entities()[0][0]);
+
+              if (canGoLeft && canGoRight) {
+                i.direction =
+                  i.direction === "TO_BUS"
+                    ? "FROM_BUS"
+                    : i.direction === "FROM_BUS"
+                    ? "NONE"
+                    : "TO_BUS";
+              } else if (canGoLeft) {
+                i.direction = i.direction === "NONE" ? "FROM_BUS" : "NONE";
+              } else if (canGoRight) {
+                i.direction = i.direction === "NONE" ? "TO_BUS" : "NONE";
+              }
+              if (i.direction === "FROM_BUS" || i.direction === "TO_BUS") {
+                beltConn.direction = i.direction;
+              }
+            }
+          }
+          return;
+        }
+
         const topB = currentRegion.BuildingSlots[action.buildingIdx].Building,
           bottomB =
             currentRegion.BuildingSlots[action.buildingIdx + 1].Building,
@@ -245,6 +284,16 @@ export const GameDispatch = (action: GameAction) => {
         firstEmptyBeltConn.direction = direction;
         firstEmptyBeltConn.laneId = laneId;
         firstEmptyBeltConn.Inserter.direction = direction;
+        // TODO: If inserter count is 0, try to build one from inventory
+        // If the current count is 0, try to build one
+        if (
+          firstEmptyBeltConn.Inserter.BuildingCount === 0 &&
+          GameState.Inventory.Remove(
+            NewEntityStack(firstEmptyBeltConn.Inserter.subkind, 0, 1),
+            1
+          )
+        )
+          firstEmptyBeltConn.Inserter.BuildingCount = 1;
       }
 
       break;
@@ -431,6 +480,16 @@ function RemoveBuilding(
             inserter.BuildingCount,
             true
           );
+        slot.BeltConnections.forEach((beltConn) => {
+          GameState.Inventory.Add(
+            NewEntityStack(
+              beltConn.Inserter.subkind,
+              beltConn.Inserter.BuildingCount
+            ),
+            beltConn.Inserter.BuildingCount,
+            true
+          );
+        });
       } else {
         // Until there are no more empty ones
         break;

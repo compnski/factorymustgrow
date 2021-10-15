@@ -21,7 +21,7 @@ export function NewInserter(
 }
 
 export function InserterTransferRate(i: Inserter): number {
-  return i.BuildingCount;
+  return (i.direction !== "NONE" && i.BuildingCount) || 0;
 }
 
 export function MoveViaInserter(

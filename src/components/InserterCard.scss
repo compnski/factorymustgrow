@@ -31,11 +31,11 @@ $inserterColor: #ffff1a;
       transform: scale(0.7);
       opacity: 0.5;
     }
-    .icon.up {
+    .icon.down {
       transform: scale(0.7) rotate(90deg);
       top: -10px;
     }
-    .icon.down {
+    .icon.up {
       transform: scale(0.7) rotate(-90deg);
       top: -4px;
     }

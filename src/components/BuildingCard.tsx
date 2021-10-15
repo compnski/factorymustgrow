@@ -53,31 +53,21 @@ export const BuildingCard = ({
      * )
      *   return; */
 
-    if (
-      BuildingHasOutput(building.kind) &&
-      (building.outputBuffers.Accepts(entity) ||
-        building.outputBuffers.Count(entity) > 0)
-    ) {
+    if (BuildingHasOutput(building, entity)) {
       GameDispatch({
         type: "AddMainBusConnection",
         buildingIdx: buildingIdx,
         laneId,
         direction: "TO_BUS",
       });
+    } else if (BuildingHasInput(building, entity)) {
+      GameDispatch({
+        type: "AddMainBusConnection",
+        buildingIdx: buildingIdx,
+        laneId,
+        direction: "FROM_BUS",
+      });
     }
-
-    if (BuildingHasInput(building.kind) && building.inputBuffers)
-      if (
-        building.inputBuffers.Accepts(entity) ||
-        building.inputBuffers.Count(entity) > 0
-      ) {
-        GameDispatch({
-          type: "AddMainBusConnection",
-          buildingIdx: buildingIdx,
-          laneId,
-          direction: "FROM_BUS",
-        });
-      }
   };
 
   const beltConnectionClicked = (connectionIdx: number) => {

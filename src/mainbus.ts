@@ -21,6 +21,7 @@ export const NewBusLane = (
 export class MainBus {
   lanes: Map<number, ItemBuffer>;
   nextLaneId: number = 1;
+  kind: string = "MainBus";
   getEntity: (e: string) => Entity;
 
   constructor(

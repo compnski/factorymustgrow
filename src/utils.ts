@@ -1,3 +1,4 @@
+import { Building } from "./building";
 import { GetResearch } from "./gen/research";
 
 const seenSet = new Set<any>();
@@ -43,10 +44,35 @@ export function entityIconLookupByKind(
   };
 }
 
-export function BuildingHasOutput(kind?: string): boolean {
-  return kind !== "Lab";
+export function BuildingHasOutput(
+  building?: string | Building,
+  entity?: string
+): boolean {
+  if (typeof building === "string") {
+    return building !== "Lab";
+  }
+  return Boolean(
+    entity &&
+      building &&
+      BuildingHasOutput(building.kind) &&
+      (building.outputBuffers.Accepts(entity) ||
+        building.outputBuffers.Count(entity) > 0)
+  );
 }
 
-export function BuildingHasInput(kind?: string): boolean {
-  return kind !== "Extractor";
+export function BuildingHasInput(
+  building?: string | Building,
+  entity?: string
+): boolean {
+  if (typeof building === "string") {
+    return building !== "Extractor";
+  }
+  return Boolean(
+    entity &&
+      building &&
+      BuildingHasInput(building.kind) &&
+      building.inputBuffers &&
+      (building.inputBuffers.Accepts(entity) ||
+        building.inputBuffers.Count(entity) > 0)
+  );
 }
