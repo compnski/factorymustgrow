@@ -1,6 +1,1382 @@
 import svgIcons from "../icons.png";
-
+import technologyIcons from "../technology.png";
 const IconSymbols = new Map([
+  [
+    "sprite-technology-worker-robots-storage",
+    <symbol
+      id="sprite-technology-worker-robots-storage"
+      viewBox="0 0 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-worker-robots-speed",
+    <symbol
+      id="sprite-technology-worker-robots-speed"
+      viewBox="64 0 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-weapon-shooting-speed-3",
+    <symbol
+      id="sprite-technology-weapon-shooting-speed-3"
+      viewBox="0 64 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-weapon-shooting-speed-2",
+    <symbol
+      id="sprite-technology-weapon-shooting-speed-2"
+      viewBox="64 64 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-weapon-shooting-speed-1",
+    <symbol
+      id="sprite-technology-weapon-shooting-speed-1"
+      viewBox="128 0 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-utility-science-pack",
+    <symbol
+      id="sprite-technology-utility-science-pack"
+      viewBox="128 64 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-uranium-processing",
+    <symbol
+      id="sprite-technology-uranium-processing"
+      viewBox="0 128 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-uranium-ammo",
+    <symbol
+      id="sprite-technology-uranium-ammo"
+      viewBox="64 128 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-turrets",
+    <symbol
+      id="sprite-technology-turrets"
+      viewBox="128 128 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-toolbelt",
+    <symbol
+      id="sprite-technology-toolbelt"
+      viewBox="192 0 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-tanks",
+    <symbol
+      id="sprite-technology-tanks"
+      viewBox="192 64 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-sulfur-processing",
+    <symbol
+      id="sprite-technology-sulfur-processing"
+      viewBox="192 128 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-stronger-explosives-3",
+    <symbol
+      id="sprite-technology-stronger-explosives-3"
+      viewBox="0 192 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-stronger-explosives-2",
+    <symbol
+      id="sprite-technology-stronger-explosives-2"
+      viewBox="64 192 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-stronger-explosives-1",
+    <symbol
+      id="sprite-technology-stronger-explosives-1"
+      viewBox="128 192 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-stone-walls",
+    <symbol
+      id="sprite-technology-stone-walls"
+      viewBox="192 192 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-steel-processing",
+    <symbol
+      id="sprite-technology-steel-processing"
+      viewBox="256 0 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-steel-axe",
+    <symbol
+      id="sprite-technology-steel-axe"
+      viewBox="256 64 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-stack-inserter",
+    <symbol
+      id="sprite-technology-stack-inserter"
+      viewBox="256 128 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-spidertron",
+    <symbol
+      id="sprite-technology-spidertron"
+      viewBox="256 192 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-speed-module-3",
+    <symbol
+      id="sprite-technology-speed-module-3"
+      viewBox="0 256 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-speed-module-2",
+    <symbol
+      id="sprite-technology-speed-module-2"
+      viewBox="64 256 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-speed-module-1",
+    <symbol
+      id="sprite-technology-speed-module-1"
+      viewBox="128 256 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-space-science-pack",
+    <symbol
+      id="sprite-technology-space-science-pack"
+      viewBox="192 256 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-solar-panel-equipment",
+    <symbol
+      id="sprite-technology-solar-panel-equipment"
+      viewBox="256 256 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-solar-energy",
+    <symbol
+      id="sprite-technology-solar-energy"
+      viewBox="320 0 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-rocketry",
+    <symbol
+      id="sprite-technology-rocketry"
+      viewBox="320 64 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-rocket-silo",
+    <symbol
+      id="sprite-technology-rocket-silo"
+      viewBox="320 128 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-rocket-fuel",
+    <symbol
+      id="sprite-technology-rocket-fuel"
+      viewBox="320 192 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-rocket-control-unit",
+    <symbol
+      id="sprite-technology-rocket-control-unit"
+      viewBox="320 256 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-robotics",
+    <symbol
+      id="sprite-technology-robotics"
+      viewBox="0 320 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-research-speed",
+    <symbol
+      id="sprite-technology-research-speed"
+      viewBox="64 320 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-refined-flammables",
+    <symbol
+      id="sprite-technology-refined-flammables"
+      viewBox="128 320 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-railway",
+    <symbol
+      id="sprite-technology-railway"
+      viewBox="192 320 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-rail-signals",
+    <symbol
+      id="sprite-technology-rail-signals"
+      viewBox="256 320 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-productivity-module-3",
+    <symbol
+      id="sprite-technology-productivity-module-3"
+      viewBox="320 320 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-productivity-module-2",
+    <symbol
+      id="sprite-technology-productivity-module-2"
+      viewBox="384 0 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-productivity-module-1",
+    <symbol
+      id="sprite-technology-productivity-module-1"
+      viewBox="384 64 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-production-science-pack",
+    <symbol
+      id="sprite-technology-production-science-pack"
+      viewBox="384 128 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-power-armor",
+    <symbol
+      id="sprite-technology-power-armor"
+      viewBox="384 192 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-power-armor-mk2",
+    <symbol
+      id="sprite-technology-power-armor-mk2"
+      viewBox="384 256 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-plastics",
+    <symbol
+      id="sprite-technology-plastics"
+      viewBox="384 320 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-physical-projectile-damage-2",
+    <symbol
+      id="sprite-technology-physical-projectile-damage-2"
+      viewBox="0 384 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-physical-projectile-damage-1",
+    <symbol
+      id="sprite-technology-physical-projectile-damage-1"
+      viewBox="64 384 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-personal-roboport-mk2-equipment",
+    <symbol
+      id="sprite-technology-personal-roboport-mk2-equipment"
+      viewBox="128 384 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-personal-roboport-equipment",
+    <symbol
+      id="sprite-technology-personal-roboport-equipment"
+      viewBox="192 384 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-personal-laser-defense-equipment",
+    <symbol
+      id="sprite-technology-personal-laser-defense-equipment"
+      viewBox="256 384 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-optics",
+    <symbol
+      id="sprite-technology-optics"
+      viewBox="320 384 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-oil-processing",
+    <symbol
+      id="sprite-technology-oil-processing"
+      viewBox="384 384 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-oil-gathering",
+    <symbol
+      id="sprite-technology-oil-gathering"
+      viewBox="448 0 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-nuclear-power",
+    <symbol
+      id="sprite-technology-nuclear-power"
+      viewBox="448 64 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-nuclear-fuel-reprocessing",
+    <symbol
+      id="sprite-technology-nuclear-fuel-reprocessing"
+      viewBox="448 128 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-no-science",
+    <symbol
+      id="sprite-technology-no-science"
+      viewBox="448 192 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-night-vision-equipment",
+    <symbol
+      id="sprite-technology-night-vision-equipment"
+      viewBox="448 256 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-module",
+    <symbol
+      id="sprite-technology-module"
+      viewBox="448 320 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-mining-productivity",
+    <symbol
+      id="sprite-technology-mining-productivity"
+      viewBox="448 384 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-military",
+    <symbol
+      id="sprite-technology-military"
+      viewBox="0 448 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-military-science-pack",
+    <symbol
+      id="sprite-technology-military-science-pack"
+      viewBox="64 448 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-lubricant",
+    <symbol
+      id="sprite-technology-lubricant"
+      viewBox="128 448 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-low-density-structure",
+    <symbol
+      id="sprite-technology-low-density-structure"
+      viewBox="192 448 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-logistics-3",
+    <symbol
+      id="sprite-technology-logistics-3"
+      viewBox="256 448 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-logistics-2",
+    <symbol
+      id="sprite-technology-logistics-2"
+      viewBox="320 448 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-logistics-1",
+    <symbol
+      id="sprite-technology-logistics-1"
+      viewBox="384 448 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-logistic-system",
+    <symbol
+      id="sprite-technology-logistic-system"
+      viewBox="448 448 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-logistic-science-pack",
+    <symbol
+      id="sprite-technology-logistic-science-pack"
+      viewBox="512 0 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-logistic-robotics",
+    <symbol
+      id="sprite-technology-logistic-robotics"
+      viewBox="512 64 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-laser",
+    <symbol
+      id="sprite-technology-laser"
+      viewBox="512 128 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-laser-turrets",
+    <symbol
+      id="sprite-technology-laser-turrets"
+      viewBox="512 192 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-laser-turret-speed",
+    <symbol
+      id="sprite-technology-laser-turret-speed"
+      viewBox="512 256 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-landfill",
+    <symbol
+      id="sprite-technology-landfill"
+      viewBox="512 320 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-land-mine",
+    <symbol
+      id="sprite-technology-land-mine"
+      viewBox="512 384 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-kovarex-enrichment-process",
+    <symbol
+      id="sprite-technology-kovarex-enrichment-process"
+      viewBox="512 448 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-inserter-capacity",
+    <symbol
+      id="sprite-technology-inserter-capacity"
+      viewBox="0 512 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-gates",
+    <symbol
+      id="sprite-technology-gates"
+      viewBox="64 512 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-fusion-reactor-equipment",
+    <symbol
+      id="sprite-technology-fusion-reactor-equipment"
+      viewBox="128 512 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-follower-robots",
+    <symbol
+      id="sprite-technology-follower-robots"
+      viewBox="192 512 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-fluid-wagon",
+    <symbol
+      id="sprite-technology-fluid-wagon"
+      viewBox="256 512 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-fluid-handling",
+    <symbol
+      id="sprite-technology-fluid-handling"
+      viewBox="320 512 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-flammables",
+    <symbol
+      id="sprite-technology-flammables"
+      viewBox="384 512 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-flamethrower",
+    <symbol
+      id="sprite-technology-flamethrower"
+      viewBox="448 512 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-fast-inserter",
+    <symbol
+      id="sprite-technology-fast-inserter"
+      viewBox="512 512 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-explosives",
+    <symbol
+      id="sprite-technology-explosives"
+      viewBox="576 0 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-explosive-rocketry",
+    <symbol
+      id="sprite-technology-explosive-rocketry"
+      viewBox="576 64 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-exoskeleton-equipment",
+    <symbol
+      id="sprite-technology-exoskeleton-equipment"
+      viewBox="576 128 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-engine",
+    <symbol
+      id="sprite-technology-engine"
+      viewBox="576 192 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-energy-weapons-damage-3",
+    <symbol
+      id="sprite-technology-energy-weapons-damage-3"
+      viewBox="576 256 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-energy-weapons-damage-2",
+    <symbol
+      id="sprite-technology-energy-weapons-damage-2"
+      viewBox="576 320 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-energy-weapons-damage-1",
+    <symbol
+      id="sprite-technology-energy-weapons-damage-1"
+      viewBox="576 384 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-energy-shield-mk2-equipment",
+    <symbol
+      id="sprite-technology-energy-shield-mk2-equipment"
+      viewBox="576 448 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-energy-shield-equipment",
+    <symbol
+      id="sprite-technology-energy-shield-equipment"
+      viewBox="576 512 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-electronics",
+    <symbol
+      id="sprite-technology-electronics"
+      viewBox="0 576 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-electric-engine",
+    <symbol
+      id="sprite-technology-electric-engine"
+      viewBox="64 576 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-electric-energy-distribution-2",
+    <symbol
+      id="sprite-technology-electric-energy-distribution-2"
+      viewBox="128 576 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-electric-energy-distribution-1",
+    <symbol
+      id="sprite-technology-electric-energy-distribution-1"
+      viewBox="192 576 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-electric-energy-acumulators",
+    <symbol
+      id="sprite-technology-electric-energy-acumulators"
+      viewBox="256 576 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-effectivity-module-3",
+    <symbol
+      id="sprite-technology-effectivity-module-3"
+      viewBox="320 576 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-effectivity-module-2",
+    <symbol
+      id="sprite-technology-effectivity-module-2"
+      viewBox="384 576 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-effectivity-module-1",
+    <symbol
+      id="sprite-technology-effectivity-module-1"
+      viewBox="448 576 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-effect-transmission",
+    <symbol
+      id="sprite-technology-effect-transmission"
+      viewBox="512 576 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-discharge-defense-equipment",
+    <symbol
+      id="sprite-technology-discharge-defense-equipment"
+      viewBox="576 576 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-construction-robotics",
+    <symbol
+      id="sprite-technology-construction-robotics"
+      viewBox="640 0 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-concrete",
+    <symbol
+      id="sprite-technology-concrete"
+      viewBox="640 64 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-combat-robotics",
+    <symbol
+      id="sprite-technology-combat-robotics"
+      viewBox="640 128 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-coal-liquefaction",
+    <symbol
+      id="sprite-technology-coal-liquefaction"
+      viewBox="640 192 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-cliff-explosives",
+    <symbol
+      id="sprite-technology-cliff-explosives"
+      viewBox="640 256 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-circuit-network",
+    <symbol
+      id="sprite-technology-circuit-network"
+      viewBox="640 320 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-chemical-science-pack",
+    <symbol
+      id="sprite-technology-chemical-science-pack"
+      viewBox="640 384 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-braking-force",
+    <symbol
+      id="sprite-technology-braking-force"
+      viewBox="640 448 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-belt-immunity-equipment",
+    <symbol
+      id="sprite-technology-belt-immunity-equipment"
+      viewBox="640 512 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-battery",
+    <symbol
+      id="sprite-technology-battery"
+      viewBox="640 576 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-battery-mk2-equipment",
+    <symbol
+      id="sprite-technology-battery-mk2-equipment"
+      viewBox="0 640 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-battery-equipment",
+    <symbol
+      id="sprite-technology-battery-equipment"
+      viewBox="64 640 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-automobilism",
+    <symbol
+      id="sprite-technology-automobilism"
+      viewBox="128 640 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-automation-3",
+    <symbol
+      id="sprite-technology-automation-3"
+      viewBox="192 640 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-automation-2",
+    <symbol
+      id="sprite-technology-automation-2"
+      viewBox="256 640 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-automation-1",
+    <symbol
+      id="sprite-technology-automation-1"
+      viewBox="320 640 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-automated-rail-transportation",
+    <symbol
+      id="sprite-technology-automated-rail-transportation"
+      viewBox="384 640 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-atomic-bomb",
+    <symbol
+      id="sprite-technology-atomic-bomb"
+      viewBox="448 640 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-artillery",
+    <symbol
+      id="sprite-technology-artillery"
+      viewBox="512 640 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-artillery-speed",
+    <symbol
+      id="sprite-technology-artillery-speed"
+      viewBox="576 640 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-artillery-range",
+    <symbol
+      id="sprite-technology-artillery-range"
+      viewBox="640 640 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-armor-making",
+    <symbol
+      id="sprite-technology-armor-making"
+      viewBox="704 0 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-advanced-material-processing",
+    <symbol
+      id="sprite-technology-advanced-material-processing"
+      viewBox="704 64 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-advanced-electronics",
+    <symbol
+      id="sprite-technology-advanced-electronics"
+      viewBox="704 128 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+  [
+    "sprite-technology-advanced-electronics-2",
+    <symbol
+      id="sprite-technology-advanced-electronics-2"
+      viewBox="704 192 64 64"
+      width="64"
+      height="64"
+    >
+      <image width="768" height="704" href={technologyIcons} x={0} y={0} />
+    </symbol>,
+  ],
+
   [
     "basic-oil-processing",
     <symbol
