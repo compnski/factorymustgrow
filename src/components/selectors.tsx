@@ -5,7 +5,7 @@ import { Inventory } from "../inventory";
 import {
   availableItems,
   availableRecipes,
-  availableResearch,
+  unlockedResearch,
 } from "../research";
 import { entityIconLookupByKind } from "../utils";
 import { IsBuilding } from "../production";
@@ -13,19 +13,7 @@ import { RecipeSelector } from "./RecipeSelector";
 import { PlaceBeltLinePanel } from "./PlaceBeltLinePanel";
 import { GeneralDialogConfig } from "../GeneralDialogProvider";
 import { Region } from "../types";
-
-export async function showResearchSelector(
-  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>
-): Promise<void> {
-  const recipe = await showIconSelector(
-    showDialog,
-    "Choose Research",
-    availableResearch(GameState.Research),
-    entityIconLookupByKind("Lab")
-  );
-
-  if (recipe) GameDispatch({ type: "ChangeResearch", producerName: recipe });
-}
+import { SelectResearchPanel } from "./SelectResearchPanel";
 
 async function showIconSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
@@ -140,6 +128,25 @@ export async function showPlaceBuildingSelector(
       entity: item,
       buildingIdx,
     });
+}
+
+export async function showResearchSelector(
+  showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>
+): Promise<void> {
+  const result = await showDialog({
+    title: "Choose Research",
+    component: (onConfirm) => (
+      <SelectResearchPanel
+        onConfirm={onConfirm}
+        researchState={GameState.Research}
+      />
+    ),
+  });
+  if (result) {
+    const [recipe] = result;
+    console.log("research ", recipe);
+    if (recipe) GameDispatch({ type: "ChangeResearch", producerName: recipe });
+  }
 }
 
 export async function showPlaceBeltLineSelector(

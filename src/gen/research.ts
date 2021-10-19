@@ -40,23 +40,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "military",
-    {
-      Id: "military",
-      Name: "Military",
-      Icon: "military",
-      Input: [{ Entity: "automation-science-pack", Count: 1 }],
-      ProductionRequiredForCompletion: 10,
-      ProductionPerTick: 0.06666667,
-      DurationSeconds: 15,
-      Row: 1,
-      Prereqs: new Set([]),
-      Unlocks: ["submachine-gun", "shotgun", "shotgun-shell"],
-      Effects: [],
-    },
-  ],
-
-  [
     "start",
     {
       Id: "start",
@@ -77,18 +60,15 @@ export const ResearchMap: Map<string, Research> = new Map([
         "copper-plate",
         "electric-mining-drill",
         "electronic-circuit",
-        "firearm-magazine",
         "inserter",
         "iron-chest",
         "iron-gear-wheel",
         "iron-plate",
         "iron-stick",
         "lab",
-        "light-armor",
         "offshore-pump",
         "pipe",
         "pipe-to-ground",
-        "pistol",
         "radar",
         "repair-pack",
         "small-electric-pole",
@@ -119,22 +99,22 @@ export const ResearchMap: Map<string, Research> = new Map([
     },
   ],
 
-  [
-    "turrets",
-    {
-      Id: "turrets",
-      Name: "Turrets",
-      Icon: "turrets",
-      Input: [{ Entity: "automation-science-pack", Count: 1 }],
-      ProductionRequiredForCompletion: 10,
-      ProductionPerTick: 0.1,
-      DurationSeconds: 10,
-      Row: 1,
-      Prereqs: new Set([]),
-      Unlocks: ["gun-turret"],
-      Effects: [],
-    },
-  ],
+  // [
+  //   "turrets",
+  //   {
+  //     Id: "turrets",
+  //     Name: "Turrets",
+  //     Icon: "turrets",
+  //     Input: [{ Entity: "automation-science-pack", Count: 1 }],
+  //     ProductionRequiredForCompletion: 10,
+  //     ProductionPerTick: 0.1,
+  //     DurationSeconds: 10,
+  //     Row: 1,
+  //     Prereqs: new Set([]),
+  //     Unlocks: ["gun-turret"],
+  //     Effects: [],
+  //   },
+  // ],
 
   [
     "steel-processing",
@@ -153,22 +133,22 @@ export const ResearchMap: Map<string, Research> = new Map([
     },
   ],
 
-  [
-    "stone-walls",
-    {
-      Id: "stone-walls",
-      Name: "Stone walls",
-      Icon: "stone-walls",
-      Input: [{ Entity: "automation-science-pack", Count: 1 }],
-      ProductionRequiredForCompletion: 10,
-      ProductionPerTick: 0.1,
-      DurationSeconds: 10,
-      Row: 1,
-      Prereqs: new Set([]),
-      Unlocks: ["stone-wall"],
-      Effects: [],
-    },
-  ],
+  // [
+  //   "stone-walls",
+  //   {
+  //     Id: "stone-walls",
+  //     Name: "Stone walls",
+  //     Icon: "stone-walls",
+  //     Input: [{ Entity: "automation-science-pack", Count: 1 }],
+  //     ProductionRequiredForCompletion: 10,
+  //     ProductionPerTick: 0.1,
+  //     DurationSeconds: 10,
+  //     Row: 1,
+  //     Prereqs: new Set([]),
+  //     Unlocks: ["stone-wall"],
+  //     Effects: [],
+  //   },
+  // ],
 
   [
     "automation",
@@ -187,22 +167,22 @@ export const ResearchMap: Map<string, Research> = new Map([
     },
   ],
 
-  [
-    "steel-axe",
-    {
-      Id: "steel-axe",
-      Name: "Steel axe",
-      Icon: "steel-axe",
-      Input: [{ Entity: "automation-science-pack", Count: 1 }],
-      ProductionRequiredForCompletion: 50,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 1,
-      Prereqs: new Set(["steel-processing"]),
-      Unlocks: [],
-      Effects: ["Character mining speed: +100%"],
-    },
-  ],
+  // [
+  //   "steel-axe",
+  //   {
+  //     Id: "steel-axe",
+  //     Name: "Steel axe",
+  //     Icon: "steel-axe",
+  //     Input: [{ Entity: "automation-science-pack", Count: 1 }],
+  //     ProductionRequiredForCompletion: 50,
+  //     ProductionPerTick: 0.033333335,
+  //     DurationSeconds: 30,
+  //     Row: 1,
+  //     Prereqs: new Set(["steel-processing"]),
+  //     Unlocks: [],
+  //     Effects: ["Character mining speed: +100%"],
+  //   },
+  // ],
 
   [
     "electronics",
@@ -218,64 +198,6 @@ export const ResearchMap: Map<string, Research> = new Map([
       Prereqs: new Set(["automation"]),
       Unlocks: [],
       Effects: [],
-    },
-  ],
-
-  [
-    "heavy-armor",
-    {
-      Id: "heavy-armor",
-      Name: "Heavy armor",
-      Icon: "armor-making",
-      Input: [{ Entity: "automation-science-pack", Count: 1 }],
-      ProductionRequiredForCompletion: 30,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 1,
-      Prereqs: new Set(["military", "steel-processing"]),
-      Unlocks: ["heavy-armor"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "weapon-shooting-speed-1",
-    {
-      Id: "weapon-shooting-speed-1",
-      Name: "Weapon shooting speed 1",
-      Icon: "weapon-shooting-speed-1",
-      Input: [{ Entity: "automation-science-pack", Count: 1 }],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 1,
-      Prereqs: new Set(["military"]),
-      Unlocks: [],
-      Effects: [
-        "Bullet shooting speed: +10%",
-        "Shotgun shell shooting speed: +10%",
-      ],
-    },
-  ],
-
-  [
-    "physical-projectile-damage-1",
-    {
-      Id: "physical-projectile-damage-1",
-      Name: "Physical projectile damage 1",
-      Icon: "physical-projectile-damage-1",
-      Input: [{ Entity: "automation-science-pack", Count: 1 }],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 1,
-      Prereqs: new Set(["military"]),
-      Unlocks: [],
-      Effects: [
-        "Bullet damage: +10%",
-        "Gun turret damage: +10%",
-        "Shotgun shell damage: +10%",
-      ],
     },
   ],
 
@@ -361,53 +283,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "weapon-shooting-speed-2",
-    {
-      Id: "weapon-shooting-speed-2",
-      Name: "Weapon shooting speed 2",
-      Icon: "weapon-shooting-speed-1",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 200,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 2,
-      Prereqs: new Set(["weapon-shooting-speed-1"]),
-      Unlocks: [],
-      Effects: [
-        "Bullet shooting speed: +20%",
-        "Shotgun shell shooting speed: +20%",
-      ],
-    },
-  ],
-
-  [
-    "physical-projectile-damage-2",
-    {
-      Id: "physical-projectile-damage-2",
-      Name: "Physical projectile damage 2",
-      Icon: "physical-projectile-damage-1",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 200,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 2,
-      Prereqs: new Set(["physical-projectile-damage-1"]),
-      Unlocks: [],
-      Effects: [
-        "Bullet damage: +10%",
-        "Gun turret damage: +10%",
-        "Shotgun shell damage: +10%",
-      ],
-    },
-  ],
-
-  [
     "automation-2",
     {
       Id: "automation-2",
@@ -473,30 +348,6 @@ export const ResearchMap: Map<string, Research> = new Map([
       Prereqs: new Set(["logistic-science-pack"]),
       Unlocks: [],
       Effects: ["Character inventory slots: +10"],
-    },
-  ],
-
-  [
-    "military-2",
-    {
-      Id: "military-2",
-      Name: "Military 2",
-      Icon: "military",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 20,
-      ProductionPerTick: 0.06666667,
-      DurationSeconds: 15,
-      Row: 2,
-      Prereqs: new Set([
-        "military",
-        "steel-processing",
-        "logistic-science-pack",
-      ]),
-      Unlocks: ["piercing-rounds-magazine", "grenade"],
-      Effects: [],
     },
   ],
 
@@ -593,46 +444,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "military-science-pack",
-    {
-      Id: "military-science-pack",
-      Name: "Military science pack",
-      Icon: "military-science-pack",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 30,
-      ProductionPerTick: 0.06666667,
-      DurationSeconds: 15,
-      Row: 2,
-      Prereqs: new Set(["military-2", "stone-walls"]),
-      Unlocks: ["military-science-pack"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "stronger-explosives-1",
-    {
-      Id: "stronger-explosives-1",
-      Name: "Stronger explosives 1",
-      Icon: "stronger-explosives-1",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 2,
-      Prereqs: new Set(["military-2"]),
-      Unlocks: [],
-      Effects: ["Grenade damage: +25%"],
-    },
-  ],
-
-  [
     "research-speed-1",
     {
       Id: "research-speed-1",
@@ -673,46 +484,6 @@ export const ResearchMap: Map<string, Research> = new Map([
         "refined-concrete",
         "refined-hazard-concrete",
       ],
-      Effects: [],
-    },
-  ],
-
-  [
-    "gates",
-    {
-      Id: "gates",
-      Name: "Gates",
-      Icon: "gates",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 2,
-      Prereqs: new Set(["stone-walls", "military-2"]),
-      Unlocks: ["gate"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "automobilism",
-    {
-      Id: "automobilism",
-      Name: "Automobilism",
-      Icon: "automobilism",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 2,
-      Prereqs: new Set(["logistics-2", "engine"]),
-      Unlocks: ["car"],
       Effects: [],
     },
   ],
@@ -925,26 +696,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "explosives",
-    {
-      Id: "explosives",
-      Name: "Explosives",
-      Icon: "explosives",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.06666667,
-      DurationSeconds: 15,
-      Row: 2,
-      Prereqs: new Set(["sulfur-processing"]),
-      Unlocks: ["explosives"],
-      Effects: [],
-    },
-  ],
-
-  [
     "advanced-electronics",
     {
       Id: "advanced-electronics",
@@ -961,72 +712,6 @@ export const ResearchMap: Map<string, Research> = new Map([
       Prereqs: new Set(["plastics"]),
       Unlocks: ["advanced-circuit"],
       Effects: [],
-    },
-  ],
-
-  [
-    "land-mine",
-    {
-      Id: "land-mine",
-      Name: "Land mines",
-      Icon: "land-mine",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 3,
-      Prereqs: new Set(["explosives", "military-science-pack"]),
-      Unlocks: ["land-mine"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "cliff-explosives",
-    {
-      Id: "cliff-explosives",
-      Name: "Cliff explosives",
-      Icon: "cliff-explosives",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 200,
-      ProductionPerTick: 0.06666667,
-      DurationSeconds: 15,
-      Row: 2,
-      Prereqs: new Set(["explosives", "military-2"]),
-      Unlocks: ["cliff-explosives"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "weapon-shooting-speed-3",
-    {
-      Id: "weapon-shooting-speed-3",
-      Name: "Weapon shooting speed 3",
-      Icon: "weapon-shooting-speed-2",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 300,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 3,
-      Prereqs: new Set(["weapon-shooting-speed-2"]),
-      Unlocks: [],
-      Effects: [
-        "Bullet shooting speed: +20%",
-        "Shotgun shell shooting speed: +20%",
-        "Rocket shooting speed: +50%",
-      ],
     },
   ],
 
@@ -1055,115 +740,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "stronger-explosives-2",
-    {
-      Id: "stronger-explosives-2",
-      Name: "Stronger explosives 2",
-      Icon: "stronger-explosives-2",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 200,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 3,
-      Prereqs: new Set(["stronger-explosives-1"]),
-      Unlocks: [],
-      Effects: ["Grenade damage: +20%", "Land mine damage: +20%"],
-    },
-  ],
-
-  [
-    "physical-projectile-damage-3",
-    {
-      Id: "physical-projectile-damage-3",
-      Name: "Physical projectile damage 3",
-      Icon: "physical-projectile-damage-1",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 300,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 3,
-      Prereqs: new Set(["physical-projectile-damage-2"]),
-      Unlocks: [],
-      Effects: [
-        "Bullet damage: +20%",
-        "Gun turret damage: +20%",
-        "Shotgun shell damage: +20%",
-      ],
-    },
-  ],
-
-  [
-    "rocketry",
-    {
-      Id: "rocketry",
-      Name: "Rocketry",
-      Icon: "rocketry",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 120,
-      ProductionPerTick: 0.06666667,
-      DurationSeconds: 15,
-      Row: 3,
-      Prereqs: new Set(["explosives", "flammables", "military-science-pack"]),
-      Unlocks: ["rocket-launcher", "rocket"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "flamethrower",
-    {
-      Id: "flamethrower",
-      Name: "Flamethrower",
-      Icon: "flamethrower",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 50,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 3,
-      Prereqs: new Set(["flammables", "military-science-pack"]),
-      Unlocks: ["flamethrower", "flamethrower-ammo", "flamethrower-turret"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "combat-robotics",
-    {
-      Id: "combat-robotics",
-      Name: "Combat robotics",
-      Icon: "combat-robotics",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 3,
-      Prereqs: new Set(["military-science-pack"]),
-      Unlocks: ["defender-capsule"],
-      Effects: ["Maximum following robots: +4"],
-    },
-  ],
-
-  [
     "mining-productivity-1",
     {
       Id: "mining-productivity-1",
@@ -1180,26 +756,6 @@ export const ResearchMap: Map<string, Research> = new Map([
       Prereqs: new Set(["advanced-electronics"]),
       Unlocks: [],
       Effects: ["Mining productivity: +10%"],
-    },
-  ],
-
-  [
-    "modular-armor",
-    {
-      Id: "modular-armor",
-      Name: "Modular armor",
-      Icon: "armor-making",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 2,
-      Prereqs: new Set(["heavy-armor", "advanced-electronics"]),
-      Unlocks: ["modular-armor"],
-      Effects: [],
     },
   ],
 
@@ -1284,48 +840,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "follower-robot-count-1",
-    {
-      Id: "follower-robot-count-1",
-      Name: "Follower robot count 1",
-      Icon: "follower-robots",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 200,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 3,
-      Prereqs: new Set(["combat-robotics"]),
-      Unlocks: [],
-      Effects: ["Maximum following robots: +5"],
-    },
-  ],
-
-  [
-    "refined-flammables-1",
-    {
-      Id: "refined-flammables-1",
-      Name: "Refined flammables 1",
-      Icon: "refined-flammables",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 3,
-      Prereqs: new Set(["flamethrower"]),
-      Unlocks: [],
-      Effects: ["Fire damage: +20%", "Flamethrower turret damage: +20%"],
-    },
-  ],
-
-  [
     "productivity-module",
     {
       Id: "productivity-module",
@@ -1386,97 +900,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "solar-panel-equipment",
-    {
-      Id: "solar-panel-equipment",
-      Name: "Portable solar panel",
-      Icon: "solar-panel-equipment",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.06666667,
-      DurationSeconds: 15,
-      Row: 2,
-      Prereqs: new Set(["modular-armor", "solar-energy"]),
-      Unlocks: ["solar-panel-equipment"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "weapon-shooting-speed-4",
-    {
-      Id: "weapon-shooting-speed-4",
-      Name: "Weapon shooting speed 4",
-      Icon: "weapon-shooting-speed-2",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 400,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 3,
-      Prereqs: new Set(["weapon-shooting-speed-3"]),
-      Unlocks: [],
-      Effects: [
-        "Bullet shooting speed: +30%",
-        "Shotgun shell shooting speed: +30%",
-        "Rocket shooting speed: +70%",
-      ],
-    },
-  ],
-
-  [
-    "physical-projectile-damage-4",
-    {
-      Id: "physical-projectile-damage-4",
-      Name: "Physical projectile damage 4",
-      Icon: "physical-projectile-damage-1",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 400,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 3,
-      Prereqs: new Set(["physical-projectile-damage-3"]),
-      Unlocks: [],
-      Effects: [
-        "Bullet damage: +20%",
-        "Gun turret damage: +20%",
-        "Shotgun shell damage: +20%",
-      ],
-    },
-  ],
-
-  [
-    "energy-shield-equipment",
-    {
-      Id: "energy-shield-equipment",
-      Name: "Energy shield equipment",
-      Icon: "energy-shield-equipment",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 150,
-      ProductionPerTick: 0.06666667,
-      DurationSeconds: 15,
-      Row: 3,
-      Prereqs: new Set(["solar-panel-equipment", "military-science-pack"]),
-      Unlocks: ["energy-shield-equipment"],
-      Effects: [],
-    },
-  ],
-
-  [
     "inserter-capacity-bonus-2",
     {
       Id: "inserter-capacity-bonus-2",
@@ -1496,108 +919,6 @@ export const ResearchMap: Map<string, Research> = new Map([
         "Non-stack inserter capacity: +1",
         "Stack inserter capacity: +1",
       ],
-    },
-  ],
-
-  [
-    "night-vision-equipment",
-    {
-      Id: "night-vision-equipment",
-      Name: "Nightvision equipment",
-      Icon: "night-vision-equipment",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 50,
-      ProductionPerTick: 0.06666667,
-      DurationSeconds: 15,
-      Row: 2,
-      Prereqs: new Set(["solar-panel-equipment"]),
-      Unlocks: ["night-vision-equipment"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "follower-robot-count-2",
-    {
-      Id: "follower-robot-count-2",
-      Name: "Follower robot count 2",
-      Icon: "follower-robots",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 300,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 3,
-      Prereqs: new Set(["follower-robot-count-1"]),
-      Unlocks: [],
-      Effects: ["Maximum following robots: +5"],
-    },
-  ],
-
-  [
-    "belt-immunity-equipment",
-    {
-      Id: "belt-immunity-equipment",
-      Name: "Belt immunity equipment",
-      Icon: "belt-immunity-equipment",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 50,
-      ProductionPerTick: 0.06666667,
-      DurationSeconds: 15,
-      Row: 2,
-      Prereqs: new Set(["solar-panel-equipment"]),
-      Unlocks: ["belt-immunity-equipment"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "battery-equipment",
-    {
-      Id: "battery-equipment",
-      Name: "Personal battery",
-      Icon: "battery-equipment",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 50,
-      ProductionPerTick: 0.06666667,
-      DurationSeconds: 15,
-      Row: 2,
-      Prereqs: new Set(["battery", "solar-panel-equipment"]),
-      Unlocks: ["battery-equipment"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "refined-flammables-2",
-    {
-      Id: "refined-flammables-2",
-      Name: "Refined flammables 2",
-      Icon: "refined-flammables",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 200,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 3,
-      Prereqs: new Set(["refined-flammables-1"]),
-      Unlocks: [],
-      Effects: ["Fire damage: +20%", "Flamethrower turret damage: +20%"],
     },
   ],
 
@@ -1629,28 +950,6 @@ export const ResearchMap: Map<string, Research> = new Map([
         "Heavy oil cracking to light oil",
         "Light oil cracking to petroleum gas",
       ],
-    },
-  ],
-
-  [
-    "refined-flammables-3",
-    {
-      Id: "refined-flammables-3",
-      Name: "Refined flammables 3",
-      Icon: "refined-flammables",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 300,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 4,
-      Prereqs: new Set(["refined-flammables-2"]),
-      Unlocks: [],
-      Effects: ["Fire damage: +20%", "Flamethrower turret damage: +20%"],
     },
   ],
 
@@ -1700,28 +999,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "military-3",
-    {
-      Id: "military-3",
-      Name: "Military 3",
-      Icon: "military",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set(["chemical-science-pack", "military-science-pack"]),
-      Unlocks: ["poison-capsule", "slowdown-capsule", "combat-shotgun"],
-      Effects: [],
-    },
-  ],
-
-  [
     "research-speed-3",
     {
       Id: "research-speed-3",
@@ -1739,33 +1016,6 @@ export const ResearchMap: Map<string, Research> = new Map([
       Prereqs: new Set(["research-speed-2"]),
       Unlocks: [],
       Effects: ["Lab research speed: +40%"],
-    },
-  ],
-
-  [
-    "physical-projectile-damage-5",
-    {
-      Id: "physical-projectile-damage-5",
-      Name: "Physical projectile damage 5",
-      Icon: "physical-projectile-damage-2",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 500,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 4,
-      Prereqs: new Set(["physical-projectile-damage-4"]),
-      Unlocks: [],
-      Effects: [
-        "Bullet damage: +20%",
-        "Gun turret damage: +20%",
-        "Shotgun shell damage: +20%",
-        "Cannon shell damage: +90%",
-      ],
     },
   ],
 
@@ -1812,32 +1062,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "stronger-explosives-3",
-    {
-      Id: "stronger-explosives-3",
-      Name: "Stronger explosives 3",
-      Icon: "stronger-explosives-3",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 300,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 4,
-      Prereqs: new Set(["stronger-explosives-2"]),
-      Unlocks: [],
-      Effects: [
-        "Rocket damage: +30%",
-        "Grenade damage: +20%",
-        "Land mine damage: +20%",
-      ],
-    },
-  ],
-
-  [
     "electric-energy-distribution-2",
     {
       Id: "electric-energy-distribution-2",
@@ -1861,75 +1085,26 @@ export const ResearchMap: Map<string, Research> = new Map([
     },
   ],
 
-  [
-    "laser",
-    {
-      Id: "laser",
-      Name: "Laser",
-      Icon: "laser",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set(["optics", "battery", "chemical-science-pack"]),
-      Unlocks: [],
-      Effects: [],
-    },
-  ],
-
-  [
-    "follower-robot-count-3",
-    {
-      Id: "follower-robot-count-3",
-      Name: "Follower robot count 3",
-      Icon: "follower-robots",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 400,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set(["follower-robot-count-2"]),
-      Unlocks: [],
-      Effects: ["Maximum following robots: +5"],
-    },
-  ],
-
-  [
-    "weapon-shooting-speed-5",
-    {
-      Id: "weapon-shooting-speed-5",
-      Name: "Weapon shooting speed 5",
-      Icon: "weapon-shooting-speed-3",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 500,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 4,
-      Prereqs: new Set(["weapon-shooting-speed-4"]),
-      Unlocks: [],
-      Effects: [
-        "Bullet shooting speed: +30%",
-        "Shotgun shell shooting speed: +40%",
-        "Cannon shell shooting speed: +80%",
-        "Rocket shooting speed: +90%",
-      ],
-    },
-  ],
+  // [
+  //   "laser",
+  //   {
+  //     Id: "laser",
+  //     Name: "Laser",
+  //     Icon: "laser",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 100,
+  //     ProductionPerTick: 0.033333335,
+  //     DurationSeconds: 30,
+  //     Row: 4,
+  //     Prereqs: new Set(["optics", "battery", "chemical-science-pack"]),
+  //     Unlocks: [],
+  //     Effects: [],
+  //   },
+  // ],
 
   [
     "low-density-structure",
@@ -2064,71 +1239,47 @@ export const ResearchMap: Map<string, Research> = new Map([
     },
   ],
 
-  [
-    "follower-robot-count-4",
-    {
-      Id: "follower-robot-count-4",
-      Name: "Follower robot count 4",
-      Icon: "follower-robots",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 600,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set(["follower-robot-count-3"]),
-      Unlocks: [],
-      Effects: ["Maximum following robots: +10"],
-    },
-  ],
+  // [
+  //   "laser-turrets",
+  //   {
+  //     Id: "laser-turrets",
+  //     Name: "Laser turrets",
+  //     Icon: "laser-turrets",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 150,
+  //     ProductionPerTick: 0.033333335,
+  //     DurationSeconds: 30,
+  //     Row: 4,
+  //     Prereqs: new Set(["turrets", "laser"]),
+  //     Unlocks: ["laser-turret"],
+  //     Effects: [],
+  //   },
+  // ],
 
-  [
-    "laser-turrets",
-    {
-      Id: "laser-turrets",
-      Name: "Laser turrets",
-      Icon: "laser-turrets",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 150,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set(["turrets", "laser", "military-science-pack"]),
-      Unlocks: ["laser-turret"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "energy-weapons-damage-1",
-    {
-      Id: "energy-weapons-damage-1",
-      Name: "Energy weapons damage 1",
-      Icon: "energy-weapons-damage-1",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set(["laser", "military-science-pack"]),
-      Unlocks: [],
-      Effects: ["Laser turret damage: +20%"],
-    },
-  ],
+  // [
+  //   "energy-weapons-damage-1",
+  //   {
+  //     Id: "energy-weapons-damage-1",
+  //     Name: "Energy weapons damage 1",
+  //     Icon: "energy-weapons-damage-1",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 100,
+  //     ProductionPerTick: 0.033333335,
+  //     DurationSeconds: 30,
+  //     Row: 4,
+  //     Prereqs: new Set(["laser"]),
+  //     Unlocks: [],
+  //     Effects: ["Laser turret damage: +20%"],
+  //   },
+  // ],
 
   [
     "rocket-fuel",
@@ -2147,28 +1298,6 @@ export const ResearchMap: Map<string, Research> = new Map([
       Row: 4,
       Prereqs: new Set(["flammables", "advanced-oil-processing"]),
       Unlocks: ["rocket-fuel"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "explosive-rocketry",
-    {
-      Id: "explosive-rocketry",
-      Name: "Explosive rocketry",
-      Icon: "explosive-rocketry",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set(["rocketry", "military-3"]),
-      Unlocks: ["explosive-rocket"],
       Effects: [],
     },
   ],
@@ -2243,28 +1372,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "combat-robotics-2",
-    {
-      Id: "combat-robotics-2",
-      Name: "Combat robotics 2",
-      Icon: "combat-robotics",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 200,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set(["combat-robotics", "military-3", "laser"]),
-      Unlocks: ["distractor-capsule"],
-      Effects: [],
-    },
-  ],
-
-  [
     "productivity-module-2",
     {
       Id: "productivity-module-2",
@@ -2281,28 +1388,6 @@ export const ResearchMap: Map<string, Research> = new Map([
       Row: 4,
       Prereqs: new Set(["productivity-module", "advanced-electronics-2"]),
       Unlocks: ["productivity-module-2"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "tanks",
-    {
-      Id: "tanks",
-      Name: "Tanks",
-      Icon: "tanks",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 250,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set(["automobilism", "military-3", "explosives"]),
-      Unlocks: ["tank", "cannon-shell", "explosive-cannon-shell"],
       Effects: [],
     },
   ],
@@ -2349,49 +1434,26 @@ export const ResearchMap: Map<string, Research> = new Map([
     },
   ],
 
-  [
-    "energy-weapons-damage-2",
-    {
-      Id: "energy-weapons-damage-2",
-      Name: "Energy weapons damage 2",
-      Icon: "energy-weapons-damage-1",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 200,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set(["energy-weapons-damage-1"]),
-      Unlocks: [],
-      Effects: ["Laser turret damage: +20%"],
-    },
-  ],
-
-  [
-    "laser-turret-speed-1",
-    {
-      Id: "laser-turret-speed-1",
-      Name: "Laser turret shooting speed 1",
-      Icon: "laser-turret-speed",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 50,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set(["laser-turrets"]),
-      Unlocks: [],
-      Effects: ["Laser turret shooting speed: +10%"],
-    },
-  ],
+  // [
+  //   "laser-turret-speed-1",
+  //   {
+  //     Id: "laser-turret-speed-1",
+  //     Name: "Laser turret shooting speed 1",
+  //     Icon: "laser-turret-speed",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 50,
+  //     ProductionPerTick: 0.033333335,
+  //     DurationSeconds: 30,
+  //     Row: 4,
+  //     Prereqs: new Set(["laser-turrets"]),
+  //     Unlocks: [],
+  //     Effects: ["Laser turret shooting speed: +10%"],
+  //   },
+  // ],
 
   [
     "robotics",
@@ -2414,127 +1476,47 @@ export const ResearchMap: Map<string, Research> = new Map([
     },
   ],
 
-  [
-    "power-armor",
-    {
-      Id: "power-armor",
-      Name: "Power armor",
-      Icon: "power-armor",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 200,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set([
-        "modular-armor",
-        "electric-engine",
-        "advanced-electronics-2",
-      ]),
-      Unlocks: ["power-armor"],
-      Effects: [],
-    },
-  ],
+  // [
+  //   "laser-turret-speed-2",
+  //   {
+  //     Id: "laser-turret-speed-2",
+  //     Name: "Laser turret shooting speed 2",
+  //     Icon: "laser-turret-speed",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 100,
+  //     ProductionPerTick: 0.033333335,
+  //     DurationSeconds: 30,
+  //     Row: 4,
+  //     Prereqs: new Set(["laser-turret-speed-1"]),
+  //     Unlocks: [],
+  //     Effects: ["Laser turret shooting speed: +20%"],
+  //   },
+  // ],
 
-  [
-    "laser-turret-speed-2",
-    {
-      Id: "laser-turret-speed-2",
-      Name: "Laser turret shooting speed 2",
-      Icon: "laser-turret-speed",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set(["laser-turret-speed-1"]),
-      Unlocks: [],
-      Effects: ["Laser turret shooting speed: +20%"],
-    },
-  ],
-
-  [
-    "energy-weapons-damage-3",
-    {
-      Id: "energy-weapons-damage-3",
-      Name: "Energy weapons damage 3",
-      Icon: "energy-weapons-damage-1",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 300,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 4,
-      Prereqs: new Set(["energy-weapons-damage-2"]),
-      Unlocks: [],
-      Effects: ["Laser turret damage: +30%"],
-    },
-  ],
-
-  [
-    "exoskeleton-equipment",
-    {
-      Id: "exoskeleton-equipment",
-      Name: "Exoskeleton equipment",
-      Icon: "exoskeleton-equipment",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 50,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set([
-        "advanced-electronics-2",
-        "electric-engine",
-        "solar-panel-equipment",
-      ]),
-      Unlocks: ["exoskeleton-equipment"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "personal-laser-defense-equipment",
-    {
-      Id: "personal-laser-defense-equipment",
-      Name: "Personal laser defense",
-      Icon: "personal-laser-defense-equipment",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set([
-        "laser-turrets",
-        "military-3",
-        "low-density-structure",
-        "power-armor",
-        "solar-panel-equipment",
-      ]),
-      Unlocks: ["personal-laser-defense-equipment"],
-      Effects: [],
-    },
-  ],
+  // [
+  //   "energy-weapons-damage-3",
+  //   {
+  //     Id: "energy-weapons-damage-3",
+  //     Name: "Energy weapons damage 3",
+  //     Icon: "energy-weapons-damage-1",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 300,
+  //     ProductionPerTick: 0.016666668,
+  //     DurationSeconds: 60,
+  //     Row: 4,
+  //     Prereqs: new Set(["energy-weapons-damage-2"]),
+  //     Unlocks: [],
+  //     Effects: ["Laser turret damage: +30%"],
+  //   },
+  // ],
 
   [
     "utility-science-pack",
@@ -2742,33 +1724,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "energy-shield-mk2-equipment",
-    {
-      Id: "energy-shield-mk2-equipment",
-      Name: "Energy shield MK2 equipment",
-      Icon: "energy-shield-mk2-equipment",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 200,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set([
-        "energy-shield-equipment",
-        "military-3",
-        "low-density-structure",
-        "power-armor",
-      ]),
-      Unlocks: ["energy-shield-mk2-equipment"],
-      Effects: [],
-    },
-  ],
-
-  [
     "automation-3",
     {
       Id: "automation-3",
@@ -2786,33 +1741,6 @@ export const ResearchMap: Map<string, Research> = new Map([
       Row: 5,
       Prereqs: new Set(["speed-module", "production-science-pack"]),
       Unlocks: ["assembling-machine-3"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "discharge-defense-equipment",
-    {
-      Id: "discharge-defense-equipment",
-      Name: "Discharge defense",
-      Icon: "discharge-defense-equipment",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set([
-        "laser-turrets",
-        "military-3",
-        "power-armor",
-        "solar-panel-equipment",
-      ]),
-      Unlocks: ["discharge-defense-equipment", "discharge-defense-remote"],
       Effects: [],
     },
   ],
@@ -2895,31 +1823,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "battery-mk2-equipment",
-    {
-      Id: "battery-mk2-equipment",
-      Name: "Personal battery MK2",
-      Icon: "battery-mk2-equipment",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set([
-        "battery-equipment",
-        "low-density-structure",
-        "power-armor",
-      ]),
-      Unlocks: ["battery-mk2-equipment"],
-      Effects: [],
-    },
-  ],
-
-  [
     "worker-robots-speed-1",
     {
       Id: "worker-robots-speed-1",
@@ -2940,27 +1843,26 @@ export const ResearchMap: Map<string, Research> = new Map([
     },
   ],
 
-  [
-    "laser-turret-speed-3",
-    {
-      Id: "laser-turret-speed-3",
-      Name: "Laser turret shooting speed 3",
-      Icon: "laser-turret-speed",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 200,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 4,
-      Prereqs: new Set(["laser-turret-speed-2"]),
-      Unlocks: [],
-      Effects: ["Laser turret shooting speed: +30%"],
-    },
-  ],
+  // [
+  //   "laser-turret-speed-3",
+  //   {
+  //     Id: "laser-turret-speed-3",
+  //     Name: "Laser turret shooting speed 3",
+  //     Icon: "laser-turret-speed",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 200,
+  //     ProductionPerTick: 0.016666668,
+  //     DurationSeconds: 60,
+  //     Row: 4,
+  //     Prereqs: new Set(["laser-turret-speed-2"]),
+  //     Unlocks: [],
+  //     Effects: ["Laser turret shooting speed: +30%"],
+  //   },
+  // ],
 
   [
     "productivity-module-3",
@@ -3032,48 +1934,26 @@ export const ResearchMap: Map<string, Research> = new Map([
     },
   ],
 
-  [
-    "energy-weapons-damage-4",
-    {
-      Id: "energy-weapons-damage-4",
-      Name: "Energy weapons damage 4",
-      Icon: "energy-weapons-damage-2",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 400,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 4,
-      Prereqs: new Set(["energy-weapons-damage-3"]),
-      Unlocks: [],
-      Effects: ["Laser turret damage: +40%", "Combat robot laser damage: +20%"],
-    },
-  ],
-
-  [
-    "personal-roboport-equipment",
-    {
-      Id: "personal-roboport-equipment",
-      Name: "Personal roboport",
-      Icon: "personal-roboport-equipment",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 50,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set(["construction-robotics", "solar-panel-equipment"]),
-      Unlocks: ["personal-roboport-equipment"],
-      Effects: [],
-    },
-  ],
+  // [
+  //   "energy-weapons-damage-4",
+  //   {
+  //     Id: "energy-weapons-damage-4",
+  //     Name: "Energy weapons damage 4",
+  //     Icon: "energy-weapons-damage-2",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 400,
+  //     ProductionPerTick: 0.016666668,
+  //     DurationSeconds: 60,
+  //     Row: 4,
+  //     Prereqs: new Set(["energy-weapons-damage-3"]),
+  //     Unlocks: [],
+  //     Effects: ["Laser turret damage: +40%", "Combat robot laser damage: +20%"],
+  //   },
+  // ],
 
   [
     "braking-force-4",
@@ -3162,27 +2042,26 @@ export const ResearchMap: Map<string, Research> = new Map([
     },
   ],
 
-  [
-    "laser-turret-speed-4",
-    {
-      Id: "laser-turret-speed-4",
-      Name: "Laser turret shooting speed 4",
-      Icon: "laser-turret-speed",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 200,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 4,
-      Prereqs: new Set(["laser-turret-speed-3"]),
-      Unlocks: [],
-      Effects: ["Laser turret shooting speed: +30%"],
-    },
-  ],
+  // [
+  //   "laser-turret-speed-4",
+  //   {
+  //     Id: "laser-turret-speed-4",
+  //     Name: "Laser turret shooting speed 4",
+  //     Icon: "laser-turret-speed",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 200,
+  //     ProductionPerTick: 0.016666668,
+  //     DurationSeconds: 60,
+  //     Row: 4,
+  //     Prereqs: new Set(["laser-turret-speed-3"]),
+  //     Unlocks: [],
+  //     Effects: ["Laser turret shooting speed: +30%"],
+  //   },
+  // ],
 
   [
     "braking-force-5",
@@ -3228,110 +2107,54 @@ export const ResearchMap: Map<string, Research> = new Map([
     },
   ],
 
-  [
-    "fusion-reactor-equipment",
-    {
-      Id: "fusion-reactor-equipment",
-      Name: "Portable fusion reactor",
-      Icon: "fusion-reactor-equipment",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 200,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 6,
-      Prereqs: new Set([
-        "utility-science-pack",
-        "power-armor",
-        "military-science-pack",
-      ]),
-      Unlocks: ["fusion-reactor-equipment"],
-      Effects: [],
-    },
-  ],
+  // [
+  //   "energy-weapons-damage-5",
+  //   {
+  //     Id: "energy-weapons-damage-5",
+  //     Name: "Energy weapons damage 5",
+  //     Icon: "energy-weapons-damage-3",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
 
-  [
-    "energy-weapons-damage-5",
-    {
-      Id: "energy-weapons-damage-5",
-      Name: "Energy weapons damage 5",
-      Icon: "energy-weapons-damage-3",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 500,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 6,
-      Prereqs: new Set(["energy-weapons-damage-4"]),
-      Unlocks: [],
-      Effects: [
-        "Laser turret damage: +50%",
-        "Combat robot laser damage: +40%",
-        "Combat robot beam damage: +40%",
-      ],
-    },
-  ],
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //       { Entity: "utility-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 500,
+  //     ProductionPerTick: 0.016666668,
+  //     DurationSeconds: 60,
+  //     Row: 6,
+  //     Prereqs: new Set(["energy-weapons-damage-4"]),
+  //     Unlocks: [],
+  //     Effects: [
+  //       "Laser turret damage: +50%",
+  //       "Combat robot laser damage: +40%",
+  //       "Combat robot beam damage: +40%",
+  //     ],
+  //   },
+  // ],
 
-  [
-    "weapon-shooting-speed-6",
-    {
-      Id: "weapon-shooting-speed-6",
-      Name: "Weapon shooting speed 6",
-      Icon: "weapon-shooting-speed-3",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 600,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 6,
-      Prereqs: new Set(["weapon-shooting-speed-5"]),
-      Unlocks: [],
-      Effects: [
-        "Bullet shooting speed: +40%",
-        "Shotgun shell shooting speed: +40%",
-        "Cannon shell shooting speed: +150%",
-        "Rocket shooting speed: +130%",
-      ],
-    },
-  ],
-
-  [
-    "laser-turret-speed-5",
-    {
-      Id: "laser-turret-speed-5",
-      Name: "Laser turret shooting speed 5",
-      Icon: "laser-turret-speed",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 200,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 6,
-      Prereqs: new Set(["laser-turret-speed-4"]),
-      Unlocks: [],
-      Effects: ["Laser turret shooting speed: +40%"],
-    },
-  ],
+  // [
+  //   "laser-turret-speed-5",
+  //   {
+  //     Id: "laser-turret-speed-5",
+  //     Name: "Laser turret shooting speed 5",
+  //     Icon: "laser-turret-speed",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //       { Entity: "utility-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 200,
+  //     ProductionPerTick: 0.016666668,
+  //     DurationSeconds: 60,
+  //     Row: 6,
+  //     Prereqs: new Set(["laser-turret-speed-4"]),
+  //     Unlocks: [],
+  //     Effects: ["Laser turret shooting speed: +40%"],
+  //   },
+  // ],
 
   [
     "worker-robots-speed-3",
@@ -3430,29 +2253,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "refined-flammables-4",
-    {
-      Id: "refined-flammables-4",
-      Name: "Refined flammables 4",
-      Icon: "refined-flammables",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 400,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 6,
-      Prereqs: new Set(["refined-flammables-3"]),
-      Unlocks: [],
-      Effects: ["Fire damage: +30%", "Flamethrower turret damage: +30%"],
-    },
-  ],
-
-  [
     "braking-force-6",
     {
       Id: "braking-force-6",
@@ -3476,55 +2276,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "stronger-explosives-4",
-    {
-      Id: "stronger-explosives-4",
-      Name: "Stronger explosives 4",
-      Icon: "stronger-explosives-3",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 400,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 6,
-      Prereqs: new Set(["stronger-explosives-3"]),
-      Unlocks: [],
-      Effects: [
-        "Rocket damage: +40%",
-        "Grenade damage: +20%",
-        "Land mine damage: +20%",
-      ],
-    },
-  ],
-
-  [
-    "personal-roboport-mk2-equipment",
-    {
-      Id: "personal-roboport-mk2-equipment",
-      Name: "Personal roboport MK2",
-      Icon: "personal-roboport-mk2-equipment",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 250,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 6,
-      Prereqs: new Set(["personal-roboport-equipment", "utility-science-pack"]),
-      Unlocks: ["personal-roboport-mk2-equipment"],
-      Effects: [],
-    },
-  ],
-
-  [
     "mining-productivity-3",
     {
       Id: "mining-productivity-3",
@@ -3544,29 +2295,6 @@ export const ResearchMap: Map<string, Research> = new Map([
       Prereqs: new Set(["mining-productivity-2"]),
       Unlocks: [],
       Effects: ["Mining productivity: +10%"],
-    },
-  ],
-
-  [
-    "military-4",
-    {
-      Id: "military-4",
-      Name: "Military 4",
-      Icon: "military",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 150,
-      ProductionPerTick: 0.022222223,
-      DurationSeconds: 45,
-      Row: 6,
-      Prereqs: new Set(["military-3", "utility-science-pack", "explosives"]),
-      Unlocks: ["piercing-shotgun-shell", "cluster-grenade"],
-      Effects: [],
     },
   ],
 
@@ -3617,91 +2345,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "physical-projectile-damage-6",
-    {
-      Id: "physical-projectile-damage-6",
-      Name: "Physical projectile damage 6",
-      Icon: "physical-projectile-damage-2",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 600,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 6,
-      Prereqs: new Set(["physical-projectile-damage-5"]),
-      Unlocks: [],
-      Effects: [
-        "Bullet damage: +40%",
-        "Gun turret damage: +40%",
-        "Shotgun shell damage: +40%",
-        "Cannon shell damage: +130%",
-      ],
-    },
-  ],
-
-  [
-    "atomic-bomb",
-    {
-      Id: "atomic-bomb",
-      Name: "Atomic bomb",
-      Icon: "atomic-bomb",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "production-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 5000,
-      ProductionPerTick: 0.022222223,
-      DurationSeconds: 45,
-      Row: 6,
-      Prereqs: new Set([
-        "military-4",
-        "kovarex-enrichment-process",
-        "rocket-control-unit",
-        "rocketry",
-      ]),
-      Unlocks: ["atomic-bomb"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "power-armor-mk2",
-    {
-      Id: "power-armor-mk2",
-      Name: "Power armor MK2",
-      Icon: "power-armor-mk2",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 400,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 6,
-      Prereqs: new Set([
-        "power-armor",
-        "military-4",
-        "speed-module-2",
-        "effectivity-module-2",
-      ]),
-      Unlocks: ["power-armor-mk2"],
-      Effects: [],
-    },
-  ],
-
-  [
     "worker-robots-speed-4",
     {
       Id: "worker-robots-speed-4",
@@ -3746,145 +2389,31 @@ export const ResearchMap: Map<string, Research> = new Map([
     },
   ],
 
-  [
-    "stronger-explosives-5",
-    {
-      Id: "stronger-explosives-5",
-      Name: "Stronger explosives 5",
-      Icon: "stronger-explosives-3",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 500,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 6,
-      Prereqs: new Set(["stronger-explosives-4"]),
-      Unlocks: [],
-      Effects: [
-        "Rocket damage: +50%",
-        "Grenade damage: +20%",
-        "Land mine damage: +20%",
-      ],
-    },
-  ],
-
-  [
-    "energy-weapons-damage-6",
-    {
-      Id: "energy-weapons-damage-6",
-      Name: "Energy weapons damage 6",
-      Icon: "energy-weapons-damage-3",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 600,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 6,
-      Prereqs: new Set(["energy-weapons-damage-5"]),
-      Unlocks: [],
-      Effects: [
-        "Laser turret damage: +70%",
-        "Combat robot laser damage: +40%",
-        "Combat robot beam damage: +60%",
-      ],
-    },
-  ],
-
-  [
-    "artillery",
-    {
-      Id: "artillery",
-      Name: "Artillery",
-      Icon: "artillery",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 2000,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 6,
-      Prereqs: new Set(["military-4", "tanks"]),
-      Unlocks: [
-        "artillery-wagon",
-        "artillery-turret",
-        "artillery-shell",
-        "artillery-targeting-remote",
-      ],
-      Effects: [],
-    },
-  ],
-
-  [
-    "uranium-ammo",
-    {
-      Id: "uranium-ammo",
-      Name: "Uranium ammo",
-      Icon: "uranium-ammo",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 1000,
-      ProductionPerTick: 0.022222223,
-      DurationSeconds: 45,
-      Row: 6,
-      Prereqs: new Set(["uranium-processing", "military-4", "tanks"]),
-      Unlocks: [
-        "uranium-rounds-magazine",
-        "uranium-cannon-shell",
-        "explosive-uranium-cannon-shell",
-      ],
-      Effects: [],
-    },
-  ],
-
-  [
-    "spidertron",
-    {
-      Id: "spidertron",
-      Name: "Spidertron",
-      Icon: "spidertron",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "production-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 2500,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 6,
-      Prereqs: new Set([
-        "military-4",
-        "exoskeleton-equipment",
-        "fusion-reactor-equipment",
-        "rocketry",
-        "rocket-control-unit",
-        "effectivity-module-3",
-      ]),
-      Unlocks: ["spidertron", "spidertron-remote"],
-      Effects: [],
-    },
-  ],
+  // [
+  //   "energy-weapons-damage-6",
+  //   {
+  //     Id: "energy-weapons-damage-6",
+  //     Name: "Energy weapons damage 6",
+  //     Icon: "energy-weapons-damage-3",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //       { Entity: "utility-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 600,
+  //     ProductionPerTick: 0.016666668,
+  //     DurationSeconds: 60,
+  //     Row: 6,
+  //     Prereqs: new Set(["energy-weapons-damage-5"]),
+  //     Unlocks: [],
+  //     Effects: [
+  //       "Laser turret damage: +70%",
+  //       "Combat robot laser damage: +40%",
+  //       "Combat robot beam damage: +60%",
+  //     ],
+  //   },
+  // ],
 
   [
     "rocket-silo",
@@ -3915,147 +2444,27 @@ export const ResearchMap: Map<string, Research> = new Map([
     },
   ],
 
-  [
-    "combat-robotics-3",
-    {
-      Id: "combat-robotics-3",
-      Name: "Combat robotics 3",
-      Icon: "combat-robotics",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 300,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 6,
-      Prereqs: new Set(["military-4", "combat-robotics-2", "speed-module"]),
-      Unlocks: ["destroyer-capsule"],
-      Effects: [],
-    },
-  ],
-
-  [
-    "refined-flammables-5",
-    {
-      Id: "refined-flammables-5",
-      Name: "Refined flammables 5",
-      Icon: "refined-flammables",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 500,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 6,
-      Prereqs: new Set(["refined-flammables-4"]),
-      Unlocks: [],
-      Effects: ["Fire damage: +30%", "Flamethrower turret damage: +30%"],
-    },
-  ],
-
-  [
-    "laser-turret-speed-6",
-    {
-      Id: "laser-turret-speed-6",
-      Name: "Laser turret shooting speed 6",
-      Icon: "laser-turret-speed",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 350,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 6,
-      Prereqs: new Set(["laser-turret-speed-5"]),
-      Unlocks: [],
-      Effects: ["Laser turret shooting speed: +40%"],
-    },
-  ],
-
-  [
-    "follower-robot-count-5",
-    {
-      Id: "follower-robot-count-5",
-      Name: "Follower robot count 5",
-      Icon: "follower-robots",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 800,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 6,
-      Prereqs: new Set(["follower-robot-count-4", "combat-robotics-3"]),
-      Unlocks: [],
-      Effects: ["Maximum following robots: +10"],
-    },
-  ],
-
-  [
-    "refined-flammables-6",
-    {
-      Id: "refined-flammables-6",
-      Name: "Refined flammables 6",
-      Icon: "refined-flammables",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 600,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 6,
-      Prereqs: new Set(["refined-flammables-5"]),
-      Unlocks: [],
-      Effects: ["Fire damage: +40%", "Flamethrower turret damage: +40%"],
-    },
-  ],
-
-  [
-    "stronger-explosives-6",
-    {
-      Id: "stronger-explosives-6",
-      Name: "Stronger explosives 6",
-      Icon: "stronger-explosives-3",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 600,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 6,
-      Prereqs: new Set(["stronger-explosives-5"]),
-      Unlocks: [],
-      Effects: [
-        "Rocket damage: +60%",
-        "Grenade damage: +20%",
-        "Land mine damage: +20%",
-      ],
-    },
-  ],
+  // [
+  //   "laser-turret-speed-6",
+  //   {
+  //     Id: "laser-turret-speed-6",
+  //     Name: "Laser turret shooting speed 6",
+  //     Icon: "laser-turret-speed",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //       { Entity: "utility-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 350,
+  //     ProductionPerTick: 0.016666668,
+  //     DurationSeconds: 60,
+  //     Row: 6,
+  //     Prereqs: new Set(["laser-turret-speed-5"]),
+  //     Unlocks: [],
+  //     Effects: ["Laser turret shooting speed: +40%"],
+  //   },
+  // ],
 
   [
     "space-science-pack",
@@ -4084,330 +2493,135 @@ export const ResearchMap: Map<string, Research> = new Map([
     },
   ],
 
-  [
-    "laser-turret-speed-7",
-    {
-      Id: "laser-turret-speed-7",
-      Name: "Laser turret shooting speed 7",
-      Icon: "laser-turret-speed",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 450,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 6,
-      Prereqs: new Set(["laser-turret-speed-6"]),
-      Unlocks: [],
-      Effects: ["Laser turret shooting speed: +50%"],
-    },
-  ],
+  // [
+  //   "laser-turret-speed-7",
+  //   {
+  //     Id: "laser-turret-speed-7",
+  //     Name: "Laser turret shooting speed 7",
+  //     Icon: "laser-turret-speed",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //       { Entity: "utility-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 450,
+  //     ProductionPerTick: 0.016666668,
+  //     DurationSeconds: 60,
+  //     Row: 6,
+  //     Prereqs: new Set(["laser-turret-speed-6"]),
+  //     Unlocks: [],
+  //     Effects: ["Laser turret shooting speed: +50%"],
+  //   },
+  // ],
 
-  [
-    "worker-robots-speed-5",
-    {
-      Id: "worker-robots-speed-5",
-      Name: "Worker robot speed 5",
-      Icon: "worker-robots-speed",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "production-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 500,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 6,
-      Prereqs: new Set(["worker-robots-speed-4"]),
-      Unlocks: [],
-      Effects: ["Worker robot speed: +65%"],
-    },
-  ],
+  // [
+  //   "worker-robots-speed-5",
+  //   {
+  //     Id: "worker-robots-speed-5",
+  //     Name: "Worker robot speed 5",
+  //     Icon: "worker-robots-speed",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //       { Entity: "production-science-pack", Count: 1 },
+  //       { Entity: "utility-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 500,
+  //     ProductionPerTick: 0.016666668,
+  //     DurationSeconds: 60,
+  //     Row: 6,
+  //     Prereqs: new Set(["worker-robots-speed-4"]),
+  //     Unlocks: [],
+  //     Effects: ["Worker robot speed: +65%"],
+  //   },
+  // ],
 
-  [
-    "follower-robot-count-6",
-    {
-      Id: "follower-robot-count-6",
-      Name: "Follower robot count 6",
-      Icon: "follower-robots",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 1000,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 6,
-      Prereqs: new Set(["follower-robot-count-5"]),
-      Unlocks: [],
-      Effects: ["Maximum following robots: +10"],
-    },
-  ],
+  // [
+  //   "energy-weapons-damage-7",
+  //   {
+  //     Id: "energy-weapons-damage-7",
+  //     Name: "Energy weapons damage 7",
+  //     Icon: "energy-weapons-damage-3",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //       { Entity: "utility-science-pack", Count: 1 },
+  //       { Entity: "space-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 1000,
+  //     ProductionPerTick: 0.016666668,
+  //     DurationSeconds: 60,
+  //     Row: 7,
+  //     Prereqs: new Set([
+  //       "energy-weapons-damage-6",
+  //       "space-science-pack",
+  //       "energy-weapons-damage-6",
+  //     ]),
+  //     Unlocks: [],
+  //     Effects: [
+  //       "Laser turret damage: +70%",
+  //       "Combat robot laser damage: +30%",
+  //       "Combat robot beam damage: +30%",
+  //     ],
+  //   },
+  // ],
 
-  [
-    "physical-projectile-damage-7",
-    {
-      Id: "physical-projectile-damage-7",
-      Name: "Physical projectile damage 7",
-      Icon: "physical-projectile-damage-2",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-        { Entity: "space-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 1000,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 7,
-      Prereqs: new Set([
-        "physical-projectile-damage-6",
-        "space-science-pack",
-        "physical-projectile-damage-6",
-      ]),
-      Unlocks: [],
-      Effects: [
-        "Bullet damage: +40%",
-        "Gun turret damage: +70%",
-        "Shotgun shell damage: +40%",
-        "Cannon shell damage: +100%",
-      ],
-    },
-  ],
+  // [
+  //   "mining-productivity-4",
+  //   {
+  //     Id: "mining-productivity-4",
+  //     Name: "Mining productivity 4",
+  //     Icon: "mining-productivity",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //       { Entity: "production-science-pack", Count: 1 },
+  //       { Entity: "utility-science-pack", Count: 1 },
+  //       { Entity: "space-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 2500,
+  //     ProductionPerTick: 0.016666668,
+  //     DurationSeconds: 60,
+  //     Row: 7,
+  //     Prereqs: new Set([
+  //       "mining-productivity-3",
+  //       "space-science-pack",
+  //       "mining-productivity-3",
+  //     ]),
+  //     Unlocks: [],
+  //     Effects: ["Mining productivity: +10%"],
+  //   },
+  // ],
 
-  [
-    "artillery-shell-speed-1",
-    {
-      Id: "artillery-shell-speed-1",
-      Name: "Artillery shell shooting speed 1",
-      Icon: "artillery-speed",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-        { Entity: "space-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 2000,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 7,
-      Prereqs: new Set(["artillery", "space-science-pack"]),
-      Unlocks: [],
-      Effects: ["Artillery shell shooting speed: +100%"],
-    },
-  ],
-
-  [
-    "stronger-explosives-7",
-    {
-      Id: "stronger-explosives-7",
-      Name: "Stronger explosives 7",
-      Icon: "stronger-explosives-3",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-        { Entity: "space-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 1000,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 7,
-      Prereqs: new Set([
-        "stronger-explosives-6",
-        "space-science-pack",
-        "stronger-explosives-6",
-      ]),
-      Unlocks: [],
-      Effects: [
-        "Rocket damage: +50%",
-        "Grenade damage: +20%",
-        "Land mine damage: +20%",
-      ],
-    },
-  ],
-
-  [
-    "energy-weapons-damage-7",
-    {
-      Id: "energy-weapons-damage-7",
-      Name: "Energy weapons damage 7",
-      Icon: "energy-weapons-damage-3",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-        { Entity: "space-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 1000,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 7,
-      Prereqs: new Set([
-        "energy-weapons-damage-6",
-        "space-science-pack",
-        "energy-weapons-damage-6",
-      ]),
-      Unlocks: [],
-      Effects: [
-        "Laser turret damage: +70%",
-        "Combat robot laser damage: +30%",
-        "Combat robot beam damage: +30%",
-      ],
-    },
-  ],
-
-  [
-    "mining-productivity-4",
-    {
-      Id: "mining-productivity-4",
-      Name: "Mining productivity 4",
-      Icon: "mining-productivity",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "production-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-        { Entity: "space-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 2500,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 7,
-      Prereqs: new Set([
-        "mining-productivity-3",
-        "space-science-pack",
-        "mining-productivity-3",
-      ]),
-      Unlocks: [],
-      Effects: ["Mining productivity: +10%"],
-    },
-  ],
-
-  [
-    "follower-robot-count-7",
-    {
-      Id: "follower-robot-count-7",
-      Name: "Follower robot count 7",
-      Icon: "follower-robots",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "production-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-        { Entity: "space-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 1000,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 7,
-      Prereqs: new Set([
-        "follower-robot-count-6",
-        "space-science-pack",
-        "follower-robot-count-6",
-      ]),
-      Unlocks: [],
-      Effects: ["Maximum following robots: +10"],
-    },
-  ],
-
-  [
-    "worker-robots-speed-6",
-    {
-      Id: "worker-robots-speed-6",
-      Name: "Worker robot speed 6",
-      Icon: "worker-robots-speed",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "production-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-        { Entity: "space-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 1000,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 7,
-      Prereqs: new Set([
-        "worker-robots-speed-5",
-        "space-science-pack",
-        "worker-robots-speed-5",
-      ]),
-      Unlocks: [],
-      Effects: ["Worker robot speed: +65%"],
-    },
-  ],
-
-  [
-    "artillery-shell-range-1",
-    {
-      Id: "artillery-shell-range-1",
-      Name: "Artillery shell range 1",
-      Icon: "artillery-range",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-        { Entity: "space-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 2000,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 7,
-      Prereqs: new Set(["artillery", "space-science-pack"]),
-      Unlocks: [],
-      Effects: ["Artillery shell range: +30%"],
-    },
-  ],
-
-  [
-    "refined-flammables-7",
-    {
-      Id: "refined-flammables-7",
-      Name: "Refined flammables 7",
-      Icon: "refined-flammables",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "military-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-        { Entity: "utility-science-pack", Count: 1 },
-        { Entity: "space-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 1000,
-      ProductionPerTick: 0.016666668,
-      DurationSeconds: 60,
-      Row: 7,
-      Prereqs: new Set([
-        "refined-flammables-6",
-        "space-science-pack",
-        "refined-flammables-6",
-      ]),
-      Unlocks: [],
-      Effects: ["Fire damage: +20%", "Flamethrower turret damage: +20%"],
-    },
-  ],
+  // [
+  //   "worker-robots-speed-6",
+  //   {
+  //     Id: "worker-robots-speed-6",
+  //     Name: "Worker robot speed 6",
+  //     Icon: "worker-robots-speed",
+  //     Input: [
+  //       { Entity: "automation-science-pack", Count: 1 },
+  //       { Entity: "logistic-science-pack", Count: 1 },
+  //       { Entity: "chemical-science-pack", Count: 1 },
+  //       { Entity: "production-science-pack", Count: 1 },
+  //       { Entity: "utility-science-pack", Count: 1 },
+  //       { Entity: "space-science-pack", Count: 1 },
+  //     ],
+  //     ProductionRequiredForCompletion: 1000,
+  //     ProductionPerTick: 0.016666668,
+  //     DurationSeconds: 60,
+  //     Row: 7,
+  //     Prereqs: new Set([
+  //       "worker-robots-speed-5",
+  //       "space-science-pack",
+  //       "worker-robots-speed-5",
+  //     ]),
+  //     Unlocks: [],
+  //     Effects: ["Worker robot speed: +65%"],
+  //   },
+  // ],
 ]);

@@ -56,28 +56,30 @@ const (
 	spriteWidth       = 64
 )
 
-var parseCssPattern = regexp.MustCompile(`(?s)(?:\.([-a-zA-Z0-9]+) {.*? background-position: -?(\d+)px -?(\d+)px.*?})+`)
+var parseCssPattern = regexp.MustCompile(`(?s)(?:\.([-a-zA-Z0-9]+) {[^{]+background-position: -?(\d+)(?:px)? -?(\d+)(?:px)?.*?})+`)
 
 func main() {
 	if len(os.Args) < 2 {
-		log.Fatalf("usage: %s <input filename>\n", os.Args[0])
+		log.Fatalf("usage: %s <input filename> [more filenames]\n", os.Args[0])
 	}
-	css, err := ioutil.ReadFile(os.Args[1])
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	var spriteInfoList []SpriteInfo
-	for _, matchInfo := range parseCssPattern.FindAllStringSubmatch(string(css), -1) {
-		spriteInfoList = append(spriteInfoList, SpriteInfo{
-			Width:       spriteWidth,
-			Height:      spriteHeight,
-			SheetWidth:  spriteSheetWidth,
-			SheetHeight: spriteSheetHeight,
-			X:           matchInfo[2],
-			Y:           matchInfo[3],
-			Name:        matchInfo[1],
-		})
+	for _, filename := range os.Args[1:] {
+		css, err := ioutil.ReadFile(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for _, matchInfo := range parseCssPattern.FindAllStringSubmatch(string(css), -1) {
+			spriteInfoList = append(spriteInfoList, SpriteInfo{
+				Width:       spriteWidth,
+				Height:      spriteHeight,
+				SheetWidth:  spriteSheetWidth,
+				SheetHeight: spriteSheetHeight,
+				X:           matchInfo[2],
+				Y:           matchInfo[3],
+				Name:        matchInfo[1],
+			})
+		}
 	}
 	svgTpl.Execute(os.Stdout, spriteInfoList)
 }

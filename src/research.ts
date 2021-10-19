@@ -11,6 +11,9 @@ import {
 } from "./types";
 import { FixedInventory } from "./inventory";
 import { productionPerTick, producableItemsForInput } from "./productionUtils";
+import { StackCapacity } from "./movement";
+import { once } from "./utils";
+import { AvailableResearchList } from "./availableResearch";
 
 export type Lab = {
   kind: "Lab";
@@ -185,13 +188,14 @@ export function ResearchInLab(
 }
 
 // Returns all research that is not completed and unlocked
-export function availableResearch(researchState: ResearchState): string[] {
+export function unlockedResearch(researchState: ResearchState): string[] {
   const unlockedResearch = new Set();
   researchState.Progress.forEach((stack) => {
-    if (stack.Count === stack.MaxCount) unlockedResearch.add(stack.Entity);
+    if (StackCapacity(stack) === 0) unlockedResearch.add(stack.Entity);
   });
+
   var availableResearch: string[] = [];
-  for (var research of ResearchMap.values()) {
+  for (var research of AvailableResearchList) {
     if (unlockedResearch.has(research.Id)) continue;
     if (
       [...research.Prereqs].filter((x) => !unlockedResearch.has(x)).length === 0
@@ -199,7 +203,6 @@ export function availableResearch(researchState: ResearchState): string[] {
       availableResearch.push(research.Id);
     }
   }
-  availableResearch = availableResearch.filter((r) => !IgnoredResearch.has(r));
   availableResearch.sort((a, b) => GetResearch(a).Row - GetResearch(b).Row);
   return availableResearch;
 }
@@ -250,38 +253,6 @@ const IgnoredRecipies: Set<string> = new Set([
   "rail-chain-signal",
   "firearm-magazine",
   "small-lamp",
-]);
-
-const IgnoredResearch: Set<string> = new Set([
-  "stone-walls",
-  "military",
-  "turrets",
-  "fast-inserter",
-  "steel-axe",
-  "electric-energy-distribution-2",
-  "circuit-network",
-  "automobilism",
-  "explosives",
-  "uranium-processing",
-  "effectivity-module",
-  "effect-transmission",
-  "laser",
-
-  //
-  "research-speed-1",
-  "toolbelt",
-  "mining-productivity-1",
-  "braking-force-1",
-
-  //
-  "automated-rail-transportation",
-  "fluid-wagon",
-  "worker-robots-storage-1",
-  "logistic-robotics",
-  "worker-robots-speed-1",
-  "coal-liquefaction",
-  "automation-3",
-  "logistics-3",
 ]);
 
 // Returns all recipes that can be crafted given the completed research

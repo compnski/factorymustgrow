@@ -32,6 +32,11 @@ span {
   user-select: none;
 }
 
+.clickable.disabled {
+  pointer-events: none;
+  opacity: 0.4;
+}
+
 .material-icons {
   font-family: "Material Icons";
   font-weight: normal;

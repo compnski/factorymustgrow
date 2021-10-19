@@ -36,6 +36,10 @@ Each step of recipe takes some amount of fuel/power
 *** Can't go on main belt
 *** Lay out pipes in some fixed-width area
 *** Connect extrators, factories, pipelines
+** Limits
+*** Main Bus Lanes
+*** Building Slots
+*** Max Building Count
 ** Transport
 *** DONE Belt transport
 Array of stacks

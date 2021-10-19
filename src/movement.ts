@@ -33,8 +33,12 @@ export function PushToOtherProducer(
   });
 }
 
-export function StackCapacity(stack: EntityStack): number {
-  if (stack.MaxCount === undefined || stack.MaxCount === Infinity)
+export function StackCapacity(stack: EntityStack | undefined): number {
+  if (
+    stack === undefined ||
+    stack.MaxCount === undefined ||
+    stack.MaxCount === Infinity
+  )
     return Infinity;
   return stack.MaxCount - stack.Count;
 }

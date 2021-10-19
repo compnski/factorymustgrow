@@ -1,0 +1,38 @@
+.select-reseach {
+  //width: 650px;
+  //height: 850px;
+  &.modal {
+    top: 1%;
+    left: 1%;
+  }
+  background: lightgrey;
+  border: 2px black solid;
+  z-index: 1;
+  padding: 10px;
+
+  .select-research-scroller {
+    height: 650px;
+    overflow-y: scroll;
+  }
+
+  .icon {
+    transform: scale(0.4);
+    margin: -24px -18px -24px -24px;
+  }
+  .info-box {
+    background: #aaaaaa;
+    height: 100px;
+    width: 800px;
+    margin-right: auto;
+    padding: 12px;
+    display: flex;
+    > div {
+      margin-right: 20px;
+    }
+    font-size: 0;
+    span,
+    li {
+      font-size: 16px;
+    }
+  }
+}
