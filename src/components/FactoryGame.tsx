@@ -7,7 +7,6 @@ import { MainBusHeader } from "./MainBusHeader";
 import "./FactoryGame.scss";
 import { FactoryButtonPanel } from "./FactoryButtonPanel";
 import { InventoryDisplay } from "./InventoryDisplay";
-import { RegionSelector } from "./RegionSelector";
 import { RegionTabBar } from "./RegionTabBar";
 import { ItemBuffer } from "../types";
 import { IsBuilding } from "../production";
@@ -29,14 +28,6 @@ export const FactoryGame = ({
     const generalDialog = useGeneralDialog();
 
     const regionIds = [...gameState.Regions.keys()];
-    const regionSelector = uiState.dialogs.regionSelectorOpen && (
-      <RegionSelector
-        regionIds={regionIds}
-        currentRegionId={gameState.CurrentRegionId}
-        inventory={gameState.Inventory}
-        gameDispatch={GameDispatch}
-      />
-    );
 
     const currentRegion = gameState.Regions.get(gameState.CurrentRegionId)!;
 
@@ -69,7 +60,6 @@ export const FactoryGame = ({
 
     return (
       <div className="factory-game">
-        {regionSelector}
         <InfoHeader
           uiDispatch={uiDispatch}
           currentRegion={currentRegion}
@@ -80,6 +70,7 @@ export const FactoryGame = ({
             currentRegionId={gameState.CurrentRegionId}
             regionIds={regionIds}
             gameDispatch={GameDispatch}
+            inventory={gameState.Inventory}
           />
           <MainBusHeader
             mainBus={currentRegion.Bus}

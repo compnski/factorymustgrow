@@ -2,7 +2,7 @@ import { NewEntityStack, Region, RegionInfo } from "./types";
 
 export function RemainingRegionBuildingCapacity(region: Region): number {
   return (
-    region.BuildingCapacity -
+    region.LaneCount -
     region.BuildingSlots.reduce(
       (accum, b) => accum + b.Building.BuildingCount || 0,
       0
@@ -10,13 +10,14 @@ export function RemainingRegionBuildingCapacity(region: Region): number {
   );
 }
 
-const Regions = new Map([
+const Regions = new Map<string, RegionInfo>([
   [
     "start",
     {
       Id: "start",
-      Capacity: 250,
-      MainBusCapacity: 10,
+      LaneCount: 25,
+      LaneSize: 50,
+      MainBusCount: 10,
       Cost: [],
       Provides: [
         NewEntityStack("iron-ore", 9000),
@@ -33,8 +34,9 @@ const Regions = new Map([
     "region1",
     {
       Id: "region1",
-      Capacity: 30,
-      MainBusCapacity: 3,
+      LaneCount: 5,
+      LaneSize: 10,
+      MainBusCount: 3,
       Cost: [],
       AdjacentTo: ["start"],
       Provides: [
@@ -51,8 +53,9 @@ const Regions = new Map([
     "region2",
     {
       Id: "region2",
-      Capacity: 400,
-      MainBusCapacity: 7,
+      LaneCount: 40,
+      LaneSize: 50,
+      MainBusCount: 7,
       AdjacentTo: ["start"],
       Cost: [],
       Provides: [
@@ -67,8 +70,9 @@ const Regions = new Map([
     "region4",
     {
       Id: "region4",
-      Capacity: 300,
-      MainBusCapacity: 6,
+      LaneCount: 10,
+      LaneSize: 20,
+      MainBusCount: 6,
       AdjacentTo: ["start"],
       Cost: [],
       Provides: [
@@ -81,8 +85,9 @@ const Regions = new Map([
     "region3",
     {
       Id: "region3",
-      Capacity: 500,
-      MainBusCapacity: 6,
+      LaneCount: 20,
+      LaneSize: 100,
+      MainBusCount: 6,
       AdjacentTo: ["start"],
       Cost: [],
       Provides: [
@@ -95,8 +100,9 @@ const Regions = new Map([
     "region5",
     {
       Id: "region5",
-      Capacity: 500,
-      MainBusCapacity: 12,
+      LaneCount: 30,
+      LaneSize: 100,
+      MainBusCount: 12,
       AdjacentTo: ["start"],
       Cost: [],
       Provides: [

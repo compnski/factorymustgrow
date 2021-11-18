@@ -33,14 +33,6 @@ export function FactoryButtonPanel({
        *   title: "Choose Research",
        * },
        */
-    {
-      clickHandler: (evt: SyntheticEvent) =>
-        uiDispatch({
-          type: "ShowRegionSelector",
-          evt,
-        }),
-      title: "Claim Region",
-    },
 
     {
       clickHandler: () => {

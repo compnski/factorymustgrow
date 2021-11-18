@@ -10,23 +10,24 @@ import { useProperties } from "../explore/svg";
 
 export type RegionSelectorProps = {
   regionIds: string[];
-  currentRegionId: string;
-  regionMap?: Map<string, RegionInfo>;
+  //  currentRegionId: string;
+  //regionMap?: Map<string, RegionInfo>;
   inventory: Inventory;
-  gameDispatch(a: GameAction): void;
+  onConfirm: (evt: SyntheticEvent, regionId: string) => void;
+  //gameDispatch(a: GameAction): void;
 };
 
 export function RegionSelector({
   inventory,
   regionIds,
-  gameDispatch,
+  onConfirm,
 }: RegionSelectorProps) {
   const handleMapClick = (evt: SyntheticEvent) => {
     const id = (evt.target as SVGElement).id;
     if (id.startsWith("region_")) {
       const regionId = id.replaceAll("region_", "");
       if (!regionIds.includes(regionId)) {
-        gameDispatch({ type: "ClaimRegion", regionId });
+        onConfirm(evt, regionId);
         return;
       }
     }
@@ -44,9 +45,17 @@ export function RegionSelector({
   const svgRef = useProperties(regionPaths);
 
   return (
-    <div className="region-selector">
+    <div className="region-selector modal">
+      <div>
+        <span
+          className="material-icons close-icon clickable"
+          onClick={(evt) => onConfirm(evt, "")}
+        >
+          close
+        </span>
+        <span className="title">Claim Region</span>
+      </div>
       <RegionMapSVG ref={svgRef} x={0} y={0} onClick={handleMapClick} />
-      <InventoryDisplay inventory={inventory} />
     </div>
   );
 }

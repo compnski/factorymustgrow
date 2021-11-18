@@ -150,16 +150,18 @@ export type RegionInfo = {
   Id: string;
   Cost: EntityStack[];
   Provides: EntityStack[];
-  Capacity: number;
-  MainBusCapacity: number;
+  LaneCount: number;
+  LaneSize: number;
+  MainBusCount: number;
   AdjacentTo: string[];
 };
 
 export type Region = {
   Id: string;
   Ore: ItemBuffer;
-  BuildingCapacity: number;
-  MainBusCapacity: number;
+  LaneCount: number;
+  LaneSize: number;
+  MainBusCount: number;
   BuildingSlots: BuildingSlot[];
   //Inserters: Inserter[];
   Bus: MainBus;
@@ -167,22 +169,24 @@ export type Region = {
 
 export const NewRegion = (
   id: string,
-  BuildingCapacity: number,
-  MainBusCapacity: number,
+  LaneCount: number,
+  LaneSize: number,
+  MainBusCount: number,
   ore: EntityStack[],
   BuildingSlots: BuildingSlot[] = [],
   getEntity?: (e: string) => Entity
 ): Region => ({
   Id: id,
-  BuildingCapacity,
-  MainBusCapacity,
+  LaneCount,
+  LaneSize,
+  MainBusCount,
   Ore: FixedInventory(ore, getEntity),
   BuildingSlots,
   Bus: new MainBus(),
 });
 
 export function NewRegionFromInfo(info: RegionInfo): Region {
-  return NewRegion(info.Id, info.Capacity, info.MainBusCapacity, [
+  return NewRegion(info.Id, info.LaneCount, info.LaneSize, info.MainBusCount, [
     ...info.Provides,
   ]);
 }

@@ -1,5 +1,12 @@
 import { SyntheticEvent } from "react";
 import { GameAction } from "../GameAction";
+import {
+  GeneralDialogConfig,
+  useGeneralDialog,
+} from "../GeneralDialogProvider";
+import { Inventory } from "../inventory";
+import { UIAction } from "../uiState";
+import { showClaimRegionSelector } from "./selectors";
 
 // TODO Dispatch event to region change
 //
@@ -7,17 +14,26 @@ type RegionTabBarProps = {
   regionIds: string[];
   currentRegionId: string;
   gameDispatch(a: GameAction): void;
+  inventory: Inventory;
 };
+
+const regionIdClaimNew = "claim-new";
+
 export function RegionTabBar({
   regionIds,
   currentRegionId,
   gameDispatch,
+  inventory,
 }: RegionTabBarProps) {
+  const generalDialog = useGeneralDialog();
+
   function clickHandler(evt: SyntheticEvent) {
     const regionId = (evt.target as HTMLElement).attributes.getNamedItem(
       "data-region-id"
     )?.value;
-    if (regionId) {
+    if (regionId === regionIdClaimNew) {
+      showClaimRegionSelector(generalDialog, inventory, regionIds);
+    } else if (regionId) {
       gameDispatch({ type: "ChangeRegion", regionId });
     }
   }
@@ -39,6 +55,9 @@ export function RegionTabBar({
   return (
     <div onClick={clickHandler} className="region-tab-bar">
       {tabs}
+      <div className="region-tab" data-region-id={regionIdClaimNew}>
+        Claim New
+      </div>
     </div>
   );
 }

@@ -14,6 +14,7 @@ import { PlaceBeltLinePanel } from "./PlaceBeltLinePanel";
 import { GeneralDialogConfig } from "../GeneralDialogProvider";
 import { Region } from "../types";
 import { SelectResearchPanel } from "./SelectResearchPanel";
+import { RegionSelector } from "./RegionSelector";
 
 async function showIconSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
@@ -175,5 +176,27 @@ export async function showPlaceBeltLineSelector(
       beltLength: 100,
       buildingIdx,
     });
+  }
+}
+
+export async function showClaimRegionSelector(
+  showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
+  inventory: Inventory,
+  regionIds: string[]
+): Promise<void> {
+  const result = await showDialog({
+    title: "Claim Region",
+    component: (onConfirm) => (
+      <RegionSelector
+        inventory={inventory}
+        regionIds={regionIds}
+        onConfirm={onConfirm}
+      />
+    ),
+  });
+  if (result) {
+    const [regionId] = result;
+    console.log("claim region ", regionId);
+    if (regionId) GameDispatch({ type: "ClaimRegion", regionId });
   }
 }
