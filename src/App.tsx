@@ -62,9 +62,6 @@ function App() {
           uiState={uiState}
           uiDispatch={uiDispatch}
         />
-        <p>
-          <a href="https://github.com/compnski/factorymustgrow">Github</a>
-        </p>
       </div>
     </GeneralDialogProvider>
   );

@@ -125,8 +125,9 @@
 }
 
 .scroller {
-  overflow: scroll;
-  height: 95vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 80vh;
 }
 
 .add-producer,
@@ -158,5 +159,12 @@
   text-align: center;
   &.active {
     border-color: black;
+  }
+}
+
+.factory-button-panel {
+  .clickable {
+    width: 250px;
+    display: inline-block;
   }
 }

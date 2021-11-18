@@ -68,6 +68,16 @@ export function FactoryButtonPanel({
   return (
     <div className="factory-button-panel">
       <ButtonPanel buttons={factoryButtons} />
+      <div
+        className="reset-button clickable"
+        onDoubleClick={() =>
+          gameDispatch({
+            type: "Reset",
+          })
+        }
+      >
+        Double Click to Reset All Data
+      </div>
     </div>
   );
 }

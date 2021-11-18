@@ -65,17 +65,17 @@ export const FactoryGame = ({
           currentRegion={currentRegion}
           researchState={gameState.Research}
         />
-        <div className="scoller">
-          <RegionTabBar
-            currentRegionId={gameState.CurrentRegionId}
-            regionIds={regionIds}
-            gameDispatch={GameDispatch}
-            inventory={gameState.Inventory}
-          />
-          <MainBusHeader
-            mainBus={currentRegion.Bus}
-            researchState={gameState.Research}
-          />
+        <RegionTabBar
+          currentRegionId={gameState.CurrentRegionId}
+          regionIds={regionIds}
+          gameDispatch={GameDispatch}
+          inventory={gameState.Inventory}
+        />
+        <MainBusHeader
+          mainBus={currentRegion.Bus}
+          researchState={gameState.Research}
+        />
+        <div className="scroller">
           <BuildingCardList
             mainBus={currentRegion.Bus}
             region={currentRegion}

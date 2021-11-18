@@ -91,7 +91,7 @@ export const MainBusHeader = ({
       </div>
       <div style={{ width: 400, height: 100 }}>
         <div className="lane-header-counts">{lanes}</div>
-        <svg>
+        <svg width="400">
           {[...mainBus.lanes.entries()].map(([laneId], idx) => {
             const laneX =
               MainBusConst.laneOffset +
