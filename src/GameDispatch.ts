@@ -24,6 +24,7 @@ import {
   NewEmptyLane,
   NewBuildingSlot,
   InserterId,
+  NextEmptySlot,
 } from "./building";
 import { GameState } from "./useGameState";
 import { ResetGameState } from "./useGameState";
@@ -359,8 +360,10 @@ function PlaceBuilding(
     return;
   }
   // if buildingIdx, and buildingIDx is empty, then build it here.
+  const buildAtIdx: number | undefined =
+    action.buildingIdx ?? NextEmptySlot(currentRegion.BuildingSlots);
   const newBuilding = NewBuilding(action.entity);
-  AddBuildingOverEmptyOrAtEnd(currentRegion, newBuilding, action.buildingIdx);
+  AddBuildingOverEmptyOrAtEnd(currentRegion, newBuilding, buildAtIdx);
 
   GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 1);
 }
@@ -418,9 +421,9 @@ function AddBuildingOverEmptyOrAtEnd(
     buildingIdx !== undefined &&
     region.BuildingSlots[buildingIdx]?.Building.kind === "Empty"
   ) {
-    region.BuildingSlots[buildingIdx] = NewBuildingSlot(b, 3);
+    region.BuildingSlots[buildingIdx] = NewBuildingSlot(b);
   } else {
-    region.BuildingSlots.push(NewBuildingSlot(b, 3));
+    region.BuildingSlots.push(NewBuildingSlot(b));
   }
 }
 
@@ -458,6 +461,7 @@ function ReorderBuildings(
   })();
 }
 
+const allowRemoveEmpty = false;
 function RemoveBuilding(
   action: {
     type: "RemoveBuilding" | "IncreaseBuildingCount" | "DecreaseBuildingCount";
@@ -470,7 +474,10 @@ function RemoveBuilding(
     currentRegion.BuildingSlots[action.buildingIdx].Building = NewEmptyLane();
     for (var idx = currentRegion.BuildingSlots.length - 1; idx >= 0; idx--) {
       // Removing the last building and it's an empty lane.
-      if (currentRegion.BuildingSlots[idx].Building.kind === "Empty") {
+      if (
+        allowRemoveEmpty &&
+        currentRegion.BuildingSlots[idx].Building.kind === "Empty"
+      ) {
         const [slot] = currentRegion.BuildingSlots.splice(idx, 1);
         const inserter = slot && slot.Inserter;
         // Refund inserters

@@ -1,6 +1,7 @@
 import { GameDispatch } from "./GameDispatch";
 import { GameState } from "./useGameState";
 import { GameWindow } from "./globals";
+import { NextEmptySlot } from "./building";
 
 export type MacroName = "redsci";
 
@@ -43,7 +44,7 @@ function addProducers(
   const upperToggles: number[] = [],
     lowerToggles: number[] = [];
   producerList.forEach(({ recipe, kind, connect = {} }) => {
-    const buildingIdx = currentRegion.BuildingSlots.length;
+    const buildingIdx = NextEmptySlot(currentRegion.BuildingSlots) || 0;
     GameDispatch({
       type: "TransferToInventory",
       entity: kind,
@@ -59,7 +60,7 @@ function addProducers(
 
     GameDispatch({ type: "PlaceBuilding", entity: kind });
 
-    const nextBuildingIdx = currentRegion.BuildingSlots.length;
+    const nextBuildingIdx = NextEmptySlot(currentRegion.BuildingSlots) || 0;
 
     if (buildingIdx === nextBuildingIdx) {
       throw new Error(`Failed to add producer ${kind} for ${recipe}`);

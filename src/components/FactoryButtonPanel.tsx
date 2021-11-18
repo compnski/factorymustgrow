@@ -1,14 +1,7 @@
-import { SyntheticEvent } from "react";
 import { GameAction } from "../GameAction";
-import { GameState } from "../useGameState";
 import { UIAction } from "../uiState";
 import { ButtonPanel } from "./ButtonPanel";
-import {
-  showMoveItemToFromInventorySelector,
-  showPlaceBuildingSelector,
-  showResearchSelector,
-  showPlaceBeltLineSelector,
-} from "./selectors";
+import { showMoveItemToFromInventorySelector } from "./selectors";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 
 export type FactoryButtonPanelProps = {

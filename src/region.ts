@@ -3,10 +3,7 @@ import { NewEntityStack, Region, RegionInfo } from "./types";
 export function RemainingRegionBuildingCapacity(region: Region): number {
   return (
     region.LaneCount -
-    region.BuildingSlots.reduce(
-      (accum, b) => accum + b.Building.BuildingCount || 0,
-      0
-    )
+    region.BuildingSlots.filter((b) => b.Building.kind !== "Empty").length
   );
 }
 
@@ -15,7 +12,7 @@ const Regions = new Map<string, RegionInfo>([
     "start",
     {
       Id: "start",
-      LaneCount: 25,
+      LaneCount: 8,
       LaneSize: 50,
       MainBusCount: 10,
       Cost: [],

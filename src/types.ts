@@ -1,4 +1,9 @@
-import { Building, BuildingSlot } from "./building";
+import {
+  Building,
+  BuildingSlot,
+  NewBuildingSlot,
+  NewEmptyLane,
+} from "./building";
 import { Inserter } from "./inserter";
 import { FixedInventory } from "./inventory";
 import { MainBus } from "./mainbus";
@@ -175,15 +180,26 @@ export const NewRegion = (
   ore: EntityStack[],
   BuildingSlots: BuildingSlot[] = [],
   getEntity?: (e: string) => Entity
-): Region => ({
-  Id: id,
-  LaneCount,
-  LaneSize,
-  MainBusCount,
-  Ore: FixedInventory(ore, getEntity),
-  BuildingSlots,
-  Bus: new MainBus(),
-});
+): Region => {
+  if (BuildingSlots.length > LaneCount) {
+    throw new Error(
+      `Trying to construct region with more building slots ${BuildingSlots.length} than lanes ${LaneCount}.`
+    );
+  } else if (BuildingSlots.length < LaneCount) {
+    for (var idx = BuildingSlots.length; idx < LaneCount; idx++) {
+      BuildingSlots.push(NewBuildingSlot(NewEmptyLane()));
+    }
+  }
+  return {
+    Id: id,
+    LaneCount,
+    LaneSize,
+    MainBusCount,
+    Ore: FixedInventory(ore, getEntity),
+    BuildingSlots,
+    Bus: new MainBus(),
+  };
+};
 
 export function NewRegionFromInfo(info: RegionInfo): Region {
   return NewRegion(info.Id, info.LaneCount, info.LaneSize, info.MainBusCount, [

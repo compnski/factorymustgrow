@@ -41,9 +41,16 @@ export function InserterIdForBelt(
   };
 }
 
+export function NextEmptySlot(
+  BuildingSlots: BuildingSlot[]
+): number | undefined {
+  const nextEmpty = BuildingSlots.findIndex((b) => b.Building.kind === "Empty");
+  return nextEmpty >= 0 ? nextEmpty : undefined;
+}
+
 export function NewBuildingSlot(
   Building: Building,
-  numBeltConnections: number = 1
+  numBeltConnections: number = 3
 ): BuildingSlot {
   const belts = [...Array(numBeltConnections)].map<BeltConnection>(
     (): BeltConnection => {

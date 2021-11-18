@@ -142,7 +142,7 @@ export const BuildingCard = ({
   ));
   return (
     <div
-      className="producer-card"
+      className={`producer-card kind-${building.kind}`}
       draggable={building.kind !== "Empty" && dragging}
       id={`b-${buildingIdx}`}
       onDrop={handleDrop}
