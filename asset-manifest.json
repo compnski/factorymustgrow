@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/factorymustgrow/static/css/main.195347cb.chunk.css",
-    "main.js": "/factorymustgrow/static/js/main.b1394caa.chunk.js",
-    "main.js.map": "/factorymustgrow/static/js/main.b1394caa.chunk.js.map",
+    "main.css": "/factorymustgrow/static/css/main.8d6c3478.chunk.css",
+    "main.js": "/factorymustgrow/static/js/main.b5b44be4.chunk.js",
+    "main.js.map": "/factorymustgrow/static/js/main.b5b44be4.chunk.js.map",
     "runtime-main.js": "/factorymustgrow/static/js/runtime-main.b493543f.js",
     "runtime-main.js.map": "/factorymustgrow/static/js/runtime-main.b493543f.js.map",
     "static/js/2.44d9ae17.chunk.js": "/factorymustgrow/static/js/2.44d9ae17.chunk.js",
@@ -10,7 +10,7 @@
     "static/js/3.7d012620.chunk.js": "/factorymustgrow/static/js/3.7d012620.chunk.js",
     "static/js/3.7d012620.chunk.js.map": "/factorymustgrow/static/js/3.7d012620.chunk.js.map",
     "index.html": "/factorymustgrow/index.html",
-    "static/css/main.195347cb.chunk.css.map": "/factorymustgrow/static/css/main.195347cb.chunk.css.map",
+    "static/css/main.8d6c3478.chunk.css.map": "/factorymustgrow/static/css/main.8d6c3478.chunk.css.map",
     "static/js/2.44d9ae17.chunk.js.LICENSE.txt": "/factorymustgrow/static/js/2.44d9ae17.chunk.js.LICENSE.txt",
     "static/media/boulder.opt.7fe45767.svg": "/factorymustgrow/static/media/boulder.opt.7fe45767.svg",
     "static/media/bug.opt.a8e27623.svg": "/factorymustgrow/static/media/bug.opt.a8e27623.svg",
@@ -25,7 +25,7 @@
   "entrypoints": [
     "static/js/runtime-main.b493543f.js",
     "static/js/2.44d9ae17.chunk.js",
-    "static/css/main.195347cb.chunk.css",
-    "static/js/main.b1394caa.chunk.js"
+    "static/css/main.8d6c3478.chunk.css",
+    "static/js/main.b5b44be4.chunk.js"
   ]
 }
