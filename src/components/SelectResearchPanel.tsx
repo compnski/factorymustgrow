@@ -221,7 +221,7 @@ export function SelectResearchPanel(props: SelectResearchPanelProps) {
                     onDoubleClick={(evt) =>
                       !isCompleted &&
                       ((isUnlocked && onConfirm(evt, research.Id)) ||
-                        showUserError("Research locked"))
+                        (!isUnlocked && showUserError("Research locked")))
                     }
                     onClick={() => !isCompleted && setSelectValue(research.Id)}
                   >

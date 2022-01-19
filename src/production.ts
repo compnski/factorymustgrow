@@ -193,11 +193,13 @@ const entityToProducerTypeMap: { [key: string]: BuildingType } = {
   "burner-mining-drill": "Miner",
   "stone-furnace": "Smelter",
   "chemical-plant": "ChemPlant",
+  "oil-refinery": "Refinery",
   "rocket-silo": "RocketSilo",
   lab: "Lab",
   "iron-chest": "Chest",
   "steel-chest": "Chest",
   "transport-belt": "Depot",
+  pumpjack: "Pumpjack",
 };
 
 export function IsBuilding(entity: string): boolean {
@@ -216,6 +218,8 @@ export function ProducerTypeFromEntity(entity: string): BuildingType {
       return "Smelter";
     case "chemical-plant":
       return "ChemPlant";
+    case "oil-refinery":
+      return "Refinery";
     case "rocket-silo":
       return "RocketSilo";
     case "lab":
@@ -226,6 +230,8 @@ export function ProducerTypeFromEntity(entity: string): BuildingType {
       return "Chest";
     case "transport-belt":
       return "Depot";
+    case "pumpjack":
+      return "Pumpjack";
   }
   // const producerType = entityToProducerTypeMap[entity];
   // if (producerType) return producerType;
