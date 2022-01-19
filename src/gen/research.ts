@@ -321,7 +321,7 @@ export const ResearchMap: Map<string, Research> = new Map([
       DurationSeconds: 30,
       Row: 2,
       Prereqs: new Set([
-        "optics",
+        //        "optics",
         "electronics",
         "steel-processing",
         "logistic-science-pack",
@@ -502,7 +502,10 @@ export const ResearchMap: Map<string, Research> = new Map([
       ProductionPerTick: 0.033333335,
       DurationSeconds: 30,
       Row: 2,
-      Prereqs: new Set(["logistics-2", "engine"]),
+      Prereqs: new Set([
+        //"logistics-2",
+        "engine",
+      ]),
       Unlocks: ["rail", "locomotive", "cargo-wagon"],
       Effects: [],
     },
@@ -616,6 +619,26 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
+    "plastics",
+    {
+      Id: "plastics",
+      Name: "Plastics",
+      Icon: "plastics",
+      Input: [
+        { Entity: "automation-science-pack", Count: 1 },
+        { Entity: "logistic-science-pack", Count: 1 },
+      ],
+      ProductionRequiredForCompletion: 200,
+      ProductionPerTick: 0.033333335,
+      DurationSeconds: 30,
+      Row: 2,
+      Prereqs: new Set(["oil-processing"]),
+      Unlocks: ["plastic-bar"],
+      Effects: [],
+    },
+  ],
+
+  [
     "sulfur-processing",
     {
       Id: "sulfur-processing",
@@ -651,26 +674,6 @@ export const ResearchMap: Map<string, Research> = new Map([
       Row: 2,
       Prereqs: new Set(["oil-processing"]),
       Unlocks: [],
-      Effects: [],
-    },
-  ],
-
-  [
-    "plastics",
-    {
-      Id: "plastics",
-      Name: "Plastics",
-      Icon: "plastics",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 200,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 2,
-      Prereqs: new Set(["oil-processing"]),
-      Unlocks: ["plastic-bar"],
       Effects: [],
     },
   ],
@@ -731,7 +734,7 @@ export const ResearchMap: Map<string, Research> = new Map([
       Row: 2,
       Prereqs: new Set([
         "fast-inserter",
-        "logistics-2",
+        //"logistics-2",
         "advanced-electronics",
       ]),
       Unlocks: ["stack-inserter", "stack-filter-inserter"],
@@ -820,6 +823,26 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
+    "speed-module",
+    {
+      Id: "speed-module",
+      Name: "Speed module",
+      Icon: "speed-module-1",
+      Input: [
+        { Entity: "automation-science-pack", Count: 1 },
+        { Entity: "logistic-science-pack", Count: 1 },
+      ],
+      ProductionRequiredForCompletion: 50,
+      ProductionPerTick: 0.033333335,
+      DurationSeconds: 30,
+      Row: 2,
+      Prereqs: new Set(["modules"]),
+      Unlocks: ["speed-module"],
+      Effects: [],
+    },
+  ],
+
+  [
     "effectivity-module",
     {
       Id: "effectivity-module",
@@ -876,26 +899,6 @@ export const ResearchMap: Map<string, Research> = new Map([
       Prereqs: new Set(["stack-inserter"]),
       Unlocks: [],
       Effects: ["Stack inserter capacity: +1"],
-    },
-  ],
-
-  [
-    "speed-module",
-    {
-      Id: "speed-module",
-      Name: "Speed module",
-      Icon: "speed-module-1",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 50,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 2,
-      Prereqs: new Set(["modules"]),
-      Unlocks: ["speed-module"],
-      Effects: [],
     },
   ],
 
@@ -1194,31 +1197,6 @@ export const ResearchMap: Map<string, Research> = new Map([
   ],
 
   [
-    "production-science-pack",
-    {
-      Id: "production-science-pack",
-      Name: "Production science pack",
-      Icon: "production-science-pack",
-      Input: [
-        { Entity: "automation-science-pack", Count: 1 },
-        { Entity: "logistic-science-pack", Count: 1 },
-        { Entity: "chemical-science-pack", Count: 1 },
-      ],
-      ProductionRequiredForCompletion: 100,
-      ProductionPerTick: 0.033333335,
-      DurationSeconds: 30,
-      Row: 4,
-      Prereqs: new Set([
-        "productivity-module",
-        "advanced-material-processing-2",
-        "railway",
-      ]),
-      Unlocks: ["production-science-pack"],
-      Effects: [],
-    },
-  ],
-
-  [
     "braking-force-2",
     {
       Id: "braking-force-2",
@@ -1388,6 +1366,31 @@ export const ResearchMap: Map<string, Research> = new Map([
       Row: 4,
       Prereqs: new Set(["productivity-module", "advanced-electronics-2"]),
       Unlocks: ["productivity-module-2"],
+      Effects: [],
+    },
+  ],
+
+  [
+    "production-science-pack",
+    {
+      Id: "production-science-pack",
+      Name: "Production science pack",
+      Icon: "production-science-pack",
+      Input: [
+        { Entity: "automation-science-pack", Count: 1 },
+        { Entity: "logistic-science-pack", Count: 1 },
+        { Entity: "chemical-science-pack", Count: 1 },
+      ],
+      ProductionRequiredForCompletion: 100,
+      ProductionPerTick: 0.033333335,
+      DurationSeconds: 30,
+      Row: 4,
+      Prereqs: new Set([
+        "productivity-module",
+        "advanced-material-processing-2",
+        "railway",
+      ]),
+      Unlocks: ["production-science-pack"],
       Effects: [],
     },
   ],

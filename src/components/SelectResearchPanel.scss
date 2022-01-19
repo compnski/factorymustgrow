@@ -9,6 +9,7 @@
   border: 2px black solid;
   z-index: 1;
   padding: 10px;
+  padding-bottom: 4px;
 
   .select-research-scroller {
     height: 650px;
@@ -21,18 +22,35 @@
   }
   .info-box {
     background: #aaaaaa;
-    height: 100px;
+    height: 110px;
     width: 800px;
     margin-right: auto;
     padding: 12px;
+    margin-bottom: 8px;
     display: flex;
     > div {
       margin-right: 20px;
     }
     font-size: 0;
-    span,
-    li {
+    span {
       font-size: 16px;
     }
+    ul {
+      font-size: 16px;
+      margin-top: 0;
+      &.double-wide {
+        column-count: 2;
+      }
+    }
+  }
+  .research-label,
+  .select-research-label {
+    font-size: 12px;
+    user-select: none;
+  }
+  .select-research-label {
+    font-size: 16px;
+    user-select: none;
+    margin-top: 10px;
   }
 }

@@ -7,7 +7,7 @@ import { StackCapacity } from "../movement";
 import { unlockedResearch } from "../research";
 import { Research } from "../types";
 import { ResearchState } from "../useGameState";
-import { entityIconLookupByKind, once } from "../utils";
+import { entityIconLookupByKind, showUserError } from "../utils";
 import "./SelectResearchPanel.scss";
 
 export type SelectResearchPanelProps = {
@@ -55,6 +55,16 @@ function getAllReserachPreReqs(researchId: string): Set<string> {
   return p;
 }
 
+function getAllResearchDirectlyUnlockedBy(researchId: string): Set<string> {
+  const r = GetResearch(researchId);
+  if (!r) return new Set([]);
+  return new Set(
+    AvailableResearchList.filter((research) =>
+      research.Prereqs.has(researchId)
+    ).map((research) => research.Id)
+  );
+}
+
 export function SelectResearchPanel(props: SelectResearchPanelProps) {
   const { researchState, onConfirm } = props;
   const [selectValue, setSelectValue] = useState<string | undefined>(
@@ -81,7 +91,10 @@ export function SelectResearchPanel(props: SelectResearchPanelProps) {
         .map((v) => (StackCapacity(v) === 0 ? v.Entity : ""))
         .filter((e) => e !== "")
     ),
-    prereqOfSelectedIds = getAllReserachPreReqs(selectedResearch?.Id || "");
+    prereqOfSelectedIds = getAllReserachPreReqs(selectedResearch?.Id || ""),
+    unlockedBySelectedIds = getAllResearchDirectlyUnlockedBy(
+      selectedResearch?.Id || ""
+    );
 
   const researchByTiers: Research[][] = [];
   AvailableResearchList.forEach((research) => {
@@ -110,24 +123,14 @@ export function SelectResearchPanel(props: SelectResearchPanelProps) {
         close
       </span>
       <span className="title">Select Research</span>
+      <div className={` select-research-label`}>
+        Double-Click Icon to Research
+      </div>
       <div>
-        <div className="search-box">
-          <input className="search-input" />
-        </div>
         <ResearchInfoBox
           research={selectedResearch}
           completedResearchIds={completedResearchIds}
         />{" "}
-        <div
-          className={`clickable select-research-button ${
-            unlockedResearchIds.has(selectedResearch?.Id || "")
-              ? ""
-              : "disabled"
-          }`}
-          onClick={(evt) => onConfirm(evt, selectedResearch?.Id || "")}
-        >
-          Set Research
-        </div>
       </div>
       <div className="select-research-scroller">
         <svg className="research-tree" height="1500" width="600">
@@ -144,12 +147,13 @@ export function SelectResearchPanel(props: SelectResearchPanelProps) {
             return researchList.map((research, iconIdx) => {
               const isCompleted = completedResearchIds.has(research.Id),
                 isUnlocked = unlockedResearchIds.has(research.Id),
-                isPrereqOfSelected = prereqOfSelectedIds.has(research.Id);
+                isPrereqOfSelected = prereqOfSelectedIds.has(research.Id),
+                isUnlockedBySelected = unlockedBySelectedIds.has(research.Id);
 
-              if (research.Id === "start" || isCompleted) {
+              if (research.Row < 0) {
                 return;
               }
-              const x = iconIdx * 50;
+              const x = iconIdx * 100;
               const y = tierIdx * 100;
               /* const colCount = countByTier.get(ResearchTier(research.Id)) || 0,
                *   tierOffset = numColsBeforeTier(ResearchTier(research.Id)),
@@ -168,8 +172,8 @@ export function SelectResearchPanel(props: SelectResearchPanelProps) {
                       fill="#aaaaaa33"
                       x={x}
                       y={y}
-                      width="32"
-                      height="32"
+                      width="64"
+                      height="60"
                     />
                   )}
                   {isPrereqOfSelected && (
@@ -179,8 +183,30 @@ export function SelectResearchPanel(props: SelectResearchPanelProps) {
                       fill="#bbaaaa"
                       x={x}
                       y={y}
-                      width="32"
-                      height="32"
+                      width="64"
+                      height="60"
+                    />
+                  )}
+                  {isUnlockedBySelected && (
+                    <rect
+                      stroke="#bac"
+                      strokeWidth="1"
+                      fill="#bac"
+                      x={x}
+                      y={y}
+                      width="64"
+                      height="60"
+                    />
+                  )}
+                  {isCompleted && (
+                    <rect
+                      stroke="#aba"
+                      strokeWidth="1"
+                      fill="#aba"
+                      x={x}
+                      y={y}
+                      width="64"
+                      height="60"
                     />
                   )}
 
@@ -188,17 +214,22 @@ export function SelectResearchPanel(props: SelectResearchPanelProps) {
                   <use
                     href={`#${iconName}`}
                     opacity={isUnlocked ? 1 : isSelected ? 0.6 : 0.4}
-                    width="32"
-                    height="32"
+                    width="64"
+                    height="64"
                     x={x}
                     y={y}
                     onDoubleClick={(evt) =>
-                      !isCompleted && isUnlocked && onConfirm(evt, research.Id)
+                      !isCompleted &&
+                      ((isUnlocked && onConfirm(evt, research.Id)) ||
+                        showUserError("Research locked"))
                     }
                     onClick={() => !isCompleted && setSelectValue(research.Id)}
                   >
                     <title>{iconName}</title>
                   </use>
+                  <foreignObject x={x} y={y + 50} width={80} height={80}>
+                    <p className={"research-label"}>{research.Name}</p>
+                  </foreignObject>
                 </g>
               );
             });
@@ -223,7 +254,7 @@ function ResearchInfoBox({
     <div className="info-box">
       {research && (
         <>
-          <div>
+          <div key={research.Id}>
             <div>
               <span>
                 {research.Name} - Tier {ResearchTier(research.Id)}
@@ -233,10 +264,10 @@ function ResearchInfoBox({
               <span>{researchIcons(research)}</span>
             </div>
             {unmetPrereqs.length > 0 && (
-              <div key="prereq">
+              <div>
                 <b>
                   <span>Requires: </span>
-                  <ul>
+                  <ul className={unmetPrereqs.length > 3 ? "double-wide" : ""}>
                     {unmetPrereqs.map((e) => (
                       <li key={e}>{e}</li>
                     ))}
@@ -247,7 +278,7 @@ function ResearchInfoBox({
           </div>
           <div>
             {research.Unlocks.length > 0 && <span>Unlocks Items</span>}
-            <ul>
+            <ul className={research.Unlocks.length > 5 ? "double-wide" : ""}>
               {research.Unlocks.map((e) => (
                 <li key={e}>{e}</li>
               ))}

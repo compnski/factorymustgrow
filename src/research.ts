@@ -30,7 +30,7 @@ export type Lab = {
 const initialLabInput = [
   { Entity: "automation-science-pack", Count: 0 },
   { Entity: "logistic-science-pack", Count: 0 },
-  { Entity: "military-science-pack", Count: 0 },
+  //  { Entity: "military-science-pack", Count: 0 },
   { Entity: "production-science-pack", Count: 0 },
   { Entity: "chemical-science-pack", Count: 0 },
   { Entity: "utility-science-pack", Count: 0 },

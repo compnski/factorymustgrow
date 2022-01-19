@@ -29,9 +29,17 @@ export type FactoryGameState = {
   BeltLines: Map<number, BeltLine>;
 };
 const initialInventorySize = 8;
+
+const startingResearch = ["start", "automation"];
+
 export const initialFactoryGameState = () => ({
   Research: {
-    Progress: new Map([["start", NewEntityStack("start", 0, 0)]]),
+    Progress: new Map(
+      startingResearch.map((research) => [
+        research,
+        NewEntityStack(research, 0, 0),
+      ])
+    ),
     CurrentResearchId: "",
   },
   CurrentRegionId: "start",

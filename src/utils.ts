@@ -76,3 +76,7 @@ export function BuildingHasInput(
         building.inputBuffers.Count(entity) > 0)
   );
 }
+
+export function showUserError(s: String) {
+  console.log("User Error: " + s);
+}

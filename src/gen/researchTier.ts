@@ -7,17 +7,17 @@ export function ResearchTier(id: string): number {
 }
 
 export const ResearchTiers = Map({
+  start: -1,
+  automation: -1,
   logistics: 0,
   "logistic-science-pack": 0,
   military: 0,
-  start: 0,
   optics: 0,
   turrets: 0,
   "steel-processing": 0,
   "stone-walls": 0,
-  automation: 0,
+  electronics: 0,
   "steel-axe": 1,
-  electronics: 1,
   "heavy-armor": 1,
   "weapon-shooting-speed-1": 1,
   "physical-projectile-damage-1": 1,
