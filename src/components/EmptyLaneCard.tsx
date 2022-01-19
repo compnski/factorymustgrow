@@ -6,7 +6,7 @@ export function EmptyLaneCard(props: { buildingIdx: number }) {
   const generalDialog = useGeneralDialog();
 
   return (
-    <div className="main-area">
+    <div className="main-area empty-lane">
       <div className="top-area">
         <div className="title">Empty Lane</div>
       </div>
@@ -19,7 +19,7 @@ export function EmptyLaneCard(props: { buildingIdx: number }) {
               props.buildingIdx
             );
           }}
-          className="change-recipe clickable"
+          className="change-recipe clickable build-something"
         >
           Build Something
         </div>

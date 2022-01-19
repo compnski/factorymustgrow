@@ -42,11 +42,17 @@ export const BuildingCardList = ({
     };
 
   const cards = region.BuildingSlots.map((buildingSlot, idx) => {
-    const isLastBuilding = idx === region.BuildingSlots.length - 1,
+    const isFirstBuilding = idx === 0,
+      isLastBuilding = idx === region.BuildingSlots.length - 1,
       allowsDrop = buildingSlot.Building.kind === "Empty" || isLastBuilding;
 
     return (
       <>
+        {isFirstBuilding && (
+          <div className="inserter-card wide">
+            <div className="inserter-rectangle" />
+          </div>
+        )}
         <BuildingCard
           key={`b-${idx}`}
           buildingIdx={idx}

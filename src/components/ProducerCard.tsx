@@ -20,6 +20,13 @@ export type ProducerCardProps = {
   regionalOre: ItemBuffer;
 };
 
+function formatRecipeName(s: string): string {
+  const title = s
+    .split("-")
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase());
+  return title.join(" ");
+}
+
 export function ProducerCard({
   producer,
   buildingIdx,
@@ -40,7 +47,19 @@ export function ProducerCard({
   return (
     <div className="main-area">
       <div className="top-area">
-        <div className="title">{producer.RecipeId /* TODO Fix name */}</div>
+        <div
+          onDoubleClick={async () => {
+            await showChangeProducerRecipeSelector(
+              producer.ProducerType,
+              buildingIdx,
+              generalDialog
+            );
+          }}
+          className="title"
+        >
+          {formatRecipeName(producer.RecipeId) || "No Recipe Selected"}
+        </div>
+
         <span className={`icon ${ProducerIcon(producer)}`} />
         <CounterWithPlusMinusButtons
           count={producer.BuildingCount}
@@ -59,18 +78,6 @@ export function ProducerCard({
         />
       </div>
       <div className="bottom-area">
-        <div
-          onClick={async () => {
-            await showChangeProducerRecipeSelector(
-              producer.ProducerType,
-              buildingIdx,
-              generalDialog
-            );
-          }}
-          className="change-recipe clickable"
-        >
-          Change Recipe
-        </div>
         <BuildingBufferDisplay
           inputBuffers={recipeInput}
           outputBuffers={producer.outputBuffers}
