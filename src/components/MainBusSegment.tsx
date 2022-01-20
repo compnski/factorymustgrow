@@ -64,8 +64,9 @@ export function MainBusSegment({
           width={MainBusConst.laneWidth}
           height={segmentHeight}
           x={laneX}
-          fill="black"
+          fill="#111"
           onDoubleClick={() => busLaneClicked(laneId, entity)}
+          filter="url(#dropshadowSide)"
         >
           <title>{entity}</title>
         </rect>
@@ -120,7 +121,8 @@ export function MainBusSegment({
             markerWidth={connectionHeight / 2}
             markerHeight={connectionHeight}
             orient="auto"
-            fill="lightgreen"
+            fill="#ffd300"
+            filter="blurMe"
           >
             <Chevron />
           </marker>
@@ -131,9 +133,10 @@ export function MainBusSegment({
           }
           d={getPath(y, laneIdx, laneX, beltConn.direction === "FROM_BUS")}
           fill="none"
-          stroke="green"
+          stroke="#333"
           strokeWidth={connectionHeight}
           markerMid="url(#chevron)"
+          filter="url(#dropshadowBelow)"
           //markerStart="url(#chevron)"
           //markerEnd="url(#chevron)"
         />
@@ -143,6 +146,22 @@ export function MainBusSegment({
 
   return (
     <svg className="mainBusSegment">
+      <defs>
+        <filter id="blurMe" filterUnits="userSpaceOnUse">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="5" />
+        </filter>
+
+        <filter id="dropshadowBelow" filterUnits="userSpaceOnUse">
+          <feOffset result="offOut" in="SourceAlpha" dx="-5" dy="5" />
+          <feGaussianBlur result="blurOut" in="offOut" stdDeviation="3" />
+          <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+        </filter>
+        <filter id="dropshadowSide" filterUnits="userSpaceOnUse">
+          <feOffset result="offOut" in="SourceAlpha" dx="2" dy="5" />
+          <feGaussianBlur result="blurOut" in="offOut" stdDeviation="3" />
+          <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+        </filter>
+      </defs>
       {lanes}
       {connections}
     </svg>

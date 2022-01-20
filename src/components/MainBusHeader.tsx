@@ -92,6 +92,11 @@ export const MainBusHeader = ({
       <div style={{ width: 400, height: 100 }}>
         <div className="lane-header-counts">{lanes}</div>
         <svg width="400">
+          <filter id="dropshadowSide" filterUnits="userSpaceOnUse">
+            <feOffset result="offOut" in="SourceAlpha" dx="2" dy="5" />
+            <feGaussianBlur result="blurOut" in="offOut" stdDeviation="3" />
+            <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+          </filter>
           {[...mainBus.lanes.entries()].map(([laneId], idx) => {
             const laneX =
               MainBusConst.laneOffset +
@@ -102,7 +107,8 @@ export const MainBusHeader = ({
                 width={MainBusConst.laneWidth}
                 height={86}
                 x={laneX}
-                fill="black"
+                fill="#111"
+                filter="url(#dropshadowSide)"
                 onDoubleClick={() => busLaneClicked(laneId)}
               />
             );

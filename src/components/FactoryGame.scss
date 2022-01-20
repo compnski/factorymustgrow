@@ -4,10 +4,13 @@ body {
   background-color: #222;
 }
 
+.App {
+  margin: 10px auto;
+}
+
 .factory-game {
   font-size: 0;
   background-color: $bgColor;
-  margin-left: 40px;
 }
 
 .main-bus-header {
