@@ -175,7 +175,7 @@ export const BuildingCard = ({
         mainBus={mainBus}
         busLaneClicked={busLaneClicked}
         beltConnectionClicked={beltConnectionClicked}
-        segmentHeight={134}
+        segmentHeight={136}
         beltConnections={buildingSlot.BeltConnections}
       />
     </div>

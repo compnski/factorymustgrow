@@ -100,7 +100,7 @@ export const MainBusHeader = ({
               <rect
                 key={laneId}
                 width={MainBusConst.laneWidth}
-                height={50}
+                height={86}
                 x={laneX}
                 fill="black"
                 onDoubleClick={() => busLaneClicked(laneId)}

@@ -5,7 +5,7 @@ import { BuildingCardList } from "./BuildingCardList";
 import { InfoHeader } from "./InfoHeader";
 import { MainBusHeader } from "./MainBusHeader";
 import "./FactoryGame.scss";
-import { FactoryButtonPanel } from "./FactoryButtonPanel";
+import { DebugButtonPanel } from "./DebugButtonPanel";
 import { InventoryDisplay } from "./InventoryDisplay";
 import { RegionTabBar } from "./RegionTabBar";
 import { ItemBuffer } from "../types";
@@ -87,10 +87,7 @@ export const FactoryGame = ({
           inventory={gameState.Inventory}
           doubleClickHandler={inventoryDoubleClickHandler}
         />
-        <FactoryButtonPanel
-          gameDispatch={GameDispatch}
-          uiDispatch={uiDispatch}
-        />
+        <DebugButtonPanel gameDispatch={GameDispatch} uiDispatch={uiDispatch} />
       </div>
     );
   } catch (e: unknown) {

@@ -1,12 +1,15 @@
 @import "./constants";
 .inventory-display {
-  max-width: 450px;
+  max-width: $appWidth;
   font-size: 10px;
   display: flex;
   flex-wrap: wrap;
   background: lightgray;
-  //padding: 12px 11px 12px 40px;
   border-top: 2px black inset;
+}
+
+.factory-game > .inventory-display {
+  padding: 4px 11px 4px 10px;
 }
 
 .inventory-slot {

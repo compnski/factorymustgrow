@@ -5,6 +5,8 @@
 ** UI
 *** Fix Up / Down arrow to move to next empty lane in that direction.
 *** Make Region Selector use GeneralDialog
+*** Replace 'Add Lane' button with + that shows up where next lane will be
+*** Extend scroller up to top of region tab bar.
 ** Inserters
 *** Move items between areas
 *** Build more to increase the rate of transfer
@@ -13,7 +15,6 @@
 **** Each transfer point has defined speed (Items/second)
 **** Can upgrade or build more transferers to incresae rate
 **** Needs UX to show rate and to allow upgrading
-
 * Next Ideas
 ** EntityId
 *** Store 'nextId' in GameState
@@ -39,7 +40,7 @@ Each step of recipe takes some amount of fuel/power
 ** Limits
 *** Main Bus Lanes
 *** Building Slots
-*** Max Building Count
+*** Max Building Cuo
 ** Transport
 *** DONE Belt transport
 Array of stacks

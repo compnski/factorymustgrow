@@ -107,7 +107,7 @@ export async function showPlaceBuildingSelector(
   inventory: Inventory,
   buildingIdx?: number
 ) {
-  const item = await showIconSelector(showDialog, "Place Building", [
+  const item = await showIconSelector(showDialog, "Choose Building", [
     ...new Set(
       inventory
         .Slots()

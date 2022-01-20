@@ -26,7 +26,15 @@ export function LabCard({ building, buildingIdx }: LabCardProps) {
   return (
     <div className="main-area lab">
       <div className="top-area">
-        <div className="title">{title /* TODO Fix name */}</div>
+        <div
+          className="title"
+          onClick={async () => {
+            await showResearchSelector(generalDialog);
+          }}
+        >
+          {title /* TODO Fix name */}
+          <span className="material-icons edit-icon">edit</span>
+        </div>
         <span className={`icon ${ProducerIcon(building)}`} />
         <CounterWithPlusMinusButtons
           count={building.BuildingCount}
@@ -46,15 +54,6 @@ export function LabCard({ building, buildingIdx }: LabCardProps) {
       </div>
 
       <div className="bottom-area">
-        <div
-          onClick={async () => {
-            await showResearchSelector(generalDialog);
-          }}
-          className="choose-research clickable"
-        >
-          Choose Research
-        </div>
-
         <BuildingBufferDisplay
           inputBuffers={building.inputBuffers}
           outputBuffers={building.outputBuffers}

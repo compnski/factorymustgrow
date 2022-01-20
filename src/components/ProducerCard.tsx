@@ -21,10 +21,11 @@ export type ProducerCardProps = {
 };
 
 function formatRecipeName(s: string): string {
+  if (!s.length) return s;
   const title = s
     .split("-")
     .map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase());
-  return title.join(" ");
+  return "Producing " + title.join(" ");
 }
 
 export function ProducerCard({
@@ -48,7 +49,7 @@ export function ProducerCard({
     <div className="main-area">
       <div className="top-area">
         <div
-          onDoubleClick={async () => {
+          onClick={async () => {
             await showChangeProducerRecipeSelector(
               producer.ProducerType,
               buildingIdx,
@@ -58,6 +59,7 @@ export function ProducerCard({
           className="title"
         >
           {formatRecipeName(producer.RecipeId) || "No Recipe Selected"}
+          <span className="material-icons edit-icon">edit</span>
         </div>
 
         <span className={`icon ${ProducerIcon(producer)}`} />
@@ -84,6 +86,7 @@ export function ProducerCard({
           doubleClickHandler={getEntityIconDoubleClickHandler(buildingIdx)}
           entityIconLookup={entityIconLookupByKind(producer.kind)}
         />
+        <div className="spacer" />
       </div>
     </div>
   );
