@@ -144,8 +144,7 @@ export const GameDispatch = (action: GameAction) => {
           return;
         }
         if (
-          GameState.Inventory.Count(b.subkind) <= 0 ||
-          RemainingRegionBuildingCapacity(currentRegion) <= 0
+          GameState.Inventory.Count(b.subkind) <= 0
         ) {
           return;
         }
