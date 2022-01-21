@@ -1,34 +1,45 @@
+import { GameDispatch } from "../GameDispatch";
 import { ItemBuffer } from "../types";
 import { InventoryDisplay } from "./InventoryDisplay";
 
 export function BuildingBufferDisplay({
   inputBuffers,
   outputBuffers,
-  doubleClickHandler,
+  buildingIdx,
   entityIconLookup = (entity: string): string => entity,
+  outputInteractable = true,
 }: {
   inputBuffers?: ItemBuffer;
   outputBuffers?: ItemBuffer;
   entityIconLookup?: (entity: string) => string;
-  doubleClickHandler?: (
-    evt: {
-      clientX: number;
-      clientY: number;
-      shiftKey: boolean;
-      //target: { hasOwnProperty(p: string): boolean }; //unknown; //{ getBoundingClientRect(): DOMRect };
-      nativeEvent: { offsetX: number; offsetY: number };
-    },
-    itemBuffer: ItemBuffer,
-    entity: string
-  ) => void;
+  buildingIdx: number;
+  outputInteractable?: boolean;
 }) {
+  const addClickHandler = function addClickHandler(entity: string) {
+      GameDispatch({
+        type: "TransferFromInventory",
+        entity,
+        buildingIdx,
+        otherStackKind: "Building",
+      });
+    },
+    remClickHandler = function remClickHandler(entity: string) {
+      GameDispatch({
+        type: "TransferToInventory",
+        entity,
+        buildingIdx,
+        otherStackKind: "Building",
+      });
+    };
+
   return (
     // TODO: Fix extractor display
     <div className="recipe-display">
       {inputBuffers && (
         <InventoryDisplay
           inventory={inputBuffers}
-          doubleClickHandler={doubleClickHandler}
+          addClickHandler={addClickHandler}
+          remClickHandler={remClickHandler}
           entityIconLookup={entityIconLookup}
         />
       )}

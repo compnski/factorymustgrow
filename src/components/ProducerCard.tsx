@@ -86,7 +86,7 @@ export function ProducerCard({
         <BuildingBufferDisplay
           inputBuffers={recipeInput}
           outputBuffers={producer.outputBuffers}
-          doubleClickHandler={getEntityIconDoubleClickHandler(buildingIdx)}
+          buildingIdx={buildingIdx}
           entityIconLookup={entityIconLookupByKind(producer.kind)}
         />
         <div className="spacer" />

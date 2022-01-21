@@ -14,6 +14,7 @@
 }
 
 .inventory-slot {
+  position: relative;
   border: 4px darkgray inset;
   width: 40px;
   height: 40px;
@@ -23,6 +24,25 @@
   .icon {
     transform: scale(0.6);
     margin: -12px;
+  }
+  .inventory-display:not(.no-hover) > &:hover .inventory-hover-tip {
+    visibility: visible;
+  }
+}
+
+.inventory-hover-tip {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: all;
+
+  background-color: #cccd;
+  width: 100%;
+  text-align: center;
+  &.top {
+    top: 0;
+  }
+  &.bottom {
+    bottom: 0;
   }
 }
 

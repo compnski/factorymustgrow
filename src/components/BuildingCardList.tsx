@@ -12,12 +12,10 @@ export const BuildingCardList = ({
   region,
   mainBus,
   regionalOre,
-  uiDispatch,
 }: {
   region: { BuildingSlots: BuildingSlot[] };
   mainBus: MainBus;
   regionalOre: ItemBuffer;
-  uiDispatch: (a: UIAction) => void;
 }) => {
   const [dragIdx, setDragIdx] = useState(-1);
 
@@ -60,7 +58,6 @@ export const BuildingCardList = ({
           building={buildingSlot.Building}
           mainBus={mainBus}
           dispatch={GameDispatch}
-          uiDispatch={uiDispatch}
           regionalOre={regionalOre}
           handleDrag={handleDrag(idx)}
           handleDrop={allowsDrop ? handleDrop(idx, isLastBuilding) : undefined}

@@ -5,24 +5,16 @@ export type InventoryDisplayProps = {
   inventory: ItemBuffer;
   showProgressBar?: boolean;
   entityIconLookup?: (entity: string) => string;
-  doubleClickHandler?: (
-    evt: {
-      shiftKey: boolean;
-      clientX: number;
-      clientY: number;
-      nativeEvent: { offsetX: number; offsetY: number };
-    },
-
-    ib: ItemBuffer,
-    s: string
-  ) => void;
+  addClickHandler?: (entity: string) => void;
+  remClickHandler?: (entity: string) => void;
 };
 
 function InventorySlot({
   entity,
   count,
   isOverCapacity,
-  doubleClickHandler = () => {},
+  addClickHandler,
+  remClickHandler,
   progress,
   entityIconLookup = (entity: string): string => entity,
 }: {
@@ -30,15 +22,8 @@ function InventorySlot({
   count: number;
   isOverCapacity: boolean;
   entityIconLookup?: (entity: string) => string;
-  doubleClickHandler: (
-    evt: {
-      shiftKey: boolean;
-      clientX: number;
-      clientY: number;
-      nativeEvent: { offsetX: number; offsetY: number };
-    },
-    s: string
-  ) => void;
+  addClickHandler?: (s: string) => void;
+  remClickHandler?: (s: string) => void;
   progress?: number;
 }) {
   return (
@@ -46,7 +31,6 @@ function InventorySlot({
       className={`inventory-slot ${
         isOverCapacity && "inventory-slot-over-capacity"
       }`}
-      onDoubleClick={(evt) => doubleClickHandler(evt, entity)}
     >
       <progress
         max={1}
@@ -56,17 +40,34 @@ function InventorySlot({
       <div className="item-stack-count-text">
         <span>{Math.floor(count)}</span>
       </div>
+      <div
+        onClick={() => {
+          addClickHandler && addClickHandler(entity);
+        }}
+        className="inventory-hover-tip top"
+      >
+        +Add
+      </div>
+      <div
+        onClick={() => remClickHandler && remClickHandler(entity)}
+        className="inventory-hover-tip bottom"
+      >
+        -Rem
+      </div>
     </div>
   );
 }
 
 export function InventoryDisplay({
   inventory,
-  doubleClickHandler = () => {},
+  addClickHandler,
+  remClickHandler,
   showProgressBar,
   entityIconLookup = (entity: string): string => entity,
 }: InventoryDisplayProps) {
   const slots: JSX.Element[] = [];
+  const allowHover = addClickHandler || remClickHandler;
+
   const numSlots =
     inventory.Capacity === Infinity
       ? inventory.Slots().length
@@ -82,9 +83,8 @@ export function InventoryDisplay({
       slots.push(
         <InventorySlot
           entityIconLookup={entityIconLookup}
-          doubleClickHandler={(evt, entity) =>
-            doubleClickHandler && doubleClickHandler(evt, inventory, entity)
-          }
+          addClickHandler={addClickHandler}
+          remClickHandler={remClickHandler}
           key={i}
           isOverCapacity={i >= inventory.Capacity}
           entity={entity}
@@ -95,5 +95,9 @@ export function InventoryDisplay({
     }
   }
 
-  return <div className="inventory-display">{slots}</div>;
+  return (
+    <div className={`inventory-display ${allowHover || "no-hover"}`}>
+      {slots}
+    </div>
+  );
 }

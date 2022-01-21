@@ -34,7 +34,7 @@ export function LabCard({ building, buildingIdx }: LabCardProps) {
           }}
           title="Select Research"
         >
-          {title /* TODO Fix name */}
+          <span className="title-text">{title /* TODO Fix name */}</span>
           <span className="material-icons edit-icon">edit</span>
         </div>
         <span className={`icon ${ProducerIcon(building)}`} />
@@ -59,10 +59,8 @@ export function LabCard({ building, buildingIdx }: LabCardProps) {
         <BuildingBufferDisplay
           inputBuffers={building.inputBuffers}
           outputBuffers={building.outputBuffers}
-          doubleClickHandler={(evt, buffer, entity) => {
-            if (buffer !== building.outputBuffers)
-              getEntityIconDoubleClickHandler(buildingIdx)(evt, buffer, entity);
-          }}
+          buildingIdx={buildingIdx}
+          outputInteractable={false}
           entityIconLookup={entityIconLookupByKind(building.kind)}
         />
       </div>

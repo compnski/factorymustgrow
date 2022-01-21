@@ -58,7 +58,7 @@ export function BeltLineCard(props: BeltLineCardProps) {
         <BuildingBufferDisplay
           inputBuffers={inputBuffersForDisplay}
           outputBuffers={outputBuffersForDisplay}
-          doubleClickHandler={getEntityIconDoubleClickHandler(buildingIdx)}
+          buildingIdx={buildingIdx}
           entityIconLookup={entityIconLookupByKind(building.kind)}
         />
       </div>

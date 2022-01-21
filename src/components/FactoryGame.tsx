@@ -82,13 +82,9 @@ export const FactoryGame = ({
             mainBus={currentRegion.Bus}
             region={currentRegion}
             regionalOre={currentRegion.Ore}
-            uiDispatch={uiDispatch}
           />
         </div>
-        <InventoryDisplay
-          inventory={gameState.Inventory}
-          doubleClickHandler={inventoryDoubleClickHandler}
-        />
+        <InventoryDisplay inventory={gameState.Inventory} />
         <DebugButtonPanel gameDispatch={GameDispatch} uiDispatch={uiDispatch} />
       </div>
     );

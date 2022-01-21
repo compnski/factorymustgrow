@@ -27,7 +27,6 @@ export type BuildingCardProps = {
   building: Building;
   buildingSlot: BuildingSlot;
   dispatch: (a: GameAction) => void;
-  uiDispatch: (a: UIAction) => void;
   buildingIdx: number;
   mainBus: MainBus;
   regionalOre: ItemBuffer;
@@ -40,7 +39,6 @@ export const BuildingCard = ({
   buildingSlot,
   buildingIdx,
   dispatch,
-  uiDispatch,
   mainBus,
   regionalOre,
   handleDrag,

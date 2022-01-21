@@ -56,7 +56,7 @@ export function StorageCard({ storage, buildingIdx }: StorageCardProps) {
         <BuildingBufferDisplay
           inputBuffers={storage.outputBuffers}
           outputBuffers={undefined}
-          doubleClickHandler={getEntityIconDoubleClickHandler(buildingIdx)}
+          buildingIdx={buildingIdx}
           entityIconLookup={entityIconLookupByKind(storage.kind)}
         />
       </div>

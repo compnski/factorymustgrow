@@ -7,6 +7,7 @@
 *** Make Region Selector use GeneralDialog
 **** Make Region selector pretty and use hexes?
 *** Change Bus item by clicking
+*** Make sure you can't remove science progress from the lab
 ** Inserters
 *** Move items between areas
 *** Build more to increase the rate of transfer
@@ -69,6 +70,9 @@ Move large quantities every interval
 *** Producers basic miner/smelter/assembler
 In case you delete yours
 *** Provides some basic power?
+** Incinerator!
+*** Can give tickets like satisfactory?
+*** Maybe v0 just eats, v1 gives tickets?
 
 * UI
 ** Fix Liquid stack sizes
