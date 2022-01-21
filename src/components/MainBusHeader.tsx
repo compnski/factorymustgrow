@@ -94,29 +94,33 @@ export const MainBusHeader = ({
   return (
     <div className="main-bus-header">
       {/* <div onClick={addLane} className="clickable add-lane-button">
-            Add Lane
-            </div> */}
+          Add Lane
+          </div> */}
       <div className="bus-area">
         <div className="lane-header-counts">{lanes}</div>
         <svg width="400">
           <filter id="dropshadowSide" filterUnits="userSpaceOnUse">
-            <feOffset result="offOut" in="SourceAlpha" dx="-5" dy="5" />
+            <feOffset result="offOut" in="SourceAlpha" dx="2" dy="1" />
             <feGaussianBlur result="blurOut" in="offOut" stdDeviation="3" />
             <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
           </filter>
+
           {[...mainBus.lanes.entries()].map(([laneId], idx) => {
             const laneX =
-              MainBusConst.laneOffset +
-              idx * (MainBusConst.laneWidth + MainBusConst.interLaneWidth);
+                MainBusConst.laneOffset +
+                idx * (MainBusConst.laneWidth + MainBusConst.interLaneWidth),
+              segmentHeight = 66;
+
             return (
-              <rect
-                key={laneId}
-                width={MainBusConst.laneWidth}
-                height={86}
-                x={laneX}
-                fill="#111"
-                filter="url(#dropshadowSide)"
+              <polyline
+                x={laneId}
+                fill="#3F4952"
+                stroke="#222"
                 onDoubleClick={() => busLaneClicked(laneId)}
+                filter="url(#dropshadowSide)"
+                points={`${laneX},0 ${laneX},${segmentHeight + 2} ${
+                  laneX + MainBusConst.laneWidth
+                },${segmentHeight + 2} ${laneX + MainBusConst.laneWidth},0`}
               />
             );
           })}

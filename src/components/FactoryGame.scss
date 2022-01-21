@@ -19,6 +19,7 @@ body {
   height: 100px;
   display: flex;
   justify-content: flex-end;
+  border-left: 2px solid #222;
 
   .add-lane-button {
     font-size: 16px;
@@ -31,6 +32,7 @@ body {
     line-height: 32px;
     margin: auto 0;
   }
+
   .belt-count {
     font-size: 22px;
     color: black;
@@ -40,17 +42,12 @@ body {
   .main-bus-segment {
     height: 70px;
   }
+
   .add-new {
     width: 35px;
     height: 50px;
     margin: 24px 8px 0;
     font-size: 16px;
-  }
-
-  .bus-area {
-    width: 400;
-    height: 100;
-    border-left: 1px solid #222;
   }
 }
 
@@ -73,9 +70,7 @@ body {
   }
 }
 
-.mainBusSegment,
 .main-bus-segment {
-  //  background-color: $bgColor;
   height: ($cardHeight + $inserterCardHeight + 2);
   width: 400px;
 }

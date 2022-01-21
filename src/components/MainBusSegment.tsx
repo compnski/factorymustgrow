@@ -21,9 +21,29 @@ const getPath = (
 ): string => {
   const pathSteps = [[0, y]];
   for (var i = 0; i <= laneIdx; i++) {
-    pathSteps.push([chevronOffset + i * interChevronWidth, y]);
+    pathSteps.push([chevronOffset + Math.max(0, i * interChevronWidth - 5), y]);
   }
-  pathSteps.push([maxX + MainBusConst.laneWidth, y]);
+  pathSteps.push([maxX + MainBusConst.laneWidth + 5, y]);
+  // Turn up/down
+  //  pathSteps.push([maxX + MainBusConst.laneWidth + 5, y + 20]);
+  //  pathSteps.push([maxX + MainBusConst.laneWidth + 5, y + 25]);
+
+  const p = "M" + (reverse ? pathSteps.reverse() : pathSteps).flat().join(" ");
+
+  return p;
+};
+
+const getPathEnd = (
+  y: number,
+  laneIdx: number,
+  maxX: number,
+  reverse: boolean
+): string => {
+  const x = maxX + MainBusConst.laneWidth + 7,
+    pathSteps = [[x, y - MainBusConst.laneWidth / 2]];
+  // Turn up/down
+  pathSteps.push([x, y + 10]);
+  pathSteps.push([x, y + 20]);
 
   const p = "M" + (reverse ? pathSteps.reverse() : pathSteps).flat().join(" ");
 
@@ -60,16 +80,18 @@ export function MainBusSegment({
       iconName = entityIconLookup(entity);
     lanes.push(
       <g key={`lane${laneId}`}>
-        <rect
-          width={MainBusConst.laneWidth}
-          height={segmentHeight}
+        <polyline
           x={laneX}
-          fill="#111"
+          fill="#3F4952"
+          stroke="#222"
           onDoubleClick={() => busLaneClicked(laneId, entity)}
           filter="url(#dropshadowSide)"
+          points={`${laneX},0 ${laneX},${segmentHeight + 2} ${
+            laneX + MainBusConst.laneWidth
+          },${segmentHeight + 2} ${laneX + MainBusConst.laneWidth},0`}
         >
           <title>{entity}</title>
-        </rect>
+        </polyline>
         {Icon(iconName)}
         <use href={`#${iconName}`} width="16" height="16" x={laneX + 4} y={0}>
           <animateTransform
@@ -131,48 +153,36 @@ export function MainBusSegment({
           onDoubleClick={() =>
             beltConn.laneId !== undefined && beltConnectionClicked(connIdx)
           }
-          d={getPath(y, laneIdx, laneX - 10, beltConn.direction === "FROM_BUS")}
+          d={getPath(y, laneIdx, laneX - 20, beltConn.direction === "FROM_BUS")}
           fill="none"
-          //stroke="#333"
-          stroke="url(#gradient-fill)"
+          stroke="#374048"
           strokeWidth={connectionHeight}
           markerMid="url(#chevron)"
           filter="url(#dropshadowBelow)"
-          //markerStart="url(#chevron)"
-          //markerEnd="url(#chevron)"
+        />
+        <path
+          onDoubleClick={() =>
+            beltConn.laneId !== undefined && beltConnectionClicked(connIdx)
+          }
+          d={getPathEnd(
+            y,
+            laneIdx,
+            laneX - 20,
+            beltConn.direction === "FROM_BUS"
+          )}
+          fill="none"
+          stroke="#374048"
+          strokeWidth={connectionHeight}
+          markerMid="url(#chevron)"
+          filter="url(#dropshadowBelow)"
         />
       </g>
     );
   });
 
   return (
-    <svg className="mainBusSegment">
+    <svg className="main-bus-segment">
       <defs>
-        <linearGradient
-          id="gradient-fill"
-          x1="0"
-          y1="0"
-          x2="800"
-          y2="0"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop offset="0" stop-color="#333333" />
-
-          <stop offset="0.14285714285714285" stop-color="#313131" />
-
-          <stop offset="0.2857142857142857" stop-color="#2e2e2e" />
-
-          <stop offset="0.42857142857142855" stop-color="#2c2c2c" />
-
-          <stop offset="0.5714285714285714" stop-color="#292929" />
-
-          <stop offset="0.7142857142857142" stop-color="#272727" />
-
-          <stop offset="0.8571428571428571" stop-color="#242424" />
-
-          <stop offset="1" stop-color="#111111" />
-        </linearGradient>
-
         <filter id="blurMe" filterUnits="userSpaceOnUse">
           <feGaussianBlur in="SourceGraphic" stdDeviation="5" />
         </filter>
