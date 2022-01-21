@@ -54,6 +54,19 @@ export const GameDispatch = (action: GameAction) => {
 
       if (lane && laneEntity)
         GameState.Inventory.AddFromItemBuffer(lane, laneEntity, Infinity, true);
+
+      // Remove attached inserters
+      currentRegion.BuildingSlots.forEach((buildingSlot, buildingSlotIdx) => {
+        buildingSlot.BeltConnections.forEach((beltConn, beltConnIdx) => {
+          if (beltConn.laneId == action.laneId) {
+            GameDispatch({
+              type: "RemoveMainBusConnection",
+              buildingIdx: buildingSlotIdx,
+              connectionIdx: beltConnIdx,
+            });
+          }
+        });
+      });
       break;
 
     case "AddLane":
