@@ -15,6 +15,7 @@ import { GeneralDialogConfig } from "../GeneralDialogProvider";
 import { Region } from "../types";
 import { SelectResearchPanel } from "./SelectResearchPanel";
 import { RegionSelector } from "./RegionSelector";
+import { HelpCard } from "./HelpCard";
 
 async function showIconSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
@@ -199,4 +200,13 @@ export async function showClaimRegionSelector(
     console.log("claim region ", regionId);
     if (regionId) GameDispatch({ type: "ClaimRegion", regionId });
   }
+}
+
+export async function showHelpCard(
+  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>
+): Promise<void> {
+  await showDialog({
+    title: "Help",
+    component: (onConfirm) => <HelpCard onConfirm={onConfirm} />,
+  });
 }

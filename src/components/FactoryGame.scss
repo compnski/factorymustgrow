@@ -11,6 +11,7 @@ body {
 .factory-game {
   font-size: 0;
   background-color: $bgColor;
+  position: relative;
 }
 
 .main-bus-header {
@@ -68,6 +69,16 @@ body {
   > * {
     pointer-events: none;
   }
+}
+
+.top-bar {
+  display: flex;
+  background: lightblue;
+}
+
+.help-icon {
+  color: #444;
+  margin: auto 10px;
 }
 
 .main-bus-segment {
@@ -178,7 +189,6 @@ body {
   height: 40px;
   width: $appWidth;
   display: flex;
-  background: lightblue;
 }
 .region-tab {
   min-width: 50px;

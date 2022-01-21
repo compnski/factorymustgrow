@@ -11,7 +11,7 @@ import { RegionTabBar } from "./RegionTabBar";
 import { ItemBuffer } from "../types";
 import { IsBuilding } from "../production";
 import { useGeneralDialog } from "../GeneralDialogProvider";
-import { showPlaceBeltLineSelector } from "./selectors";
+import { showHelpCard, showPlaceBeltLineSelector } from "./selectors";
 
 type FactoryGameProps = {
   gameState: FactoryGameState;
@@ -58,14 +58,23 @@ export const FactoryGame = ({
       }
     };
 
+    const showHelp = () => {
+      showHelpCard(generalDialog);
+    };
+
     return (
       <div className="factory-game">
-        <RegionTabBar
-          currentRegionId={gameState.CurrentRegionId}
-          regionIds={regionIds}
-          gameDispatch={GameDispatch}
-          inventory={gameState.Inventory}
-        />
+        <div className="top-bar">
+          <RegionTabBar
+            currentRegionId={gameState.CurrentRegionId}
+            regionIds={regionIds}
+            gameDispatch={GameDispatch}
+            inventory={gameState.Inventory}
+          />
+          <div onClick={showHelp} className="help-icon">
+            <span className="material-icons">help_outline</span>
+          </div>
+        </div>
         <div style={{ display: "flex" }}>
           <InfoHeader
             uiDispatch={uiDispatch}

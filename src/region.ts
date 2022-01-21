@@ -110,6 +110,25 @@ const Regions = new Map<string, RegionInfo>([
       ],
     },
   ],
+  [
+    "HelpRegion",
+    {
+      Id: "HelpRegion",
+      LaneCount: 4,
+      LaneSize: 50,
+      MainBusCount: 3,
+      Cost: [],
+      Provides: [
+        NewEntityStack("iron-ore", 9000),
+        NewEntityStack("copper-ore", 9000),
+        NewEntityStack("stone", 9000),
+        NewEntityStack("coal", 9000),
+        NewEntityStack("crude-oil", 9000),
+        NewEntityStack("water", Infinity),
+      ],
+      AdjacentTo: [],
+    },
+  ],
 ]);
 
 export function GetRegionInfo(s: string): RegionInfo {

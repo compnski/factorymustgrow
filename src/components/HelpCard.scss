@@ -1,0 +1,13 @@
+.help-card {
+  z-index: 10;
+  width: 100%;
+
+  > div {
+    padding: 10px;
+    height: 800px;
+    width: 1000px;
+    background: #222;
+    transform: scale(0.8);
+    pointer-events: none;
+  }
+}

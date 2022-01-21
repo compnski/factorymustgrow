@@ -49,7 +49,8 @@ export function BuildingBufferDisplay({
       {outputBuffers && (
         <InventoryDisplay
           inventory={outputBuffers}
-          doubleClickHandler={doubleClickHandler}
+          addClickHandler={(outputInteractable && addClickHandler) || undefined}
+          remClickHandler={(outputInteractable && remClickHandler) || undefined}
           showProgressBar={true}
           entityIconLookup={entityIconLookup}
         />
@@ -57,24 +58,3 @@ export function BuildingBufferDisplay({
     </div>
   );
 }
-
-/* inputBuffers.Entities().map(([entity, count]) => {
- *   return (
- *     <div
- *       key={entity}
- *       className="recipe-item"
- *       onDoubleClick={
- *         doubleClickHandler &&
- *         ((evt) => doubleClickHandler(evt, inputBuffers, entity))
- *       }
- *     >
- *       <div className="quantity-text">{Math.floor(count)}</div>
- *       <div className="icon-frame">
- *         {outputBuffers?.Count(entity) > 0 ? (
- *           <div className={`icon landfill`} />
- *         ) : null}
- *         <div className={`icon ${entityIconLookup(entity)}`} />
- *       </div>
- *     </div>
- *   );
- * })} */

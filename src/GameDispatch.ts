@@ -422,19 +422,21 @@ function PlaceBeltLine(
   GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 100), 100);
 }
 
-function AddBuildingOverEmptyOrAtEnd(
+export function AddBuildingOverEmptyOrAtEnd(
   region: { BuildingSlots: BuildingSlot[] },
   b: Building,
   buildingIdx?: number
-) {
+): BuildingSlot {
+  const buildingSlot = NewBuildingSlot(b);
   if (
     buildingIdx !== undefined &&
     region.BuildingSlots[buildingIdx]?.Building.kind === "Empty"
   ) {
-    region.BuildingSlots[buildingIdx] = NewBuildingSlot(b);
+    region.BuildingSlots[buildingIdx] = buildingSlot;
   } else {
-    region.BuildingSlots.push(NewBuildingSlot(b));
+    region.BuildingSlots.push(buildingSlot);
   }
+  return buildingSlot;
 }
 
 function ReorderBuildings(
@@ -614,7 +616,7 @@ function inventoryTransferStack(
   return;
 }
 
-function NewBuilding(entity: string): Building {
+export function NewBuilding(entity: string): Building {
   switch (ProducerTypeFromEntity(entity)) {
     case "Assembler":
     case "Smelter":
