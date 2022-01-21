@@ -39,11 +39,12 @@ const getPathEnd = (
   maxX: number,
   reverse: boolean
 ): string => {
-  const x = maxX + MainBusConst.laneWidth + 7,
-    pathSteps = [[x, y - MainBusConst.laneWidth / 2]];
+  const direction = reverse ? -1 : 1;
+  const x = maxX + MainBusConst.laneWidth + 9,
+    pathSteps = [[x, y - (MainBusConst.laneWidth / 2) * direction]];
   // Turn up/down
-  pathSteps.push([x, y + 10]);
-  pathSteps.push([x, y + 20]);
+  pathSteps.push([x, y + 3 * direction]);
+  pathSteps.push([x, y + 18 * direction]);
 
   const p = "M" + (reverse ? pathSteps.reverse() : pathSteps).flat().join(" ");
 
