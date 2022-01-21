@@ -5,7 +5,7 @@ body {
 }
 
 .App {
-  margin: 10px auto;
+  margin: 0 auto 5px;
 }
 
 .factory-game {
@@ -15,7 +15,7 @@ body {
 
 .main-bus-header {
   background-color: #526b83;
-  width: $appWidth;
+  width: 400px;
   height: 100px;
   display: flex;
   justify-content: flex-end;
@@ -80,7 +80,17 @@ body {
   width: 400px;
 }
 
-.info-card {
+.info-header {
+  display: flex;
+  line-height: 12px;
+  font-size: 12px;
+  vertical-align: middle;
+  align-items: flex-start;
+  width: $appWidth;
+  z-index: 1;
+  background-color: #526b83;
+  padding-top: 20px;
+
   .icon {
     transform: scale(0.5);
     margin: -16px;
@@ -94,15 +104,6 @@ body {
   .science-info {
     margin-left: auto;
   }
-  //position: fixed;
-  display: flex;
-  line-height: 12px;
-  font-size: 12px;
-  vertical-align: middle;
-  background-color: grey;
-  align-items: flex-start;
-  width: $appWidth;
-  z-index: 1;
 }
 
 .recipe-selector {

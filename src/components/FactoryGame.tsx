@@ -60,21 +60,23 @@ export const FactoryGame = ({
 
     return (
       <div className="factory-game">
-        <InfoHeader
-          uiDispatch={uiDispatch}
-          currentRegion={currentRegion}
-          researchState={gameState.Research}
-        />
         <RegionTabBar
           currentRegionId={gameState.CurrentRegionId}
           regionIds={regionIds}
           gameDispatch={GameDispatch}
           inventory={gameState.Inventory}
         />
-        <MainBusHeader
-          mainBus={currentRegion.Bus}
-          researchState={gameState.Research}
-        />
+        <div style={{ display: "flex" }}>
+          <InfoHeader
+            uiDispatch={uiDispatch}
+            currentRegion={currentRegion}
+            researchState={gameState.Research}
+          />
+          <MainBusHeader
+            mainBus={currentRegion.Bus}
+            researchState={gameState.Research}
+          />
+        </div>
         <div className="scroller">
           <BuildingCardList
             mainBus={currentRegion.Bus}

@@ -12,7 +12,7 @@ import { GetRegionInfo } from "./region";
 import { BeltLine } from "./transport";
 import { GameWindow } from "./globals";
 
-export const CurrentGameStateVersion = "0.1.2";
+export const CurrentGameStateVersion = "0.1.3";
 
 export const useGameState = () => useState<FactoryGameState>(GameState);
 
@@ -42,7 +42,7 @@ export const initialFactoryGameState = () => ({
     ),
     CurrentResearchId: "",
   },
-  CurrentRegionId: "start",
+  CurrentRegionId: "region0",
   Inventory: new Inventory(initialInventorySize, [
     NewEntityStack(GetEntity("burner-mining-drill"), 5),
     NewEntityStack(GetEntity("assembling-machine-1"), 5),
@@ -52,7 +52,7 @@ export const initialFactoryGameState = () => ({
     NewEntityStack(GetEntity("inserter"), 50),
     NewEntityStack(GetEntity("iron-chest"), 5),
   ]),
-  Regions: new Map([["start", NewRegionFromInfo(GetRegionInfo("start"))]]),
+  Regions: new Map([["region0", NewRegionFromInfo(GetRegionInfo("region0"))]]),
   BeltLines: new Map(),
 });
 

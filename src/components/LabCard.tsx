@@ -8,6 +8,7 @@ import { getEntityIconDoubleClickHandler } from "./events";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { Lab } from "../research";
 import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
+import { GetResearch } from "../gen/research";
 
 const ProducerIcon = (p: Producer): string => p.subkind;
 
@@ -21,7 +22,7 @@ export type LabCardProps = {
 export function LabCard({ building, buildingIdx }: LabCardProps) {
   const generalDialog = useGeneralDialog();
   const title = building.RecipeId
-    ? `Researching ${building.RecipeId}`
+    ? `Researching ${GetResearch(building.RecipeId).Name}`
     : "No Research Selected";
   return (
     <div className="main-area lab">

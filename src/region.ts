@@ -9,9 +9,9 @@ export function RemainingRegionBuildingCapacity(region: Region): number {
 
 const Regions = new Map<string, RegionInfo>([
   [
-    "start",
+    "region0",
     {
-      Id: "start",
+      Id: "region0",
       LaneCount: 8,
       LaneSize: 50,
       MainBusCount: 10,
@@ -35,7 +35,7 @@ const Regions = new Map<string, RegionInfo>([
       LaneSize: 10,
       MainBusCount: 3,
       Cost: [],
-      AdjacentTo: ["start"],
+      AdjacentTo: ["region0"],
       Provides: [
         NewEntityStack("iron-ore", Infinity),
         NewEntityStack("copper-ore", Infinity),
@@ -53,7 +53,7 @@ const Regions = new Map<string, RegionInfo>([
       LaneCount: 40,
       LaneSize: 50,
       MainBusCount: 7,
-      AdjacentTo: ["start"],
+      AdjacentTo: ["region0"],
       Cost: [],
       Provides: [
         NewEntityStack("iron-ore", 500000),
@@ -70,7 +70,7 @@ const Regions = new Map<string, RegionInfo>([
       LaneCount: 10,
       LaneSize: 20,
       MainBusCount: 6,
-      AdjacentTo: ["start"],
+      AdjacentTo: ["region0"],
       Cost: [],
       Provides: [
         NewEntityStack("crude-oil", Infinity),
@@ -85,7 +85,7 @@ const Regions = new Map<string, RegionInfo>([
       LaneCount: 20,
       LaneSize: 100,
       MainBusCount: 6,
-      AdjacentTo: ["start"],
+      AdjacentTo: ["region0"],
       Cost: [],
       Provides: [
         NewEntityStack("iron-ore", 10000),
@@ -100,7 +100,7 @@ const Regions = new Map<string, RegionInfo>([
       LaneCount: 30,
       LaneSize: 100,
       MainBusCount: 12,
-      AdjacentTo: ["start"],
+      AdjacentTo: ["region0"],
       Cost: [],
       Provides: [
         NewEntityStack("iron-ore", 500000),

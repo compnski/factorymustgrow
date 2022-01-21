@@ -6,7 +6,7 @@
 *** Fix Up / Down arrow to move to next empty lane in that direction.
 *** Make Region Selector use GeneralDialog
 **** Make Region selector pretty and use hexes?
-*** Move Region Info into left side of Main Bus Header
+*** Change Bus item by clicking
 ** Inserters
 *** Move items between areas
 *** Build more to increase the rate of transfer
