@@ -143,9 +143,7 @@ export const GameDispatch = (action: GameAction) => {
           console.log("Can't add lanes to beltlines");
           return;
         }
-        if (
-          GameState.Inventory.Count(b.subkind) <= 0
-        ) {
+        if (GameState.Inventory.Count(b.subkind) <= 0) {
           return;
         }
         GameState.Inventory.Remove(NewEntityStack(b.subkind, 0, 1), 1);
@@ -315,7 +313,7 @@ export const GameDispatch = (action: GameAction) => {
       (() => {
         const fromStack = inventoryTransferStack(action);
         if (fromStack) {
-          const fromStackEntity = fromStack.Entities()[0][0];
+          const fromStackEntity = action.entity;
           if (GameState.Inventory.AvailableSpace(fromStackEntity) > 0) {
             GameState.Inventory.AddFromItemBuffer(
               fromStack,
@@ -606,7 +604,8 @@ function inventoryTransferStack(
         }
         if (
           BuildingHasInput(b.kind) &&
-          b?.inputBuffers.AvailableSpace(action.entity) > 0
+          (b?.inputBuffers.AvailableSpace(action.entity) > 0 ||
+            b?.inputBuffers.Count(action.entity) > 0)
         ) {
           return b.inputBuffers;
         }
