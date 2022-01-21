@@ -9,6 +9,7 @@ $inserterColor: slategrey;
 .inserter-card.wide {
   width: $appWidth;
   height: $inserterCardHeight;
+  z-index: 1;
 
   .inserter-diamond {
     width: 50px;

@@ -57,8 +57,11 @@ export function ProducerCard({
             );
           }}
           className="title"
+          title="Change Recipe"
         >
-          {formatRecipeName(producer.RecipeId) || "No Recipe Selected"}
+          <span className="title-text">
+            {formatRecipeName(producer.RecipeId) || "No Recipe Selected"}
+          </span>
           <span className="material-icons edit-icon">edit</span>
         </div>
 

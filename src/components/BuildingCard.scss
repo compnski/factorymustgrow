@@ -61,12 +61,20 @@
     margin-right: auto;
     display: inline-block;
     flex-basis: 100%;
+    overflow: hidden;
     .edit-icon {
       visibility: hidden;
     }
     &:hover .edit-icon {
       visibility: visible;
       margin-left: 6px;
+    }
+    .title-text {
+      display: inline-block;
+      max-width: 300px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow-x: none;
     }
   }
 

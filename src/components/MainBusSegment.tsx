@@ -131,9 +131,10 @@ export function MainBusSegment({
           onDoubleClick={() =>
             beltConn.laneId !== undefined && beltConnectionClicked(connIdx)
           }
-          d={getPath(y, laneIdx, laneX, beltConn.direction === "FROM_BUS")}
+          d={getPath(y, laneIdx, laneX - 10, beltConn.direction === "FROM_BUS")}
           fill="none"
-          stroke="#333"
+          //stroke="#333"
+          stroke="url(#gradient-fill)"
           strokeWidth={connectionHeight}
           markerMid="url(#chevron)"
           filter="url(#dropshadowBelow)"
@@ -147,17 +148,37 @@ export function MainBusSegment({
   return (
     <svg className="mainBusSegment">
       <defs>
+        <linearGradient
+          id="gradient-fill"
+          x1="0"
+          y1="0"
+          x2="800"
+          y2="0"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0" stop-color="#333333" />
+
+          <stop offset="0.14285714285714285" stop-color="#313131" />
+
+          <stop offset="0.2857142857142857" stop-color="#2e2e2e" />
+
+          <stop offset="0.42857142857142855" stop-color="#2c2c2c" />
+
+          <stop offset="0.5714285714285714" stop-color="#292929" />
+
+          <stop offset="0.7142857142857142" stop-color="#272727" />
+
+          <stop offset="0.8571428571428571" stop-color="#242424" />
+
+          <stop offset="1" stop-color="#111111" />
+        </linearGradient>
+
         <filter id="blurMe" filterUnits="userSpaceOnUse">
           <feGaussianBlur in="SourceGraphic" stdDeviation="5" />
         </filter>
 
         <filter id="dropshadowBelow" filterUnits="userSpaceOnUse">
-          <feOffset result="offOut" in="SourceAlpha" dx="-5" dy="5" />
-          <feGaussianBlur result="blurOut" in="offOut" stdDeviation="3" />
-          <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
-        </filter>
-        <filter id="dropshadowSide" filterUnits="userSpaceOnUse">
-          <feOffset result="offOut" in="SourceAlpha" dx="2" dy="5" />
+          <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5" />
           <feGaussianBlur result="blurOut" in="offOut" stdDeviation="3" />
           <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
         </filter>

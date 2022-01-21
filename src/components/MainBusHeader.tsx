@@ -77,6 +77,13 @@ export const MainBusHeader = ({
     );
   }
 
+  lanes.push(
+    <div className="add-new" onClick={addLane} title="Add Lane">
+      <span className="material-icons">add_circle_outline</span>
+      {lanes.length === 0 && <div>Add Lane</div>}
+    </div>
+  );
+
   const busLaneClicked = (laneId: number) => {
     GameDispatch({
       type: "RemoveLane",
@@ -86,14 +93,14 @@ export const MainBusHeader = ({
 
   return (
     <div className="main-bus-header">
-      <div onClick={addLane} className="clickable add-lane-button">
-        Add Lane
-      </div>
-      <div style={{ width: 400, height: 100 }}>
+      {/* <div onClick={addLane} className="clickable add-lane-button">
+            Add Lane
+            </div> */}
+      <div className="bus-area">
         <div className="lane-header-counts">{lanes}</div>
         <svg width="400">
           <filter id="dropshadowSide" filterUnits="userSpaceOnUse">
-            <feOffset result="offOut" in="SourceAlpha" dx="2" dy="5" />
+            <feOffset result="offOut" in="SourceAlpha" dx="-5" dy="5" />
             <feGaussianBlur result="blurOut" in="offOut" stdDeviation="3" />
             <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
           </filter>

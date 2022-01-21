@@ -40,6 +40,18 @@ body {
   .main-bus-segment {
     height: 70px;
   }
+  .add-new {
+    width: 35px;
+    height: 50px;
+    margin: 24px 8px 0;
+    font-size: 16px;
+  }
+
+  .bus-area {
+    width: 400;
+    height: 100;
+    border-left: 1px solid #222;
+  }
 }
 
 .lane-header-counts {
@@ -141,6 +153,7 @@ body {
   height: 78vh;
   scrollbar-color: red blue;
   scrollbar-width: thin;
+  position: relative;
 
   &::-webkit-scrollbar {
     width: 10px;

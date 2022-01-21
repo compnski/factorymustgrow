@@ -31,6 +31,7 @@ export function LabCard({ building, buildingIdx }: LabCardProps) {
           onClick={async () => {
             await showResearchSelector(generalDialog);
           }}
+          title="Select Research"
         >
           {title /* TODO Fix name */}
           <span className="material-icons edit-icon">edit</span>
