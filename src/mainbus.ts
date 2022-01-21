@@ -51,4 +51,8 @@ export class MainBus {
   HasLane(id: number): boolean {
     return this.lanes.has(id);
   }
+
+  CanAddLane(): boolean {
+    return this.lanes.size < 10;
+  }
 }

@@ -6,6 +6,7 @@ import { MainBusConst } from "./uiConstants";
 import { showAddLaneItemSelector } from "./selectors";
 import { MainBus } from "../mainbus";
 import { useGeneralDialog } from "../GeneralDialogProvider";
+import { showUserError } from "../utils";
 
 const entityIconDoubleClickHandler = (
   evt: {
@@ -53,7 +54,11 @@ export const MainBusHeader = ({
   const generalDialog = useGeneralDialog();
 
   async function addLane(evt: SyntheticEvent) {
-    showAddLaneItemSelector(generalDialog);
+    if (mainBus.CanAddLane()) {
+      showAddLaneItemSelector(generalDialog);
+    } else {
+      showUserError("Out of lane capacity");
+    }
     evt.stopPropagation();
   }
   const lanes = [];
