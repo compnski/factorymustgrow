@@ -2,15 +2,14 @@
 * In progress
 ** BeltLine
 *** Re-Connect when rebuilding
+*** Only connect directly adjacent regions
 ** UI
-*** Fix Up / Down arrow to move to next empty lane in that direction.
 *** Make Region Selector use GeneralDialog
 **** Make Region selector pretty and use hexes?
 *** Change Bus item by clicking
-*** Make sure you can't remove science progress from the lab
 ** Inserters
-*** Move items between areas
-*** Build more to increase the rate of transfer
+*** Make sure they are properly taken from inventory when building
+*** Maybe auto-build when creating main bus connection
 *** Transfer speed
 **** Show inserters between factories, maybe between factory and mainbus
 **** Each transfer point has defined speed (Items/second)
@@ -50,7 +49,7 @@ Pointers move, like ring buffer
 **** Direct connects two regions
 *** Pipe transport
 Fluids are instantaneous?
-**** Direct connects two regions
+**** Direct connects two adjacent regions
 *** Train transport
 Move large quantities every interval
 **** Connects to rail grid
