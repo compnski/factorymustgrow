@@ -13,7 +13,7 @@ it("Saves a serialized state to local storage", () => {
 
 it("Saves a mainBus to local storage", () => {
   const state = initialFactoryGameState();
-  state.Regions.get(state.CurrentRegionId).Bus.AddLane("copper-ore");
+  state.Regions.get(state.CurrentRegionId)!.Bus.AddLane("copper-ore");
   saveStateToLocalStorage(state);
   expect(loadStateFromLocalStorage({} as FactoryGameState)).toStrictEqual(
     state

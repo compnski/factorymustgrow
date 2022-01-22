@@ -5,7 +5,7 @@ import { EntityStack, NewEntityStack, NewRegion, Region } from "./types";
 var nextTestRegionId = 1;
 var testRegions = new Map<string, Region>();
 function NewTestRegion(ore: EntityStack[] = []): Region {
-  const r = NewRegion(`test-${nextTestRegionId++}`, 0, 0, ore, []);
+  const r = NewRegion(`test-${nextTestRegionId++}`, 0, 0, 0, ore, []);
   testRegions.set(r.Id, r);
   return r;
 }

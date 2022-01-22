@@ -83,7 +83,7 @@ export const MainBusHeader = ({
   }
 
   lanes.push(
-    <div className="add-new" onClick={addLane} title="Add Lane">
+    <div key="add-new" className="add-new" onClick={addLane} title="Add Lane">
       <span className="material-icons">add_circle_outline</span>
       {lanes.length === 0 && <div>Add Lane</div>}
     </div>

@@ -78,9 +78,9 @@ export const BuildingCardList = ({
       allowsDrop = buildingSlot.Building.kind === "Empty" || isLastBuilding;
 
     return (
-      <>
+      <div key={idx}>
         {isFirstBuilding && (
-          <div className="inserter-card wide">
+          <div key="i-top" className="inserter-card wide">
             <div className="inserter-rectangle" />
           </div>
         )}
@@ -105,7 +105,7 @@ export const BuildingCardList = ({
             inserterId={InserterIdForBuilding(idx)}
           />
         )}
-      </>
+      </div>
     );
   });
 

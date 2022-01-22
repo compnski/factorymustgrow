@@ -37,8 +37,8 @@ function NewTestFactory(r: string, count: number = 1): Factory {
   UpdateBuildingRecipe(
     factory,
     r,
-    TestEntityList.get.bind(TestEntityList),
-    TestRecipeBook.get.bind(TestRecipeBook)
+    (e) => TestEntityList.get(e)!,
+    (r) => TestRecipeBook.get(r)!
   );
   return factory;
 }
@@ -48,8 +48,8 @@ function NewTestExtractor(r: string, count: number = 1): Extractor {
   UpdateBuildingRecipe(
     factory,
     r,
-    TestEntityList.get.bind(TestEntityList),
-    TestRecipeBook.get.bind(TestRecipeBook)
+    (e) => TestEntityList.get(e)!,
+    (r) => TestRecipeBook.get(r)!
   );
   return factory;
 }
@@ -169,11 +169,11 @@ describe("PushPullFromMainBus", () => {
 
   it("Moves between Factory and MainBus", () => {
     const mb = new MainBus();
-    mb.getEntity = TestEntityList.get.bind(TestEntityList);
-    mb.AddLane("test-item", 0);
+    mb.getEntity = (e) => TestEntityList.get(e)!;
+    const testItemLane = mb.AddLane("test-item", 0);
     mb.AddLane("test-ore", 5);
     mb.AddLane("test-slow-ore", 10);
-    const factory = NewTestFactory("test-item", 1);
+    const factory = NewTestFactory("test-item", 0);
     const slot = NewBuildingSlot(factory, 3);
 
     AddItemsToFixedBuffer(factory.outputBuffers, 5);
@@ -181,27 +181,28 @@ describe("PushPullFromMainBus", () => {
     slot.BeltConnections = [
       {
         direction: "TO_BUS",
-        laneId: 1,
-        Inserter: NewInserter(1),
+        laneId: testItemLane,
+        Inserter: NewInserter(1, "TO_BUS"),
       },
       {
         direction: "FROM_BUS",
         laneId: 2,
-        Inserter: NewInserter(1),
+        Inserter: NewInserter(1, "FROM_BUS"),
       },
       {
         direction: "FROM_BUS",
         laneId: 3,
-        Inserter: NewInserter(1),
+        Inserter: NewInserter(1, "FROM_BUS"),
       },
     ];
+
     TestMovement(slot, mb, {
       inputBuffers: [
         NewEntityStack("test-ore", 1),
         NewEntityStack("test-slow-ore", 1),
       ],
       busCounts: new Map([
-        [1, 1],
+        [testItemLane, 1],
         [2, 4],
         [3, 9],
       ]),

@@ -376,6 +376,7 @@ function PlaceBuilding(
   AddBuildingOverEmptyOrAtEnd(currentRegion, newBuilding, buildAtIdx);
 
   GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 1);
+  // TODO: Show recipe selector
 }
 
 function PlaceBeltLine(

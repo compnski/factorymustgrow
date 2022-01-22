@@ -41,7 +41,7 @@ function NewTestExtractor(r: string, count: number = 1): Extractor {
 }
 
 function NewTestRegion(ore: EntityStack[]): Region {
-  return NewRegion("start", 0, 0, ore, [], GetTestEntity);
+  return NewRegion("start", 2, 2, 2, ore, [], GetTestEntity);
 }
 
 describe("Factories", () => {

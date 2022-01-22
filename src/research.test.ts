@@ -82,7 +82,9 @@ describe("Labs", () => {
       NewEntityStack("test-research", 150, 150)
     );
 
-    lab.inputBuffers.forEach((input) => FillEntityStack(input, 10));
+    lab.inputBuffers
+      .Entities()
+      .forEach(([entity]) => lab.inputBuffers.Add(NewEntityStack(entity, 10)));
 
     TestLab(lab, researchState, {
       outputBuffers: [NewEntityStack("test-research", 150)],
