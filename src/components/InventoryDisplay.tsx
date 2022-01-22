@@ -29,7 +29,7 @@ function InventorySlot({
   return (
     <div
       className={`inventory-slot ${
-        isOverCapacity && "inventory-slot-over-capacity"
+        (isOverCapacity && "inventory-slot-over-capacity") || ""
       }`}
     >
       <progress
@@ -96,7 +96,7 @@ export function InventoryDisplay({
   }
 
   return (
-    <div className={`inventory-display ${allowHover || "no-hover"}`}>
+    <div className={`inventory-display ${(!allowHover && "no-hover") || ""}`}>
       {slots}
     </div>
   );

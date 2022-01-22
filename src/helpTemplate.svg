@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="1000" height="1000" viewBox="0 0 1000 1000"
+version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
+xmlns="http://www.w3.org/2000/svg">
+	<defs id="defs2">
+	<marker style="overflow:visible;" id="Arrow1Lend" refX="0.0"
+	refY="0.0" orient="auto">
+	<path transform="scale(0.8) rotate(180) translate(12.5,0)"
+	style="fill-rule:evenodd;fill:context-stroke;stroke:context-stroke;stroke-width:1.0pt;"
+	d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z"
+	id="path18113" />
+	</marker>
+	<marker style="overflow:visible" id="Arrow1Lend-5" refX="0"
+	refY="0" orient="auto">
+	<path transform="matrix(-0.8,0,0,-0.8,-10,0)"
+	style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+	d="M 0,0 5,-5 -12.5,0 5,5 Z" id="path18113-6" />
+	</marker>
+	</defs>
+	<!-- Change Recipe -->
+	<g id="change-recipe">
+	<ellipse style="fill:none;stroke:#800000;stroke-width:4;"
+	id="path43" cx="155" cy="20" rx="150" ry="20" />
+	<g id="g13201" transform="translate(20,80)">
+	<rect style="fill:#b3b3b3;" width="250" height="35" />
+	<text y="25"
+	style="font-size:24px;line-height:1.25;font-family:sans-serif;white-space:pre;fill:#800000;stroke:#800000">
+	Click to change recipe</text>
+	<path style="stroke:#800000;stroke-width:2;marker-end:url(#Arrow1Lend)"
+	d="M 100,0 120,-50" />
+	</g>
+	<!-- Add / Remove From Inventory -->
+	<g id="add-remove-inventory" transform="translate(20,140)">
+	<rect style="fill:#b3b3b3;" width="340" height="35" />
+	<text y="25"
+	style="font-size:24px;line-height:1.25;font-family:sans-serif;white-space:pre;fill:#800000;stroke:#800000">
+	Add / Remove From Inventory</text>
+	<path style="stroke:#800000;stroke-width:2;marker-end:url(#Arrow1Lend)"
+	d="M 250,0 335,-50" />
+	<path style="stroke:#800000;stroke-width:2;marker-end:url(#Arrow1Lend)"
+	d="M 250,0 335,-25" />
+	</g>
+	<!-- Add / Remove Building -->
+	<g id="add-remove-building" transform="translate(50,255)">
+	<rect style="fill:#b3b3b3;" width="275" height="35" />
+	<text y="25"
+	style="font-size:24px;line-height:1.25;font-family:sans-serif;white-space:pre;fill:#800000;stroke:#800000">
+	Add / Remove Buildings</text>
+	<path style="stroke:#800000;stroke-width:2;marker-end:url(#Arrow1Lend)"
+	d="M 100,0 60,-50" />
+	<path style="stroke:#800000;stroke-width:2;marker-end:url(#Arrow1Lend)"
+	d="M 100,0 110,-50" />
+	</g>
+	<!-- Add / Remove Bus -->
+	<g id="add-remove-building" transform="translate(20,400)">
+	<rect style="fill:#b3b3b3;" width="470" height="35" />
+	<text y="25"
+	style="font-size:24px;line-height:1.25;font-family:sans-serif;white-space:pre;fill:#800000;stroke:#800000">
+	Double Click to Connect / Disconnect Bus</text>
+	<path style="stroke:#800000;stroke-width:2;marker-end:url(#Arrow1Lend)"
+	d="M 470,25 600,-5" />
+	<path style="stroke:#800000;stroke-width:2;marker-end:url(#Arrow1Lend)"
+	d="M 470,25 600,50" />
+	</g>
+	<!-- Empty Slot -->
+	<g id="add-remove-building" transform="translate(50,500)">
+	<rect style="fill:#b3b3b3;" width="220" height="35" />
+	<text y="25"
+	style="font-size:24px;line-height:1.25;font-family:sans-serif;white-space:pre;fill:#800000;stroke:#800000">
+	Clear Building Slot</text>
+	<path style="stroke:#800000;stroke-width:2;marker-end:url(#Arrow1Lend)"
+	d="M 10,15 -30,20" />
+	</g>
+	</g>
+</svg>

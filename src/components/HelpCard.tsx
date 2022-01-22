@@ -2,14 +2,17 @@ import { SyntheticEvent } from "react";
 import { AddBuildingOverEmptyOrAtEnd, NewBuilding } from "../GameDispatch";
 import { Extractor, Factory, UpdateBuildingRecipe } from "../production";
 import { GetRegionInfo } from "../region";
-import { NewEntityStack, NewRegionFromInfo } from "../types";
+import { NewEntityStack, NewRegionFromInfo, Region } from "../types";
 import { BuildingCardList } from "./BuildingCardList";
+import { ReactComponent as HelpOverlay } from "../helpTemplate.svg";
+
 import "./HelpCard.scss";
 
 export type HelpCardProps = {
   onConfirm: (evt: SyntheticEvent, recipe: string) => void;
 };
-export const HelpCard = function HelpCard({}: HelpCardProps) {
+
+function buildHelpRegion(): Region {
   const regionInfo = GetRegionInfo("HelpRegion")!,
     helpRegion = NewRegionFromInfo(regionInfo),
     miner = NewBuilding("burner-mining-drill") as Extractor,
@@ -30,6 +33,11 @@ export const HelpCard = function HelpCard({}: HelpCardProps) {
     smelterSlot = AddBuildingOverEmptyOrAtEnd(helpRegion, smelter, 1),
     assemblerSlot = AddBuildingOverEmptyOrAtEnd(helpRegion, assembler, 2),
     assemblerSlot2 = AddBuildingOverEmptyOrAtEnd(helpRegion, assembler2, 3);
+
+  [minerSlot, smelterSlot, assemblerSlot].forEach((s) => {
+    s.Inserter.direction = "DOWN";
+    s.Inserter.BuildingCount = 1;
+  });
 
   const plateLaneId = helpRegion.Bus.AddLane("iron-plate", 10);
   var bc = smelterSlot.BeltConnections[0];
@@ -52,14 +60,35 @@ export const HelpCard = function HelpCard({}: HelpCardProps) {
   bc.Inserter.BuildingCount = 1;
   bc.laneId = beltLaneId;
 
+  return helpRegion;
+}
+
+const helpRegion = buildHelpRegion();
+
+export const HelpCard = function HelpCard({ onConfirm }: HelpCardProps) {
   return (
     <div className="modal help-card">
-      <div>
-        <BuildingCardList
-          mainBus={helpRegion.Bus}
-          region={helpRegion}
-          regionalOre={helpRegion.Ore}
-        />
+      <div className="inner-frame">
+        <span
+          className="material-icons close-icon clickable"
+          onClick={(evt) => onConfirm(evt, "")}
+        >
+          close
+        </span>
+        <div className="help-text">
+          <div>Goal: Launch a rocket!</div>
+          <div style={{ fontSize: 16 }}>
+            Research technologies to expand what your factory can produce.
+          </div>
+        </div>
+        <div className="inner-content">
+          <BuildingCardList
+            mainBus={helpRegion.Bus}
+            region={helpRegion}
+            regionalOre={helpRegion.Ore}
+          />
+          <HelpOverlay />
+        </div>
       </div>
     </div>
   );

@@ -2,12 +2,38 @@
   z-index: 10;
   width: 100%;
 
-  > div {
+  .inner-frame {
     padding: 10px;
     height: 800px;
     width: 1000px;
     background: #222;
-    transform: scale(0.8);
     pointer-events: none;
+    border: 1px solid #ccc;
+  }
+  .help-text {
+    font-size: 24px;
+    color: #ccc;
+  }
+  .inner-content {
+    margin: 12px;
+    > * {
+      position: absolute;
+      z-index: 10;
+      width: 1000px;
+      height: 1000px;
+    }
+  }
+  .close-icon {
+    color: #ccc;
+    border-color: #ccc;
+    pointer-events: all;
+  }
+  // Only extractor in help card
+  .kind-Extractor .inventory-display:first-child .inventory-hover-tip {
+    visibility: visible;
+  }
+
+  .kind-Extractor .title .edit-icon {
+    visibility: visible;
   }
 }
