@@ -2,14 +2,33 @@ import { GameDispatch } from "./GameDispatch";
 import { GameState } from "./useGameState";
 import { GameWindow } from "./globals";
 import { NextEmptySlot } from "./building";
+import { AvailableResearchList } from "./availableResearch";
+import { NewEntityStack } from "./types";
 
-export type MacroName = "redsci";
+export type MacroName = "redsci" | "allresearch";
 
 export function Macro(name: MacroName): any {
   switch (name) {
+    case "allresearch":
+      return doAllResearch();
+
     case "redsci":
       return buildRedSci();
   }
+}
+
+function doAllResearch() {
+  AvailableResearchList.forEach((r) => {
+    if (r)
+      GameState.Research.Progress.set(
+        r.Id,
+        NewEntityStack(
+          r.Id,
+          r.ProductionRequiredForCompletion,
+          r.ProductionRequiredForCompletion
+        )
+      );
+  });
 }
 
 function buildRedSci() {
