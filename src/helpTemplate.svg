@@ -64,6 +64,15 @@ xmlns="http://www.w3.org/2000/svg">
 	d="M 470,25 600,50" />
 	</g>
 	<!-- Empty Slot -->
+	<g id="add-remove-building" transform="translate(50,450)">
+	<rect style="fill:#b3b3b3;" width="340" height="35" />
+	<text y="25"
+	style="font-size:24px;line-height:1.25;font-family:sans-serif;white-space:pre;fill:#800000;stroke:#800000">
+	Drag to move over empty lane</text>
+	<path style="stroke:#800000;stroke-width:2;marker-end:url(#Arrow1Lend)"
+	d="M 10,15 -30,20" />
+	</g>
+	<!-- Empty Slot -->
 	<g id="add-remove-building" transform="translate(50,500)">
 	<rect style="fill:#b3b3b3;" width="220" height="35" />
 	<text y="25"

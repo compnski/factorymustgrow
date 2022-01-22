@@ -7,6 +7,7 @@ import { Building, BuildingSlot, InserterIdForBuilding } from "../building";
 import { MainBus } from "../mainbus";
 import { InserterCard } from "./InserterCard";
 import { Inserter } from "../inserter";
+import { showUserError } from "../utils";
 
 export const BuildingCardList = ({
   region,
@@ -39,6 +40,38 @@ export const BuildingCardList = ({
       //e.stopPropagation();
     };
 
+  const moveUp = (buildingIdx: number) => {
+    for (var i = buildingIdx; i >= 0; i--) {
+      if (region.BuildingSlots[i].Building.kind === "Empty") {
+        GameDispatch({
+          type: "ReorderBuildings",
+          buildingIdx: buildingIdx,
+          dropBuildingIdx: i,
+          isDropOnLastBuilding: false,
+        });
+        return;
+      }
+    }
+    showUserError("No empty slot found");
+    return;
+  };
+
+  const moveDown = (buildingIdx: number) => {
+    for (var i = buildingIdx; i < region.BuildingSlots.length; i++) {
+      if (region.BuildingSlots[i].Building.kind === "Empty") {
+        GameDispatch({
+          type: "ReorderBuildings",
+          buildingIdx: buildingIdx,
+          dropBuildingIdx: i,
+          isDropOnLastBuilding: false,
+        });
+        return;
+      }
+    }
+    showUserError("No empty slot found");
+    return;
+  };
+
   const cards = region.BuildingSlots.map((buildingSlot, idx) => {
     const isFirstBuilding = idx === 0,
       isLastBuilding = idx === region.BuildingSlots.length - 1,
@@ -61,6 +94,8 @@ export const BuildingCardList = ({
           regionalOre={regionalOre}
           handleDrag={handleDrag(idx)}
           handleDrop={allowsDrop ? handleDrop(idx, isLastBuilding) : undefined}
+          moveUp={() => moveUp(idx)}
+          moveDown={() => moveDown(idx)}
         />
         {!isLastBuilding && (
           <InserterCard

@@ -32,6 +32,8 @@ export type BuildingCardProps = {
   regionalOre: ItemBuffer;
   handleDrag: (evt: SyntheticEvent) => void;
   handleDrop: undefined | ((evt: SyntheticEvent) => void);
+  moveUp: (evt: SyntheticEvent) => void;
+  moveDown: (evt: SyntheticEvent) => void;
 };
 
 export const BuildingCard = ({
@@ -43,14 +45,11 @@ export const BuildingCard = ({
   regionalOre,
   handleDrag,
   handleDrop,
+  moveUp,
+  moveDown,
 }: BuildingCardProps) => {
   // TOOD: Change to use Events
   const busLaneClicked = (laneId: number, entity: string) => {
-    /* if (
-     *   buildingSlot.BeltConnections.filter((v) => v.laneId === laneId).length > 0
-     * )
-     *   return; */
-
     if (BuildingHasOutput(building, entity)) {
       GameDispatch({
         type: "AddMainBusConnection",
@@ -86,24 +85,6 @@ export const BuildingCard = ({
     //console.log("drag over");
     e.preventDefault();
     e.stopPropagation();
-  };
-
-  const moveUp = () => {
-    return;
-    /* GameDispatch({
-     *   type: "ReorderBuildings",
-     *   buildingIdx: buildingIdx,
-     *   dropBuildingIdx: buildingIdx - 1,
-     * }); */
-  };
-
-  const moveDown = () => {
-    return;
-    /* GameDispatch({
-     *   type: "ReorderBuildings",
-     *   buildingIdx: buildingIdx,
-     *   dropBuildingIdx: buildingIdx + 1,
-     * }); */
   };
 
   const removeBuilding = () => {
@@ -162,7 +143,7 @@ export const BuildingCard = ({
         <span onClick={moveDown} className="material-icons arrow">
           arrow_downward
         </span>
-        <span onDoubleClick={removeBuilding} className="material-icons arrow">
+        <span onDoubleClick={removeBuilding} className="material-icons">
           close
         </span>
       </div>
