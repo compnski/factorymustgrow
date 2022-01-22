@@ -15,6 +15,9 @@
 **** Each transfer point has defined speed (Items/second)
 **** Can upgrade or build more transferers to incresae rate
 **** Needs UX to show rate and to allow upgrading
+** Rocket Silo
+*** Custom UI
+*** Launch rocket on 100 parts
 * Next Ideas
 ** EntityId
 *** Store 'nextId' in GameState
