@@ -1,5 +1,6 @@
 import { GameDispatch } from "../GameDispatch";
 import { ItemBuffer, NewEntityStack } from "../types";
+import { showPlaceBeltLineSelector } from "./selectors";
 
 export function getEntityIconDoubleClickHandler(buildingIdx: number) {
   return (
@@ -37,3 +38,30 @@ export function getEntityIconDoubleClickHandler(buildingIdx: number) {
     }
   };
 }
+
+// const inventoryDoubleClickHandler = function inventoryDoubleClickHandler(
+//   evt: { shiftKey: boolean },
+//   itemBuffer: ItemBuffer,
+//   entity: string
+// ) {
+//   if (evt.shiftKey) {
+//     GameDispatch({
+//       type: "TransferFromInventory",
+//       entity,
+//       otherStackKind: "Void",
+//     });
+//   } else {
+//     // Place Item
+//     if (entity === "transport-belt")
+//       showPlaceBeltLineSelector(
+//         generalDialog,
+//         gameState.Inventory,
+//         gameState.Regions
+//       );
+//     else if (IsBuilding(entity))
+//       GameDispatch({
+//         type: "PlaceBuilding",
+//         entity,
+//       });
+//   }
+// };

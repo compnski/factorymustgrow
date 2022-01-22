@@ -20,37 +20,8 @@ type FactoryGameProps = {
 export const FactoryGame = ({ gameState }: FactoryGameProps) => {
   try {
     const generalDialog = useGeneralDialog();
-
     const regionIds = [...gameState.Regions.keys()];
-
     const currentRegion = gameState.Regions.get(gameState.CurrentRegionId)!;
-
-    const inventoryDoubleClickHandler = function inventoryDoubleClickHandler(
-      evt: { shiftKey: boolean },
-      itemBuffer: ItemBuffer,
-      entity: string
-    ) {
-      if (evt.shiftKey) {
-        GameDispatch({
-          type: "TransferFromInventory",
-          entity,
-          otherStackKind: "Void",
-        });
-      } else {
-        // Place Item
-        if (entity === "transport-belt")
-          showPlaceBeltLineSelector(
-            generalDialog,
-            gameState.Inventory,
-            gameState.Regions
-          );
-        else if (IsBuilding(entity))
-          GameDispatch({
-            type: "PlaceBuilding",
-            entity,
-          });
-      }
-    };
 
     const showHelp = () => {
       showHelpCard(generalDialog);
