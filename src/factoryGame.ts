@@ -18,10 +18,7 @@ import { GameDispatch } from "./GameDispatch";
 import { Building, BuildingSlot } from "./building";
 import { Inserter, InserterTransferRate, MoveViaInserter } from "./inserter";
 
-export const UpdateGameState = (
-  tick: number,
-  uiDispatch: (a: UIAction) => void
-) => {
+export const UpdateGameState = (tick: number) => {
   try {
     //const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
     for (var [, currentBeltLine] of GameState.BeltLines) {
@@ -34,7 +31,6 @@ export const UpdateGameState = (
     if (IsResearchComplete(GameState.Research)) {
       console.log("Research Complete!");
       GameDispatch({ type: "CompleteResearch" });
-      uiDispatch({ type: "ShowResearchSelector" });
     }
   } catch (e) {
     //TODO Show error dialog

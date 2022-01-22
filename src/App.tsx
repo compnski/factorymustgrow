@@ -16,14 +16,11 @@ import { GeneralDialogProvider } from "./GeneralDialogProvider";
 
 function App() {
   const [gameState, setGameState] = useGameState();
-  const [uiState, uiDispatch] = useUIState();
-
-  (window as unknown as GameWindow).uiDispatch = uiDispatch;
 
   useInterval(() => {
     // Your custom logic here
     const tick = new Date().getTime();
-    UpdateGameState(tick, uiDispatch);
+    UpdateGameState(tick);
     saveStateToLocalStorage(GameState);
   }, 1000 / TicksPerSecond);
 
@@ -31,37 +28,15 @@ function App() {
     setGameState({ ...GameState });
   }, 32);
 
-  const exploreGameEndCallback = () => {
-    console.log("Game Ended");
-    uiDispatch({ type: "CloseExploreGame" });
-  };
-
-  const exploreGame = uiState.exploreGameOpen ? (
-    <ExploreGame
-      resources={[
-        { kind: "space", count: 150 },
-        { kind: "copper-ore", count: 100_000 },
-      ]}
-      inventory={[{ kind: "turret", count: 20 }]}
-      gameEndCallback={exploreGameEndCallback}
-    />
-  ) : null;
-
   return (
     <GeneralDialogProvider>
       <div
         className="App"
         onClick={(evt) => {
           if ((evt.target as Element).classList.contains("clickable")) return;
-          uiDispatch({ type: "CloseDialog", evt });
         }}
       >
-        {exploreGame}
-        <FactoryGame
-          gameState={gameState}
-          uiState={uiState}
-          uiDispatch={uiDispatch}
-        />
+        <FactoryGame gameState={gameState} />
       </div>
     </GeneralDialogProvider>
   );

@@ -1,19 +1,14 @@
 import { GameAction } from "../GameAction";
-import { UIAction } from "../uiState";
 import { ButtonPanel } from "./ButtonPanel";
 import { showMoveItemToFromInventorySelector } from "./selectors";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { useState } from "react";
 
 export type DebugButtonPanelProps = {
-  uiDispatch(e: UIAction): void;
   gameDispatch(e: GameAction): void;
 };
 
-export function DebugButtonPanel({
-  uiDispatch,
-  gameDispatch,
-}: DebugButtonPanelProps) {
+export function DebugButtonPanel({ gameDispatch }: DebugButtonPanelProps) {
   const generalDialog = useGeneralDialog(),
     autoOpenDebug = window.location.hash.includes("debug"),
     [isOpen, setOpen] = useState<boolean>(autoOpenDebug),
@@ -23,7 +18,6 @@ export function DebugButtonPanel({
           gameDispatch({
             type: "CompleteResearch",
           });
-          uiDispatch({ type: "ShowResearchSelector" });
         },
 
         title: "Complete Research (DEBUG)",

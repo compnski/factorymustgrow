@@ -78,7 +78,8 @@ export const HelpCard = function HelpCard({ onConfirm }: HelpCardProps) {
         <div className="help-text">
           <div>Goal: Launch a rocket!</div>
           <div style={{ fontSize: 16 }}>
-            Research technologies to expand what your factory can produce.
+            Build a lab to research technologies and expand what your factory
+            can produce.
           </div>
         </div>
         <div className="inner-content">

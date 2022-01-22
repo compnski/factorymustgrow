@@ -15,15 +15,9 @@ import { showHelpCard, showPlaceBeltLineSelector } from "./selectors";
 
 type FactoryGameProps = {
   gameState: FactoryGameState;
-  uiState: UIState;
-  uiDispatch: (a: UIAction) => void;
 };
 
-export const FactoryGame = ({
-  gameState,
-  uiState,
-  uiDispatch,
-}: FactoryGameProps) => {
+export const FactoryGame = ({ gameState }: FactoryGameProps) => {
   try {
     const generalDialog = useGeneralDialog();
 
@@ -77,7 +71,6 @@ export const FactoryGame = ({
         </div>
         <div style={{ display: "flex" }}>
           <InfoHeader
-            uiDispatch={uiDispatch}
             currentRegion={currentRegion}
             researchState={gameState.Research}
           />
@@ -94,7 +87,7 @@ export const FactoryGame = ({
           />
         </div>
         <InventoryDisplay inventory={gameState.Inventory} />
-        <DebugButtonPanel gameDispatch={GameDispatch} uiDispatch={uiDispatch} />
+        <DebugButtonPanel gameDispatch={GameDispatch} />
       </div>
     );
   } catch (e: unknown) {

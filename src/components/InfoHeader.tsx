@@ -1,6 +1,5 @@
 import { ResearchState } from "../useGameState";
 import { Region } from "../types";
-import { UIAction } from "../uiState";
 import { entityIconLookupByKind } from "../utils";
 import { RemainingRegionBuildingCapacity } from "../region";
 import { useGeneralDialog } from "../GeneralDialogProvider";
@@ -10,13 +9,11 @@ import { GetEntity } from "../gen/entities";
 export type InfoHeaderProps = {
   currentRegion: Region;
   researchState: ResearchState;
-  uiDispatch(a: UIAction): void;
 };
 
 export const InfoHeader = ({
   currentRegion,
   researchState,
-  uiDispatch,
 }: InfoHeaderProps) => {
   const oreInfo = currentRegion.Ore;
   const infoCards = oreInfo.Entities().map(([Entity, Count]) => (
