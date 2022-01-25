@@ -1,5 +1,10 @@
 #+TITLE: Todo
 * In progress
+** Fix factories producing partial goods
+Consume resources to start production
+For each set of consumed resources, add a 'tick counter' that counts up. When it reaches ticks to build, output resources
+On destruction, refund input cost * outstanding tick counters
+*** TODO figure out progress bar
 ** BeltLine
 *** Re-Connect when rebuilding
 *** Only connect directly adjacent regions

@@ -6,17 +6,16 @@ import {
 } from "./production";
 import { Region } from "./types";
 import { GetRecipe } from "./gen/entities";
-import { CanPushTo, PushToOtherProducer } from "./movement";
+import { CanPushTo } from "./movement";
 import { PushPullFromMainBus } from "./MainBusMovement";
 import { IsResearchComplete, Lab, ResearchInLab } from "./research";
 import { GetResearch } from "./gen/research";
-import { UIAction } from "./uiState";
 import { GameState } from "./useGameState";
 import { UpdateBeltLine } from "./transport";
 import { MainBus } from "./mainbus";
 import { GameDispatch } from "./GameDispatch";
-import { Building, BuildingSlot } from "./building";
-import { Inserter, InserterTransferRate, MoveViaInserter } from "./inserter";
+import { BuildingSlot } from "./building";
+import { MoveViaInserter } from "./inserter";
 
 export const UpdateGameState = (tick: number) => {
   try {
