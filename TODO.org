@@ -1,9 +1,6 @@
 #+TITLE: Todo
 * In progress
 ** Fix factories producing partial goods
-Consume resources to start production
-For each set of consumed resources, add a 'tick counter' that counts up. When it reaches ticks to build, output resources
-On destruction, refund input cost * outstanding tick counters
 *** TODO figure out progress bar
 ** BeltLine
 *** Re-Connect when rebuilding
@@ -20,9 +17,6 @@ On destruction, refund input cost * outstanding tick counters
 **** Each transfer point has defined speed (Items/second)
 **** Can upgrade or build more transferers to incresae rate
 **** Needs UX to show rate and to allow upgrading
-** Rocket Silo
-*** Custom UI
-*** Launch rocket on 100 parts
 * Next Ideas
 ** EntityId
 *** Store 'nextId' in GameState

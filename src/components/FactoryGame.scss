@@ -159,8 +159,8 @@ body {
   overflow-x: hidden;
   width: $appWidth;
   height: 78vh;
-  scrollbar-color: red blue;
-  scrollbar-width: thin;
+  scrollbar-color: darkgrey slategrey;
+
   position: relative;
 
   &::-webkit-scrollbar {
