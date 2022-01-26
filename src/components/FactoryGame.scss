@@ -223,3 +223,41 @@ body {
     display: inline-block;
   }
 }
+
+@keyframes myship {
+  from {
+    top: 100vh;
+  }
+  to {
+    top: -1000px;
+  }
+}
+@-moz-keyframes myship {
+  from {
+    top: 100vh;
+  }
+  to {
+    top: -1000px;
+  }
+}
+@-webkit-keyframes myship {
+  from {
+    top: 100vh;
+  }
+  to {
+    top: -1000px;
+  }
+}
+
+.rocket-ship {
+  position: absolute;
+  z-index: 100;
+  left: 20vw;
+  top: 100vh;
+  visibility: hidden;
+  &.animate {
+    visibility: visible;
+    animation: myship 10s;
+    animation-timing-function: ease-in;
+  }
+}

@@ -31,6 +31,7 @@ function InventorySlot({
       className={`inventory-slot ${
         (isOverCapacity && "inventory-slot-over-capacity") || ""
       }`}
+      title={entity}
     >
       <progress
         max={1}

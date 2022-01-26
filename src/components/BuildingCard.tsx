@@ -22,6 +22,7 @@ import { LabCard } from "./LabCard";
 import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
 import { InserterCard } from "./InserterCard";
 import { NewInserter } from "../inserter";
+import { RocketSiloCard } from "./RocketSiloCard";
 
 export type BuildingCardProps = {
   building: Building;
@@ -103,6 +104,8 @@ export const BuildingCard = ({
       <EmptyLaneCard buildingIdx={buildingIdx} />
     ) : building.kind === "Lab" ? (
       <LabCard building={building} buildingIdx={buildingIdx} />
+    ) : building.subkind === "rocket-silo" ? (
+      <RocketSiloCard building={building} buildingIdx={buildingIdx} />
     ) : (
       <ProducerCard
         producer={building as Producer}

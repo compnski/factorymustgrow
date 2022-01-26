@@ -4,7 +4,7 @@ import {
   ProduceFromExtractor,
   ProduceFromFactory,
 } from "./production";
-import { Region } from "./types";
+import { NewEntityStack, Region } from "./types";
 import { GetRecipe } from "./gen/entities";
 import { CanPushTo } from "./movement";
 import { PushPullFromMainBus } from "./MainBusMovement";
@@ -39,6 +39,13 @@ export const UpdateGameState = (tick: number) => {
 };
 
 function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
+  // Reset rocket 10s after launch
+  if (
+    GameState.RocketLaunchingAt > 0 &&
+    tick - GameState.RocketLaunchingAt > 10000
+  ) {
+    GameState.RocketLaunchingAt = 0;
+  }
   fixOutputStatus(currentRegion);
   fixBeltConnections(currentRegion.BuildingSlots, currentRegion.Bus);
   currentRegion.BuildingSlots.forEach((slot, idx) => {

@@ -13,6 +13,8 @@ import { IsBuilding } from "../production";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { showHelpCard, showPlaceBeltLineSelector } from "./selectors";
 
+import { ReactComponent as RocketShip } from "../rocket-launch.svg";
+
 type FactoryGameProps = {
   gameState: FactoryGameState;
 };
@@ -26,9 +28,13 @@ export const FactoryGame = ({ gameState }: FactoryGameProps) => {
     const showHelp = () => {
       showHelpCard(generalDialog);
     };
+    const isRocketLaunching = gameState.RocketLaunchingAt > 0;
 
     return (
       <div className="factory-game">
+        <RocketShip
+          className={`rocket-ship ${(isRocketLaunching && "animate") || ""}`}
+        />
         <div className="top-bar">
           <RegionTabBar
             currentRegionId={gameState.CurrentRegionId}

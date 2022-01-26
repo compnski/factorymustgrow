@@ -10,7 +10,8 @@ export type GameAction =
   | AddBuildingAction
   | DragBuildingAction
   | ChangeRecipeAction
-  | InserterAction;
+  | InserterAction
+  | LaunchRocketAction;
 
 type AddBuildingAction = {
   type: "AddBuilding";
@@ -75,6 +76,11 @@ type BuildingAction =
       buildingIdx: number;
       connectionIdx: number;
     };
+
+type LaunchRocketAction = {
+  type: "LaunchRocket";
+  buildingIdx: number;
+};
 
 type InserterAction = {
   type:

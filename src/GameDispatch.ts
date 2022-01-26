@@ -17,7 +17,7 @@ import { GetEntity } from "./gen/entities";
 import { CanPushTo } from "./movement";
 import { NewLab } from "./research";
 import { GetResearch } from "./gen/research";
-import { BuildingHasInput, BuildingHasOutput } from "./utils";
+import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
 import { GameWindow } from "./globals";
 import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
 import {
@@ -359,6 +359,23 @@ export const GameDispatch = (action: GameAction) => {
         GameState.CurrentRegionId = action.regionId;
       }
       break;
+
+    case "LaunchRocket":
+      const b = building(action); // as Producer;
+      if (!b) break;
+      // If RocketSilo, then check for launch
+      if (b.subkind === "rocket-silo") {
+        if (b.outputBuffers.Count("rocket-part") === 100) {
+          // TODO: Better launch update
+          // TODO: Use actual tick for launching?
+          GameState.RocketLaunchingAt = new Date().getTime();
+          showUserError("Congratulations!");
+          b.outputBuffers.Remove(
+            NewEntityStack("rocket-part", 0, Infinity),
+            100
+          );
+        }
+      }
   }
 };
 
@@ -384,6 +401,10 @@ function PlaceBuilding(
 
   GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 1);
   // TODO: Show recipe selector
+  // TODO: Finish default building recipes
+  if (action.entity === "rocket-silo") {
+    UpdateBuildingRecipe(newBuilding as Factory, "rocket-part");
+  }
 }
 
 function PlaceBeltLine(

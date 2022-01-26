@@ -12,7 +12,7 @@ import { GetRegionInfo } from "./region";
 import { BeltLine } from "./transport";
 import { GameWindow } from "./globals";
 
-export const CurrentGameStateVersion = "0.1.4";
+export const CurrentGameStateVersion = "0.1.6";
 
 export const useGameState = () => useState<FactoryGameState>(GameState);
 
@@ -22,6 +22,7 @@ export type ResearchState = {
 };
 
 export type FactoryGameState = {
+  RocketLaunchingAt: number;
   CurrentRegionId: string;
   Research: ResearchState;
   Inventory: Inventory;
@@ -33,6 +34,7 @@ const initialInventorySize = 8;
 const startingResearch = ["start", "automation"];
 
 export const initialFactoryGameState = () => ({
+  RocketLaunchingAt: 0,
   Research: {
     Progress: new Map(
       startingResearch.map((research) => [
