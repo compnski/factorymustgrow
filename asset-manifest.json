@@ -1,19 +1,27 @@
 {
   "files": {
-    "main.css": "/factorymustgrow/static/css/main.c9170555.css",
-    "main.js": "/factorymustgrow/static/js/main.21196294.js",
-    "static/js/787.aa33acf2.chunk.js": "/factorymustgrow/static/js/787.aa33acf2.chunk.js",
-    "static/media/icons.png": "/factorymustgrow/static/media/icons.e7652a31dd05ace9d1aa.png",
-    "static/media/technology.png": "/factorymustgrow/static/media/technology.7056d4fd9d538cb31ddd.png",
-    "static/media/helpTemplate.svg": "/factorymustgrow/static/media/helpTemplate.e630f11eb05c954d74b663b68630d184.svg",
-    "static/media/regionmap.svg": "/factorymustgrow/static/media/regionmap.fda40266ac0ae351c8a2fba8b4c0ce53.svg",
+    "main.css": "/factorymustgrow/static/css/main.f4804680.chunk.css",
+    "main.js": "/factorymustgrow/static/js/main.c61df10c.chunk.js",
+    "main.js.map": "/factorymustgrow/static/js/main.c61df10c.chunk.js.map",
+    "runtime-main.js": "/factorymustgrow/static/js/runtime-main.bb327184.js",
+    "runtime-main.js.map": "/factorymustgrow/static/js/runtime-main.bb327184.js.map",
+    "static/js/2.efe99e1e.chunk.js": "/factorymustgrow/static/js/2.efe99e1e.chunk.js",
+    "static/js/2.efe99e1e.chunk.js.map": "/factorymustgrow/static/js/2.efe99e1e.chunk.js.map",
+    "static/js/3.0c789117.chunk.js": "/factorymustgrow/static/js/3.0c789117.chunk.js",
+    "static/js/3.0c789117.chunk.js.map": "/factorymustgrow/static/js/3.0c789117.chunk.js.map",
     "index.html": "/factorymustgrow/index.html",
-    "main.c9170555.css.map": "/factorymustgrow/static/css/main.c9170555.css.map",
-    "main.21196294.js.map": "/factorymustgrow/static/js/main.21196294.js.map",
-    "787.aa33acf2.chunk.js.map": "/factorymustgrow/static/js/787.aa33acf2.chunk.js.map"
+    "static/css/main.f4804680.chunk.css.map": "/factorymustgrow/static/css/main.f4804680.chunk.css.map",
+    "static/js/2.efe99e1e.chunk.js.LICENSE.txt": "/factorymustgrow/static/js/2.efe99e1e.chunk.js.LICENSE.txt",
+    "static/media/helpTemplate.e630f11e.svg": "/factorymustgrow/static/media/helpTemplate.e630f11e.svg",
+    "static/media/App.scss": "/factorymustgrow/static/media/icons.e7652a31.png",
+    "static/media/regionmap.fda40266.svg": "/factorymustgrow/static/media/regionmap.fda40266.svg",
+    "static/media/rocket-launch.cc924228.svg": "/factorymustgrow/static/media/rocket-launch.cc924228.svg",
+    "static/media/technology.css": "/factorymustgrow/static/media/technology.7056d4fd.png"
   },
   "entrypoints": [
-    "static/css/main.c9170555.css",
-    "static/js/main.21196294.js"
+    "static/js/runtime-main.bb327184.js",
+    "static/js/2.efe99e1e.chunk.js",
+    "static/css/main.f4804680.chunk.css",
+    "static/js/main.c61df10c.chunk.js"
   ]
 }
