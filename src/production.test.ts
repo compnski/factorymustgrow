@@ -1,10 +1,13 @@
 import {
+  AddProgressTracker,
   Extractor,
   Factory,
   NewExtractor,
   NewFactory,
   ProduceFromExtractor,
   ProduceFromFactory,
+  RemoveProgressTracker,
+  TickProgressTracker,
   UpdateBuildingRecipe,
 } from "./production";
 import {
@@ -44,6 +47,76 @@ function NewTestRegion(ore: EntityStack[]): Region {
   return NewRegion("start", 2, 2, 2, ore, [], GetTestEntity);
 }
 
+describe("Progress Trackers", () => {
+  function tracker(
+    count: number = 1,
+    trackers: number[] = []
+  ): {
+    progressTrackers: number[];
+    BuildingCount: number;
+  } {
+    return { progressTrackers: trackers, BuildingCount: count };
+  }
+
+  describe("Adding", () => {
+    it("Adds a first tracker", () => {
+      const t = tracker(1, []);
+      expect(AddProgressTracker(t, 5)).toBe(1);
+      expect(t.progressTrackers.length).toBe(1);
+      expect(t.progressTrackers[0]).toBe(5);
+    });
+
+    it("Adds an additional tracker", () => {
+      const t = tracker(2, [1]);
+      expect(AddProgressTracker(t, 2)).toBe(1);
+      expect(t.progressTrackers.length).toBe(2);
+      expect(t.progressTrackers[0]).toBe(1);
+      expect(t.progressTrackers[1]).toBe(2);
+    });
+
+    it("Won't add trackers past the BuildingCount", () => {
+      const t = tracker(2, [1, 2]);
+      expect(t.progressTrackers.length).toBe(2);
+      expect(AddProgressTracker(t, 3)).toBe(0);
+      expect(t.progressTrackers.length).toBe(2);
+    });
+  });
+
+  describe("Removing", () => {
+    it("Try removing an empty tracker", () => {
+      const t = tracker(2, []);
+      expect(RemoveProgressTracker(t)).toBe(0);
+    });
+
+    it("Removes only tracker", () => {
+      const t = tracker(2, [1]);
+      expect(RemoveProgressTracker(t)).toBe(1);
+      expect(t.progressTrackers.length).toBe(0);
+    });
+
+    it("Removes last tracker", () => {
+      const t = tracker(3, [1, 2, 3]);
+      expect(RemoveProgressTracker(t)).toBe(1);
+      expect(t.progressTrackers.length).toBe(2);
+      expect(t.progressTrackers[1]).toBe(2);
+    });
+  });
+
+  describe("Ticks", () => {
+    it("Does nothing when there are no expiring trackers", () => {
+      const t = tracker(3, [1, 2, 3]);
+      expect(TickProgressTracker(t, 5, 5)).toBe(0);
+      expect(t.progressTrackers.length).toBe(3);
+    });
+
+    it("Returns a count of expiring trackers and removes them", () => {
+      const t = tracker(3, [1, 2, 3]);
+      expect(TickProgressTracker(t, 7, 5)).toBe(2);
+      expect(t.progressTrackers.length).toBe(1);
+      expect(t.progressTrackers[0]).toBe(3);
+    });
+  });
+});
 describe("Factories", () => {
   function TestFactory(
     factory: Factory,
@@ -52,9 +125,13 @@ describe("Factories", () => {
       inputBuffers: EntityStack[];
     }
   ) {
-    for (var i = 0; i < TicksPerSecond; i++) {
-      ProduceFromFactory(factory, TestRecipeBook.get.bind(TestRecipeBook));
-    }
+    [0, 1000].forEach((tick) => {
+      ProduceFromFactory(
+        factory,
+        tick,
+        TestRecipeBook.get.bind(TestRecipeBook)
+      );
+    });
 
     for (var expectedOutput of expected.outputBuffers) {
       expect(factory.outputBuffers.Count(expectedOutput.Entity)).toBe(
@@ -96,19 +173,19 @@ describe("Factories", () => {
     });
   });
 
-  it("Produces 1.5 items", () => {
-    const factory = NewTestFactory("test-slow-item", 3);
-    AddItemsToFixedBuffer(factory.inputBuffers, 10);
+  // it("Produces 1.5 items", () => {
+  //   const factory = NewTestFactory("test-slow-item", 3);
+  //   AddItemsToFixedBuffer(factory.inputBuffers, 10);
 
-    TestFactory(factory, {
-      outputBuffers: [NewEntityStack("test-item", 1.5)],
+  //   TestFactory(factory, {
+  //     outputBuffers: [NewEntityStack("test-item", 1.5)],
 
-      inputBuffers: [
-        NewEntityStack("test-ore", 7),
-        NewEntityStack("test-slow-ore", 5.5),
-      ],
-    });
-  });
+  //     inputBuffers: [
+  //       NewEntityStack("test-ore", 7),
+  //       NewEntityStack("test-slow-ore", 5.5),
+  //     ],
+  //   });
+  // });
 
   it("Requires 1 full set of materials to start", () => {
     const factory = NewTestFactory("test-slow-item", 3);
@@ -134,6 +211,17 @@ describe("Factories", () => {
         NewEntityStack("test-ore", 10),
         NewEntityStack("test-slow-ore", 10),
       ],
+    });
+  });
+
+  fit("Won't overfill inventory when outputing multiple items", () => {
+    const factory = NewTestFactory("test-multi-count-item", 1);
+    AddItemsToFixedBuffer(factory.inputBuffers, 10);
+    AddItemsToFixedBuffer(factory.outputBuffers, 49);
+
+    TestFactory(factory, {
+      outputBuffers: [NewEntityStack("test-item", 49)],
+      inputBuffers: [NewEntityStack("test-ore", 10)],
     });
   });
 });

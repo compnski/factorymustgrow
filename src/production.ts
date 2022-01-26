@@ -59,7 +59,6 @@ export function UpdateBuildingRecipe(
     oldInputBuffers.Entities().forEach(([entity]) => {
       if (recipe.Input.findIndex((e) => e.Entity === entity) < 0) {
         //Not in input, remove
-        console.log("remove ", entity);
         GameState.Inventory.AddFromItemBuffer(
           oldInputBuffers,
           entity,
@@ -84,7 +83,7 @@ export function UpdateBuildingRecipe(
     oldOutputBuffers.Entities().forEach(([entity]) => {
       if (recipe.Output.findIndex((e) => e.Entity === entity) < 0) {
         //Not in output, remove
-        console.log("remove ", entity);
+
         GameState.Inventory.AddFromItemBuffer(
           oldOutputBuffers,
           entity,
@@ -155,6 +154,44 @@ export function ProduceFromExtractor(
 
 // Factory
 
+export function AddProgressTracker(
+  producer: {
+    progressTrackers: number[];
+    BuildingCount: number;
+  },
+  currentTick: number
+): number {
+  if (producer.progressTrackers.length >= producer.BuildingCount) return 0;
+  producer.progressTrackers.push(currentTick);
+  return 1;
+}
+
+export function RemoveProgressTracker(producer: {
+  progressTrackers: number[];
+}): number {
+  if (producer.progressTrackers.length === 0) return 0;
+  producer.progressTrackers.pop();
+  return 1;
+}
+
+export function TickProgressTracker(
+  producer: { progressTrackers: number[] },
+  currentTick: number,
+  progressLength: number
+): number {
+  // TODO: Return early for extra speed boost, items *should* be sorted
+  const toRemove: number[] = [];
+  producer.progressTrackers.forEach((startedAt, idx) => {
+    if (currentTick >= startedAt + progressLength) {
+      toRemove.unshift(idx); // Add to front so we can remove back-to-front
+    }
+  });
+  toRemove.forEach((removeIdx) => {
+    producer.progressTrackers.splice(removeIdx, 1);
+  });
+  return toRemove.length;
+}
+
 export type Factory = {
   kind: "Factory";
   subkind:
@@ -176,6 +213,7 @@ export type Factory = {
   RecipeId: string;
   BuildingCount: number;
   outputStatus: OutputStatus;
+  progressTrackers: number[];
 };
 
 function EntityStackForEntity(
@@ -254,6 +292,7 @@ export function NewFactory(
     outputStatus: { beltConnections: [] },
     RecipeId: "",
     BuildingCount: initialProduceCount,
+    progressTrackers: [],
   };
 }
 
@@ -278,49 +317,63 @@ function outputItemBufferForFactory(
 
 export function ProduceFromFactory(
   f: Factory,
+  currentTick: number,
   GetRecipe: (s: string) => Recipe | undefined
 ) {
   const recipe = GetRecipe(f.RecipeId);
   if (!recipe) return 0;
 
-  const maxProduction = productionPerTick(f, recipe),
-    availableInputs = producableItemsForInput(f.inputBuffers, recipe.Input),
-    availableInventorySpace = recipe.Output.reduce((accum, entityStack) => {
-      var spaceInOutputStack = f.outputBuffers.AvailableSpace(
-        entityStack.Entity
-      );
-
-      //if (spaceInOutputStack < entityStack.Count) spaceInOutputStack = 0;
-      return Math.min(accum, spaceInOutputStack);
-    }, Infinity),
-    actualProduction = Math.min(
-      maxProduction,
-      availableInputs,
-      availableInventorySpace
+  const availableInventorySpace = recipe.Output.reduce((accum, entityStack) => {
+    var spaceInOutputStack = f.outputBuffers.AvailableSpace(entityStack.Entity);
+    return Math.min(
+      accum,
+      Math.floor(spaceInOutputStack / recipe.Output[0].Count)
     );
-  for (var input of recipe.Input) {
-    const removed = f.inputBuffers.Remove(
-      NewEntityStack(input.Entity, 0, Infinity),
-      input.Count * actualProduction,
-      false
-    );
+  }, Infinity);
 
-    if (removed !== input.Count * actualProduction) {
-      console.error(f.inputBuffers.Entities());
-      throw new Error(
-        `Produced without enough input. Missing ${removed} ${input.Entity}`
-      );
+  // Check empty factories
+  const emptyFactoriesToStart = Math.min(
+    producableItemsForInput(f.inputBuffers, recipe.Input),
+    Math.max(f.BuildingCount - f.progressTrackers.length, 0),
+    availableInventorySpace
+  );
+  for (var idx = 0; idx < emptyFactoriesToStart; idx++) {
+    // Check if we have enough ingredients to start producing and add a new tracker
+    //console.log(`Starting production of ${recipe.Id} at ${currentTick}`);
+    if (AddProgressTracker(f, currentTick)) {
+      // Consume resources
+      for (var input of recipe.Input) {
+        const removed = f.inputBuffers.Remove(
+          NewEntityStack(input.Entity, 0, Infinity),
+          input.Count
+        );
+
+        if (removed !== input.Count) {
+          console.error(f.inputBuffers.Entities());
+          throw new Error(
+            `Produced without enough input. Missing ${removed} ${input.Entity}`
+          );
+        }
+      }
     }
   }
-
-  recipe.Output.forEach((entityStack) => {
-    f.outputBuffers.Add(
-      NewEntityStack(entityStack.Entity, entityStack.Count * actualProduction),
-      entityStack.Count * actualProduction,
-      false,
-      false
-    );
-  });
+  // TODO: Fix item stack overflowing
+  const producedItems = TickProgressTracker(
+    f,
+    currentTick,
+    recipe.DurationSeconds * 1000
+  );
+  for (idx = 0; idx < producedItems; idx++) {
+    // console.log(
+    //   `Produced item ${idx + 1}/${producedItems} ${recipe.Id} at ${currentTick}`
+    // );
+    recipe.Output.forEach((outputStack) => {
+      f.outputBuffers.Add(
+        NewEntityStack(outputStack.Entity, outputStack.Count),
+        outputStack.Count
+      );
+    });
+  }
 }
 
 // Train Station

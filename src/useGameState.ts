@@ -12,7 +12,7 @@ import { GetRegionInfo } from "./region";
 import { BeltLine } from "./transport";
 import { GameWindow } from "./globals";
 
-export const CurrentGameStateVersion = "0.1.3";
+export const CurrentGameStateVersion = "0.1.4";
 
 export const useGameState = () => useState<FactoryGameState>(GameState);
 

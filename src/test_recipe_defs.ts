@@ -32,6 +32,17 @@ export const TestRecipe: Recipe = {
   ProductionPerTick: 1,
 };
 
+export const TestMultipleOutputCountRecipe: Recipe = {
+  //Name: "Test Item",
+  Icon: "test-item",
+  Id: "test-mutli-count-item",
+  ProducerType: "Assembler",
+  DurationSeconds: 1,
+  Input: [NewEntityStack("test-ore", 2)],
+  Output: [NewEntityStack("test-item", 2)],
+  ProductionPerTick: 1,
+};
+
 export const TestSlowRecipe: Recipe = {
   //Name: "Test Slow Item",
   Icon: "test-item",
@@ -60,6 +71,7 @@ export const TestRecipeBook = new Map<string, Recipe>([
   ["test-item", TestRecipe],
   ["test-slow-item", TestSlowRecipe],
   ["test-item-consumer", TestItemConsumerRecipe],
+  ["test-multi-count-item", TestMultipleOutputCountRecipe],
 ]);
 
 export function GetTestRecipe(name: string): Recipe {
