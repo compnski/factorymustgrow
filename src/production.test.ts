@@ -120,7 +120,7 @@ describe("Progress Trackers", () => {
       const t = tracker(3, [1, 2, 3]);
       expect(TickProgressTracker(t, 7, 5, 1)).toBe(1);
       expect(t.progressTrackers.length).toBe(2);
-      expect(t.progressTrackers[0]).toBe(3);
+      expect(t.progressTrackers[0]).toBe(2);
     });
   });
 });
@@ -215,22 +215,24 @@ describe("Factories", () => {
     TestFactory(factory, {
       outputBuffers: [NewEntityStack("test-item", 50)],
       inputBuffers: [
-        NewEntityStack("test-ore", 10),
-        NewEntityStack("test-slow-ore", 10),
+        NewEntityStack("test-ore", 8),
+        NewEntityStack("test-slow-ore", 7),
       ],
     });
   });
 
-  fit("Won't overfill inventory when outputing multiple items", () => {
+  it("Won't overfill inventory when outputing multiple items", () => {
     const factory = NewTestFactory("test-multi-count-item", 1);
     AddItemsToFixedBuffer(factory.inputBuffers, 10);
     AddItemsToFixedBuffer(factory.outputBuffers, 49);
 
     TestFactory(factory, {
       outputBuffers: [NewEntityStack("test-item", 49)],
-      inputBuffers: [NewEntityStack("test-ore", 10)],
+      inputBuffers: [NewEntityStack("test-ore", 8)],
     });
   });
+
+  it.todo("Keeps track of progress even when output is full");
 });
 
 describe("Extractors", () => {
