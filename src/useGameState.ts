@@ -29,7 +29,7 @@ export type FactoryGameState = {
   Regions: Map<string, Region>;
   BeltLines: Map<number, BeltLine>;
 };
-const initialInventorySize = 8;
+const initialInventorySize = 16;
 
 const startingResearch = ["start", "automation"];
 

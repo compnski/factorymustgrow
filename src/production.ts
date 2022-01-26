@@ -144,7 +144,7 @@ export function ProduceFromExtractor(
       e.outputBuffers.AddFromItemBuffer(
         region.Ore,
         entityStack.Entity,
-        productionPerTick(e, recipe),
+        productionPerTick(e, recipe) * entityStack.Count,
         false,
         false
       );
@@ -243,6 +243,7 @@ const entityToProducerTypeMap: { [key: string]: BuildingType } = {
   "transport-belt": "Depot",
   pumpjack: "Pumpjack",
   incinerator: "Chest",
+  "offshore-pump": "WaterPump",
 };
 
 export function IsBuilding(entity: string): boolean {
@@ -277,6 +278,8 @@ export function ProducerTypeFromEntity(entity: string): BuildingType {
       return "Pumpjack";
     case "incinerator":
       return "Chest";
+    case "offshore-pump":
+      return "WaterPump";
   }
   // const producerType = entityToProducerTypeMap[entity];
   // if (producerType) return producerType;

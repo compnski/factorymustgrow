@@ -9,6 +9,7 @@
 *** Make Region Selector use GeneralDialog
 **** Make Region selector pretty and use hexes?
 *** Change Bus item by clicking
+*** Recipe Display for Producers
 ** Inserters
 *** Make sure they are properly taken from inventory when building
 *** Maybe auto-build when creating main bus connection
@@ -17,6 +18,7 @@
 **** Each transfer point has defined speed (Items/second)
 **** Can upgrade or build more transferers to incresae rate
 **** Needs UX to show rate and to allow upgrading
+
 * Next Ideas
 ** EntityId
 *** Store 'nextId' in GameState
