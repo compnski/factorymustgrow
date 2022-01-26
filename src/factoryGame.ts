@@ -16,6 +16,7 @@ import { MainBus } from "./mainbus";
 import { GameDispatch } from "./GameDispatch";
 import { BuildingSlot } from "./building";
 import { MoveViaInserter } from "./inserter";
+import { Chest, UpdateChest } from "./storage";
 
 export const UpdateGameState = (tick: number) => {
   try {
@@ -52,6 +53,8 @@ function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
       case "Lab":
         ResearchInLab(building as Lab, GameState.Research, GetResearch);
         break;
+      case "Chest":
+        UpdateChest(building as Chest, tick);
     }
 
     if (idx < currentRegion.BuildingSlots.length - 1)

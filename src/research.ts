@@ -236,7 +236,6 @@ const IgnoredRecipies: Set<string> = new Set([
   "underground-belt",
   "fast-underground-belt",
   "wooden-chest",
-  "iron-chest",
   "steel-chest",
   "roboport",
   "pistol",

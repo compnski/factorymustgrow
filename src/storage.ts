@@ -1,9 +1,9 @@
 import { Inventory } from "./inventory";
-import { EntityStack, ItemBuffer, OutputStatus } from "./types";
+import { EntityStack, ItemBuffer, NewEntityStack, OutputStatus } from "./types";
 
 export type Chest = {
   kind: "Chest";
-  subkind: "iron-chest" | "steel-chest";
+  subkind: "iron-chest" | "steel-chest" | "incinerator";
   ProducerType: string;
   inputBuffers: ItemBuffer;
   outputBuffers: ItemBuffer;
@@ -28,4 +28,17 @@ export function NewChest(
     outputBuffers: sharedStorage,
     outputStatus: { beltConnections: [] },
   };
+}
+
+export function UpdateChest(chest: Chest, tick: number) {
+  if (chest.subkind === "incinerator")
+    chest.inputBuffers.Entities().forEach(([entity]) => {
+      chest.inputBuffers.Remove(NewEntityStack(entity, 0, Infinity), 1);
+    });
+}
+
+export function UpdateChestSize(chest: Chest) {
+  if (chest.BuildingCount != chest.inputBuffers.Capacity) {
+    chest.inputBuffers.Capacity = chest.BuildingCount;
+  }
 }

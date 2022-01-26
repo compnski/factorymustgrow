@@ -34,7 +34,7 @@ import {
   NewBeltLinePair,
 } from "./transport";
 import { FixedInventory } from "./inventory";
-import { NewChest } from "./storage";
+import { Chest, NewChest, UpdateChestSize } from "./storage";
 import { GameAction, InventoryTransferAction } from "./GameAction";
 import { fixOutputStatus } from "./factoryGame";
 import { Inserter, NewInserter } from "./inserter";
@@ -149,6 +149,7 @@ export const GameDispatch = (action: GameAction) => {
         GameState.Inventory.Remove(NewEntityStack(b.subkind, 0, 1), 1);
 
         if (b) b.BuildingCount = Math.min(50, b.BuildingCount + 1);
+        if (b?.kind === "Chest") UpdateChestSize(b as Chest);
       })();
       break;
 
@@ -166,6 +167,7 @@ export const GameDispatch = (action: GameAction) => {
             GameState.Inventory.Add(NewEntityStack(b.subkind, 1, 1), 1);
             b.BuildingCount = Math.max(0, b.BuildingCount - 1);
           }
+          if (b?.kind === "Chest") UpdateChestSize(b as Chest);
         }
       })();
       break;
@@ -635,7 +637,7 @@ export function NewBuilding(entity: string): Building {
       return NewLab(1);
 
     case "Chest":
-      return NewChest({ subkind: entity } as any);
+      return NewChest({ subkind: entity } as any, 1);
 
     case "Empty":
       return NewEmptyLane();

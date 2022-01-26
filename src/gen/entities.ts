@@ -39,6 +39,15 @@ export const Entities: Map<string, Entity> = Map(TestEntityList).merge(
       Row: 1,
       Col: 3,
     },
+    incinerator: {
+      Name: "Incinerator",
+      Id: "incinerator",
+      Icon: "explosives",
+      StackSize: 50,
+      Category: "logistics",
+      Row: 1,
+      Col: 5,
+    },
     "storage-tank": {
       Name: "Storage tank",
       Id: "storage-tank",
@@ -1906,6 +1915,30 @@ export const Recipes: Map<string, Recipe> = Map(TestRecipeBook).merge(
       Output: [
         {
           Entity: "iron-chest",
+          Count: 1,
+        },
+      ],
+    },
+
+    incinerator: {
+      Id: "incinerator",
+      Icon: "explosives",
+      DurationSeconds: 0.5,
+      ProductionPerTick: 2,
+      ProducerType: "Assembler",
+      Input: [
+        {
+          Entity: "iron-plate",
+          Count: 8,
+        },
+        {
+          Entity: "iron-gear-wheel",
+          Count: 8,
+        },
+      ],
+      Output: [
+        {
+          Entity: "incinerator",
           Count: 1,
         },
       ],

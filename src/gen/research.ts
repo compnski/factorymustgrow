@@ -77,6 +77,7 @@ export const ResearchMap: Map<string, Research> = new Map([
         "stone-furnace",
         "transport-belt",
         "wooden-chest",
+        "incinerator",
       ],
       Effects: [],
     },

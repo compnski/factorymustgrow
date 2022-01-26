@@ -200,6 +200,7 @@ const entityToProducerTypeMap: { [key: string]: BuildingType } = {
   "steel-chest": "Chest",
   "transport-belt": "Depot",
   pumpjack: "Pumpjack",
+  incinerator: "Chest",
 };
 
 export function IsBuilding(entity: string): boolean {
@@ -232,6 +233,8 @@ export function ProducerTypeFromEntity(entity: string): BuildingType {
       return "Depot";
     case "pumpjack":
       return "Pumpjack";
+    case "incinerator":
+      return "Chest";
   }
   // const producerType = entityToProducerTypeMap[entity];
   // if (producerType) return producerType;
