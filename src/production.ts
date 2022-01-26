@@ -177,12 +177,16 @@ export function RemoveProgressTracker(producer: {
 export function TickProgressTracker(
   producer: { progressTrackers: number[] },
   currentTick: number,
-  progressLength: number
+  progressLength: number,
+  maxRemoved: number
 ): number {
   // TODO: Return early for extra speed boost, items *should* be sorted
   const toRemove: number[] = [];
   producer.progressTrackers.forEach((startedAt, idx) => {
-    if (currentTick >= startedAt + progressLength) {
+    if (
+      toRemove.length < maxRemoved &&
+      currentTick >= startedAt + progressLength
+    ) {
       toRemove.unshift(idx); // Add to front so we can remove back-to-front
     }
   });
@@ -323,19 +327,10 @@ export function ProduceFromFactory(
   const recipe = GetRecipe(f.RecipeId);
   if (!recipe) return 0;
 
-  const availableInventorySpace = recipe.Output.reduce((accum, entityStack) => {
-    var spaceInOutputStack = f.outputBuffers.AvailableSpace(entityStack.Entity);
-    return Math.min(
-      accum,
-      Math.floor(spaceInOutputStack / recipe.Output[0].Count)
-    );
-  }, Infinity);
-
   // Check empty factories
   const emptyFactoriesToStart = Math.min(
     producableItemsForInput(f.inputBuffers, recipe.Input),
-    Math.max(f.BuildingCount - f.progressTrackers.length, 0),
-    availableInventorySpace
+    Math.max(f.BuildingCount - f.progressTrackers.length, 0)
   );
   for (var idx = 0; idx < emptyFactoriesToStart; idx++) {
     // Check if we have enough ingredients to start producing and add a new tracker
@@ -357,13 +352,24 @@ export function ProduceFromFactory(
       }
     }
   }
-  // TODO: Fix item stack overflowing
-  const producedItems = TickProgressTracker(
+
+  const availableInventorySpace = recipe.Output.reduce((accum, entityStack) => {
+    var spaceInOutputStack = f.outputBuffers.AvailableSpace(entityStack.Entity);
+    return Math.min(
+      accum,
+      Math.floor(spaceInOutputStack / recipe.Output[0].Count)
+    );
+  }, Infinity);
+
+  const outputCount = TickProgressTracker(
     f,
     currentTick,
-    recipe.DurationSeconds * 1000
+    recipe.DurationSeconds * 1000,
+    availableInventorySpace
   );
-  for (idx = 0; idx < producedItems; idx++) {
+  //const outputCount = Math.min(producedItems, availableInventorySpace);
+
+  for (idx = 0; idx < outputCount; idx++) {
     // console.log(
     //   `Produced item ${idx + 1}/${producedItems} ${recipe.Id} at ${currentTick}`
     // );

@@ -1,7 +1,9 @@
 import {
+  Factory,
   NewExtractor,
   NewFactory,
   ProducerTypeFromEntity,
+  RemoveProgressTracker,
   UpdateBuildingRecipe,
 } from "./production";
 import {
@@ -168,6 +170,9 @@ export const GameDispatch = (action: GameAction) => {
             b.BuildingCount = Math.max(0, b.BuildingCount - 1);
           }
           if (b?.kind === "Chest") UpdateChestSize(b as Chest);
+          // TODO: If factory, reduce ProgressTracker and refund materials
+          // NOTE: Only if progressTracker == BuildingCount
+          //if (b?.kind === "Factory") RemoveProgressTracker(b as Factory);
         }
       })();
       break;
@@ -603,7 +608,8 @@ function inventoryTransferStack(
       if (b) {
         if (
           BuildingHasOutput(b.kind) &&
-          b.outputBuffers.Count(action.entity) > 0
+          (b.outputBuffers.AvailableSpace(action.entity) > 0 ||
+            b.outputBuffers.Count(action.entity) > 0)
         ) {
           return b.outputBuffers;
         }

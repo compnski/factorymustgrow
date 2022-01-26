@@ -105,14 +105,21 @@ describe("Progress Trackers", () => {
   describe("Ticks", () => {
     it("Does nothing when there are no expiring trackers", () => {
       const t = tracker(3, [1, 2, 3]);
-      expect(TickProgressTracker(t, 5, 5)).toBe(0);
+      expect(TickProgressTracker(t, 5, 5, Infinity)).toBe(0);
       expect(t.progressTrackers.length).toBe(3);
     });
 
     it("Returns a count of expiring trackers and removes them", () => {
       const t = tracker(3, [1, 2, 3]);
-      expect(TickProgressTracker(t, 7, 5)).toBe(2);
+      expect(TickProgressTracker(t, 7, 5, Infinity)).toBe(2);
       expect(t.progressTrackers.length).toBe(1);
+      expect(t.progressTrackers[0]).toBe(3);
+    });
+
+    it("Only removes up to maxRemoved trackers", () => {
+      const t = tracker(3, [1, 2, 3]);
+      expect(TickProgressTracker(t, 7, 5, 1)).toBe(1);
+      expect(t.progressTrackers.length).toBe(2);
       expect(t.progressTrackers[0]).toBe(3);
     });
   });
