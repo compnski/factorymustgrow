@@ -134,12 +134,13 @@
   }
 }
 
-.change-recipe {
+.building-card-button {
   font-size: 18px;
-  line-height: 20px;
-  width: 180px;
-  margin: auto 0;
+  line-height: 22px;
+  min-width: 200px;
+  margin: 10px 0 0 50px;
   padding: 6px;
+  text-align: center;
 }
 
 .choose-research {
@@ -174,6 +175,6 @@
   }
 }
 
-.main-area.empty-lane .bottom-area .build-something {
+.main-area.empty-lane .bottom-area .building-card-button {
   margin: 25px 50px 0;
 }

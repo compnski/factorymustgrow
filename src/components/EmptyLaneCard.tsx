@@ -19,7 +19,7 @@ export function EmptyLaneCard(props: { buildingIdx: number }) {
               props.buildingIdx
             );
           }}
-          className="change-recipe clickable build-something"
+          className="building-card-button  clickable"
         >
           Build Something
         </div>

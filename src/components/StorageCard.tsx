@@ -16,13 +16,19 @@ export type StorageCardProps = {
   //  mainBus: MainBus;
 };
 
+function formatName(n: string) {
+  return (n.charAt(0).toUpperCase() + n.slice(1, n.length)).replaceAll(
+    "-",
+    " "
+  );
+}
 export function StorageCard({ storage, buildingIdx }: StorageCardProps) {
   const generalDialog = useGeneralDialog();
 
   return (
     <div className="main-area">
       <div className="top-area">
-        <div className="title">{storage.subkind /* TODO Fix name */}</div>
+        <div className="title">{formatName(storage.subkind)}</div>
         <span className={`icon ${storage.subkind}`} />
         <CounterWithPlusMinusButtons
           count={storage.BuildingCount}
@@ -49,9 +55,9 @@ export function StorageCard({ storage, buildingIdx }: StorageCardProps) {
               buildingIdx
             );
           }}
-          className="change-recipe clickable"
+          className="building-card-button clickable"
         >
-          From Inventory
+          Fill From Inventory
         </div>
         <BuildingBufferDisplay
           inputBuffers={storage.outputBuffers}

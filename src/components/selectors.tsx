@@ -49,9 +49,9 @@ export async function showMoveItemToFromInventorySelector(
 ): Promise<void> {
   if (!filter && direction === "TransferFromInventory")
     filter = (e) => GameState.Inventory.Count(e) > 0;
-  var recipes = availableItems(GameState.Research);
-  if (filter) recipes = recipes.filter(filter);
-  const recipe = await showIconSelector(showDialog, "Add Stack", recipes);
+  var items = availableItems(GameState.Research);
+  if (filter) items = items.filter(filter);
+  const recipe = await showIconSelector(showDialog, "Add Stack", items);
 
   if (recipe)
     GameDispatch(
