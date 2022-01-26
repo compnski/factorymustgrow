@@ -4,7 +4,7 @@ import {
   ProduceFromExtractor,
   ProduceFromFactory,
 } from "./production";
-import { NewEntityStack, Region } from "./types";
+import { Region } from "./types";
 import { GetRecipe } from "./gen/entities";
 import { CanPushTo } from "./movement";
 import { PushPullFromMainBus } from "./MainBusMovement";

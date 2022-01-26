@@ -2,11 +2,9 @@ import { BuildingCard } from "./BuildingCard";
 import { GameDispatch } from "../GameDispatch";
 import { ItemBuffer } from "../types";
 import { SyntheticEvent, useState } from "react";
-import { UIAction } from "../uiState";
-import { Building, BuildingSlot, InserterIdForBuilding } from "../building";
+import { BuildingSlot, InserterIdForBuilding } from "../building";
 import { MainBus } from "../mainbus";
 import { InserterCard } from "./InserterCard";
-import { Inserter } from "../inserter";
 import { showUserError } from "../utils";
 
 export const BuildingCardList = ({

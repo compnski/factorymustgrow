@@ -1,6 +1,6 @@
 import { ResearchState } from "./useGameState";
 import { GetEntity, GetRecipe } from "./gen/entities";
-import { GetResearch, ResearchMap } from "./gen/research";
+import { GetResearch } from "./gen/research";
 import {
   EntityStack,
   ItemBuffer,
@@ -12,7 +12,6 @@ import {
 import { FixedInventory } from "./inventory";
 import { productionPerTick, producableItemsForInput } from "./productionUtils";
 import { StackCapacity } from "./movement";
-import { once } from "./utils";
 import { AvailableResearchList } from "./availableResearch";
 
 export type Lab = {

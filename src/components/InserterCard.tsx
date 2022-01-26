@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { InserterId } from "../building";
 import { GameDispatch } from "../GameDispatch";
 import { Inserter } from "../inserter";

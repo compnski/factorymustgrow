@@ -3,7 +3,6 @@ import "./BuildingCard.scss";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import { entityIconLookupByKind } from "../utils";
 import { showMoveItemToFromInventorySelector } from "./selectors";
-import { getEntityIconDoubleClickHandler } from "./events";
 import { Chest } from "../storage";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";

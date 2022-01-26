@@ -1,11 +1,8 @@
 import { Inventory } from "../inventory";
-import { RegionInfo } from "../types";
-import { InventoryDisplay } from "./InventoryDisplay";
 import "./RegionSelector.scss";
 
 import { ReactComponent as RegionMapSVG } from "../gen/regionmap.svg";
 import { SyntheticEvent } from "react";
-import { GameAction } from "../GameAction";
 import { useProperties } from "../explore/svg";
 
 export type RegionSelectorProps = {

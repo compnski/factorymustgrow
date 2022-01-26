@@ -38,7 +38,7 @@ export function UpdateChest(chest: Chest, tick: number) {
 }
 
 export function UpdateChestSize(chest: Chest) {
-  if (chest.BuildingCount != chest.inputBuffers.Capacity) {
+  if (chest.BuildingCount !== chest.inputBuffers.Capacity) {
     chest.inputBuffers.Capacity = chest.BuildingCount;
   }
 }

@@ -4,7 +4,6 @@ import "./BuildingCard.scss";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import { entityIconLookupByKind } from "../utils";
 import { showResearchSelector } from "./selectors";
-import { getEntityIconDoubleClickHandler } from "./events";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { Lab } from "../research";
 import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";

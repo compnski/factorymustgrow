@@ -15,13 +15,6 @@ export type SelectResearchPanelProps = {
   researchState: ResearchState;
 };
 
-const iconsPerTier = 12;
-function xyFromColAndOffset(col: number, tierOffset: number): [number, number] {
-  const x = (col % iconsPerTier) * 48,
-    y = tierOffset * 70 + Math.floor(col / iconsPerTier) * 36;
-  return [x, y];
-}
-
 function researchIcons(research: Research) {
   return (
     <span>
@@ -37,7 +30,7 @@ function researchIcons(research: Research) {
 }
 
 const ResearchEntriesByTier = new Map<number, number>();
-AvailableResearchList.map((research) => {
+AvailableResearchList.forEach((research) => {
   ResearchEntriesByTier.set(
     ResearchTier(research.Id),
     (ResearchEntriesByTier.get(ResearchTier(research.Id)) || 0) + 1
@@ -72,18 +65,9 @@ export function SelectResearchPanel(props: SelectResearchPanelProps) {
   );
 
   const iconLookup = entityIconLookupByKind("Lab");
-  const countByTier = new Map<number, number>();
+
   const selectedResearch =
     (selectValue !== undefined && ResearchMap.get(selectValue)) || undefined;
-
-  function numColsBeforeTier(tier: number): number {
-    if (tier < 1) return 0;
-
-    return (
-      numColsBeforeTier(tier - 1) +
-      Math.ceil((ResearchEntriesByTier.get(tier - 1) || 0) / iconsPerTier)
-    );
-  }
 
   const unlockedResearchIds = new Set<string>(unlockedResearch(researchState)),
     completedResearchIds = new Set<string>(
@@ -110,7 +94,7 @@ export function SelectResearchPanel(props: SelectResearchPanelProps) {
     const prereqId = [...r.Prereqs][0];
     //const prereqRes = ResearchMap.get(prereqId);
     const prereqLoc = rt[ResearchTier(prereqId)].findIndex(
-      (r) => r.Id == prereqId
+      (r) => r.Id === prereqId
     );
     return prereqLoc;
   }
@@ -151,7 +135,7 @@ export function SelectResearchPanel(props: SelectResearchPanelProps) {
                 isUnlockedBySelected = unlockedBySelectedIds.has(research.Id);
 
               if (research.Row < 0) {
-                return;
+                return false;
               }
               const x = iconIdx * 100;
               const y = tierIdx * 100;

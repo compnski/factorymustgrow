@@ -3,7 +3,6 @@ import {
   NewExtractor,
   NewFactory,
   ProducerTypeFromEntity,
-  RemoveProgressTracker,
   UpdateBuildingRecipe,
 } from "./production";
 import {
@@ -39,7 +38,7 @@ import { FixedInventory } from "./inventory";
 import { Chest, NewChest, UpdateChestSize } from "./storage";
 import { GameAction, InventoryTransferAction } from "./GameAction";
 import { fixOutputStatus } from "./factoryGame";
-import { Inserter, NewInserter } from "./inserter";
+import { Inserter } from "./inserter";
 
 export const GameDispatch = (action: GameAction) => {
   const currentRegion = GameState?.Regions?.get(GameState.CurrentRegionId)!;
@@ -60,7 +59,7 @@ export const GameDispatch = (action: GameAction) => {
       // Remove attached inserters
       currentRegion.BuildingSlots.forEach((buildingSlot, buildingSlotIdx) => {
         buildingSlot.BeltConnections.forEach((beltConn, beltConnIdx) => {
-          if (beltConn.laneId == action.laneId) {
+          if (beltConn.laneId === action.laneId) {
             GameDispatch({
               type: "RemoveMainBusConnection",
               buildingIdx: buildingSlotIdx,

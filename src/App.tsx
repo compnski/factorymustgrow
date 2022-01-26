@@ -6,11 +6,8 @@ import { UpdateGameState } from "./factoryGame";
 import { GameState, useGameState } from "./useGameState";
 import { saveStateToLocalStorage } from "./localstorage";
 import { useInterval } from "./reactUtils";
-import { useUIState } from "./uiState";
-import { ExploreGame } from "./explore/ExploreGame";
 import { FactoryGame } from "./components/FactoryGame";
 import { TicksPerSecond } from "./constants";
-import { GameWindow } from "./globals";
 import "./macro_def";
 import { GeneralDialogProvider } from "./GeneralDialogProvider";
 

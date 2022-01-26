@@ -1,11 +1,7 @@
 import { SyntheticEvent } from "react";
 import { GameAction } from "../GameAction";
-import {
-  GeneralDialogConfig,
-  useGeneralDialog,
-} from "../GeneralDialogProvider";
+import { useGeneralDialog } from "../GeneralDialogProvider";
 import { Inventory } from "../inventory";
-import { UIAction } from "../uiState";
 import { showClaimRegionSelector } from "./selectors";
 
 // TODO Dispatch event to region change

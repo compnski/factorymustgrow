@@ -1,9 +1,4 @@
-import {
-  Building,
-  BuildingSlot,
-  NewBuildingSlot,
-  NewEmptyLane,
-} from "./building";
+import { BuildingSlot, NewBuildingSlot, NewEmptyLane } from "./building";
 import { Inserter } from "./inserter";
 import { FixedInventory } from "./inventory";
 import { MainBus } from "./mainbus";

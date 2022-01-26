@@ -2,12 +2,7 @@ import { GameDispatch } from "../GameDispatch";
 import { GameState } from "../useGameState";
 import { GetRecipe } from "../gen/entities";
 import { Inventory } from "../inventory";
-import {
-  availableItems,
-  availableRecipes,
-  unlockedResearch,
-} from "../research";
-import { entityIconLookupByKind } from "../utils";
+import { availableItems, availableRecipes } from "../research";
 import { IsBuilding } from "../production";
 import { RecipeSelector } from "./RecipeSelector";
 import { PlaceBeltLinePanel } from "./PlaceBeltLinePanel";

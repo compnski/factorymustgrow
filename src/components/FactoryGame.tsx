@@ -1,6 +1,5 @@
 import { GameDispatch } from "../GameDispatch";
 import { FactoryGameState } from "../useGameState";
-import { UIAction, UIState } from "../uiState";
 import { BuildingCardList } from "./BuildingCardList";
 import { InfoHeader } from "./InfoHeader";
 import { MainBusHeader } from "./MainBusHeader";
@@ -8,10 +7,8 @@ import "./FactoryGame.scss";
 import { DebugButtonPanel } from "./DebugButtonPanel";
 import { InventoryDisplay } from "./InventoryDisplay";
 import { RegionTabBar } from "./RegionTabBar";
-import { ItemBuffer } from "../types";
-import { IsBuilding } from "../production";
 import { useGeneralDialog } from "../GeneralDialogProvider";
-import { showHelpCard, showPlaceBeltLineSelector } from "./selectors";
+import { showHelpCard } from "./selectors";
 
 import { ReactComponent as RocketShip } from "../rocket-launch.svg";
 

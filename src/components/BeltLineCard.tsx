@@ -3,7 +3,6 @@ import "./BuildingCard.scss";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import { entityIconLookupByKind } from "../utils";
 import { BeltLineDepot } from "../transport";
-import { getEntityIconDoubleClickHandler } from "./events";
 import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
 
 export type BeltLineCardProps = {

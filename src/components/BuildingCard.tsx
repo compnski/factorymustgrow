@@ -6,22 +6,14 @@ import { ItemBuffer, Producer } from "../types";
 import { SyntheticEvent, useState } from "react";
 import { MainBusSegment } from "./MainBusSegment";
 import { BuildingHasInput, BuildingHasOutput } from "../utils";
-import { UIAction } from "../uiState";
 import { ProducerCard } from "./ProducerCard";
-import {
-  Building,
-  BuildingSlot,
-  InserterIdForBelt,
-  InserterIdForBuilding,
-} from "../building";
+import { Building, BuildingSlot, InserterIdForBelt } from "../building";
 import { BeltLineCard } from "./BeltLineCard";
 import { MainBus } from "../mainbus";
 import { StorageCard } from "./StorageCard";
 import { EmptyLaneCard } from "./EmptyLaneCard";
 import { LabCard } from "./LabCard";
-import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
 import { InserterCard } from "./InserterCard";
-import { NewInserter } from "../inserter";
 import { RocketSiloCard } from "./RocketSiloCard";
 
 export type BuildingCardProps = {
