@@ -2,9 +2,12 @@
 * In progress
 ** Fix factories producing partial goods
 *** TODO figure out progress bar
+*** Update extractors to also use ProgressTracker
 ** BeltLine
 *** Re-Connect when rebuilding
 *** Only connect directly adjacent regions
+*** NEW UI that hides the -+ count
+**** Maybe some way to increase throughput?
 ** UI
 *** Make Region Selector use GeneralDialog
 **** Make Region selector pretty and use hexes?
@@ -20,6 +23,11 @@
 **** Needs UX to show rate and to allow upgrading
 
 * Next Ideas
+** Regions UI
+*** Rename regions
+*** Re-order tab bar
+** Blueprints
+*** Somehow store lists of entities that can be rebuilt
 ** EntityId
 *** Store 'nextId' in GameState
 *** Add Id to many/most/all? entities
@@ -44,7 +52,8 @@ Each step of recipe takes some amount of fuel/power
 ** Limits
 *** Main Bus Lanes
 *** Building Slots
-*** Max Building Cuo
+*** Max Building Count?
+*** Power is a natural limit
 ** Transport
 *** DONE Belt transport
 Array of stacks

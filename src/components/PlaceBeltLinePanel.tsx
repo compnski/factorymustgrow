@@ -23,7 +23,9 @@ export function PlaceBeltLinePanel(props: PlaceBeltLineProps) {
   const cost = 100,
     entity = "transport-belt";
 
+  console.log(inventory.Count(entity), cost);
   const enoughBeltsInInventory = inventory.Count(entity) >= cost;
+  console.log(inventory.Count(entity), cost, enoughBeltsInInventory);
   return (
     <div className="place-belt-line modal">
       <span
@@ -57,7 +59,7 @@ export function PlaceBeltLinePanel(props: PlaceBeltLineProps) {
             onConfirm(evt, selectValue, "transport-belt")
           }
           className={`clickable place-belt-line-build-button ${
-            enoughBeltsInInventory ? "disabled" : ""
+            !enoughBeltsInInventory ? "disabled" : ""
           }`}
         >
           Build!
