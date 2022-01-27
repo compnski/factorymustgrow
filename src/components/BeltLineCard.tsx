@@ -30,28 +30,13 @@ export function BeltLineCard(props: BeltLineCardProps) {
       <div className="top-area">
         <div className="title">
           {`Belt line ` +
-            building.beltLineId +
+            building.name +
             ` ` +
             direction(building.direction) +
             ` ` +
             building.otherRegionId}
         </div>
         <span className={`icon ${building.subkind}`} />
-        <CounterWithPlusMinusButtons
-          count={building.BuildingCount}
-          minusClickHandler={() =>
-            GameDispatch({
-              type: "DecreaseBuildingCount",
-              buildingIdx,
-            })
-          }
-          plusClickHandler={() =>
-            GameDispatch({
-              type: "IncreaseBuildingCount",
-              buildingIdx,
-            })
-          }
-        />
       </div>
       <div className="bottom-area">
         <BuildingBufferDisplay

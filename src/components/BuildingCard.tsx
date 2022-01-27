@@ -115,36 +115,38 @@ export const BuildingCard = ({
     />
   ));
   return (
-    <div
-      className={`producer-card kind-${building.kind}`}
-      draggable={building.kind !== "Empty" && dragging}
-      id={`b-${buildingIdx}`}
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      onDragStart={handleDrag}
-    >
+    <div className="producer-card-container">
       <div
-        className="drag-area"
-        onMouseDown={() => setDragging(true)}
-        onMouseUp={() => setDragging(false)}
-        onMouseLeave={() => setDragging(false)}
-        onTouchStart={() => setDragging(true)}
-        onTouchEnd={() => setDragging(false)}
+        className={`producer-card kind-${building.kind}`}
+        draggable={building.kind !== "Empty" && dragging}
+        id={`b-${buildingIdx}`}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragStart={handleDrag}
       >
-        <span onClick={moveUp} className="material-icons arrow">
-          arrow_upward
-        </span>
-        <span className="material-icons">reorder</span>
-        <span onClick={moveDown} className="material-icons arrow">
-          arrow_downward
-        </span>
-        <span onDoubleClick={removeBuilding} className="material-icons">
-          close
-        </span>
-      </div>
+        <div
+          className="drag-area"
+          onMouseDown={() => setDragging(true)}
+          onMouseUp={() => setDragging(false)}
+          onMouseLeave={() => setDragging(false)}
+          onTouchStart={() => setDragging(true)}
+          onTouchEnd={() => setDragging(false)}
+        >
+          <span onClick={moveUp} className="material-icons arrow">
+            arrow_upward
+          </span>
+          <span className="material-icons">reorder</span>
+          <span onClick={moveDown} className="material-icons arrow">
+            arrow_downward
+          </span>
+          <span onDoubleClick={removeBuilding} className="material-icons">
+            close
+          </span>
+        </div>
 
-      {card}
-      <div className="output-area">{beltInserters}</div>
+        {card}
+        <div className="output-area">{beltInserters}</div>
+      </div>
       <MainBusSegment
         mainBus={mainBus}
         busLaneClicked={busLaneClicked}

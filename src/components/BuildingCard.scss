@@ -1,13 +1,20 @@
 @import "./_constants";
 
+.producer-card-container {
+  display: flex;
+  height: $cardHeight;
+}
+
 .producer-card {
-  width: $appWidth;
+  width: 600px;
   height: $cardHeight;
   //border: 1px black solid;
   display: flex;
   box-sizing: border-box;
   user-select: none;
   justify-content: flex-end;
+  filter: drop-shadow(2px 4px 6px black);
+  margin-right: 4px;
 
   .icon {
   }
@@ -119,6 +126,7 @@
     border-top: 1px solid black;
     background: lightgrey;
     border-radius: 4px;
+    box-sizing: border-box;
     //height: 86px;
     .output-arrow {
       box-sizing: border-box;
@@ -181,4 +189,8 @@
 
 .main-area.empty-lane .bottom-area .building-card-button {
   margin: 25px 50px 0;
+}
+
+.main-bus-segment {
+  background-color: #55626e;
 }

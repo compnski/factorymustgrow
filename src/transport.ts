@@ -1,5 +1,6 @@
 import { Inventory } from "./inventory";
 import { stackTransfer } from "./movement";
+import { randomName } from "./namegen";
 import {
   EntityStack,
   ItemBuffer,
@@ -96,6 +97,7 @@ export type BeltLineDepot = {
   direction: "TO_REGION" | "FROM_REGION";
   beltLineId: number;
   BuildingCount: number;
+  name: string;
 };
 
 export type BeltLine = {
@@ -110,6 +112,7 @@ export type BeltLine = {
   fromRegionId: string;
   length: number;
   sharedBeltBuffer: Array<EntityStack>;
+  name: string;
 };
 
 export function NewBeltLinePair(
@@ -126,7 +129,12 @@ export function NewBeltLinePair(
 
   // TODO: Static increasing id, stored someplace in state
   const beltLineId = new Date().getTime() % 100000;
-
+  var beltLineName: string = "";
+  for (
+    ;
+    beltLineName === "" || beltLineName.length > 15;
+    beltLineName = randomName()
+  ) {}
   // Belt should be thought of as a chain of EntityStacks,
   // each with a small StackSize.
   // The first and last N EntityStacks are the input / output buffers
@@ -153,6 +161,7 @@ export function NewBeltLinePair(
     direction: "TO_REGION",
     length: length,
     beltLineId: beltLineId,
+    name: beltLineName,
   };
 
   const fromBeltLine: BeltLineDepot = {
@@ -167,6 +176,7 @@ export function NewBeltLinePair(
     direction: "FROM_REGION",
     length: length,
     beltLineId: beltLineId,
+    name: beltLineName,
   };
 
   const beltLine = {
@@ -178,6 +188,7 @@ export function NewBeltLinePair(
     fromRegionId: fromRegion.Id,
     length: length,
     sharedBeltBuffer: sharedBeltBuffer,
+    name: beltLineName,
   };
 
   return [beltLine, fromBeltLine, toBeltLine];
