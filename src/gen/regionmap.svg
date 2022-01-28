@@ -3,18 +3,28 @@
 <svg id="svg3090" width="600" height="600" version="1.1"
 viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
 <path id="path3071"
-d="m-1.5879-1.0614v599.47h600v-600h-600v0.52651z" fill="#00f"
+d="m-1.5879-1.0614v599.47h600v-600h-600v0.52651z" fill="#248"
 stroke-width="0" />
-<g id="g3081" fill="#a05a2c" stroke-width=".23393">
+<g id="g3081" fill="#742" stroke-width=".23393">
 	<circle id="region_start" cx="300" cy="300" r="50">
 	<text id="text3073" stroke="#fff" stroke-width="1">Start</text>
 	</circle>
-	<circle id="region_region1" cx="175" cy="175" r="50" />
-	<circle id="region_region2" cx="425" cy="175" r="50" />
-	<circle id="region_region3" cx="175" cy="425" r="50" />
+	<circle id="region_region1" cx="175" cy="175" r="50">
+	<title>Lots of stuff, no space</title>
+	</circle>
+	<circle id="region_region2" cx="425" cy="175" r="50">
+	<title>Lots of space</title>
+	</circle>
+	<circle id="region_region3" cx="175" cy="425" r="50">
+	<title>Large lanes</title>
+	</circle>
 	<circle id="region_region4" cx="298.42" cy="213.77" r="17.5"
-	fill="#803300" />
-	<circle id="region_region5" cx="425" cy="425" r="50" />
+	fill="#803300">
+	<title>Infinite Water/Oil</title>
+	</circle>
+	<circle id="region_region5" cx="425" cy="425" r="50">
+	<title>Large lanes</title>
+	</circle>
 </g>
 <g id="g3088" fill="none" stroke="#000" stroke-width="4px">
 	<path id="path_start_region1" d="m264.64 264.64-54.289-54.289" />

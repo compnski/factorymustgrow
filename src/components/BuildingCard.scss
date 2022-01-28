@@ -6,7 +6,7 @@
 }
 
 .producer-card {
-  width: 600px;
+  width: 592px;
   height: $cardHeight;
   //border: 1px black solid;
   display: flex;
@@ -15,7 +15,7 @@
   justify-content: flex-end;
   filter: drop-shadow(2px 4px 6px black);
   margin-right: 4px;
-
+  margin-left: 4px;
   .icon {
   }
 

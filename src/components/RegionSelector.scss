@@ -1,11 +1,20 @@
 @import "./constants";
 .region-selector {
-  background: lightgrey;
+  z-index: 10;
+  background: #aaa;
   border: 2px black solid;
-  padding: 10px;
+  padding: 50px;
   display: flex;
   flex-direction: column;
   .top {
     line-height: 32px;
+  }
+  &.modal {
+    left: 20%;
+  }
+  .title {
+    line-height: 36px;
+    font-size: 32px;
+    padding-left: 8px;
   }
 }

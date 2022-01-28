@@ -6,8 +6,7 @@
 ** BeltLine
 *** Re-Connect when rebuilding
 *** Only connect directly adjacent regions
-*** NEW UI that hides the -+ count
-**** Maybe some way to increase throughput?
+*** Maybe some way to increase throughput?
 ** UI
 *** Make Region Selector use GeneralDialog
 **** Make Region selector pretty and use hexes?
