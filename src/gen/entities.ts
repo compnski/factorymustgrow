@@ -7754,7 +7754,7 @@ export const Recipes: Map<string, Recipe> = Map(TestRecipeBook).merge(
       Output: [
         {
           Entity: "crude-oil",
-          Count: 1,
+          Count: 5,
         },
       ],
     },

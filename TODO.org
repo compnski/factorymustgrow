@@ -1,12 +1,22 @@
 #+TITLE: Todo
 * In progress
+** Bugs
+*** When adding a beltline, it shows up in the wrong place (Index from starting region, not target region)
+*** When adding a beltline, it adds extra empty slots to the end if it tries to land in a filled slot.
+*** Performance sucks
+*** Names sometime still too long "courageous ram"
+*** Plastic production seems hard to scale up, maybe oil issues?
+** Better UI for deleting belt lines
 ** Fix factories producing partial goods
 *** TODO figure out progress bar
 *** Update extractors to also use ProgressTracker
+*** Update labs to use ProgressTracker
 ** BeltLine
 *** Re-Connect when rebuilding
 *** Only connect directly adjacent regions
 *** Maybe some way to increase throughput?
+*** Some better visibility of contents
+*** Renaming?
 ** UI
 *** Make Region Selector use GeneralDialog
 **** Make Region selector pretty and use hexes?
@@ -25,6 +35,8 @@
 ** Regions UI
 *** Rename regions
 *** Re-order tab bar
+*** Keep scroll position per-region
+
 ** Blueprints
 *** Somehow store lists of entities that can be rebuilt
 ** EntityId
