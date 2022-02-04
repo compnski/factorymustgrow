@@ -74,6 +74,7 @@ export const MainBusHeader = ({
         key={laneId}
         className="lane-header-item-stack"
       >
+        <title>${entity}</title>
         <div className={`icon ${entity}`} />
         <div className="item-stack-count-text">
           <span>{count}</span>
@@ -99,8 +100,8 @@ export const MainBusHeader = ({
   return (
     <div className="main-bus-header">
       {/* <div onClick={addLane} className="clickable add-lane-button">
-          Add Lane
-          </div> */}
+              Add Lane
+              </div> */}
       <div className="bus-area">
         <div className="lane-header-counts">{lanes}</div>
         <svg width="400">
@@ -110,11 +111,12 @@ export const MainBusHeader = ({
             <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
           </filter>
 
-          {[...mainBus.lanes.entries()].map(([laneId], idx) => {
+          {[...mainBus.lanes.entries()].map(([laneId, lane], idx) => {
             const laneX =
                 MainBusConst.laneOffset +
                 idx * (MainBusConst.laneWidth + MainBusConst.interLaneWidth),
-              segmentHeight = 66;
+              segmentHeight = 66,
+              entity = lane.Entities()[0][0];
 
             return (
               <polyline
@@ -126,7 +128,10 @@ export const MainBusHeader = ({
                 points={`${laneX},0 ${laneX},${segmentHeight + 2} ${
                   laneX + MainBusConst.laneWidth
                 },${segmentHeight + 2} ${laneX + MainBusConst.laneWidth},0`}
-              />
+              >
+                {" "}
+                <title>${entity}</title>
+              </polyline>
             );
           })}
         </svg>
