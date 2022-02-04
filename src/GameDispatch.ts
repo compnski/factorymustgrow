@@ -39,6 +39,7 @@ import { Chest, NewChest, UpdateChestSize } from "./storage";
 import { GameAction, InventoryTransferAction } from "./GameAction";
 import { fixOutputStatus } from "./factoryGame";
 import { Inserter } from "./inserter";
+import { showResearchSelector } from "./components/selectors";
 
 export const GameDispatch = (action: GameAction) => {
   const currentRegion = GameState?.Regions?.get(GameState.CurrentRegionId)!;

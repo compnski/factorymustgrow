@@ -17,8 +17,13 @@ import { GameDispatch } from "./GameDispatch";
 import { BuildingSlot } from "./building";
 import { MoveViaInserter } from "./inserter";
 import { Chest, UpdateChest } from "./storage";
+import { GeneralDialogConfig } from "./GeneralDialogProvider";
+import { showResearchSelector } from "./components/selectors";
 
-export const UpdateGameState = (tick: number) => {
+export async function UpdateGameState(
+  tick: number,
+  generalDialog: (arg0: GeneralDialogConfig) => Promise<any[] | false>
+) {
   try {
     //const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
     for (var [, currentBeltLine] of GameState.BeltLines) {
@@ -31,12 +36,13 @@ export const UpdateGameState = (tick: number) => {
     if (IsResearchComplete(GameState.Research)) {
       console.log("Research Complete!");
       GameDispatch({ type: "CompleteResearch" });
+      await showResearchSelector(generalDialog);
     }
   } catch (e) {
     //TODO Show error dialog
     console.error("Failed to update game state:", e);
   }
-};
+}
 
 function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
   // Reset rocket 10s after launch

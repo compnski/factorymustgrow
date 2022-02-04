@@ -9,22 +9,12 @@ import { useInterval } from "./reactUtils";
 import { FactoryGame } from "./components/FactoryGame";
 import { TicksPerSecond } from "./constants";
 import "./macro_def";
-import { GeneralDialogProvider } from "./GeneralDialogProvider";
+import {
+  GeneralDialogProvider,
+  useGeneralDialog,
+} from "./GeneralDialogProvider";
 
 function App() {
-  const [gameState, setGameState] = useGameState();
-
-  useInterval(() => {
-    // Your custom logic here
-    const tick = new Date().getTime();
-    UpdateGameState(tick);
-    saveStateToLocalStorage(GameState);
-  }, 1000 / TicksPerSecond);
-
-  useInterval(() => {
-    setGameState({ ...GameState });
-  }, 32);
-
   return (
     <GeneralDialogProvider>
       <div
@@ -33,7 +23,7 @@ function App() {
           if ((evt.target as Element).classList.contains("clickable")) return;
         }}
       >
-        <FactoryGame gameState={gameState} />
+        <FactoryGame />
       </div>
     </GeneralDialogProvider>
   );

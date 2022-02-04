@@ -1,5 +1,5 @@
 import { GameDispatch } from "../GameDispatch";
-import { FactoryGameState } from "../useGameState";
+import { FactoryGameState, GameState, useGameState } from "../useGameState";
 import { BuildingCardList } from "./BuildingCardList";
 import { InfoHeader } from "./InfoHeader";
 import { MainBusHeader } from "./MainBusHeader";
@@ -11,14 +11,31 @@ import { useGeneralDialog } from "../GeneralDialogProvider";
 import { showHelpCard } from "./selectors";
 
 import { ReactComponent as RocketShip } from "../rocket-launch.svg";
+import { useInterval } from "../reactUtils";
+import { UpdateGameState } from "../factoryGame";
+import { saveStateToLocalStorage } from "../localstorage";
+import { TicksPerSecond } from "../constants";
 
 type FactoryGameProps = {
   gameState: FactoryGameState;
 };
 
-export const FactoryGame = ({ gameState }: FactoryGameProps) => {
+export const FactoryGame = () => {
+  const [gameState, setGameState] = useGameState();
+  const generalDialog = useGeneralDialog();
+
+  useInterval(() => {
+    // Your custom logic here
+    const tick = new Date().getTime();
+    UpdateGameState(tick, generalDialog);
+    saveStateToLocalStorage(GameState);
+  }, 1000 / TicksPerSecond);
+
+  useInterval(() => {
+    setGameState({ ...GameState });
+  }, 32);
+
   try {
-    const generalDialog = useGeneralDialog();
     const regionIds = [...gameState.Regions.keys()];
     const currentRegion = gameState.Regions.get(gameState.CurrentRegionId)!;
 
