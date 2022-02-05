@@ -1,27 +1,20 @@
 {
   "files": {
-    "main.css": "/factorymustgrow/static/css/main.631a4f41.chunk.css",
-    "main.js": "/factorymustgrow/static/js/main.5da35106.chunk.js",
-    "main.js.map": "/factorymustgrow/static/js/main.5da35106.chunk.js.map",
-    "runtime-main.js": "/factorymustgrow/static/js/runtime-main.bb327184.js",
-    "runtime-main.js.map": "/factorymustgrow/static/js/runtime-main.bb327184.js.map",
-    "static/js/2.efe99e1e.chunk.js": "/factorymustgrow/static/js/2.efe99e1e.chunk.js",
-    "static/js/2.efe99e1e.chunk.js.map": "/factorymustgrow/static/js/2.efe99e1e.chunk.js.map",
-    "static/js/3.0c789117.chunk.js": "/factorymustgrow/static/js/3.0c789117.chunk.js",
-    "static/js/3.0c789117.chunk.js.map": "/factorymustgrow/static/js/3.0c789117.chunk.js.map",
+    "main.css": "/factorymustgrow/static/css/main.8de0bd7f.css",
+    "main.js": "/factorymustgrow/static/js/main.17a484e2.js",
+    "static/js/787.aa33acf2.chunk.js": "/factorymustgrow/static/js/787.aa33acf2.chunk.js",
+    "static/media/icons.png": "/factorymustgrow/static/media/icons.e7652a31dd05ace9d1aa.png",
+    "static/media/technology.png": "/factorymustgrow/static/media/technology.7056d4fd9d538cb31ddd.png",
+    "static/media/rocket-launch.svg": "/factorymustgrow/static/media/rocket-launch.cc924228bbcacbd4bd119981bb773c08.svg",
+    "static/media/helpTemplate.svg": "/factorymustgrow/static/media/helpTemplate.e630f11eb05c954d74b663b68630d184.svg",
+    "static/media/regionmap.svg": "/factorymustgrow/static/media/regionmap.2ad834336c958155fe6183bac16ea38f.svg",
     "index.html": "/factorymustgrow/index.html",
-    "static/css/main.631a4f41.chunk.css.map": "/factorymustgrow/static/css/main.631a4f41.chunk.css.map",
-    "static/js/2.efe99e1e.chunk.js.LICENSE.txt": "/factorymustgrow/static/js/2.efe99e1e.chunk.js.LICENSE.txt",
-    "static/media/helpTemplate.e630f11e.svg": "/factorymustgrow/static/media/helpTemplate.e630f11e.svg",
-    "static/media/App.scss": "/factorymustgrow/static/media/icons.e7652a31.png",
-    "static/media/regionmap.fda40266.svg": "/factorymustgrow/static/media/regionmap.fda40266.svg",
-    "static/media/rocket-launch.cc924228.svg": "/factorymustgrow/static/media/rocket-launch.cc924228.svg",
-    "static/media/technology.css": "/factorymustgrow/static/media/technology.7056d4fd.png"
+    "main.8de0bd7f.css.map": "/factorymustgrow/static/css/main.8de0bd7f.css.map",
+    "main.17a484e2.js.map": "/factorymustgrow/static/js/main.17a484e2.js.map",
+    "787.aa33acf2.chunk.js.map": "/factorymustgrow/static/js/787.aa33acf2.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.bb327184.js",
-    "static/js/2.efe99e1e.chunk.js",
-    "static/css/main.631a4f41.chunk.css",
-    "static/js/main.5da35106.chunk.js"
+    "static/css/main.8de0bd7f.css",
+    "static/js/main.17a484e2.js"
   ]
 }
