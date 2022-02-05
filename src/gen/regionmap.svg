@@ -25,6 +25,10 @@ stroke-width="0" />
 	<circle id="region_region5" cx="425" cy="425" r="50">
 	<title>Large lanes</title>
 	</circle>
+	<circle id="region_region6" cx="298.42" cy="385" r="17.5"
+	fill="#803300">
+	<title>Infinite Water, lots of space</title>
+	</circle>
 </g>
 <g id="g3088" fill="none" stroke="#000" stroke-width="4px">
 	<path id="path_start_region1" d="m264.64 264.64-54.289-54.289" />
@@ -32,6 +36,7 @@ stroke-width="0" />
 	<path id="path_start_region3" d="m264.64 335.36-54.289 54.289" />
 	<path id="path_start_region4" d="m299.08 250.01-0.34371-18.749" />
 	<path id="path_start_region5" d="m335.36 335.36 54.289 54.289" />
+	<path id="path_start_region4" d="m299.08 350.36-0.34371 20" />
 </g>
 <g fill="#ffccaa" font-family="sans-serif" font-size="30.238px"
 stroke-width=".75595"
@@ -42,4 +47,5 @@ style="line-height:1.25;pointer-events:none;user-select:none">
 	<text x="150" y="425">R 3</text>
 	<text x="275" y="225">R 4</text>
 	<text x="400" y="425">R 5</text>
+	<text x="275" y="395">R 6</text>
 </g>&gt;</svg>

@@ -31,9 +31,9 @@ const Regions = new Map<string, RegionInfo>([
     "region1",
     {
       Id: "region1",
-      LaneCount: 5,
-      LaneSize: 10,
-      MainBusCount: 3,
+      LaneCount: 10,
+      LaneSize: 50,
+      MainBusCount: 0,
       Cost: [],
       AdjacentTo: ["region0"],
       Provides: [
@@ -64,21 +64,6 @@ const Regions = new Map<string, RegionInfo>([
     },
   ],
   [
-    "region4",
-    {
-      Id: "region4",
-      LaneCount: 10,
-      LaneSize: 20,
-      MainBusCount: 6,
-      AdjacentTo: ["region0"],
-      Cost: [],
-      Provides: [
-        NewEntityStack("crude-oil", Infinity),
-        NewEntityStack("water", Infinity),
-      ],
-    },
-  ],
-  [
     "region3",
     {
       Id: "region3",
@@ -90,6 +75,21 @@ const Regions = new Map<string, RegionInfo>([
       Provides: [
         NewEntityStack("iron-ore", 10000),
         NewEntityStack("copper-ore", 10000),
+      ],
+    },
+  ],
+  [
+    "region4",
+    {
+      Id: "region4",
+      LaneCount: 10,
+      LaneSize: 20,
+      MainBusCount: 6,
+      AdjacentTo: ["region0"],
+      Cost: [],
+      Provides: [
+        NewEntityStack("crude-oil", Infinity),
+        NewEntityStack("water", Infinity),
       ],
     },
   ],
@@ -110,6 +110,19 @@ const Regions = new Map<string, RegionInfo>([
       ],
     },
   ],
+  [
+    "region6",
+    {
+      Id: "region6",
+      LaneCount: 40,
+      LaneSize: 100,
+      MainBusCount: 10,
+      AdjacentTo: ["region0"],
+      Cost: [],
+      Provides: [NewEntityStack("water", Infinity)],
+    },
+  ],
+
   [
     "HelpRegion",
     {

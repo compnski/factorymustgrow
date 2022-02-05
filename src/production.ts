@@ -222,11 +222,16 @@ export type Factory = {
 
 function EntityStackForEntity(
   entity: string,
-  getEntity: (e: string) => Entity | undefined
+  getEntity: (e: string) => Entity | undefined,
+  stackSizeMinimum: number = 0
 ): EntityStack {
   const e = getEntity(entity);
   if (!e) console.error("Failed to find entity for ", entity);
-  return NewEntityStack(entity, 0, e?.StackSize || Infinity);
+  return NewEntityStack(
+    entity,
+    0,
+    Math.max(stackSizeMinimum, e?.StackSize || Infinity)
+  );
 }
 
 const entityToProducerTypeMap: { [key: string]: BuildingType } = {
@@ -308,7 +313,9 @@ function inputItemBufferForFactory(
   getEntity: (e: string) => Entity
 ): ItemBuffer {
   return FixedInventory(
-    r.Input.map((input) => EntityStackForEntity(input.Entity, getEntity)),
+    r.Input.map((input) =>
+      EntityStackForEntity(input.Entity, getEntity, input.Count)
+    ),
     getEntity
   );
 }
@@ -317,7 +324,9 @@ function outputItemBufferForFactory(
   getEntity: (e: string) => Entity
 ): ItemBuffer {
   return FixedInventory(
-    r.Output.map((output) => EntityStackForEntity(output.Entity, getEntity)),
+    r.Output.map((output) =>
+      EntityStackForEntity(output.Entity, getEntity, output.Count)
+    ),
     getEntity
   );
 }

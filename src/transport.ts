@@ -132,7 +132,7 @@ export function NewBeltLinePair(
   var beltLineName: string = "";
   for (
     ;
-    beltLineName === "" || beltLineName.length > 15;
+    beltLineName === "" || beltLineName.length > 14;
     beltLineName = randomName()
   ) {}
   // Belt should be thought of as a chain of EntityStacks,

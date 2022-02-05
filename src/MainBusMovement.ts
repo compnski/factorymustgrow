@@ -32,12 +32,14 @@ export function PushPullFromMainBus(
         } from main bus ${JSON.stringify(mb)}`
       );
     }
+
+    // TODO Use InserterTransferRate, not buildngCount
     const busLaneEntity = busLane.Entities()[0][0];
     const producerBuffer =
         laneConnection.direction === "TO_BUS"
           ? building.outputBuffers
           : building?.inputBuffers,
-      maxTransferToFromBelt = building.BuildingCount || 1;
+      maxTransferToFromBelt = InserterTransferRate(laneConnection.Inserter); // building.BuildingCount || 1;
     if (!producerBuffer)
       throw new Error(
         `Failed to find producer buffer for ${JSON.stringify(

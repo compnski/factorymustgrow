@@ -6,7 +6,16 @@
 *** Performance sucks
 *** Names sometime still too long "courageous ram"
 *** Plastic production seems hard to scale up, maybe oil issues?
+*** Belt connections don't move with buildings
+*** Pop-up recipe selector after placing building
+*** Research dialog overwrites any existing dialog
+*** Auto-select recipe for oil, water pumps
+*** Better re-arranging? (Maybe with research)
+*** Can't build rocket silo, factory doesn't fit enough resources
+** Factory inventory upgrade -- Hold 2x required materials per factory
 ** Better UI for deleting belt lines
+** Save progress during upgrades?
+*** Offer to save progress during upgrades if possible
 ** Fix factories producing partial goods
 *** TODO figure out progress bar
 *** Update extractors to also use ProgressTracker
