@@ -3,7 +3,7 @@ import "./RegionSelector.scss";
 
 import { ReactComponent as RegionMapSVG } from "../gen/regionmap.svg";
 import { SyntheticEvent } from "react";
-import { useProperties } from "../explore/svg";
+import { useProperties } from "../svg";
 
 export type RegionSelectorProps = {
   regionIds: string[];
