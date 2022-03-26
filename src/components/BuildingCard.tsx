@@ -1,20 +1,19 @@
-import "./BuildingCard.scss";
-
+import { SyntheticEvent, useState } from "react";
+import { Building, BuildingSlot, InserterIdForBelt } from "../building";
 import { GameAction } from "../GameAction";
 import { GameDispatch } from "../GameDispatch";
-import { ItemBuffer, Producer } from "../types";
-import { SyntheticEvent, useState } from "react";
-import { MainBusSegment } from "./MainBusSegment";
-import { BuildingHasInput, BuildingHasOutput } from "../utils";
-import { ProducerCard } from "./ProducerCard";
-import { Building, BuildingSlot, InserterIdForBelt } from "../building";
-import { BeltLineCard } from "./BeltLineCard";
 import { MainBus } from "../mainbus";
-import { StorageCard } from "./StorageCard";
+import { ItemBuffer, Producer } from "../types";
+import { BuildingHasInput, BuildingHasOutput } from "../utils";
+import { BeltLineCard } from "./BeltLineCard";
+import "./BuildingCard.scss";
 import { EmptyLaneCard } from "./EmptyLaneCard";
-import { LabCard } from "./LabCard";
 import { InserterCard } from "./InserterCard";
+import { LabCard } from "./LabCard";
+import { MainBusSegment } from "./MainBusSegment";
+import { ProducerCard } from "./ProducerCard";
 import { RocketSiloCard } from "./RocketSiloCard";
+import { StorageCard } from "./StorageCard";
 
 export type BuildingCardProps = {
   building: Building;
@@ -33,7 +32,6 @@ export const BuildingCard = ({
   building,
   buildingSlot,
   buildingIdx,
-  dispatch,
   mainBus,
   regionalOre,
   handleDrag,

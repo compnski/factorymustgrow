@@ -34,11 +34,11 @@ export function ProducerCard({
 }: ProducerCardProps) {
   const generalDialog = useGeneralDialog();
 
-  var recipeInput = producer.inputBuffers;
+  let recipeInput = producer.inputBuffers;
 
   if (producer.kind === "Extractor" && producer.inputBuffers) {
     recipeInput = new Inventory(Infinity);
-    for (var [entity] of producer.inputBuffers.Entities()) {
+    for (const [entity] of producer.inputBuffers.Entities()) {
       const ore = regionalOre.Count(entity);
       if (ore) recipeInput.Add(NewEntityStack(entity, ore));
     }

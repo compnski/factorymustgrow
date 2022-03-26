@@ -30,7 +30,9 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "gen": "go run ./src/scripts/genEntities.go src/gen/entities.ts",
-    "researchTiers": "ts-node ./src/scripts/genResearchTiers.ts"
+    "researchTiers": "ts-node ./src/scripts/genResearchTiers.ts",
+    "lint": "npx eslint --fix src/**/*.ts src/**/*.tsx",
+    "check-lint": "npx eslint src/**/*.ts src/**/*.tsx"
   },
   "eslintConfig": {
     "extends": ["react-app", "react-app/jest"]
@@ -44,6 +46,7 @@
     ]
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.16.0",
     "gh-pages": "^3.2.0",
     "prettier": "^2.3.1"
   }

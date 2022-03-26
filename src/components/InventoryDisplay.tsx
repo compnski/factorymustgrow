@@ -74,7 +74,7 @@ export function InventoryDisplay({
       ? inventory.Slots().length
       : Math.max(inventory.Capacity, inventory.Slots().length);
 
-  for (var i = 0; i < numSlots; i++) {
+  for (let i = 0; i < numSlots; i++) {
     const slotData = inventory.Slots()[i];
     if (!slotData) {
       slots.push(<div key={i} className="inventory-slot" />);

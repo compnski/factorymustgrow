@@ -28,7 +28,7 @@ export function RegionTabBar({
       "data-region-id"
     )?.value;
     if (regionId === regionIdClaimNew) {
-      showClaimRegionSelector(generalDialog, inventory, regionIds);
+      void showClaimRegionSelector(generalDialog, inventory, regionIds);
     } else if (regionId) {
       gameDispatch({ type: "ChangeRegion", regionId });
     }

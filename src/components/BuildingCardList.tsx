@@ -1,11 +1,11 @@
-import { BuildingCard } from "./BuildingCard";
-import { GameDispatch } from "../GameDispatch";
-import { ItemBuffer } from "../types";
 import { SyntheticEvent, useState } from "react";
 import { BuildingSlot, InserterIdForBuilding } from "../building";
+import { GameDispatch } from "../GameDispatch";
 import { MainBus } from "../mainbus";
-import { InserterCard } from "./InserterCard";
+import { ItemBuffer } from "../types";
 import { showUserError } from "../utils";
+import { BuildingCard } from "./BuildingCard";
+import { InserterCard } from "./InserterCard";
 
 export const BuildingCardList = ({
   region,
@@ -18,7 +18,7 @@ export const BuildingCardList = ({
 }) => {
   const [dragIdx, setDragIdx] = useState(-1);
 
-  const handleDrag = (buildingIdx: number) => (e: SyntheticEvent) => {
+  const handleDrag = (buildingIdx: number) => () => {
     console.log("drag start");
     setDragIdx(buildingIdx);
     //e.preventDefault();
@@ -39,7 +39,7 @@ export const BuildingCardList = ({
     };
 
   const moveUp = (buildingIdx: number) => {
-    for (var i = buildingIdx; i >= 0; i--) {
+    for (let i = buildingIdx; i >= 0; i--) {
       if (region.BuildingSlots[i].Building.kind === "Empty") {
         GameDispatch({
           type: "ReorderBuildings",
@@ -55,7 +55,7 @@ export const BuildingCardList = ({
   };
 
   const moveDown = (buildingIdx: number) => {
-    for (var i = buildingIdx; i < region.BuildingSlots.length; i++) {
+    for (let i = buildingIdx; i < region.BuildingSlots.length; i++) {
       if (region.BuildingSlots[i].Building.kind === "Empty") {
         GameDispatch({
           type: "ReorderBuildings",

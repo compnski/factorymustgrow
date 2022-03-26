@@ -47,5 +47,7 @@ export const TestEntityList = new Map<string, Entity>([
 ]);
 
 export function GetTestEntity(name: string): Entity {
-  return TestEntityList.get(name)!;
+  const e = TestEntityList.get(name);
+  if (!e) throw new Error("Cannot find entity for " + name);
+  return e;
 }

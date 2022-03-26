@@ -6,7 +6,7 @@ export const NewBusLane = (
   getEntity: (e: string) => Entity,
   Id: number,
   Entity: string,
-  initialCount: number = 0
+  initialCount = 0
 ): ItemBuffer => {
   const inv = FixedInventory([
     {
@@ -20,20 +20,17 @@ export const NewBusLane = (
 };
 export class MainBus {
   lanes: Map<number, ItemBuffer>;
-  nextLaneId: number = 1;
-  kind: string = "MainBus";
+  nextLaneId = 1;
+  kind = "MainBus";
   getEntity: (e: string) => Entity;
 
-  constructor(
-    firstLaneId: number = 1,
-    lanes: Map<number, ItemBuffer> = new Map()
-  ) {
+  constructor(firstLaneId = 1, lanes: Map<number, ItemBuffer> = new Map()) {
     this.lanes = lanes;
     this.nextLaneId = firstLaneId;
     this.getEntity = GetEntity;
   }
 
-  AddLane(Entity: string, initialCount: number = 0): number {
+  AddLane(Entity: string, initialCount = 0): number {
     const laneId = this.nextLaneId++;
     this.lanes.set(
       laneId,

@@ -12,8 +12,8 @@ export function EmptyLaneCard(props: { buildingIdx: number }) {
       </div>
       <div className="bottom-area">
         <div
-          onClick={async () => {
-            showPlaceBuildingSelector(
+          onClick={() => {
+            void showPlaceBuildingSelector(
               generalDialog,
               GameState.Inventory,
               props.buildingIdx

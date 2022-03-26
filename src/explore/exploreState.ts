@@ -69,8 +69,8 @@ const chooseNearestTarget = (
   targets: Map<number, EntityDef>
 ): EntityDef | null => {
   // TODO:  Sort targets to get nearest
-  var nearestTarget = null;
-  var nearestDistance = 1e6;
+  let nearestTarget = null;
+  let nearestDistance = 1e6;
   targets.forEach((target) => {
     if (t.kind === "Turret" && !inRange(t, target)) return;
     const d = targetDistance(t, target);
@@ -126,9 +126,9 @@ const pickAndFaceTarget = (
         : ent.currentTarget;
     const deltaY = rotationTarget.y - ent.y;
     const deltaX = rotationTarget.x - ent.x;
-    let rotation = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
+    const rotation = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
 
-    var rotationDelta = ent.rotation - rotation;
+    let rotationDelta = ent.rotation - rotation;
     rotationDelta = Math.min(Math.max(rotationDelta, -1), 1);
     ent.rotation = rotation + rotationDelta;
   }
@@ -196,7 +196,7 @@ const lineIntersectsCircle = (
 const inRange = (attacker: EntityDef, defender: EntityDef): boolean => {
   const isInRange = targetDistance(attacker, defender) < attacker.weapon.range;
   if (!isInRange) return false;
-  for (var [, r] of GameState.terrain) {
+  for (const [, r] of GameState.terrain) {
     if (lineIntersectsCircle(attacker, defender, r, r.hitRadius)) return false;
   }
   return true;
@@ -231,7 +231,7 @@ const doMove = (entity: EntityDef, bugs: EntityMap, turrets: EntityMap) => {
   const newY = entity.y + deltaY;
   const newPos = { x: newX, y: newY };
 
-  for (var [, e] of new Map([...turrets])) {
+  for (const [, e] of new Map([...turrets])) {
     if (e.id === entity.id) continue;
     if (targetDistance(newPos, e) < entity.hitRadius) {
       //console.log(`${entity.id} Would collide with bug ${e.id}`);
@@ -318,7 +318,7 @@ function scoreFunction(
   const pointCache = new Map<string, number>();
   return (p: Point): number => {
     const pointS = PointToS(p);
-    var points = pointCache.get(pointS);
+    const points = pointCache.get(pointS);
     if (points != null) return points;
     const score = ((): number => {
       if (p.x < 0 || p.y < 0 || p.x > bottomRight.x || p.y > bottomRight.y)
@@ -376,8 +376,8 @@ function inBounds(n: number): number {
 }
 
 function pickBugSpawnCoords(bug: Point): Point {
-  var x = inBounds(bug.x + normalRand(-100, 100));
-  var y = inBounds(bug.y + normalRand(-100, 100));
+  let x = inBounds(bug.x + normalRand(-100, 100));
+  let y = inBounds(bug.y + normalRand(-100, 100));
   x = x < bug.x ? x - 24 : x + 24;
   y = y < bug.y ? y - 24 : y + 24;
   return { x, y };
@@ -406,7 +406,7 @@ function spawnNewBugs(delta: number, bugs: Map<number, EntityDef>) {
     });
 }
 
-var lastTick = 0;
+let lastTick = 0;
 // returns false when the game is over
 export function AdvanceGameState(tick: number, mousePos: Point): boolean {
   const score = scoreFunction(4, GameState.bugs, GameState.turrets, {
@@ -419,9 +419,9 @@ export function AdvanceGameState(tick: number, mousePos: Point): boolean {
   mouseEnt.x = mousePos.x;
   mouseEnt.y = mousePos.y;
   // Allow to target spawners
-  for (var [, t] of GameState.turrets)
+  for (const [, t] of GameState.turrets)
     if (!t.notAIControlled) pickAndFaceTarget(t, GameState.bugs, score);
-  for (var [, b] of GameState.bugs)
+  for (const [, b] of GameState.bugs)
     if (!b.notAIControlled) pickAndFaceTarget(b, GameState.turrets, score);
   doMoveAndCombat(GameState.bugs, GameState.turrets);
 
@@ -437,7 +437,7 @@ export function AdvanceGameState(tick: number, mousePos: Point): boolean {
 }
 
 const noMoreSpawners = (bugs: Map<number, EntityDef>): boolean => {
-  for (var [, b] of bugs) {
+  for (const [, b] of bugs) {
     if (b.kind === "Spawner") return false;
   }
   return true;
@@ -447,12 +447,12 @@ const NumSpawners = 7;
 const AllowedBugsPerSpawner = 10;
 
 function spawnSpawners() {
-  for (var i = 0; i < NumSpawners; i++) {
+  for (let i = 0; i < NumSpawners; i++) {
     const x = inBounds(normalRand(32, 500, 1) + Math.random() * 200);
     const y = inBounds(normalRand(32, 500, 1.2) + (75 - Math.random() * 200));
     const b = NewSpawner(x, y);
     GameState.bugs.set(b.id, b);
-    for (var j = 0; j < normalRand(2, AllowedBugsPerSpawner / 2); j++) {
+    for (let j = 0; j < normalRand(2, AllowedBugsPerSpawner / 2); j++) {
       spawnBug(pickBugSpawnCoords(b));
     }
   }
@@ -462,7 +462,7 @@ const NumRocks = 10;
 
 function spawnRocks(): Map<number, TerrainDef> {
   const terrainMap = new Map();
-  for (var i = 0; i < NumRocks; i++) {
+  for (let i = 0; i < NumRocks; i++) {
     const rock = NewTerrain(Math.random() * 500, Math.random() * 500);
     terrainMap.set(rock.id, rock);
   }
@@ -494,7 +494,7 @@ export function updateExploreState(action: ExploreAction): void {
       break;
     case "SpawnSpawner":
       if (action.position) {
-        for (var [, e] of GameState.bugs) {
+        for (const [, e] of GameState.bugs) {
           if (targetDistance(action.position, e) < 16 + e.hitRadius) {
             console.log(`New Spawner Would collide with ${e.id} ${e.x},${e.y}`);
             break;
@@ -535,7 +535,7 @@ const canPlaceTurretAt = function (
       return false;
     }
   }
-  for (var [, t] of GameState.terrain) {
+  for (const [, t] of GameState.terrain) {
     if (targetDistance({ x, y }, t) < 16 + t.hitRadius) {
       return false;
     }
@@ -544,7 +544,7 @@ const canPlaceTurretAt = function (
   return true;
 };
 
-function normalRand(min: number = 0, max: number = 1, skew: number = 1) {
+function normalRand(min = 0, max = 1, skew = 1) {
   let u = 0,
     v = 0;
   while (u === 0) u = Math.random(); //Converting [0,1) to (0,1)

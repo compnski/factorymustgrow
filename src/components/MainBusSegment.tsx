@@ -20,7 +20,7 @@ const getPath = (
   reverse: boolean
 ): string => {
   const pathSteps = [[0, y]];
-  for (var i = 0; i <= laneIdx; i++) {
+  for (let i = 0; i <= laneIdx; i++) {
     pathSteps.push([chevronOffset + Math.max(0, i * interChevronWidth - 5), y]);
   }
   pathSteps.push([maxX + MainBusConst.laneWidth + 5, y]);
@@ -67,11 +67,11 @@ export function MainBusSegment({
   beltConnectionClicked?: (connectionIdx: number) => void;
 }) {
   const lanes = [];
-  var idx = 0;
+  let idx = 0;
   const laneIdxByBeltId: { [key: number]: number } = {};
   const entityIconLookup = entityIconLookupByKind("MainBus");
 
-  for (var [_laneId, lane] of mainBus.lanes.entries()) {
+  for (const [_laneId, lane] of mainBus.lanes.entries()) {
     const laneId = _laneId;
     const laneX =
       MainBusConst.laneOffset +

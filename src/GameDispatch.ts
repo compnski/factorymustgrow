@@ -1,49 +1,46 @@
 import {
+  Building,
+  BuildingSlot,
+  InserterId,
+  NewBuildingSlot,
+  NewEmptyLane,
+  NextEmptySlot,
+} from "./building";
+import { fixOutputStatus } from "./factoryGame";
+import { GameAction, InventoryTransferAction } from "./GameAction";
+import { GetEntity } from "./gen/entities";
+import { GetResearch } from "./gen/research";
+import { GameWindow } from "./globals";
+import { Inserter } from "./inserter";
+import { FixedInventory } from "./inventory";
+import { CanPushTo } from "./movement";
+import {
   Factory,
   NewExtractor,
   NewFactory,
   ProducerTypeFromEntity,
   UpdateBuildingRecipe,
 } from "./production";
-import {
-  NewEntityStack,
-  Producer,
-  NewRegionFromInfo,
-  ItemBuffer,
-  Region,
-} from "./types";
-import { GetEntity } from "./gen/entities";
-import { CanPushTo } from "./movement";
-import { NewLab } from "./research";
-import { GetResearch } from "./gen/research";
-import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
-import { GameWindow } from "./globals";
 import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
-import {
-  BuildingSlot,
-  Building,
-  NewEmptyLane,
-  NewBuildingSlot,
-  InserterId,
-  NextEmptySlot,
-} from "./building";
-import { GameState } from "./useGameState";
-import { ResetGameState } from "./useGameState";
+import { NewLab } from "./research";
+import { Chest, NewChest, UpdateChestSize } from "./storage";
 import {
   BeltLineDepot,
   FindDepotForBeltLineInRegion,
   NewBeltLinePair,
 } from "./transport";
-import { FixedInventory } from "./inventory";
-import { Chest, NewChest, UpdateChestSize } from "./storage";
-import { GameAction, InventoryTransferAction } from "./GameAction";
-import { fixOutputStatus } from "./factoryGame";
-import { Inserter } from "./inserter";
-import { showResearchSelector } from "./components/selectors";
+import {
+  ItemBuffer,
+  NewEntityStack,
+  NewRegionFromInfo,
+  Producer,
+  Region,
+} from "./types";
+import { CurrentRegion, GameState, ResetGameState } from "./useGameState";
+import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
 
 export const GameDispatch = (action: GameAction) => {
-  const currentRegion = GameState?.Regions?.get(GameState.CurrentRegionId)!;
-
+  const currentRegion = CurrentRegion();
   switch (action.type) {
     case "Reset":
       ResetGameState();
@@ -51,24 +48,7 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "RemoveLane":
-      const lane = currentRegion.Bus.RemoveLane(action.laneId),
-        laneEntity = lane?.Entities()[0][0];
-
-      if (lane && laneEntity)
-        GameState.Inventory.AddFromItemBuffer(lane, laneEntity, Infinity, true);
-
-      // Remove attached inserters
-      currentRegion.BuildingSlots.forEach((buildingSlot, buildingSlotIdx) => {
-        buildingSlot.BeltConnections.forEach((beltConn, beltConnIdx) => {
-          if (beltConn.laneId === action.laneId) {
-            GameDispatch({
-              type: "RemoveMainBusConnection",
-              buildingIdx: buildingSlotIdx,
-              connectionIdx: beltConnIdx,
-            });
-          }
-        });
-      });
+      removeLane(currentRegion, action);
       break;
 
     case "AddLane":
@@ -83,26 +63,7 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "CompleteResearch":
-      const currentResearchId = GameState.Research.CurrentResearchId,
-        currentResearchProgress =
-          GameState.Research.Progress.get(currentResearchId);
-      if (currentResearchProgress)
-        currentResearchProgress.Count = currentResearchProgress.MaxCount || 0;
-      else {
-        const r = GetResearch(currentResearchId);
-        if (r)
-          GameState.Research.Progress.set(
-            currentResearchId,
-            NewEntityStack(
-              currentResearchId,
-              r.ProductionRequiredForCompletion,
-              r.ProductionRequiredForCompletion
-            )
-          );
-        else console.log("No Research");
-      }
-      //else console.log("No research", currentResearchId);
-      GameState.Research.CurrentResearchId = "";
+      completeResearch();
       break;
 
     case "NewLab":
@@ -138,209 +99,39 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "IncreaseBuildingCount":
-      (() => {
-        const b = building(action) as Producer;
-        // TODO: Handle belt lines
-        if (b?.kind === "BeltLineDepot") {
-          console.log("Can't add lanes to beltlines");
-          return;
-        }
-        if (GameState.Inventory.Count(b.subkind) <= 0) {
-          return;
-        }
-        GameState.Inventory.Remove(NewEntityStack(b.subkind, 0, 1), 1);
-
-        if (b) b.BuildingCount = Math.min(50, b.BuildingCount + 1);
-        if (b?.kind === "Chest") UpdateChestSize(b as Chest);
-      })();
+      increaseBuildingCount(action);
       break;
 
     case "DecreaseBuildingCount":
-      (() => {
-        const b = building(action) as Producer;
-        // TODO: Handle belt lines
-        if (b?.kind === "BeltLineDepot") {
-          console.log("Can't remove lanes to beltlines");
-          return;
-        }
-
-        if (b) {
-          if (b.BuildingCount > 0) {
-            GameState.Inventory.Add(NewEntityStack(b.subkind, 1, 1), 1);
-            b.BuildingCount = Math.max(0, b.BuildingCount - 1);
-          }
-          if (b?.kind === "Chest") UpdateChestSize(b as Chest);
-          // TODO: If factory, reduce ProgressTracker and refund materials
-          // NOTE: Only if progressTracker == BuildingCount
-          //if (b?.kind === "Factory") RemoveProgressTracker(b as Factory);
-        }
-      })();
+      decreaseBuildingCount(action);
       break;
 
     case "IncreaseInserterCount":
-      (() => {
-        const i = inserter(action);
-
-        if (!i || GameState.Inventory.Count(i.subkind) <= 0) {
-          return;
-        }
-        GameState.Inventory.Remove(NewEntityStack(i.subkind, 0, 1), 1);
-
-        if (i) i.BuildingCount = Math.min(50, i.BuildingCount + 1);
-      })();
+      increaseInserterCount(action);
       break;
 
     case "DecreaseInserterCount":
-      (() => {
-        const i = inserter(action);
-
-        if (i && i.BuildingCount > 0) {
-          GameState.Inventory.Add(NewEntityStack(i.subkind, 1, 1), 1);
-          i.BuildingCount = Math.max(0, i.BuildingCount - 1);
-        }
-      })();
+      decreaseInserterCount(action);
       break;
 
     case "ToggleInserterDirection":
-      (() => {
-        if (action.location === "BELT") {
-          const i = inserter(action),
-            b = building(action);
-
-          const beltConn =
-              currentRegion.BuildingSlots[action.buildingIdx].BeltConnections[
-                action.connectionIdx
-              ],
-            mainBusLaneId = beltConn.laneId;
-          if (
-            mainBusLaneId !== undefined &&
-            currentRegion.Bus.HasLane(mainBusLaneId)
-          ) {
-            const busLane = currentRegion.Bus.lanes.get(mainBusLaneId);
-            // Check if the inserter can be toggled
-            // IF so, flip it
-            if (i && b && busLane) {
-              const canGoLeft = BuildingHasInput(b, busLane.Entities()[0][0]),
-                canGoRight = BuildingHasOutput(b, busLane.Entities()[0][0]);
-
-              if (canGoLeft && canGoRight) {
-                i.direction =
-                  i.direction === "TO_BUS"
-                    ? "FROM_BUS"
-                    : i.direction === "FROM_BUS"
-                    ? "NONE"
-                    : "TO_BUS";
-              } else if (canGoLeft) {
-                i.direction = i.direction === "NONE" ? "FROM_BUS" : "NONE";
-              } else if (canGoRight) {
-                i.direction = i.direction === "NONE" ? "TO_BUS" : "NONE";
-              }
-              if (i.direction === "FROM_BUS" || i.direction === "TO_BUS") {
-                beltConn.direction = i.direction;
-              }
-            }
-          }
-          return;
-        }
-
-        const topB = currentRegion.BuildingSlots[action.buildingIdx].Building,
-          bottomB =
-            currentRegion.BuildingSlots[action.buildingIdx + 1].Building,
-          i = currentRegion.BuildingSlots[action.buildingIdx].Inserter;
-
-        if (!topB || !bottomB || action.buildingIdx === undefined) return;
-
-        console.log(CanPushTo(bottomB, topB), CanPushTo(topB, bottomB));
-
-        const canGoUp =
-            BuildingHasOutput(bottomB.kind) &&
-            BuildingHasInput(topB.kind) &&
-            CanPushTo(bottomB, topB),
-          canGoDown =
-            BuildingHasOutput(topB.kind) &&
-            BuildingHasInput(bottomB.kind) &&
-            CanPushTo(topB, bottomB);
-
-        if (canGoUp && canGoDown) {
-          i.direction =
-            i.direction === "UP"
-              ? "DOWN"
-              : i.direction === "DOWN"
-              ? "NONE"
-              : "UP";
-        } else if (canGoUp) {
-          i.direction = i.direction === "NONE" ? "UP" : "NONE";
-        } else if (canGoDown) {
-          i.direction = i.direction === "NONE" ? "DOWN" : "NONE";
-        }
-      })();
+      toggleInserterDirection(action, currentRegion);
       break;
 
     case "RemoveMainBusConnection":
-      const conn = buildingSlot(action)?.BeltConnections[action.connectionIdx];
-      if (conn) {
-        conn.laneId = undefined;
-        conn.direction = undefined;
-        conn.Inserter.direction = "NONE";
-      }
+      removeMainBusConnection(action);
       break;
 
     case "AddMainBusConnection":
-      const { laneId, direction } = action;
-      const slot = buildingSlot(action),
-        firstEmptyBeltConn = slot?.BeltConnections.find(
-          (beltConn) => beltConn.direction === undefined
-        );
-      console.log(
-        "Add slot",
-        action,
-        firstEmptyBeltConn,
-        slot?.BeltConnections
-      );
-
-      if (firstEmptyBeltConn) {
-        firstEmptyBeltConn.direction = direction;
-        firstEmptyBeltConn.laneId = laneId;
-        firstEmptyBeltConn.Inserter.direction = direction;
-        // TODO: If inserter count is 0, try to build one from inventory
-        // If the current count is 0, try to build one
-        if (
-          firstEmptyBeltConn.Inserter.BuildingCount === 0 &&
-          GameState.Inventory.Remove(
-            NewEntityStack(firstEmptyBeltConn.Inserter.subkind, 0, 1),
-            1
-          )
-        )
-          firstEmptyBeltConn.Inserter.BuildingCount = 1;
-      }
-
+      addMainBusConnection(action);
       break;
 
     case "TransferToInventory":
-      (() => {
-        const fromStack = inventoryTransferStack(action);
-        if (fromStack) {
-          const fromStackEntity = action.entity;
-          if (GameState.Inventory.AvailableSpace(fromStackEntity) > 0) {
-            GameState.Inventory.AddFromItemBuffer(
-              fromStack,
-              fromStackEntity,
-              undefined,
-              false,
-              false
-            );
-          }
-        }
-      })();
+      transferToInventory(action);
       break;
 
     case "TransferFromInventory":
-      (() => {
-        const toStack = inventoryTransferStack(action);
-        if (toStack) {
-          toStack.AddFromItemBuffer(GameState.Inventory, action.entity);
-        }
-      })();
+      transferFromInventory(action);
       break;
 
     case "ChangeRegion":
@@ -349,35 +140,389 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "ClaimRegion":
-      if (GameState.Regions.has(action.regionId)) {
-        console.log("Region already unlocked", action.regionId);
-        return;
-      }
-      const regionInfo = GetRegionInfo(action.regionId);
-      if (regionInfo) {
-        GameState.Regions.set(action.regionId, NewRegionFromInfo(regionInfo));
-        GameState.CurrentRegionId = action.regionId;
-      }
+      claimRegion(action);
       break;
 
     case "LaunchRocket":
-      const b = building(action); // as Producer;
-      if (!b) break;
-      // If RocketSilo, then check for launch
-      if (b.subkind === "rocket-silo") {
-        if (b.outputBuffers.Count("rocket-part") === 100) {
-          // TODO: Better launch update
-          // TODO: Use actual tick for launching?
-          GameState.RocketLaunchingAt = new Date().getTime();
-          showUserError("Congratulations!");
-          b.outputBuffers.Remove(
-            NewEntityStack("rocket-part", 0, Infinity),
-            100
-          );
-        }
-      }
+      launchRocket(action);
   }
 };
+
+function launchRocket(action: { type: "LaunchRocket"; buildingIdx: number }) {
+  (() => {
+    const b = building(action); // as Producer;
+    if (!b) return;
+    // If RocketSilo, then check for launch
+    if (b.subkind === "rocket-silo") {
+      if (b.outputBuffers.Count("rocket-part") === 100) {
+        // TODO: Better launch update
+        // TODO: Use actual tick for launching?
+        GameState.RocketLaunchingAt = new Date().getTime();
+        showUserError("Congratulations!");
+        b.outputBuffers.Remove(NewEntityStack("rocket-part", 0, Infinity), 100);
+      }
+    }
+  })();
+}
+
+function claimRegion(action: {
+  type: "ClaimRegion" | "ChangeRegion";
+  regionId: string;
+}) {
+  (() => {
+    if (GameState.Regions.has(action.regionId)) {
+      console.log("Region already unlocked", action.regionId);
+      return;
+    }
+    const regionInfo = GetRegionInfo(action.regionId);
+    if (regionInfo) {
+      GameState.Regions.set(action.regionId, NewRegionFromInfo(regionInfo));
+      GameState.CurrentRegionId = action.regionId;
+    }
+  })();
+}
+
+function transferFromInventory(
+  action:
+    | {
+        type: "TransferToInventory" | "TransferFromInventory";
+        entity: string;
+        otherStackKind: "MainBus";
+        laneId: number;
+      }
+    | {
+        type: "TransferToInventory" | "TransferFromInventory";
+        entity: string;
+        otherStackKind: "Building"; // Update input/output buffers
+        // Update input/output buffers
+        buildingIdx: number;
+      }
+    | {
+        type: "TransferToInventory" | "TransferFromInventory";
+        entity: string;
+        otherStackKind: "Void";
+        count?: number | undefined;
+      }
+) {
+  (() => {
+    const toStack = inventoryTransferStack(action);
+    if (toStack) {
+      toStack.AddFromItemBuffer(GameState.Inventory, action.entity);
+    }
+  })();
+}
+
+function transferToInventory(
+  action:
+    | {
+        type: "TransferToInventory" | "TransferFromInventory";
+        entity: string;
+        otherStackKind: "MainBus";
+        laneId: number;
+      }
+    | {
+        type: "TransferToInventory" | "TransferFromInventory";
+        entity: string;
+        otherStackKind: "Building"; // Update input/output buffers
+        // Update input/output buffers
+        buildingIdx: number;
+      }
+    | {
+        type: "TransferToInventory" | "TransferFromInventory";
+        entity: string;
+        otherStackKind: "Void";
+        count?: number | undefined;
+      }
+) {
+  (() => {
+    const fromStack = inventoryTransferStack(action);
+    if (fromStack) {
+      const fromStackEntity = action.entity;
+      if (GameState.Inventory.AvailableSpace(fromStackEntity) > 0) {
+        GameState.Inventory.AddFromItemBuffer(
+          fromStack,
+          fromStackEntity,
+          undefined,
+          false,
+          false
+        );
+      }
+    }
+  })();
+}
+
+function addMainBusConnection(action: {
+  type: "AddMainBusConnection";
+  buildingIdx: number;
+  laneId: number;
+  direction: "FROM_BUS" | "TO_BUS";
+}) {
+  const { laneId, direction } = action;
+  const slot = buildingSlot(action),
+    firstEmptyBeltConn = slot?.BeltConnections.find(
+      (beltConn) => beltConn.direction === undefined
+    );
+  console.log("Add slot", action, firstEmptyBeltConn, slot?.BeltConnections);
+
+  if (firstEmptyBeltConn) {
+    firstEmptyBeltConn.direction = direction;
+    firstEmptyBeltConn.laneId = laneId;
+    firstEmptyBeltConn.Inserter.direction = direction;
+    // TODO: If inserter count is 0, try to build one from inventory
+    // If the current count is 0, try to build one
+    if (
+      firstEmptyBeltConn.Inserter.BuildingCount === 0 &&
+      GameState.Inventory.Remove(
+        NewEntityStack(firstEmptyBeltConn.Inserter.subkind, 0, 1),
+        1
+      )
+    )
+      firstEmptyBeltConn.Inserter.BuildingCount = 1;
+  }
+}
+
+function removeMainBusConnection(action: {
+  type: "RemoveMainBusConnection";
+  buildingIdx: number;
+  connectionIdx: number;
+}) {
+  const conn = buildingSlot(action)?.BeltConnections[action.connectionIdx];
+  if (conn) {
+    conn.laneId = undefined;
+    conn.direction = undefined;
+    conn.Inserter.direction = "NONE";
+  }
+}
+
+function toggleInserterDirection(
+  action:
+    | ({
+        type:
+          | "IncreaseInserterCount"
+          | "DecreaseInserterCount"
+          | "ToggleInserterDirection";
+      } & { location: "BUILDING"; buildingIdx: number })
+    | ({
+        type:
+          | "IncreaseInserterCount"
+          | "DecreaseInserterCount"
+          | "ToggleInserterDirection";
+      } & { location: "BELT"; buildingIdx: number; connectionIdx: number }),
+  currentRegion: Region
+) {
+  (() => {
+    if (action.location === "BELT") {
+      const i = inserter(action),
+        b = building(action);
+
+      const beltConn =
+          currentRegion.BuildingSlots[action.buildingIdx].BeltConnections[
+            action.connectionIdx
+          ],
+        mainBusLaneId = beltConn.laneId;
+      if (
+        mainBusLaneId !== undefined &&
+        currentRegion.Bus.HasLane(mainBusLaneId)
+      ) {
+        const busLane = currentRegion.Bus.lanes.get(mainBusLaneId);
+        // Check if the inserter can be toggled
+        // IF so, flip it
+        if (i && b && busLane) {
+          const canGoLeft = BuildingHasInput(b, busLane.Entities()[0][0]),
+            canGoRight = BuildingHasOutput(b, busLane.Entities()[0][0]);
+
+          if (canGoLeft && canGoRight) {
+            i.direction =
+              i.direction === "TO_BUS"
+                ? "FROM_BUS"
+                : i.direction === "FROM_BUS"
+                ? "NONE"
+                : "TO_BUS";
+          } else if (canGoLeft) {
+            i.direction = i.direction === "NONE" ? "FROM_BUS" : "NONE";
+          } else if (canGoRight) {
+            i.direction = i.direction === "NONE" ? "TO_BUS" : "NONE";
+          }
+          if (i.direction === "FROM_BUS" || i.direction === "TO_BUS") {
+            beltConn.direction = i.direction;
+          }
+        }
+      }
+      return;
+    }
+
+    const topB = currentRegion.BuildingSlots[action.buildingIdx].Building,
+      bottomB = currentRegion.BuildingSlots[action.buildingIdx + 1].Building,
+      i = currentRegion.BuildingSlots[action.buildingIdx].Inserter;
+
+    if (!topB || !bottomB || action.buildingIdx === undefined) return;
+
+    console.log(CanPushTo(bottomB, topB), CanPushTo(topB, bottomB));
+
+    const canGoUp =
+        BuildingHasOutput(bottomB.kind) &&
+        BuildingHasInput(topB.kind) &&
+        CanPushTo(bottomB, topB),
+      canGoDown =
+        BuildingHasOutput(topB.kind) &&
+        BuildingHasInput(bottomB.kind) &&
+        CanPushTo(topB, bottomB);
+
+    if (canGoUp && canGoDown) {
+      i.direction =
+        i.direction === "UP" ? "DOWN" : i.direction === "DOWN" ? "NONE" : "UP";
+    } else if (canGoUp) {
+      i.direction = i.direction === "NONE" ? "UP" : "NONE";
+    } else if (canGoDown) {
+      i.direction = i.direction === "NONE" ? "DOWN" : "NONE";
+    }
+  })();
+}
+
+function decreaseInserterCount(
+  action:
+    | ({
+        type:
+          | "IncreaseInserterCount"
+          | "DecreaseInserterCount"
+          | "ToggleInserterDirection";
+      } & { location: "BUILDING"; buildingIdx: number })
+    | ({
+        type:
+          | "IncreaseInserterCount"
+          | "DecreaseInserterCount"
+          | "ToggleInserterDirection";
+      } & { location: "BELT"; buildingIdx: number; connectionIdx: number })
+) {
+  (() => {
+    const i = inserter(action);
+
+    if (i && i.BuildingCount > 0) {
+      GameState.Inventory.Add(NewEntityStack(i.subkind, 1, 1), 1);
+      i.BuildingCount = Math.max(0, i.BuildingCount - 1);
+    }
+  })();
+}
+
+function increaseInserterCount(
+  action:
+    | ({
+        type:
+          | "IncreaseInserterCount"
+          | "DecreaseInserterCount"
+          | "ToggleInserterDirection";
+      } & { location: "BUILDING"; buildingIdx: number })
+    | ({
+        type:
+          | "IncreaseInserterCount"
+          | "DecreaseInserterCount"
+          | "ToggleInserterDirection";
+      } & { location: "BELT"; buildingIdx: number; connectionIdx: number })
+) {
+  (() => {
+    const i = inserter(action);
+
+    if (!i || GameState.Inventory.Count(i.subkind) <= 0) {
+      return;
+    }
+    GameState.Inventory.Remove(NewEntityStack(i.subkind, 0, 1), 1);
+
+    if (i) i.BuildingCount = Math.min(50, i.BuildingCount + 1);
+  })();
+}
+
+function decreaseBuildingCount(action: {
+  type: "RemoveBuilding" | "IncreaseBuildingCount" | "DecreaseBuildingCount";
+  buildingIdx: number;
+}) {
+  (() => {
+    const b = building(action) as Producer;
+    // TODO: Handle belt lines
+    if (b?.kind === "BeltLineDepot") {
+      console.log("Can't remove lanes to beltlines");
+      return;
+    }
+
+    if (b) {
+      if (b.BuildingCount > 0) {
+        GameState.Inventory.Add(NewEntityStack(b.subkind, 1, 1), 1);
+        b.BuildingCount = Math.max(0, b.BuildingCount - 1);
+      }
+      if (b?.kind === "Chest") UpdateChestSize(b as Chest);
+      // TODO: If factory, reduce ProgressTracker and refund materials
+      // NOTE: Only if progressTracker == BuildingCount
+      //if (b?.kind === "Factory") RemoveProgressTracker(b as Factory);
+    }
+  })();
+}
+
+function increaseBuildingCount(action: {
+  type: "RemoveBuilding" | "IncreaseBuildingCount" | "DecreaseBuildingCount";
+  buildingIdx: number;
+}) {
+  (() => {
+    const b = building(action) as Producer;
+    // TODO: Handle belt lines
+    if (b?.kind === "BeltLineDepot") {
+      console.log("Can't add lanes to beltlines");
+      return;
+    }
+    if (GameState.Inventory.Count(b.subkind) <= 0) {
+      return;
+    }
+    GameState.Inventory.Remove(NewEntityStack(b.subkind, 0, 1), 1);
+
+    if (b) b.BuildingCount = Math.min(50, b.BuildingCount + 1);
+    if (b?.kind === "Chest") UpdateChestSize(b as Chest);
+  })();
+}
+
+function completeResearch() {
+  const currentResearchId = GameState.Research.CurrentResearchId,
+    currentResearchProgress =
+      GameState.Research.Progress.get(currentResearchId);
+  if (currentResearchProgress)
+    currentResearchProgress.Count = currentResearchProgress.MaxCount || 0;
+  else {
+    const r = GetResearch(currentResearchId);
+    if (r)
+      GameState.Research.Progress.set(
+        currentResearchId,
+        NewEntityStack(
+          currentResearchId,
+          r.ProductionRequiredForCompletion,
+          r.ProductionRequiredForCompletion
+        )
+      );
+    else console.log("No Research");
+  }
+  //else console.log("No research", currentResearchId);
+  GameState.Research.CurrentResearchId = "";
+}
+
+function removeLane(
+  currentRegion: Region,
+  action: { type: "RemoveLane"; laneId: number }
+) {
+  const lane = currentRegion.Bus.RemoveLane(action.laneId),
+    laneEntity = lane?.Entities()[0][0];
+
+  if (lane && laneEntity)
+    GameState.Inventory.AddFromItemBuffer(lane, laneEntity, Infinity, true);
+
+  // Remove attached inserters
+  currentRegion.BuildingSlots.forEach((buildingSlot, buildingSlotIdx) => {
+    buildingSlot.BeltConnections.forEach((beltConn, beltConnIdx) => {
+      if (beltConn.laneId === action.laneId) {
+        GameDispatch({
+          type: "RemoveMainBusConnection",
+          buildingIdx: buildingSlotIdx,
+          connectionIdx: beltConnIdx,
+        });
+      }
+    });
+  });
+}
 
 function PlaceBuilding(
   action: {
@@ -513,7 +658,7 @@ function RemoveBuilding(
   const b = building(action); // as Producer;
   if (b) {
     currentRegion.BuildingSlots[action.buildingIdx].Building = NewEmptyLane();
-    for (var idx = currentRegion.BuildingSlots.length - 1; idx >= 0; idx--) {
+    for (let idx = currentRegion.BuildingSlots.length - 1; idx >= 0; idx--) {
       // Removing the last building and it's an empty lane.
       if (
         allowRemoveEmpty &&
@@ -568,11 +713,14 @@ function RemoveBuilding(
         );
     if (b.kind === "BeltLineDepot") {
       const depot = b as BeltLineDepot,
-        otherDepot = FindDepotForBeltLineInRegion(
-          GameState.Regions.get(depot.otherRegionId)!,
-          depot.beltLineId,
-          depot.direction === "TO_REGION" ? "FROM_REGION" : "TO_REGION"
-        );
+        otherRegion = GameState.Regions.get(depot.otherRegionId);
+      if (!otherRegion)
+        throw new Error("Cannot find region " + depot.otherRegionId);
+      const otherDepot = FindDepotForBeltLineInRegion(
+        otherRegion,
+        depot.beltLineId,
+        depot.direction === "TO_REGION" ? "FROM_REGION" : "TO_REGION"
+      );
       // Have to remove both depots to remove beltline
       if (!otherDepot) {
         // Remove BeltLine
@@ -608,24 +756,25 @@ function RemoveBuilding(
 function inventoryTransferStack(
   action: InventoryTransferAction
 ): ItemBuffer | undefined {
-  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
-
+  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId);
+  let b: Building | undefined;
   switch (action.otherStackKind) {
     case "Void":
-      const stackSize = GetEntity(action.entity).StackSize || 50;
       return FixedInventory([
         NewEntityStack(
           action.entity,
-          action.count ?? stackSize,
+          action.count ?? (GetEntity(action.entity).StackSize || 50),
           action.count ?? Infinity
         ),
       ]);
 
     case "MainBus":
-      return currentRegion.Bus.lanes.get(action.laneId);
+      return currentRegion
+        ? currentRegion.Bus.lanes.get(action.laneId)
+        : undefined;
 
     case "Building":
-      const b = building(action);
+      b = building(action);
       if (b) {
         if (
           BuildingHasOutput(b.kind) &&
@@ -653,17 +802,20 @@ export function NewBuilding(entity: string): Building {
     case "ChemPlant":
     case "RocketSilo":
     case "Refinery":
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return NewFactory({ subkind: entity } as any, 1);
 
     case "Miner":
     case "Pumpjack":
     case "WaterPump":
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return NewExtractor({ subkind: entity } as any, 1);
 
     case "Lab":
       return NewLab(1);
 
     case "Chest":
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return NewChest({ subkind: entity } as any, 1);
 
     case "Empty":
@@ -678,7 +830,7 @@ export function NewBuilding(entity: string): Building {
 }
 
 function building(action: { buildingIdx?: number }): Building | undefined {
-  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
+  const currentRegion = CurrentRegion();
 
   return action.buildingIdx !== undefined
     ? currentRegion.BuildingSlots[action.buildingIdx].Building
@@ -687,7 +839,7 @@ function building(action: { buildingIdx?: number }): Building | undefined {
 
 function inserter(action: InserterId): Inserter | undefined {
   console.log(JSON.stringify(action));
-  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
+  const currentRegion = CurrentRegion();
 
   return action.location === "BUILDING"
     ? currentRegion.BuildingSlots[action.buildingIdx].Inserter
@@ -699,7 +851,7 @@ function inserter(action: InserterId): Inserter | undefined {
 function buildingSlot(action: {
   buildingIdx?: number;
 }): BuildingSlot | undefined {
-  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
+  const currentRegion = CurrentRegion();
 
   return action.buildingIdx !== undefined
     ? currentRegion.BuildingSlots[action.buildingIdx]

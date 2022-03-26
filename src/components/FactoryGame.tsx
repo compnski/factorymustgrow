@@ -1,33 +1,28 @@
-import { GameDispatch } from "../GameDispatch";
-import { FactoryGameState, GameState, useGameState } from "../useGameState";
-import { BuildingCardList } from "./BuildingCardList";
-import { InfoHeader } from "./InfoHeader";
-import { MainBusHeader } from "./MainBusHeader";
-import "./FactoryGame.scss";
-import { DebugButtonPanel } from "./DebugButtonPanel";
-import { InventoryDisplay } from "./InventoryDisplay";
-import { RegionTabBar } from "./RegionTabBar";
-import { useGeneralDialog } from "../GeneralDialogProvider";
-import { showHelpCard } from "./selectors";
-
-import { ReactComponent as RocketShip } from "../rocket-launch.svg";
-import { useInterval } from "../reactUtils";
-import { UpdateGameState } from "../factoryGame";
-import { saveStateToLocalStorage } from "../localstorage";
 import { TicksPerSecond } from "../constants";
-
-type FactoryGameProps = {
-  gameState: FactoryGameState;
-};
+import { UpdateGameState } from "../factoryGame";
+import { GameDispatch } from "../GameDispatch";
+import { useGeneralDialog } from "../GeneralDialogProvider";
+import { saveStateToLocalStorage } from "../localstorage";
+import { useInterval } from "../reactUtils";
+import { ReactComponent as RocketShip } from "../rocket-launch.svg";
+import { GameState, useGameState } from "../useGameState";
+import { BuildingCardList } from "./BuildingCardList";
+import { DebugButtonPanel } from "./DebugButtonPanel";
+import "./FactoryGame.scss";
+import { InfoHeader } from "./InfoHeader";
+import { InventoryDisplay } from "./InventoryDisplay";
+import { MainBusHeader } from "./MainBusHeader";
+import { RegionTabBar } from "./RegionTabBar";
+import { showHelpCard } from "./selectors";
 
 export const FactoryGame = () => {
   const [gameState, setGameState] = useGameState();
   const generalDialog = useGeneralDialog();
 
-  useInterval(() => {
+  useInterval(async () => {
     // Your custom logic here
     const tick = new Date().getTime();
-    UpdateGameState(tick, generalDialog);
+    await UpdateGameState(tick, generalDialog);
     saveStateToLocalStorage(GameState);
   }, 1000 / TicksPerSecond);
 
@@ -37,10 +32,12 @@ export const FactoryGame = () => {
 
   try {
     const regionIds = [...gameState.Regions.keys()];
-    const currentRegion = gameState.Regions.get(gameState.CurrentRegionId)!;
+    const currentRegion = gameState.Regions.get(gameState.CurrentRegionId);
+    if (!currentRegion)
+      throw new Error("Missing current region: " + gameState.CurrentRegionId);
 
     const showHelp = () => {
-      showHelpCard(generalDialog);
+      void showHelpCard(generalDialog);
     };
     const isRocketLaunching = gameState.RocketLaunchingAt > 0;
 

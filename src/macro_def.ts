@@ -1,5 +1,5 @@
 import { GameDispatch } from "./GameDispatch";
-import { GameState } from "./useGameState";
+import { CurrentRegion, GameState } from "./useGameState";
 import { GameWindow } from "./globals";
 import { NextEmptySlot } from "./building";
 import { AvailableResearchList } from "./availableResearch";
@@ -7,6 +7,7 @@ import { NewEntityStack } from "./types";
 
 export type MacroName = "redsci" | "allresearch";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function Macro(name: MacroName): any {
   switch (name) {
     case "allresearch":
@@ -58,7 +59,7 @@ function addProducers(
     };
   }[]
 ) {
-  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
+  const currentRegion = CurrentRegion();
 
   const upperToggles: number[] = [],
     lowerToggles: number[] = [];

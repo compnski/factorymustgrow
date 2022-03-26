@@ -1,18 +1,9 @@
-import "./icons.scss";
-import "./technology.css";
 import "./App.scss";
-
-import { UpdateGameState } from "./factoryGame";
-import { GameState, useGameState } from "./useGameState";
-import { saveStateToLocalStorage } from "./localstorage";
-import { useInterval } from "./reactUtils";
 import { FactoryGame } from "./components/FactoryGame";
-import { TicksPerSecond } from "./constants";
+import { GeneralDialogProvider } from "./GeneralDialogProvider";
+import "./icons.scss";
 import "./macro_def";
-import {
-  GeneralDialogProvider,
-  useGeneralDialog,
-} from "./GeneralDialogProvider";
+import "./technology.css";
 
 function App() {
   return (

@@ -41,8 +41,8 @@ const getEventPosition = (evt: SyntheticEvent): { x: number; y: number } => {
   return { x, y };
 };
 
-var lastX: number = 0,
-  lastY: number = 0;
+let lastX = 0,
+  lastY = 0;
 
 const canvasMouseMove = (evt: SyntheticEvent) => {
   const pos = getEventPosition(evt);

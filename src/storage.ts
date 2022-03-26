@@ -13,7 +13,7 @@ export type Chest = {
 
 export function NewChest(
   { subkind }: Pick<Chest, "subkind">,
-  size: number = 4,
+  size = 4,
   initialContents: EntityStack[] = []
 ): Chest {
   console.log("new chest");
@@ -30,6 +30,7 @@ export function NewChest(
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function UpdateChest(chest: Chest, tick: number) {
   if (chest.subkind === "incinerator")
     chest.inputBuffers.Entities().forEach(([entity]) => {

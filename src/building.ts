@@ -50,7 +50,7 @@ export function NextEmptySlot(
 
 export function NewBuildingSlot(
   Building: Building,
-  numBeltConnections: number = 3
+  numBeltConnections = 3
 ): BuildingSlot {
   const belts = [...Array(numBeltConnections)].map<BeltConnection>(
     (): BeltConnection => {

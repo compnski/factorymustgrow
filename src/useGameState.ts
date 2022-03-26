@@ -62,6 +62,13 @@ export function ResetGameState() {
   GameState = initialFactoryGameState();
 }
 
-export var GameState = loadStateFromLocalStorage(initialFactoryGameState());
+export let GameState = loadStateFromLocalStorage(initialFactoryGameState());
 
 (window as unknown as GameWindow).GameState = () => GameState;
+
+export function CurrentRegion(): Region {
+  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId);
+  if (!currentRegion)
+    throw new Error("Cannot find current region " + GameState.CurrentRegionId);
+  return currentRegion;
+}

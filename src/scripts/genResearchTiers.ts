@@ -4,7 +4,7 @@ export function getResearchTiers() {
   const researchTiers = new Map<string, number>();
 
   ResearchMap.forEach((research) => {
-    var maxPrereqTier = -1;
+    let maxPrereqTier = -1;
     if (research.Prereqs.size === 0) {
       researchTiers.set(research.Id, 0);
       return;

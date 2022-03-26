@@ -4,6 +4,7 @@ import { MainBus } from "./mainbus";
 import { ResearchOutput } from "./research";
 import { NewChest } from "./storage";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const replacer = (key: string, value: any): any =>
   value instanceof Map
     ? {
@@ -39,6 +40,7 @@ const replacer = (key: string, value: any): any =>
     ? "Infinity"
     : value;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const reviver = (key: string, value: any): any => {
   return value === "Infinity"
     ? Infinity
@@ -59,7 +61,9 @@ const reviver = (key: string, value: any): any => {
     : value;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const serialize = (obj: any): string => JSON.stringify(obj, replacer);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const parse = (s: string): any => JSON.parse(s, reviver);
 
 export const saveStateToLocalStorage = (gs: FactoryGameState) => {

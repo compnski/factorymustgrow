@@ -1,9 +1,7 @@
-import { GameDispatch } from "../GameDispatch";
-import "./BuildingCard.scss";
-import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
-import { entityIconLookupByKind } from "../utils";
 import { BeltLineDepot } from "../transport";
-import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
+import { entityIconLookupByKind } from "../utils";
+import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
+import "./BuildingCard.scss";
 
 export type BeltLineCardProps = {
   building: BeltLineDepot;

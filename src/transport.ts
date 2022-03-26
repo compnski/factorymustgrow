@@ -33,9 +33,10 @@ export function UpdateBeltLine(
   regions: { get(s: string): Region | undefined },
   currentBeltLine: BeltLine
 ) {
-  const toRegion = regions.get(currentBeltLine.toRegionId)!,
-    fromRegion = regions.get(currentBeltLine.fromRegionId)!,
-    toDepot = FindDepotForBeltLineInRegion(
+  const toRegion = regions.get(currentBeltLine.toRegionId),
+    fromRegion = regions.get(currentBeltLine.fromRegionId);
+  if (!toRegion || !fromRegion) throw new Error("Missing regions");
+  const toDepot = FindDepotForBeltLineInRegion(
       toRegion,
       currentBeltLine.beltLineId,
       "TO_REGION"
@@ -54,7 +55,7 @@ export function UpdateBeltLine(
     if (lastBelt.Count === 0) lastBelt.Entity = "";
   }
   // Move all items, coalescing toward the end
-  for (var idx = lastBufferIdx; idx > 0; idx--) {
+  for (let idx = lastBufferIdx; idx > 0; idx--) {
     const fromBelt = currentBeltLine.sharedBeltBuffer[idx - 1],
       toBelt = currentBeltLine.sharedBeltBuffer[idx];
     if (toBelt.Entity === "" || toBelt.Entity === fromBelt.Entity) {
@@ -123,18 +124,20 @@ export function NewBeltLinePair(
   initialLaneCount = 1
 ): [BeltLine, BeltLineDepot, BeltLineDepot] {
   const sharedBeltBuffer = Array<EntityStack>(length);
-  for (var idx = 0; idx < sharedBeltBuffer.length; idx++)
+  for (let idx = 0; idx < sharedBeltBuffer.length; idx++)
     // TODO Size based on speed?
     sharedBeltBuffer[idx] = NewEntityStack("", 0, 16);
 
   // TODO: Static increasing id, stored someplace in state
   const beltLineId = new Date().getTime() % 100000;
-  var beltLineName: string = "";
+  let beltLineName = "";
   for (
     ;
     beltLineName === "" || beltLineName.length > 14;
     beltLineName = randomName()
-  ) {}
+  ) {
+    1;
+  }
   // Belt should be thought of as a chain of EntityStacks,
   // each with a small StackSize.
   // The first and last N EntityStacks are the input / output buffers

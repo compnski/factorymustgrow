@@ -1,7 +1,7 @@
 import { Building } from "./building";
 import { GetResearch } from "./gen/research";
 
-const seenSet = new Set<any>();
+const seenSet = new Set<string>();
 
 export const once = (key: string | number | null, f: () => void) => {
   const seenKey = new Error().stack + "_" + key;
@@ -27,7 +27,7 @@ export function entityIconLookupByKind(
     case "Lab":
       return (entity: string): string => {
         if (entity.endsWith("science-pack")) return entity;
-        const research = GetResearch(entity);
+        const research = !entity ? "" : GetResearch(entity);
         if (research) return "sprite-technology-" + research.Icon;
         return "sprite-technology-no-science";
       };
@@ -39,7 +39,7 @@ export function entityIconLookupByKind(
         return entity;
       };
   }
-  return (entity: string) => {
+  return function entityLookupInnerFunction(entity: string) {
     return entity;
   };
 }
@@ -77,6 +77,6 @@ export function BuildingHasInput(
   );
 }
 
-export function showUserError(s: String) {
+export function showUserError(s: string) {
   console.log("User Error: " + s);
 }

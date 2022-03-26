@@ -14,11 +14,7 @@ export type RegionSelectorProps = {
   //gameDispatch(a: GameAction): void;
 };
 
-export function RegionSelector({
-  inventory,
-  regionIds,
-  onConfirm,
-}: RegionSelectorProps) {
+export function RegionSelector({ regionIds, onConfirm }: RegionSelectorProps) {
   const handleMapClick = (evt: SyntheticEvent) => {
     const id = (evt.target as SVGElement).id;
     if (id.startsWith("region_")) {

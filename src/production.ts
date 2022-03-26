@@ -106,7 +106,7 @@ export function UpdateBuildingRecipe(
 
 export function NewExtractor(
   { subkind }: Pick<Extractor, "subkind">,
-  initialProduceCount: number = 0
+  initialProduceCount = 0
 ): Extractor {
   return {
     kind: "Extractor",
@@ -223,7 +223,7 @@ export type Factory = {
 function EntityStackForEntity(
   entity: string,
   getEntity: (e: string) => Entity | undefined,
-  stackSizeMinimum: number = 0
+  stackSizeMinimum = 0
 ): EntityStack {
   const e = getEntity(entity);
   if (!e) console.error("Failed to find entity for ", entity);
@@ -293,7 +293,7 @@ export function ProducerTypeFromEntity(entity: string): BuildingType {
 
 export function NewFactory(
   { subkind }: Pick<Factory, "subkind">,
-  initialProduceCount: number = 0
+  initialProduceCount = 0
 ): Factory {
   return {
     kind: "Factory",
@@ -336,6 +336,7 @@ export function ProduceFromFactory(
   currentTick: number,
   GetRecipe: (s: string) => Recipe | undefined
 ) {
+  if (!f.RecipeId) return 0;
   const recipe = GetRecipe(f.RecipeId);
   if (!recipe) return 0;
 
@@ -344,12 +345,12 @@ export function ProduceFromFactory(
     producableItemsForInput(f.inputBuffers, recipe.Input),
     Math.max(f.BuildingCount - f.progressTrackers.length, 0)
   );
-  for (var idx = 0; idx < emptyFactoriesToStart; idx++) {
+  for (let idx = 0; idx < emptyFactoriesToStart; idx++) {
     // Check if we have enough ingredients to start producing and add a new tracker
     //console.log(`Starting production of ${recipe.Id} at ${currentTick}`);
     if (AddProgressTracker(f, currentTick)) {
       // Consume resources
-      for (var input of recipe.Input) {
+      for (const input of recipe.Input) {
         const removed = f.inputBuffers.Remove(
           NewEntityStack(input.Entity, 0, Infinity),
           input.Count
@@ -366,7 +367,9 @@ export function ProduceFromFactory(
   }
 
   const availableInventorySpace = recipe.Output.reduce((accum, entityStack) => {
-    var spaceInOutputStack = f.outputBuffers.AvailableSpace(entityStack.Entity);
+    const spaceInOutputStack = f.outputBuffers.AvailableSpace(
+      entityStack.Entity
+    );
     return Math.min(
       accum,
       Math.floor(spaceInOutputStack / recipe.Output[0].Count)
@@ -381,7 +384,7 @@ export function ProduceFromFactory(
   );
   //const outputCount = Math.min(producedItems, availableInventorySpace);
 
-  for (idx = 0; idx < outputCount; idx++) {
+  for (let idx = 0; idx < outputCount; idx++) {
     // console.log(
     //   `Produced item ${idx + 1}/${producedItems} ${recipe.Id} at ${currentTick}`
     // );

@@ -95,8 +95,8 @@ export type EntityStack = {
 
 export function NewEntityStack(
   e: string | Entity,
-  initialCount: number = 0,
-  maxCount: number = 0
+  initialCount = 0,
+  maxCount = 0
 ): EntityStack {
   const entityId = typeof e === "string" ? e : e.Id;
   const stackSize = typeof e === "string" ? 0 : e.StackSize;
@@ -181,7 +181,7 @@ export const NewRegion = (
       `Trying to construct region with more building slots ${BuildingSlots.length} than lanes ${LaneCount}.`
     );
   } else if (BuildingSlots.length < LaneCount) {
-    for (var idx = BuildingSlots.length; idx < LaneCount; idx++) {
+    for (let idx = BuildingSlots.length; idx < LaneCount; idx++) {
       BuildingSlots.push(NewBuildingSlot(NewEmptyLane()));
     }
   }

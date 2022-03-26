@@ -20,8 +20,8 @@ export function PushPullFromMainBus(
   slot: { Building: MainBusConnector; BeltConnections: BeltConnection[] },
   mb: MainBus
 ) {
-  var building = slot.Building;
-  for (var laneConnection of slot.BeltConnections) {
+  const building = slot.Building;
+  for (const laneConnection of slot.BeltConnections) {
     if (laneConnection?.laneId === undefined) continue;
     if (InserterTransferRate(laneConnection.Inserter) <= 0) continue;
     const busLane = mb.lanes.get(laneConnection.laneId);

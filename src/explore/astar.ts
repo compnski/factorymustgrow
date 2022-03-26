@@ -55,7 +55,7 @@ export function BestPath(
 
   gScore.set(PointToS(start), 0);
 
-  var maxIter = 100000;
+  let maxIter = 100000;
 
   while (openSet.length > 0) {
     if (maxIter-- < 0) {
@@ -132,12 +132,12 @@ function reconstructPath(
   return totalPath;
 }
 
-export function PrintPath(path: Point[], scalingFactor: number = 1): string {
-  var maxX = -Infinity,
+export function PrintPath(path: Point[], scalingFactor = 1): string {
+  let maxX = -Infinity,
     maxY = -Infinity,
     minX = Infinity,
     minY = Infinity;
-  var pathMap = new Map<string, number>();
+  const pathMap = new Map<string, number>();
 
   path.forEach((p, idx) => {
     p = scalePoint(p, scalingFactor);
@@ -148,10 +148,10 @@ export function PrintPath(path: Point[], scalingFactor: number = 1): string {
     pathMap.set(PointToS(p), idx);
   });
 
-  var output = "";
-  for (var y = minY; y <= maxY; y++) {
-    var line = "";
-    for (var x = minX; x <= maxX; x++) {
+  let output = "";
+  for (let y = minY; y <= maxY; y++) {
+    let line = "";
+    for (let x = minX; x <= maxX; x++) {
       line += pathMap.get(PointToS({ x, y })) !== undefined ? "X" : "0";
     }
     output += line + "\n";

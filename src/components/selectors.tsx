@@ -15,7 +15,7 @@ import { HelpCard } from "./HelpCard";
 async function showIconSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
   title: string,
-  recipes: { map(f: (r: string) => any): any },
+  recipes: { map(f: (r: string) => string): unknown },
   entityIconLookup?: (entity: string) => string
 ): Promise<string> {
   const results = await showDialog({
@@ -44,7 +44,7 @@ export async function showMoveItemToFromInventorySelector(
 ): Promise<void> {
   if (!filter && direction === "TransferFromInventory")
     filter = (e) => GameState.Inventory.Count(e) > 0;
-  var items = availableItems(GameState.Research);
+  let items = availableItems(GameState.Research);
   if (filter) items = items.filter(filter);
   const recipe = await showIconSelector(showDialog, "Add Stack", items);
 
@@ -113,7 +113,7 @@ export async function showPlaceBuildingSelector(
   ]);
 
   if (item === "transport-belt") {
-    showPlaceBeltLineSelector(
+    await showPlaceBeltLineSelector(
       showDialog,
       inventory,
       GameState.Regions,
@@ -128,6 +128,7 @@ export async function showPlaceBuildingSelector(
 }
 
 export async function showResearchSelector(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>
 ): Promise<void> {
   const result = await showDialog({
@@ -147,6 +148,7 @@ export async function showResearchSelector(
 }
 
 export async function showPlaceBeltLineSelector(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
   inventory: Inventory,
   regions: Map<string, Region>,
@@ -176,6 +178,7 @@ export async function showPlaceBeltLineSelector(
 }
 
 export async function showClaimRegionSelector(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
   inventory: Inventory,
   regionIds: string[]

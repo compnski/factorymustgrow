@@ -2,6 +2,7 @@ import { SyntheticEvent } from "react";
 
 export type RecipeSelectorProps = {
   onConfirm: (evt: SyntheticEvent, recipe: string) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   recipes: { map(f: (r: string) => any): any };
   title: string;
   entityIconLookup?: (entity: string) => string;

@@ -4,12 +4,17 @@ import { TestEntityList } from "../test_entity_defs";
 import { TestRecipeBook } from "../test_recipe_defs";
 
 export function GetEntity(name: string): Entity {
-  return Entities.get(name)!;
+  const e = Entities.get(name);
+  if (!e) throw new Error("Cannot find entity for " + name);
+  return e;
 }
 
 export function GetRecipe(name: string): Recipe {
-  return Recipes.get(name)!;
+  const r = Recipes.get(name);
+  if (!r) throw new Error("Cannot find recipe for " + name);
+  return r;
 }
+
 export const Entities: Map<string, Entity> = Map(TestEntityList).merge(
   Map({
     "wooden-chest": {

@@ -13,7 +13,7 @@ export type HelpCardProps = {
 };
 
 function buildHelpRegion(): Region {
-  const regionInfo = GetRegionInfo("HelpRegion")!,
+  const regionInfo = GetRegionInfo("HelpRegion"),
     helpRegion = NewRegionFromInfo(regionInfo),
     miner = NewBuilding("burner-mining-drill") as Extractor,
     smelter = NewBuilding("stone-furnace") as Factory,
@@ -40,7 +40,7 @@ function buildHelpRegion(): Region {
   });
 
   const plateLaneId = helpRegion.Bus.AddLane("iron-plate", 10);
-  var bc = smelterSlot.BeltConnections[0];
+  let bc = smelterSlot.BeltConnections[0];
   bc.direction = "TO_BUS";
   bc.Inserter.direction = "TO_BUS";
   bc.Inserter.BuildingCount = 1;

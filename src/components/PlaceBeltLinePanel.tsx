@@ -42,7 +42,7 @@ export function PlaceBeltLinePanel(props: PlaceBeltLineProps) {
           value={selectValue}
           onChange={(evt) => setSelectValue(evt.target.value)}
         >
-          {[...regions.entries()].map(([regionName, region]) => {
+          {[...regions.entries()].map(([regionName]) => {
             const costTxt = `${cost} Yellow Belts`;
             return (
               <option key={regionName} value={regionName}>

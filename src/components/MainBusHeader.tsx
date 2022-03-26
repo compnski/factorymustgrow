@@ -46,7 +46,6 @@ const entityIconDoubleClickHandler = (
 
 export const MainBusHeader = ({
   mainBus,
-  researchState,
 }: {
   mainBus: MainBus;
   researchState: ResearchState;
@@ -55,14 +54,14 @@ export const MainBusHeader = ({
 
   async function addLane(evt: SyntheticEvent) {
     if (mainBus.CanAddLane()) {
-      showAddLaneItemSelector(generalDialog);
+      void showAddLaneItemSelector(generalDialog);
     } else {
       showUserError("Out of lane capacity");
     }
     evt.stopPropagation();
   }
   const lanes = [];
-  for (var entry of mainBus.lanes.entries()) {
+  for (const entry of mainBus.lanes.entries()) {
     const [laneId, lane] = entry,
       entity = lane.Entities()[0][0],
       count = lane.Count(entity);
@@ -120,6 +119,7 @@ export const MainBusHeader = ({
 
             return (
               <polyline
+                key={laneId}
                 x={laneId}
                 fill="#3F4952"
                 stroke="#222"

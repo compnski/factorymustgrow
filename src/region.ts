@@ -145,5 +145,7 @@ const Regions = new Map<string, RegionInfo>([
 ]);
 
 export function GetRegionInfo(s: string): RegionInfo {
-  return Regions.get(s)!;
+  const r = Regions.get(s);
+  if (!r) throw new Error("No region info for " + s);
+  return r;
 }

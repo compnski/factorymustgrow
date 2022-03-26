@@ -9,7 +9,7 @@ export type Inserter = {
 };
 
 export function NewInserter(
-  count: number = 0,
+  count = 0,
   direction: "UP" | "DOWN" | "TO_BUS" | "FROM_BUS" | "NONE" = "NONE",
   subkind: "inserter" | "fast-inserter" | "stack-inserter" = "inserter"
 ): Inserter {

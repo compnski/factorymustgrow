@@ -158,11 +158,15 @@ const headerTxt = `import {Recipe, Entity} from "../types"
 import { Map } from "immutable";
 
 export function GetEntity(name:string):Entity {
-  return Entities.get(name)!;
+  const e = Entities.get(name);
+  if (!e) throw new Error("Cannot find entity for " + name);
+  return e;
 }
 
 export function GetRecipe(name:string):Recipe {
-  return Recipes.get(name)!;
+  const r = Recipes.get(name);
+  if (!r) throw new Error("Cannot find recipe for " + name);
+  return r;
 }
 `
 

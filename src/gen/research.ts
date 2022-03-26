@@ -1,7 +1,9 @@
 import { Research } from "../types";
 
 export function GetResearch(name: string): Research {
-  return ResearchMap.get(name)!;
+  const r = ResearchMap.get(name);
+  if (!r) throw new Error("Cannot find research for " + name);
+  return r;
 }
 
 export const ResearchMap: Map<string, Research> = new Map([

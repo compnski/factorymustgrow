@@ -1,18 +1,17 @@
-import { ResearchState } from "./useGameState";
+import { AvailableResearchList } from "./availableResearch";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { GetResearch } from "./gen/research";
+import { FixedInventory } from "./inventory";
+import { StackCapacity } from "./movement";
+import { producableItemsForInput, productionPerTick } from "./productionUtils";
 import {
-  EntityStack,
   ItemBuffer,
   NewEntityStack,
   OutputStatus,
   Recipe,
   Research,
 } from "./types";
-import { FixedInventory } from "./inventory";
-import { productionPerTick, producableItemsForInput } from "./productionUtils";
-import { StackCapacity } from "./movement";
-import { AvailableResearchList } from "./availableResearch";
+import { ResearchState } from "./useGameState";
 
 export type Lab = {
   kind: "Lab";
@@ -36,16 +35,12 @@ const initialLabInput = [
   //  { Entity: "space-science-pack", Count: 0 },
 ];
 
-export class ResearchOutput {
-  researchId: string = "";
-  progress: number = 0;
-  maxProgress: number = 0;
+export class ResearchOutput implements ItemBuffer {
+  researchId = "";
+  progress = 0;
+  maxProgress = 0;
 
-  constructor(
-    researchId: string = "",
-    progress: number = 0,
-    maxProgress: number = 0
-  ) {
+  constructor(researchId = "", progress = 0, maxProgress = 0) {
     this.SetResearch(researchId, progress, maxProgress);
   }
 
@@ -74,26 +69,15 @@ export class ResearchOutput {
     return this.progress;
   }
 
-  Add(
-    fromStack: EntityStack,
-    count?: number,
-    exceedCapacity?: boolean,
-    integersOnly?: boolean
-  ): number {
+  Add(): number {
     throw new Error("NYI");
   }
 
-  AddFromItemBuffer(
-    from: ItemBuffer,
-    entity: string,
-    itemCount?: number,
-    exceedCapacity?: boolean,
-    integersOnly?: boolean
-  ): number {
+  AddFromItemBuffer(): number {
     throw new Error("NYI");
   }
 
-  Remove(toStack: EntityStack, count?: number, integersOnly?: boolean): number {
+  Remove(): number {
     throw new Error("NYI");
   }
 
@@ -105,10 +89,10 @@ export class ResearchOutput {
     return this.Entities();
   }
 
-  Capacity: number = 0;
+  Capacity = 0;
 }
 
-export function NewLab(initialProduceCount: number = 0): Lab {
+export function NewLab(initialProduceCount = 0): Lab {
   return {
     kind: "Lab",
     subkind: "lab",
@@ -167,7 +151,7 @@ export function ResearchInLab(
       availableInputs,
       availableInventorySpace
     );
-  for (var input of research.Input) {
+  for (const input of research.Input) {
     const removed = l.inputBuffers.Remove(
       NewEntityStack(input.Entity, 0, Infinity),
       input.Count * actualProduction,
@@ -180,7 +164,9 @@ export function ResearchInLab(
       );
     }
   }
-  currentProgress!.Count += actualProduction;
+  if (currentProgress) {
+    currentProgress.Count += actualProduction;
+  }
   l.outputBuffers.SetProgress(currentProgress?.Count || 0);
 
   return actualProduction;
@@ -193,8 +179,8 @@ export function unlockedResearch(researchState: ResearchState): string[] {
     if (StackCapacity(stack) === 0) unlockedResearch.add(stack.Entity);
   });
 
-  var availableResearch: string[] = [];
-  for (var research of AvailableResearchList) {
+  const availableResearch: string[] = [];
+  for (const research of AvailableResearchList) {
     if (unlockedResearch.has(research.Id)) continue;
     if (
       [...research.Prereqs].filter((x) => !unlockedResearch.has(x)).length === 0
@@ -258,7 +244,7 @@ export function availableRecipes(
   researchState: ResearchState,
   filterFunc?: (r: Recipe) => boolean
 ): string[] {
-  var availableRecipesIds: string[] = [...AlwaysUnlockedRecipes];
+  const availableRecipesIds: string[] = [...AlwaysUnlockedRecipes];
   researchState.Progress.forEach((stack) => {
     if (stack.Count === stack.MaxCount) {
       const research = GetResearch(stack.Entity);
@@ -266,7 +252,7 @@ export function availableRecipes(
       else console.log("Missing research entity for ", stack.Entity);
     }
   });
-  var availableRecipes = availableRecipesIds
+  let availableRecipes = availableRecipesIds
     .filter((r) => !IgnoredRecipies.has(r))
     .map((r) => GetRecipe(r));
   if (filterFunc) availableRecipes = availableRecipes.filter(filterFunc);

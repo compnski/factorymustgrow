@@ -75,5 +75,7 @@ export const TestRecipeBook = new Map<string, Recipe>([
 ]);
 
 export function GetTestRecipe(name: string): Recipe {
-  return TestRecipeBook.get(name)!;
+  const r = TestRecipeBook.get(name);
+  if (!r) throw new Error("Cannot find recipe for " + name);
+  return r;
 }

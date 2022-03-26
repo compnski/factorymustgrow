@@ -1,35 +1,35 @@
+import { BuildingSlot } from "./building";
+import { showResearchSelector } from "./components/selectors";
+import { GameDispatch } from "./GameDispatch";
+import { GetRecipe } from "./gen/entities";
+import { GetResearch } from "./gen/research";
+import { GeneralDialogConfig } from "./GeneralDialogProvider";
+import { MoveViaInserter } from "./inserter";
+import { PushPullFromMainBus } from "./MainBusMovement";
+import { CanPushTo } from "./movement";
 import {
   Extractor,
   Factory,
   ProduceFromExtractor,
   ProduceFromFactory,
 } from "./production";
-import { Region } from "./types";
-import { GetRecipe } from "./gen/entities";
-import { CanPushTo } from "./movement";
-import { PushPullFromMainBus } from "./MainBusMovement";
 import { IsResearchComplete, Lab, ResearchInLab } from "./research";
-import { GetResearch } from "./gen/research";
-import { GameState } from "./useGameState";
-import { UpdateBeltLine } from "./transport";
-import { MainBus } from "./mainbus";
-import { GameDispatch } from "./GameDispatch";
-import { BuildingSlot } from "./building";
-import { MoveViaInserter } from "./inserter";
 import { Chest, UpdateChest } from "./storage";
-import { GeneralDialogConfig } from "./GeneralDialogProvider";
-import { showResearchSelector } from "./components/selectors";
+import { UpdateBeltLine } from "./transport";
+import { Region } from "./types";
+import { GameState } from "./useGameState";
 
 export async function UpdateGameState(
   tick: number,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   generalDialog: (arg0: GeneralDialogConfig) => Promise<any[] | false>
 ) {
   try {
     //const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
-    for (var [, currentBeltLine] of GameState.BeltLines) {
+    for (const [, currentBeltLine] of GameState.BeltLines) {
       UpdateBeltLine(tick, GameState.Regions, currentBeltLine);
     }
-    for (var [, currentRegion] of GameState.Regions) {
+    for (const [, currentRegion] of GameState.Regions) {
       UpdateGameStateForRegion(tick, currentRegion);
     }
     // Check Research Completion
@@ -53,7 +53,7 @@ function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
     GameState.RocketLaunchingAt = 0;
   }
   fixOutputStatus(currentRegion);
-  fixBeltConnections(currentRegion.BuildingSlots, currentRegion.Bus);
+  //fixBeltConnections(currentRegion.BuildingSlots, currentRegion.Bus);
   currentRegion.BuildingSlots.forEach((slot, idx) => {
     const building = slot.Building;
     switch (building.kind) {
@@ -81,15 +81,15 @@ function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
   });
 }
 
-function fixBeltConnections(BuildingSlots: BuildingSlot[], bus: MainBus) {
-  // BuildingSlots.forEach((slot) => {
-  //   const building = slot.Building;
-  //   building.outputStatus.beltConnections.forEach((beltConn, idx) => {
-  //     if (beltConn.laneId !== undefined && !bus.HasLane(beltConn.laneId))
-  //       building.outputStatus.beltConnections.splice(idx, 1);
-  //   });
-  // });
-}
+// function fixBeltConnections(BuildingSlots: BuildingSlot[], bus: MainBus) {
+//   // BuildingSlots.forEach((slot) => {
+//   //   const building = slot.Building;
+//   //   building.outputStatus.beltConnections.forEach((beltConn, idx) => {
+//   //     if (beltConn.laneId !== undefined && !bus.HasLane(beltConn.laneId))
+//   //       building.outputStatus.beltConnections.splice(idx, 1);
+//   //   });
+//   // });
+// }
 
 export function fixOutputStatus(region: { BuildingSlots: BuildingSlot[] }) {
   // TODO: Fix Inserters

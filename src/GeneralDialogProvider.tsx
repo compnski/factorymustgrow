@@ -3,12 +3,18 @@ import React from "react";
 
 const GeneralDialogContext = React.createContext<{
   openGeneralDialog(c: GeneralDialogConfig): void;
-}>({ openGeneralDialog: (): void => {} });
+}>({
+  openGeneralDialog: (): void => {
+    return;
+  },
+});
 
 export type GeneralDialogConfig = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   actionCallback?: (returnData: any | false) => void;
   title: string;
   component?: (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onConfirm: (evt: SyntheticEvent, returnData: any) => any
   ) => JSX.Element;
 };
@@ -41,6 +47,7 @@ export const GeneralDialogProvider = ({
     });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onConfirm = (evt: SyntheticEvent, ...returnData: any) => {
     resetGeneralDialog();
     generalDialogConfig.actionCallback &&
@@ -65,10 +72,12 @@ export const GeneralDialogProvider = ({
 
 export const useGeneralDialog = (): ((
   c: GeneralDialogConfig
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ) => Promise<any[] | false>) => {
   const { openGeneralDialog } = React.useContext(GeneralDialogContext);
 
   const getConfirmation = ({ title, component }: GeneralDialogConfig) =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     new Promise<any[] | false>((res) => {
       openGeneralDialog({
         actionCallback: res,

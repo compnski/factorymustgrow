@@ -1,6 +1,6 @@
 import { Point } from "./astar";
 
-var _entityIdx = 0;
+let _entityIdx = 0;
 const entityId = (): number => _entityIdx++;
 
 export const GameState: {
