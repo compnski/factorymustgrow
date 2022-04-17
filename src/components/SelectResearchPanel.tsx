@@ -6,13 +6,13 @@ import { Icon } from "../gen/svgIcons";
 import { StackCapacity } from "../movement";
 import { unlockedResearch } from "../research";
 import { Research } from "../types";
-import { ResearchState } from "../useGameState";
+import { ReadonlyResearchState } from "../useGameState";
 import { entityIconLookupByKind, showUserError } from "../utils";
 import "./SelectResearchPanel.scss";
 
 export type SelectResearchPanelProps = {
   onConfirm: (evt: SyntheticEvent, recipe: string) => void;
-  researchState: ResearchState;
+  researchState: ReadonlyResearchState;
 };
 
 function researchIcons(research: Research) {

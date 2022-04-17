@@ -7,6 +7,9 @@ import { BuildingCardList } from "./BuildingCardList";
 import { ReactComponent as HelpOverlay } from "../helpTemplate.svg";
 
 import "./HelpCard.scss";
+import { GameState, ReadonlyRegion } from "../useGameState";
+import { ReadonlyMainBus } from "../mainbus";
+import { Inventory } from "../inventory";
 
 export type HelpCardProps = {
   onConfirm: (evt: SyntheticEvent, recipe: string) => void;
@@ -63,7 +66,9 @@ function buildHelpRegion(): Region {
   return helpRegion;
 }
 
-const helpRegion = buildHelpRegion();
+const inventory = new Inventory();
+
+const helpRegion = buildHelpRegion() as ReadonlyRegion;
 
 export const HelpCard = function HelpCard({ onConfirm }: HelpCardProps) {
   return (
@@ -84,9 +89,11 @@ export const HelpCard = function HelpCard({ onConfirm }: HelpCardProps) {
         </div>
         <div className="inner-content">
           <BuildingCardList
-            mainBus={helpRegion.Bus}
+            mainBus={new ReadonlyMainBus(helpRegion.Bus)}
             region={helpRegion}
             regionalOre={helpRegion.Ore}
+            inventory={inventory}
+            researchState={GameState.Research}
           />
           <HelpOverlay />
         </div>

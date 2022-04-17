@@ -1,25 +1,30 @@
 import { GameDispatch } from "../GameDispatch";
-import { Producer } from "../types";
-import "./BuildingCard.scss";
-import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
-import { entityIconLookupByKind } from "../utils";
-import { showResearchSelector } from "./selectors";
-import { useGeneralDialog } from "../GeneralDialogProvider";
-import { Lab } from "../research";
-import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
 import { GetResearch } from "../gen/research";
+import { useGeneralDialog } from "../GeneralDialogProvider";
+import { ReadonlyBuilding, ReadonlyResearchState } from "../useGameState";
+import { entityIconLookupByKind } from "../utils";
+import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
+import "./BuildingCard.scss";
+import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
+import { showResearchSelector } from "./selectors";
 
-const ProducerIcon = (p: Producer): string => p.subkind;
+const ProducerIcon = (p: { subkind: string }): string => p.subkind;
 
 export type LabCardProps = {
-  building: Lab;
+  building: ReadonlyBuilding;
   /* dispatch: (a: GameAction) => void;
    * uiDispatch: (a: UIAction) => void; */
   buildingIdx: number;
   regionId: string;
+  researchState: ReadonlyResearchState;
 };
 
-export function LabCard({ building, buildingIdx, regionId }: LabCardProps) {
+export function LabCard({
+  building,
+  buildingIdx,
+  regionId,
+  researchState,
+}: LabCardProps) {
   const generalDialog = useGeneralDialog();
   const title = building.RecipeId
     ? `Researching ${GetResearch(building.RecipeId).Name}`
@@ -30,7 +35,7 @@ export function LabCard({ building, buildingIdx, regionId }: LabCardProps) {
         <div
           className="title"
           onClick={async () => {
-            await showResearchSelector(generalDialog);
+            await showResearchSelector(generalDialog, researchState);
           }}
           title="Select Research"
         >

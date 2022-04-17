@@ -1,12 +1,12 @@
-import { ItemBuffer, NewEntityStack } from "../types";
-import { GameDispatch } from "../GameDispatch";
-import { ResearchState } from "../useGameState";
 import { SyntheticEvent } from "react";
-import { MainBusConst } from "./uiConstants";
-import { showAddLaneItemSelector } from "./selectors";
-import { MainBus } from "../mainbus";
+import { GameDispatch } from "../GameDispatch";
 import { useGeneralDialog } from "../GeneralDialogProvider";
+import { ReadonlyMainBus } from "../mainbus";
+import { availableItems } from "../research";
+import { ReadonlyResearchState } from "../useGameState";
 import { showUserError } from "../utils";
+import { showAddLaneItemSelector } from "./selectors";
+import { MainBusConst } from "./uiConstants";
 
 const entityIconDoubleClickHandler = (
   evt: {
@@ -18,13 +18,8 @@ const entityIconDoubleClickHandler = (
   },
   regionId: string,
   laneId: number,
-  entity: string,
-  lane: ItemBuffer
+  entity: string
 ): void => {
-  if (evt.shiftKey) {
-    lane.Add(NewEntityStack(entity, 1));
-    return;
-  }
   const clickY = evt.nativeEvent.offsetY;
   if (clickY < 20) {
     GameDispatch({
@@ -50,16 +45,21 @@ const entityIconDoubleClickHandler = (
 export const MainBusHeader = ({
   mainBus,
   regionId,
+  researchState,
 }: {
-  mainBus: MainBus;
+  mainBus: ReadonlyMainBus;
   regionId: string;
-  researchState: ResearchState;
+  researchState: ReadonlyResearchState;
 }) => {
   const generalDialog = useGeneralDialog();
 
   async function addLane(evt: SyntheticEvent) {
     if (mainBus.CanAddLane()) {
-      void showAddLaneItemSelector(generalDialog, regionId);
+      void showAddLaneItemSelector(
+        generalDialog,
+        regionId,
+        availableItems(researchState)
+      );
     } else {
       showUserError("Out of lane capacity");
     }
@@ -73,7 +73,7 @@ export const MainBusHeader = ({
     lanes.push(
       <div
         onDoubleClick={(evt) =>
-          entityIconDoubleClickHandler(evt, regionId, laneId, entity, lane)
+          entityIconDoubleClickHandler(evt, regionId, laneId, entity)
         }
         key={laneId}
         className="lane-header-item-stack"

@@ -1,11 +1,13 @@
 import { useState } from "react";
+import { Building } from "./building";
 import { GetEntity } from "./gen/entities";
 import { GameWindow } from "./globals";
 import { Inserter } from "./inserter";
 import { Inventory } from "./inventory";
 import { loadStateFromLocalStorage } from "./localstorage";
+import { ReadonlyMainBus } from "./mainbus";
 import { GetRegionInfo } from "./region";
-import { BeltLine } from "./transport";
+import { BeltLine, BeltLineDepot } from "./transport";
 import {
   BeltConnection,
   EntityStack,
@@ -13,6 +15,55 @@ import {
   NewRegionFromInfo,
   Region,
 } from "./types";
+
+export type ReadonlyItemBuffer = {
+  //readonly slots: Readonly<EntityStack>[];
+  readonly Capacity: number;
+  Entities(): Readonly<[entity: string, count: number][]>;
+  Slots(): Readonly<[entity: string, count: number][]>;
+  Count(entity: string): number;
+  Accepts(entity: string): boolean;
+};
+
+export interface ReadonlyResearchState {
+  readonly Progress: ReadonlyMap<string, Readonly<EntityStack>>;
+  readonly CurrentResearchId: string;
+}
+
+export type ReadonlyBuilding = {
+  readonly inputBuffers: ReadonlyItemBuffer;
+  readonly outputBuffers: ReadonlyItemBuffer;
+} & Readonly<
+  Pick<Building, "kind" | "subkind" | "ProducerType" | "BuildingCount">
+> &
+  Partial<{ RecipeId: string }> &
+  Partial<Pick<BeltLineDepot, "name" | "direction" | "otherRegionId">>;
+
+export interface ReadonlyBuildingSlot {
+  Building: ReadonlyBuilding;
+  readonly Inserter: Readonly<Inserter>;
+  readonly BeltConnections: Readonly<BeltConnection>[];
+}
+
+export interface ReadonlyRegion {
+  readonly Id: string;
+  readonly Ore: ReadonlyItemBuffer;
+  readonly LaneCount: number;
+  readonly Bus: ReadonlyMainBus;
+  readonly BuildingSlots: ReadonlyBuildingSlot[];
+}
+
+interface IHackyPropertyBag {
+  RocketLaunchingAt?: number;
+}
+
+export interface ReadonlyState {
+  readonly HackyPropertyBag: Readonly<IHackyPropertyBag>;
+  readonly Research: ReadonlyResearchState;
+  readonly Inventory: ReadonlyItemBuffer;
+  readonly Regions: ReadonlyMap<string, ReadonlyRegion>;
+  readonly BeltLines: ReadonlyMap<number, Readonly<BeltLine>>;
+}
 
 export const CurrentGameStateVersion = "0.1.6";
 
@@ -70,4 +121,10 @@ export function GetRegion(regionId: string): Region {
   const region = GameState.Regions.get(regionId);
   if (!region) throw new Error("Cannot find current region " + regionId);
   return region;
+}
+
+export function GetReadonlyRegion(regionId: string): ReadonlyRegion {
+  const region = GameState.Regions.get(regionId);
+  if (!region) throw new Error("Cannot find current region " + regionId);
+  return { ...region, Bus: new ReadonlyMainBus(region.Bus) };
 }

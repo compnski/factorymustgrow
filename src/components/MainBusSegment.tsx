@@ -1,8 +1,8 @@
-import { BeltConnection } from "../types";
 import { Icon } from "../gen/svgIcons";
-import { MainBusConst } from "./uiConstants";
+import { ReadonlyMainBus } from "../mainbus";
+import { BeltConnection } from "../types";
 import { entityIconLookupByKind } from "../utils";
-import { MainBus } from "../mainbus";
+import { MainBusConst } from "./uiConstants";
 
 const connectionHeight = 25,
   connectionOffset = 15,
@@ -60,7 +60,7 @@ export function MainBusSegment({
   busLaneClicked = () => void {},
   beltConnectionClicked = () => void {},
 }: {
-  mainBus: MainBus;
+  mainBus: ReadonlyMainBus;
   segmentHeight: number;
   beltConnections?: BeltConnection[];
   busLaneClicked?: (laneId: number, entity: string) => void;

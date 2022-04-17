@@ -7,7 +7,13 @@ import { saveStateToLocalStorage } from "../localstorage";
 import { setMacroRegionId } from "../macro_def";
 import { useInterval } from "../reactUtils";
 import { ReactComponent as RocketShip } from "../rocket-launch.svg";
-import { GameState, useGameState } from "../useGameState";
+import {
+  GameState,
+  GetReadonlyRegion,
+  ReadonlyItemBuffer,
+  ReadonlyResearchState,
+  useGameState,
+} from "../useGameState";
 import { BuildingCardList } from "./BuildingCardList";
 import { DebugButtonPanel } from "./DebugButtonPanel";
 import "./FactoryGame.scss";
@@ -38,10 +44,9 @@ export const FactoryGame = () => {
 
   try {
     const regionIds = [...gameState.Regions.keys()];
-    const currentRegion = gameState.Regions.get(currentRegionId);
-    if (!currentRegion)
-      throw new Error("Missing current region: " + currentRegionId);
-
+    const currentRegion = GetReadonlyRegion(currentRegionId);
+    const inventory = gameState.Inventory as ReadonlyItemBuffer;
+    const researchState = gameState.Research as ReadonlyResearchState;
     const showHelp = () => {
       void showHelpCard(generalDialog);
     };
@@ -67,11 +72,11 @@ export const FactoryGame = () => {
         <div style={{ display: "flex" }}>
           <InfoHeader
             currentRegion={currentRegion}
-            researchState={gameState.Research}
+            researchState={researchState}
           />
           <MainBusHeader
             mainBus={currentRegion.Bus}
-            researchState={gameState.Research}
+            researchState={researchState}
             regionId={currentRegion.Id}
           />
         </div>
@@ -80,10 +85,15 @@ export const FactoryGame = () => {
             mainBus={currentRegion.Bus}
             region={currentRegion}
             regionalOre={currentRegion.Ore}
+            inventory={inventory}
+            researchState={researchState}
           />
         </div>
-        <InventoryDisplay inventory={gameState.Inventory} />
-        <DebugButtonPanel gameDispatch={GameDispatch} />
+        <InventoryDisplay inventory={inventory} />
+        <DebugButtonPanel
+          researchState={researchState}
+          gameDispatch={GameDispatch}
+        />
       </div>
     );
   } catch (e: unknown) {

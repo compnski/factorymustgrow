@@ -3,12 +3,18 @@ import { ButtonPanel } from "./ButtonPanel";
 import { showMoveItemToFromInventorySelector } from "./selectors";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { useState } from "react";
+import { availableItems } from "../research";
+import { ReadonlyResearchState } from "../useGameState";
 
 export type DebugButtonPanelProps = {
   gameDispatch(e: GameAction): void;
+  researchState: ReadonlyResearchState;
 };
 
-export function DebugButtonPanel({ gameDispatch }: DebugButtonPanelProps) {
+export function DebugButtonPanel({
+  gameDispatch,
+  researchState,
+}: DebugButtonPanelProps) {
   const generalDialog = useGeneralDialog(),
     autoOpenDebug = window.location.hash.includes("debug"),
     [isOpen, setOpen] = useState<boolean>(autoOpenDebug),
@@ -27,7 +33,8 @@ export function DebugButtonPanel({ gameDispatch }: DebugButtonPanelProps) {
         clickHandler: () =>
           showMoveItemToFromInventorySelector(
             generalDialog,
-            "TransferToInventory"
+            "TransferToInventory",
+            availableItems(researchState)
           ),
         title: "Add To Inventory (DEBUG)",
       },

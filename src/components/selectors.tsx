@@ -1,16 +1,19 @@
 import { GameDispatch } from "../GameDispatch";
-import { GameState } from "../useGameState";
 import { GetRecipe } from "../gen/entities";
-import { Inventory } from "../inventory";
-import { availableItems, availableRecipes } from "../research";
-import { IsBuilding } from "../production";
-import { RecipeSelector } from "./RecipeSelector";
-import { PlaceBeltLinePanel } from "./PlaceBeltLinePanel";
 import { GeneralDialogConfig } from "../GeneralDialogProvider";
+import { IsBuilding } from "../production";
+import { availableRecipes } from "../research";
 import { Region } from "../types";
-import { SelectResearchPanel } from "./SelectResearchPanel";
-import { RegionSelector } from "./RegionSelector";
+import {
+  GameState,
+  ReadonlyItemBuffer,
+  ReadonlyResearchState,
+} from "../useGameState";
 import { HelpCard } from "./HelpCard";
+import { PlaceBeltLinePanel } from "./PlaceBeltLinePanel";
+import { RecipeSelector } from "./RecipeSelector";
+import { RegionSelector } from "./RegionSelector";
+import { SelectResearchPanel } from "./SelectResearchPanel";
 
 async function showIconSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
@@ -39,14 +42,11 @@ async function showIconSelector(
 export async function showMoveItemToFromInventorySelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
   direction: "TransferToInventory" | "TransferFromInventory",
+  items: string[],
   regionId?: string,
-  buildingIdx?: number,
-  filter?: (entity: string) => boolean
+  buildingIdx?: number
+  //filter?: (entity: string) => boolean
 ): Promise<void> {
-  if (!filter && direction === "TransferFromInventory")
-    filter = (e) => GameState.Inventory.Count(e) > 0;
-  let items = availableItems(GameState.Research);
-  if (filter) items = items.filter(filter);
   const recipe = await showIconSelector(showDialog, "Add Stack", items);
 
   if (recipe)
@@ -69,13 +69,10 @@ export async function showMoveItemToFromInventorySelector(
 
 export async function showAddLaneItemSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
-  regionId: string
+  regionId: string,
+  items: string[]
 ): Promise<void> {
-  const item = await showIconSelector(
-    showDialog,
-    "Add Bus Lane",
-    availableItems(GameState.Research)
-  );
+  const item = await showIconSelector(showDialog, "Add Bus Lane", items);
   if (item)
     GameDispatch({
       type: "AddLane",
@@ -88,12 +85,13 @@ export async function showChangeProducerRecipeSelector(
   producerType: string,
   regionId: string,
   buildingIdx: number,
-  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>
+  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
+  researchState: ReadonlyResearchState
 ): Promise<void> {
   const recipeId = await showIconSelector(
     showDialog,
     "Choose Recipe",
-    availableRecipes(GameState.Research).filter(function filterRecipes(
+    availableRecipes(researchState).filter(function filterRecipes(
       recipeId: string
     ): boolean {
       const r = GetRecipe(recipeId);
@@ -106,7 +104,7 @@ export async function showChangeProducerRecipeSelector(
 
 export async function showPlaceBuildingSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
-  inventory: Inventory,
+  inventory: ReadonlyItemBuffer,
   regionId: string,
   buildingIdx?: number
 ) {
@@ -138,14 +136,15 @@ export async function showPlaceBuildingSelector(
 
 export async function showResearchSelector(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>
+  showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
+  researchState: ReadonlyResearchState
 ): Promise<void> {
   const result = await showDialog({
     title: "Choose Research",
     component: (onConfirm) => (
       <SelectResearchPanel
         onConfirm={onConfirm}
-        researchState={GameState.Research}
+        researchState={researchState}
       />
     ),
   });
@@ -159,7 +158,7 @@ export async function showResearchSelector(
 export async function showPlaceBeltLineSelector(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
-  inventory: Inventory,
+  inventory: ReadonlyItemBuffer,
   regions: Map<string, Region>,
   regionId: string,
   buildingIdx?: number
@@ -191,7 +190,7 @@ export async function showPlaceBeltLineSelector(
 export async function showClaimRegionSelector(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
-  inventory: Inventory,
+  inventory: ReadonlyItemBuffer,
   regionIds: string[]
 ): Promise<void> {
   const result = await showDialog({

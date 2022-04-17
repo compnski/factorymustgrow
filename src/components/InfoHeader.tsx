@@ -1,14 +1,13 @@
-import { ResearchState } from "../useGameState";
-import { Region } from "../types";
-import { entityIconLookupByKind } from "../utils";
-import { RemainingRegionBuildingCapacity } from "../region";
-import { useGeneralDialog } from "../GeneralDialogProvider";
-import { showResearchSelector } from "./selectors";
 import { GetEntity } from "../gen/entities";
+import { useGeneralDialog } from "../GeneralDialogProvider";
+import { RemainingRegionBuildingCapacity } from "../region";
+import { ReadonlyRegion, ReadonlyResearchState } from "../useGameState";
+import { entityIconLookupByKind } from "../utils";
+import { showResearchSelector } from "./selectors";
 
 export type InfoHeaderProps = {
-  currentRegion: Region;
-  researchState: ResearchState;
+  currentRegion: ReadonlyRegion;
+  researchState: ReadonlyResearchState;
 };
 
 export const InfoHeader = ({
@@ -39,7 +38,9 @@ export const InfoHeader = ({
       {infoCards}
       <div
         className="top-info science-info"
-        onClick={async () => await showResearchSelector(generalDialog)}
+        onClick={async () =>
+          await showResearchSelector(generalDialog, researchState)
+        }
         title="Select Research"
       >
         <div className={`icon ${researchIcon}`} />

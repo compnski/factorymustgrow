@@ -32,7 +32,8 @@
     "gen": "go run ./src/scripts/genEntities.go src/gen/entities.ts",
     "researchTiers": "ts-node ./src/scripts/genResearchTiers.ts",
     "lint": "npx eslint --fix src/**/*.ts src/**/*.tsx",
-    "check-lint": "npx eslint src/**/*.ts src/**/*.tsx"
+    "check-lint": "npx eslint src/**/*.ts src/**/*.tsx",
+    "check-types": "npx tsc --noEmit"
   },
   "eslintConfig": {
     "extends": ["react-app", "react-app/jest"]

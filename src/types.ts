@@ -2,8 +2,11 @@ import { BuildingSlot, NewBuildingSlot, NewEmptyLane } from "./building";
 import { Inserter } from "./inserter";
 import { FixedInventory } from "./inventory";
 import { MainBus } from "./mainbus";
+import { ReadonlyItemBuffer } from "./useGameState";
 
-export function IsItemBuffer(i: ItemBuffer | EntityStack): boolean {
+export function IsItemBuffer(
+  i: ItemBuffer | EntityStack | ReadonlyItemBuffer
+): i is ItemBuffer {
   return (i as ItemBuffer).AvailableSpace !== undefined;
 }
 

@@ -1,10 +1,10 @@
 import { SyntheticEvent, useState } from "react";
-import { Inventory } from "../inventory";
 import { Region } from "../types";
+import { ReadonlyItemBuffer } from "../useGameState";
 import "./PlaceBeltLinePanel.scss";
 
 export type PlaceBeltLineProps = {
-  inventory: Inventory;
+  inventory: ReadonlyItemBuffer;
   regions: Map<string, Region>;
   title: string;
   onConfirm: (

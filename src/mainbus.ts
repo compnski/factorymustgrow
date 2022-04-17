@@ -1,5 +1,6 @@
 import { FixedInventory } from "./inventory";
 import { ItemBuffer } from "./types";
+import { ReadonlyItemBuffer } from "./useGameState";
 
 export const NewBusLane = (
   Id: number,
@@ -15,6 +16,31 @@ export const NewBusLane = (
   ]);
   return inv;
 };
+
+export class ReadonlyMainBus {
+  readonly lanes: ReadonlyMap<number, ReadonlyItemBuffer>;
+  readonly nextLaneId: number;
+
+  constructor({
+    lanes,
+    nextLaneId,
+  }: {
+    lanes: ReadonlyMap<number, ReadonlyItemBuffer>;
+    nextLaneId: number;
+  }) {
+    this.lanes = lanes;
+    this.nextLaneId = nextLaneId;
+  }
+
+  HasLane(id: number): boolean {
+    return this.lanes.has(id);
+  }
+
+  CanAddLane(): boolean {
+    return this.lanes.size < 10;
+  }
+}
+
 export class MainBus {
   lanes: Map<number, ItemBuffer>;
   nextLaneId = 1;

@@ -1,13 +1,12 @@
-import { Inventory } from "../inventory";
-import "./RegionSelector.scss";
-
-import { ReactComponent as RegionMapSVG } from "../gen/regionmap.svg";
 import { SyntheticEvent } from "react";
+import { ReactComponent as RegionMapSVG } from "../gen/regionmap.svg";
 import { useProperties } from "../svg";
+import { ReadonlyItemBuffer } from "../useGameState";
+import "./RegionSelector.scss";
 
 export type RegionSelectorProps = {
   regionIds: string[];
-  inventory: Inventory;
+  inventory: ReadonlyItemBuffer;
   onConfirm: (evt: SyntheticEvent, regionId: string) => void;
 };
 

@@ -1,8 +1,12 @@
 import { SyntheticEvent, useState } from "react";
-import { BuildingSlot, InserterIdForBuilding } from "../building";
+import { InserterIdForBuilding } from "../building";
 import { GameDispatch } from "../GameDispatch";
-import { MainBus } from "../mainbus";
-import { ItemBuffer } from "../types";
+import { ReadonlyMainBus } from "../mainbus";
+import {
+  ReadonlyBuildingSlot,
+  ReadonlyItemBuffer,
+  ReadonlyResearchState,
+} from "../useGameState";
 import { showUserError } from "../utils";
 import { BuildingCard } from "./BuildingCard";
 import { InserterCard } from "./InserterCard";
@@ -11,10 +15,14 @@ export const BuildingCardList = ({
   region,
   mainBus,
   regionalOre,
+  inventory,
+  researchState,
 }: {
-  region: { Id: string; BuildingSlots: BuildingSlot[] };
-  mainBus: MainBus;
-  regionalOre: ItemBuffer;
+  region: { Id: string; BuildingSlots: ReadonlyBuildingSlot[] };
+  mainBus: ReadonlyMainBus;
+  regionalOre: ReadonlyItemBuffer;
+  inventory: ReadonlyItemBuffer;
+  researchState: ReadonlyResearchState;
 }) => {
   const regionId = region.Id;
   const [dragIdx, setDragIdx] = useState(-1);
@@ -95,10 +103,12 @@ export const BuildingCardList = ({
           mainBus={mainBus}
           dispatch={GameDispatch}
           regionalOre={regionalOre}
+          inventory={inventory}
           handleDrag={handleDrag(idx)}
           handleDrop={allowsDrop ? handleDrop(idx, isLastBuilding) : undefined}
           moveUp={() => moveUp(idx)}
           moveDown={() => moveDown(idx)}
+          researchState={researchState}
         />
         {!isLastBuilding && (
           <InserterCard

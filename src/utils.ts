@@ -1,5 +1,5 @@
-import { Building } from "./building";
 import { GetResearch } from "./gen/research";
+import { ReadonlyBuilding } from "./useGameState";
 
 const seenSet = new Set<string>();
 
@@ -45,7 +45,7 @@ export function entityIconLookupByKind(
 }
 
 export function BuildingHasOutput(
-  building?: string | Building,
+  building?: string | ReadonlyBuilding,
   entity?: string
 ): boolean {
   if (typeof building === "string") {
@@ -61,7 +61,7 @@ export function BuildingHasOutput(
 }
 
 export function BuildingHasInput(
-  building?: string | Building,
+  building?: string | ReadonlyBuilding,
   entity?: string
 ): boolean {
   if (typeof building === "string") {

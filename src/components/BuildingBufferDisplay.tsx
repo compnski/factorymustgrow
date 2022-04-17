@@ -1,5 +1,5 @@
 import { GameDispatch } from "../GameDispatch";
-import { ItemBuffer } from "../types";
+import { ReadonlyItemBuffer } from "../useGameState";
 import { InventoryDisplay } from "./InventoryDisplay";
 
 export function BuildingBufferDisplay({
@@ -10,8 +10,8 @@ export function BuildingBufferDisplay({
   outputInteractable = true,
   regionId,
 }: {
-  inputBuffers?: ItemBuffer;
-  outputBuffers?: ItemBuffer;
+  inputBuffers?: ReadonlyItemBuffer;
+  outputBuffers?: ReadonlyItemBuffer;
   entityIconLookup?: (entity: string) => string;
   buildingIdx: number;
   outputInteractable?: boolean;

@@ -30,13 +30,19 @@ import {
   NewBeltLinePair,
 } from "./transport";
 import {
+  BeltConnection,
   ItemBuffer,
   NewEntityStack,
   NewRegionFromInfo,
   Producer,
   Region,
 } from "./types";
-import { GameState, GetRegion, ResetGameState } from "./useGameState";
+import {
+  GameState,
+  GetReadonlyRegion,
+  GetRegion,
+  ResetGameState,
+} from "./useGameState";
 import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
 
 export const GameDispatch = (action: GameAction) => {
@@ -289,7 +295,7 @@ function toggleInserterDirection(
         connectionIdx: number;
       })
 ) {
-  const currentRegion = GetRegion(action.regionId);
+  const currentRegion = GetReadonlyRegion(action.regionId);
 
   if (action.location === "BELT") {
     const i = inserter(action),
@@ -324,7 +330,8 @@ function toggleInserterDirection(
           i.direction = i.direction === "NONE" ? "TO_BUS" : "NONE";
         }
         if (i.direction === "FROM_BUS" || i.direction === "TO_BUS") {
-          beltConn.direction = i.direction;
+          (beltConn as Pick<BeltConnection, "direction">).direction =
+            i.direction;
         }
       }
     }
@@ -349,12 +356,14 @@ function toggleInserterDirection(
       CanPushTo(topB, bottomB);
 
   if (canGoUp && canGoDown) {
-    i.direction =
+    (i as Pick<Inserter, "direction">).direction =
       i.direction === "UP" ? "DOWN" : i.direction === "DOWN" ? "NONE" : "UP";
   } else if (canGoUp) {
-    i.direction = i.direction === "NONE" ? "UP" : "NONE";
+    (i as Pick<Inserter, "direction">).direction =
+      i.direction === "NONE" ? "UP" : "NONE";
   } else if (canGoDown) {
-    i.direction = i.direction === "NONE" ? "DOWN" : "NONE";
+    (i as Pick<Inserter, "direction">).direction =
+      i.direction === "NONE" ? "DOWN" : "NONE";
   }
 }
 
@@ -548,10 +557,9 @@ function PlaceBeltLine(
 ) {
   // TODO: Check for any orphan beltlines that could connect here.
 
-  const targetRegion = GameState.Regions.get(action.targetRegion);
+  const targetRegion = GetRegion(action.targetRegion);
 
   if (
-    targetRegion === undefined ||
     GameState.Inventory.Count(action.entity) < action.beltLength ||
     RemainingRegionBuildingCapacity(currentRegion) <= 0 ||
     RemainingRegionBuildingCapacity(targetRegion) <= 0
@@ -698,9 +706,8 @@ function RemoveBuilding(
         );
     if (b.kind === "BeltLineDepot") {
       const depot = b as BeltLineDepot,
-        otherRegion = GameState.Regions.get(depot.otherRegionId);
-      if (!otherRegion)
-        throw new Error("Cannot find region " + depot.otherRegionId);
+        otherRegion = GetRegion(depot.otherRegionId);
+
       const otherDepot = FindDepotForBeltLineInRegion(
         otherRegion,
         depot.beltLineId,
@@ -753,9 +760,7 @@ function inventoryTransferStack(
       ]);
 
     case "MainBus":
-      return GameState.Regions.get(action.regionId)?.Bus.lanes.get(
-        action.laneId
-      );
+      return GetRegion(action.regionId).Bus.lanes.get(action.laneId);
 
     case "Building":
       b = building(action);

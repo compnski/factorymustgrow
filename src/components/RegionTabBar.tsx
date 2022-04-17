@@ -1,7 +1,7 @@
 import { SyntheticEvent } from "react";
 import { GameAction } from "../GameAction";
 import { useGeneralDialog } from "../GeneralDialogProvider";
-import { Inventory } from "../inventory";
+import { ReadonlyItemBuffer } from "../useGameState";
 import { showClaimRegionSelector } from "./selectors";
 
 // TODO Dispatch event to region change
@@ -10,7 +10,7 @@ type RegionTabBarProps = {
   regionIds: string[];
   currentRegionId: string;
   gameDispatch(a: GameAction): void;
-  inventory: Inventory;
+  inventory: ReadonlyItemBuffer;
   setCurrentRegionId: (regionId: string) => void;
 };
 
@@ -19,7 +19,6 @@ const regionIdClaimNew = "claim-new";
 export function RegionTabBar({
   regionIds,
   currentRegionId,
-  gameDispatch,
   inventory,
   setCurrentRegionId,
 }: RegionTabBarProps) {

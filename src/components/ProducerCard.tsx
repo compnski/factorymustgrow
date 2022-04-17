@@ -1,27 +1,30 @@
 import { GameDispatch } from "../GameDispatch";
-import { ItemBuffer, NewEntityStack, Producer } from "../types";
-import "./BuildingCard.scss";
-import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
-import { entityIconLookupByKind } from "../utils";
-import { showChangeProducerRecipeSelector } from "./selectors";
-import { Inventory } from "../inventory";
 import { useGeneralDialog } from "../GeneralDialogProvider";
+import { Inventory } from "../inventory";
+import { IsItemBuffer, ItemBuffer, NewEntityStack } from "../types";
+import {
+  ReadonlyBuilding,
+  ReadonlyItemBuffer,
+  ReadonlyResearchState,
+} from "../useGameState";
+import { entityIconLookupByKind } from "../utils";
+import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
+import "./BuildingCard.scss";
 import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
+import { showChangeProducerRecipeSelector } from "./selectors";
 
-const ProducerIcon = (p: Producer): string => p.subkind;
+const ProducerIcon = (p: { subkind: string }): string => p.subkind;
 
 export type ProducerCardProps = {
-  producer: Producer;
-  /* dispatch: (a: GameAction) => void;
-   * uiDispatch: (a: UIAction) => void; */
-  buildingIdx: number;
-  //  mainBus: MainBus;
-  regionalOre: ItemBuffer;
+  producer: ReadonlyBuilding;
   regionId: string;
+  buildingIdx: number;
+  regionalOre: ReadonlyItemBuffer;
+  researchState: ReadonlyResearchState;
 };
 
-function formatRecipeName(s: string): string {
-  if (!s.length) return s;
+function formatRecipeName(s: string | undefined): string {
+  if (!s?.length) return s || "";
   const title = s
     .split("-")
     .map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase());
@@ -33,16 +36,19 @@ export function ProducerCard({
   buildingIdx,
   regionalOre,
   regionId,
+  researchState,
 }: ProducerCardProps) {
   const generalDialog = useGeneralDialog();
 
-  let recipeInput = producer.inputBuffers;
+  let recipeInput: ItemBuffer | ReadonlyItemBuffer = producer.inputBuffers;
 
   if (producer.kind === "Extractor" && producer.inputBuffers) {
     recipeInput = new Inventory(Infinity);
+    // TODO: Clean this up to use some immutable inventory
     for (const [entity] of producer.inputBuffers.Entities()) {
       const ore = regionalOre.Count(entity);
-      if (ore) recipeInput.Add(NewEntityStack(entity, ore));
+      if (ore && IsItemBuffer(recipeInput))
+        recipeInput.Add(NewEntityStack(entity, ore));
     }
   }
 
@@ -55,7 +61,8 @@ export function ProducerCard({
               producer.ProducerType,
               regionId,
               buildingIdx,
-              generalDialog
+              generalDialog,
+              researchState
             );
           }}
           className="title"

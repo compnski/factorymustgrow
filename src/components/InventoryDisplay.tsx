@@ -1,8 +1,8 @@
+import { ReadonlyItemBuffer } from "../useGameState";
 import "./InventoryDisplay.scss";
-import { ItemBuffer } from "../types";
 
 export type InventoryDisplayProps = {
-  inventory: ItemBuffer;
+  inventory: ReadonlyItemBuffer;
   showProgressBar?: boolean;
   entityIconLookup?: (entity: string) => string;
   addClickHandler?: (entity: string) => void;

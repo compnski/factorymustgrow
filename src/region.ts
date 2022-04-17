@@ -1,6 +1,9 @@
-import { NewEntityStack, Region, RegionInfo } from "./types";
+import { NewEntityStack, RegionInfo } from "./types";
+import { ReadonlyRegion } from "./useGameState";
 
-export function RemainingRegionBuildingCapacity(region: Region): number {
+export function RemainingRegionBuildingCapacity(
+  region: ReadonlyRegion
+): number {
   return (
     region.LaneCount -
     region.BuildingSlots.filter((b) => b.Building.kind !== "Empty").length

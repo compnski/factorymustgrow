@@ -1,13 +1,13 @@
 import { GameDispatch } from "../GameDispatch";
-import "./BuildingCard.scss";
-import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
+import { ReadonlyBuilding } from "../useGameState";
 import { entityIconLookupByKind } from "../utils";
-import { Factory } from "../production";
+import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
+import "./BuildingCard.scss";
 
 const ProducerIcon = (p: { subkind: string }): string => p.subkind;
 
 export type RocketSiloCardProps = {
-  building: Factory;
+  building: ReadonlyBuilding;
   regionId: string;
   buildingIdx: number;
 };

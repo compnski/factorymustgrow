@@ -1,9 +1,10 @@
 import { EntityStack, ItemBuffer } from "./types";
+import { ReadonlyItemBuffer } from "./useGameState";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
 
 export function CanPushTo(
-  from: { kind: string; outputBuffers: ItemBuffer },
-  to: { kind: string; inputBuffers: ItemBuffer } | null
+  from: { kind: string; outputBuffers: ReadonlyItemBuffer },
+  to: { kind: string; inputBuffers: ReadonlyItemBuffer } | null
 ): boolean {
   return Boolean(
     BuildingHasInput(to?.kind) &&

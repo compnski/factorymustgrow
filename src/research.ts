@@ -5,7 +5,7 @@ import { FixedInventory } from "./inventory";
 import { StackCapacity } from "./movement";
 import { producableItemsForInput, productionPerTick } from "./productionUtils";
 import { ItemBuffer, NewEntityStack, Recipe, Research } from "./types";
-import { ResearchState } from "./useGameState";
+import { ReadonlyResearchState, ResearchState } from "./useGameState";
 
 export type Lab = {
   kind: "Lab";
@@ -165,7 +165,9 @@ export function ResearchInLab(
 }
 
 // Returns all research that is not completed and unlocked
-export function unlockedResearch(researchState: ResearchState): string[] {
+export function unlockedResearch(
+  researchState: ReadonlyResearchState
+): string[] {
   const unlockedResearch = new Set();
   researchState.Progress.forEach((stack) => {
     if (StackCapacity(stack) === 0) unlockedResearch.add(stack.Entity);
@@ -233,7 +235,7 @@ const IgnoredRecipies: Set<string> = new Set([
 
 // Returns all recipes that can be crafted given the completed research
 export function availableRecipes(
-  researchState: ResearchState,
+  researchState: ReadonlyResearchState,
   filterFunc?: (r: Recipe) => boolean
 ): string[] {
   const availableRecipesIds: string[] = [...AlwaysUnlockedRecipes];
@@ -263,7 +265,7 @@ export function availableRecipes(
   return availableRecipes.map((r) => r.Id);
 }
 
-export function availableItems(researchState: ResearchState): string[] {
+export function availableItems(researchState: ReadonlyResearchState): string[] {
   const availableItems: string[] = [],
     seenItems: Set<string> = new Set();
   availableRecipes(researchState).forEach((r: string) => {

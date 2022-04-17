@@ -1,7 +1,6 @@
 import { BuildingSlot } from "./building";
 import { showResearchSelector } from "./components/selectors";
 import { GameDispatch } from "./GameDispatch";
-import { GetRecipe } from "./gen/entities";
 import { GetResearch } from "./gen/research";
 import { GeneralDialogConfig } from "./GeneralDialogProvider";
 import { MoveViaInserter } from "./inserter";
@@ -35,7 +34,7 @@ export async function UpdateGameState(
     if (IsResearchComplete(GameState.Research)) {
       console.log("Research Complete!");
       GameDispatch({ type: "CompleteResearch" });
-      await showResearchSelector(generalDialog);
+      await showResearchSelector(generalDialog, GameState.Research);
     }
   } catch (e) {
     //TODO Show error dialog

@@ -1,9 +1,14 @@
 import { SyntheticEvent, useState } from "react";
-import { Building, BuildingSlot, InserterIdForBelt } from "../building";
+import { InserterIdForBelt } from "../building";
 import { GameAction } from "../GameAction";
 import { GameDispatch } from "../GameDispatch";
-import { MainBus } from "../mainbus";
-import { ItemBuffer, Producer } from "../types";
+import { ReadonlyMainBus } from "../mainbus";
+import {
+  ReadonlyBuilding,
+  ReadonlyBuildingSlot,
+  ReadonlyItemBuffer,
+  ReadonlyResearchState,
+} from "../useGameState";
 import { BuildingHasInput, BuildingHasOutput } from "../utils";
 import { BeltLineCard } from "./BeltLineCard";
 import "./BuildingCard.scss";
@@ -16,17 +21,19 @@ import { RocketSiloCard } from "./RocketSiloCard";
 import { StorageCard } from "./StorageCard";
 
 export type BuildingCardProps = {
-  building: Building;
-  buildingSlot: BuildingSlot;
+  building: ReadonlyBuilding;
+  buildingSlot: ReadonlyBuildingSlot;
   dispatch: (a: GameAction) => void;
   buildingIdx: number;
-  mainBus: MainBus;
-  regionalOre: ItemBuffer;
+  mainBus: ReadonlyMainBus;
+  regionalOre: ReadonlyItemBuffer;
   handleDrag: (evt: SyntheticEvent) => void;
   handleDrop: undefined | ((evt: SyntheticEvent) => void);
   moveUp: (evt: SyntheticEvent) => void;
   moveDown: (evt: SyntheticEvent) => void;
   regionId: string;
+  inventory: ReadonlyItemBuffer;
+  researchState: ReadonlyResearchState;
 };
 
 export const BuildingCard = ({
@@ -40,6 +47,8 @@ export const BuildingCard = ({
   moveUp,
   moveDown,
   regionId,
+  inventory,
+  researchState,
 }: BuildingCardProps) => {
   // TOOD: Change to use Events
   const busLaneClicked = (laneId: number, entity: string) => {
@@ -98,14 +107,20 @@ export const BuildingCard = ({
         storage={building}
         regionId={regionId}
         buildingIdx={buildingIdx}
+        inventory={inventory}
       />
     ) : building.kind === "Empty" ? (
-      <EmptyLaneCard regionId={regionId} buildingIdx={buildingIdx} />
+      <EmptyLaneCard
+        regionId={regionId}
+        buildingIdx={buildingIdx}
+        inventory={inventory}
+      />
     ) : building.kind === "Lab" ? (
       <LabCard
         building={building}
         regionId={regionId}
         buildingIdx={buildingIdx}
+        researchState={researchState}
       />
     ) : building.subkind === "rocket-silo" ? (
       <RocketSiloCard
@@ -115,10 +130,11 @@ export const BuildingCard = ({
       />
     ) : (
       <ProducerCard
-        producer={building as Producer}
+        producer={building}
         regionId={regionId}
         buildingIdx={buildingIdx}
         regionalOre={regionalOre}
+        researchState={researchState}
       />
     );
 
