@@ -1,6 +1,6 @@
 import { ItemBuffer, NewEntityStack } from "../types";
 import { GameDispatch } from "../GameDispatch";
-import { ResearchState } from "../useGameState";
+import { ResearchState } from "../state/FactoryGameState";
 import { SyntheticEvent } from "react";
 import { MainBusConst } from "./uiConstants";
 import { showAddLaneItemSelector } from "./selectors";

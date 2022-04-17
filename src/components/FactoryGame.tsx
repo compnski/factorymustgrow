@@ -5,7 +5,7 @@ import { useGeneralDialog } from "../GeneralDialogProvider";
 import { saveStateToLocalStorage } from "../localstorage";
 import { useInterval } from "../reactUtils";
 import { ReactComponent as RocketShip } from "../rocket-launch.svg";
-import { GameState, useGameState } from "../useGameState";
+import { GameStateFunc, useGameState } from "../state/FactoryGameState";
 import { BuildingCardList } from "./BuildingCardList";
 import { DebugButtonPanel } from "./DebugButtonPanel";
 import "./FactoryGame.scss";
@@ -23,11 +23,11 @@ export const FactoryGame = () => {
     // Your custom logic here
     const tick = new Date().getTime();
     await UpdateGameState(tick, generalDialog);
-    saveStateToLocalStorage(GameState);
+    saveStateToLocalStorage(GameStateFunc());
   }, 1000 / TicksPerSecond);
 
   useInterval(() => {
-    setGameState({ ...GameState });
+    setGameState({ ...GameStateFunc() });
   }, 32);
 
   try {

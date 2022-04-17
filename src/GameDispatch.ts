@@ -23,6 +23,7 @@ import {
 } from "./production";
 import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
 import { NewLab } from "./research";
+import { CurrentMutableRegion, CurrentRegion, HasRegion } from "./state/region";
 import { Chest, NewChest, UpdateChestSize } from "./storage";
 import {
   BeltLineDepot,
@@ -36,11 +37,15 @@ import {
   Producer,
   Region,
 } from "./types";
-import { CurrentRegion, GameState, ResetGameState } from "./useGameState";
+import {
+  GameStateFunc,
+  GameStateMutableFunc,
+  ResetGameState,
+} from "./state/FactoryGameState";
 import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
 
 export const GameDispatch = (action: GameAction) => {
-  const currentRegion = CurrentRegion();
+  const currentRegion = CurrentMutableRegion();
   switch (action.type) {
     case "Reset":
       ResetGameState();
@@ -58,7 +63,7 @@ export const GameDispatch = (action: GameAction) => {
     case "ChangeResearch":
       if (action.producerName) {
         console.log("Set research to ", action.producerName);
-        GameState.Research.CurrentResearchId = action.producerName;
+        GameStateFunc().Research.CurrentResearchId = action.producerName;
       }
       break;
 
@@ -135,8 +140,8 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "ChangeRegion":
-      if (GameState.Regions.has(action.regionId))
-        GameState.CurrentRegionId = action.regionId;
+      if (HasRegion(action.regionId))
+        GameStateMutableFunc().CurrentRegionId = action.regionId;
       break;
 
     case "ClaimRegion":
@@ -157,7 +162,7 @@ function launchRocket(action: { type: "LaunchRocket"; buildingIdx: number }) {
       if (b.outputBuffers.Count("rocket-part") === 100) {
         // TODO: Better launch update
         // TODO: Use actual tick for launching?
-        GameState.RocketLaunchingAt = new Date().getTime();
+        GameStateMutableFunc().RocketLaunchingAt = new Date().getTime();
         showUserError("Congratulations!");
         b.outputBuffers.Remove(NewEntityStack("rocket-part", 0, Infinity), 100);
       }
@@ -170,14 +175,17 @@ function claimRegion(action: {
   regionId: string;
 }) {
   (() => {
-    if (GameState.Regions.has(action.regionId)) {
+    if (HasRegion(action.regionId)) {
       console.log("Region already unlocked", action.regionId);
       return;
     }
     const regionInfo = GetRegionInfo(action.regionId);
     if (regionInfo) {
-      GameState.Regions.set(action.regionId, NewRegionFromInfo(regionInfo));
-      GameState.CurrentRegionId = action.regionId;
+      GameStateMutableFunc().Regions.set(
+        action.regionId,
+        NewRegionFromInfo(regionInfo)
+      );
+      GameStateMutableFunc().CurrentRegionId = action.regionId;
     }
   })();
 }
@@ -207,7 +215,7 @@ function transferFromInventory(
   (() => {
     const toStack = inventoryTransferStack(action);
     if (toStack) {
-      toStack.AddFromItemBuffer(GameState.Inventory, action.entity);
+      toStack.AddFromItemBuffer(GameStateFunc().Inventory, action.entity);
     }
   })();
 }
@@ -238,8 +246,8 @@ function transferToInventory(
     const fromStack = inventoryTransferStack(action);
     if (fromStack) {
       const fromStackEntity = action.entity;
-      if (GameState.Inventory.AvailableSpace(fromStackEntity) > 0) {
-        GameState.Inventory.AddFromItemBuffer(
+      if (GameStateFunc().Inventory.AvailableSpace(fromStackEntity) > 0) {
+        GameStateFunc().Inventory.AddFromItemBuffer(
           fromStack,
           fromStackEntity,
           undefined,
@@ -272,7 +280,7 @@ function addMainBusConnection(action: {
     // If the current count is 0, try to build one
     if (
       firstEmptyBeltConn.Inserter.BuildingCount === 0 &&
-      GameState.Inventory.Remove(
+      GameStateFunc().Inventory.Remove(
         NewEntityStack(firstEmptyBeltConn.Inserter.subkind, 0, 1),
         1
       )
@@ -398,7 +406,7 @@ function decreaseInserterCount(
     const i = inserter(action);
 
     if (i && i.BuildingCount > 0) {
-      GameState.Inventory.Add(NewEntityStack(i.subkind, 1, 1), 1);
+      GameStateFunc().Inventory.Add(NewEntityStack(i.subkind, 1, 1), 1);
       i.BuildingCount = Math.max(0, i.BuildingCount - 1);
     }
   })();
@@ -422,10 +430,10 @@ function increaseInserterCount(
   (() => {
     const i = inserter(action);
 
-    if (!i || GameState.Inventory.Count(i.subkind) <= 0) {
+    if (!i || GameStateFunc().Inventory.Count(i.subkind) <= 0) {
       return;
     }
-    GameState.Inventory.Remove(NewEntityStack(i.subkind, 0, 1), 1);
+    GameStateFunc().Inventory.Remove(NewEntityStack(i.subkind, 0, 1), 1);
 
     if (i) i.BuildingCount = Math.min(50, i.BuildingCount + 1);
   })();
@@ -445,7 +453,7 @@ function decreaseBuildingCount(action: {
 
     if (b) {
       if (b.BuildingCount > 0) {
-        GameState.Inventory.Add(NewEntityStack(b.subkind, 1, 1), 1);
+        GameStateFunc().Inventory.Add(NewEntityStack(b.subkind, 1, 1), 1);
         b.BuildingCount = Math.max(0, b.BuildingCount - 1);
       }
       if (b?.kind === "Chest") UpdateChestSize(b as Chest);
@@ -467,10 +475,10 @@ function increaseBuildingCount(action: {
       console.log("Can't add lanes to beltlines");
       return;
     }
-    if (GameState.Inventory.Count(b.subkind) <= 0) {
+    if (GameStateFunc().Inventory.Count(b.subkind) <= 0) {
       return;
     }
-    GameState.Inventory.Remove(NewEntityStack(b.subkind, 0, 1), 1);
+    GameStateFunc().Inventory.Remove(NewEntityStack(b.subkind, 0, 1), 1);
 
     if (b) b.BuildingCount = Math.min(50, b.BuildingCount + 1);
     if (b?.kind === "Chest") UpdateChestSize(b as Chest);
@@ -478,15 +486,15 @@ function increaseBuildingCount(action: {
 }
 
 function completeResearch() {
-  const currentResearchId = GameState.Research.CurrentResearchId,
+  const currentResearchId = GameStateFunc().Research.CurrentResearchId,
     currentResearchProgress =
-      GameState.Research.Progress.get(currentResearchId);
+      GameStateFunc().Research.Progress.get(currentResearchId);
   if (currentResearchProgress)
     currentResearchProgress.Count = currentResearchProgress.MaxCount || 0;
   else {
     const r = GetResearch(currentResearchId);
     if (r)
-      GameState.Research.Progress.set(
+      GameStateFunc().Research.Progress.set(
         currentResearchId,
         NewEntityStack(
           currentResearchId,
@@ -497,7 +505,7 @@ function completeResearch() {
     else console.log("No Research");
   }
   //else console.log("No research", currentResearchId);
-  GameState.Research.CurrentResearchId = "";
+  GameStateFunc().Research.CurrentResearchId = "";
 }
 
 function removeLane(
@@ -508,7 +516,12 @@ function removeLane(
     laneEntity = lane?.Entities()[0][0];
 
   if (lane && laneEntity)
-    GameState.Inventory.AddFromItemBuffer(lane, laneEntity, Infinity, true);
+    GameStateFunc().Inventory.AddFromItemBuffer(
+      lane,
+      laneEntity,
+      Infinity,
+      true
+    );
 
   // Remove attached inserters
   currentRegion.BuildingSlots.forEach((buildingSlot, buildingSlotIdx) => {
@@ -533,7 +546,7 @@ function PlaceBuilding(
   currentRegion: Region
 ) {
   if (
-    GameState.Inventory.Count(action.entity) <= 0 ||
+    GameStateFunc().Inventory.Count(action.entity) <= 0 ||
     RemainingRegionBuildingCapacity(currentRegion) <= 0
   ) {
     return;
@@ -544,7 +557,7 @@ function PlaceBuilding(
   const newBuilding = NewBuilding(action.entity);
   AddBuildingOverEmptyOrAtEnd(currentRegion, newBuilding, buildAtIdx);
 
-  GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 1);
+  GameStateFunc().Inventory.Remove(NewEntityStack(action.entity, 0, 1), 1);
   // TODO: Show recipe selector
   // TODO: Finish default building recipes
   if (action.entity === "rocket-silo") {
@@ -564,11 +577,11 @@ function PlaceBeltLine(
 ) {
   // TODO: Check for any orphan beltlines that could connect here.
 
-  const targetRegion = GameState.Regions.get(action.targetRegion);
+  const targetRegion = GameStateFunc().Regions.get(action.targetRegion);
 
   if (
     targetRegion === undefined ||
-    GameState.Inventory.Count(action.entity) < action.beltLength ||
+    GameStateFunc().Inventory.Count(action.entity) < action.beltLength ||
     RemainingRegionBuildingCapacity(currentRegion) <= 0 ||
     RemainingRegionBuildingCapacity(targetRegion) <= 0
   ) {
@@ -585,15 +598,15 @@ function PlaceBeltLine(
     action.entity,
     100
   );
-  if (GameState.BeltLines.has(beltLine.beltLineId)) {
+  if (GameStateFunc().BeltLines.has(beltLine.beltLineId)) {
     throw new Error("Duplicate BeltLine ID");
   }
   // If buildingIdx is set, and points to an Empty Lane, replace it.
   AddBuildingOverEmptyOrAtEnd(fromRegion, fromDepot, action.buildingIdx);
   AddBuildingOverEmptyOrAtEnd(toRegion, toDepot, (action.buildingIdx || 0) + 1);
 
-  GameState.BeltLines.set(beltLine.beltLineId, beltLine);
-  GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 100), 100);
+  GameStateFunc().BeltLines.set(beltLine.beltLineId, beltLine);
+  GameStateFunc().Inventory.Remove(NewEntityStack(action.entity, 0, 100), 100);
 }
 
 export function AddBuildingOverEmptyOrAtEnd(
@@ -668,13 +681,13 @@ function RemoveBuilding(
         const inserter = slot && slot.Inserter;
         // Refund inserters
         if (inserter)
-          GameState.Inventory.Add(
+          GameStateFunc().Inventory.Add(
             NewEntityStack(inserter.subkind, inserter.BuildingCount),
             inserter.BuildingCount,
             true
           );
         slot.BeltConnections.forEach((beltConn) => {
-          GameState.Inventory.Add(
+          GameStateFunc().Inventory.Add(
             NewEntityStack(
               beltConn.Inserter.subkind,
               beltConn.Inserter.BuildingCount
@@ -693,7 +706,7 @@ function RemoveBuilding(
       b.inputBuffers
         .Entities()
         .forEach(([entity, count]) =>
-          GameState.Inventory.AddFromItemBuffer(
+          GameStateFunc().Inventory.AddFromItemBuffer(
             b.inputBuffers,
             entity,
             count,
@@ -704,7 +717,7 @@ function RemoveBuilding(
       b.outputBuffers
         .Entities()
         .forEach(([entity, count]) =>
-          GameState.Inventory.AddFromItemBuffer(
+          GameStateFunc().Inventory.AddFromItemBuffer(
             b.outputBuffers,
             entity,
             count,
@@ -713,7 +726,7 @@ function RemoveBuilding(
         );
     if (b.kind === "BeltLineDepot") {
       const depot = b as BeltLineDepot,
-        otherRegion = GameState.Regions.get(depot.otherRegionId);
+        otherRegion = GameStateFunc().Regions.get(depot.otherRegionId);
       if (!otherRegion)
         throw new Error("Cannot find region " + depot.otherRegionId);
       const otherDepot = FindDepotForBeltLineInRegion(
@@ -724,7 +737,7 @@ function RemoveBuilding(
       // Have to remove both depots to remove beltline
       if (!otherDepot) {
         // Remove BeltLine
-        const beltLine = GameState.BeltLines.get(depot.beltLineId);
+        const beltLine = GameStateFunc().BeltLines.get(depot.beltLineId);
         if (!beltLine) {
           console.error(
             "No beltline to delete when deleting depot for ",
@@ -732,18 +745,19 @@ function RemoveBuilding(
           );
           return;
         }
-        GameState.Inventory.Add(
+        GameStateFunc().Inventory.Add(
           NewEntityStack(b.subkind, b.BuildingCount * beltLine.length),
           b.BuildingCount * beltLine.length
         );
         beltLine.sharedBeltBuffer.forEach((es) => {
-          if (es && es.Entity) GameState.Inventory.Add(es, Infinity, true);
+          if (es && es.Entity)
+            GameStateFunc().Inventory.Add(es, Infinity, true);
         });
-        GameState.BeltLines.delete(beltLine.beltLineId);
+        GameStateFunc().BeltLines.delete(beltLine.beltLineId);
       }
     } else {
       if (b.BuildingCount > 0)
-        GameState.Inventory.Add(
+        GameStateFunc().Inventory.Add(
           NewEntityStack(b.subkind, b.BuildingCount),
           b.BuildingCount,
           true
@@ -756,7 +770,9 @@ function RemoveBuilding(
 function inventoryTransferStack(
   action: InventoryTransferAction
 ): ItemBuffer | undefined {
-  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId);
+  const currentRegion = GameStateFunc().Regions.get(
+    GameStateFunc().CurrentRegionId
+  );
   let b: Building | undefined;
   switch (action.otherStackKind) {
     case "Void":

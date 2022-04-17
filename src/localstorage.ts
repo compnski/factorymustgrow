@@ -1,4 +1,7 @@
-import { CurrentGameStateVersion, FactoryGameState } from "./useGameState";
+import {
+  CurrentGameStateVersion,
+  FactoryGameState,
+} from "./state/FactoryGameState";
 import { Inventory } from "./inventory";
 import { MainBus } from "./mainbus";
 import { ResearchOutput } from "./research";

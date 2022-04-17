@@ -1,4 +1,7 @@
-import { FactoryGameState, initialFactoryGameState } from "./useGameState";
+import {
+  FactoryGameState,
+  initialFactoryGameState,
+} from "./state/FactoryGameState";
 import {
   saveStateToLocalStorage,
   loadStateFromLocalStorage,

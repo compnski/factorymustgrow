@@ -1,10 +1,22 @@
-import { Inserter, NewInserter } from "./inserter";
+import { Inserter, NewInserter, ReadOnlyInserter } from "./inserter";
 import { Inventory } from "./inventory";
 import { Extractor, Factory } from "./production";
 import { Lab } from "./research";
 import { Chest } from "./storage";
 import { BeltLineDepot } from "./transport";
-import { BeltConnection, ItemBuffer, OutputStatus } from "./types";
+import {
+  BeltConnection,
+  ItemBuffer,
+  OutputStatus,
+  ReadOnlyBeltConnection,
+  ReadOnlyItemBuffer,
+} from "./types";
+
+export interface ReadOnlyBuildingSlot {
+  readonly Building: ReadOnlyBuilding;
+  readonly Inserter: ReadOnlyInserter;
+  readonly BeltConnections: ReadOnlyBeltConnection[];
+}
 
 export type BuildingSlot = {
   Building: Building;
@@ -67,6 +79,13 @@ export function NewBuildingSlot(
     BeltConnections: belts,
   };
 }
+
+export type ReadOnlyBuilding = Readonly<
+  Omit<Building, "inputBuffers" | "outputBuffers"> & {
+    inputBuffers: ReadOnlyItemBuffer;
+    outputBuffers: ReadOnlyItemBuffer;
+  }
+>;
 
 export type Building =
   | Factory

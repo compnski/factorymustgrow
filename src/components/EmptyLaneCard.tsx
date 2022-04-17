@@ -1,5 +1,5 @@
 import { useGeneralDialog } from "../GeneralDialogProvider";
-import { GameState } from "../useGameState";
+import { GameStateFunc } from "../state/FactoryGameState";
 import { showPlaceBuildingSelector } from "./selectors";
 
 export function EmptyLaneCard(props: { buildingIdx: number }) {
@@ -15,7 +15,7 @@ export function EmptyLaneCard(props: { buildingIdx: number }) {
           onClick={() => {
             void showPlaceBuildingSelector(
               generalDialog,
-              GameState.Inventory,
+              GameStateFunc().Inventory,
               props.buildingIdx
             );
           }}

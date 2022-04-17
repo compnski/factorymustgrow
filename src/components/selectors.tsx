@@ -1,5 +1,5 @@
 import { GameDispatch } from "../GameDispatch";
-import { GameState } from "../useGameState";
+import { GameStateFunc } from "../state/FactoryGameState";
 import { GetRecipe } from "../gen/entities";
 import { Inventory } from "../inventory";
 import { availableItems, availableRecipes } from "../research";
@@ -43,8 +43,8 @@ export async function showMoveItemToFromInventorySelector(
   filter?: (entity: string) => boolean
 ): Promise<void> {
   if (!filter && direction === "TransferFromInventory")
-    filter = (e) => GameState.Inventory.Count(e) > 0;
-  let items = availableItems(GameState.Research);
+    filter = (e) => GameStateFunc().Inventory.Count(e) > 0;
+  let items = availableItems(GameStateFunc().Research);
   if (filter) items = items.filter(filter);
   const recipe = await showIconSelector(showDialog, "Add Stack", items);
 
@@ -71,7 +71,7 @@ export async function showAddLaneItemSelector(
   const item = await showIconSelector(
     showDialog,
     "Add Bus Lane",
-    availableItems(GameState.Research)
+    availableItems(GameStateFunc().Research)
   );
   if (item)
     GameDispatch({
@@ -88,7 +88,7 @@ export async function showChangeProducerRecipeSelector(
   const recipeId = await showIconSelector(
     showDialog,
     "Choose Recipe",
-    availableRecipes(GameState.Research).filter(function filterRecipes(
+    availableRecipes(GameStateFunc().Research).filter(function filterRecipes(
       recipeId: string
     ): boolean {
       const r = GetRecipe(recipeId);
@@ -116,7 +116,7 @@ export async function showPlaceBuildingSelector(
     await showPlaceBeltLineSelector(
       showDialog,
       inventory,
-      GameState.Regions,
+      GameStateFunc().Regions,
       buildingIdx
     );
   } else if (item)
@@ -136,7 +136,7 @@ export async function showResearchSelector(
     component: (onConfirm) => (
       <SelectResearchPanel
         onConfirm={onConfirm}
-        researchState={GameState.Research}
+        researchState={GameStateFunc().Research}
       />
     ),
   });

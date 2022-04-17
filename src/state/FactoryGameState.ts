@@ -1,16 +1,18 @@
+import { Map } from "immutable";
 import { useState } from "react";
+import { GetEntity } from "../gen/entities";
+import { GameWindow } from "../globals";
+import { Inventory } from "../inventory";
+import { loadStateFromLocalStorage } from "../localstorage";
+import { GetRegionInfo } from "../region";
+import { BeltLine } from "../transport";
 import {
-  NewEntityStack,
-  Region,
   EntityStack,
+  NewEntityStack,
   NewRegionFromInfo,
-} from "./types";
-import { GetEntity } from "./gen/entities";
-import { loadStateFromLocalStorage } from "./localstorage";
-import { Inventory } from "./inventory";
-import { GetRegionInfo } from "./region";
-import { BeltLine } from "./transport";
-import { GameWindow } from "./globals";
+  Region,
+} from "../types";
+import { ReadOnlyRegion } from "./region";
 
 export const CurrentGameStateVersion = "0.1.6";
 
@@ -62,13 +64,26 @@ export function ResetGameState() {
   GameState = initialFactoryGameState();
 }
 
-export let GameState = loadStateFromLocalStorage(initialFactoryGameState());
+type ReadonlyGameState = Readonly<FactoryGameState> & {
+  Regions: ReadonlyMap<string, ReadOnlyRegion>;
+  BeltLines: ReadonlyMap<number, Readonly<BeltLine>>;
+};
+
+export type ReadonlyResearchState = {
+  readonly CurrentResearchId: string;
+  readonly Progress: ReadonlyMap<string, EntityStack>;
+};
+
+// export type FactoryGameState = {
+//   RocketLaunchingAt: number;
+//   CurrentRegionId: string;
+//   Research: ResearchState;
+//   Inventory: Inventory;
+// };
+
+export const GameStateFunc = (): ReadonlyGameState => GameState;
+export const GameStateMutableFunc = () => GameState;
+
+let GameState = loadStateFromLocalStorage(initialFactoryGameState());
 
 (window as unknown as GameWindow).GameState = () => GameState;
-
-export function CurrentRegion(): Region {
-  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId);
-  if (!currentRegion)
-    throw new Error("Cannot find current region " + GameState.CurrentRegionId);
-  return currentRegion;
-}

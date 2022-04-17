@@ -1,4 +1,4 @@
-import { ResearchState } from "../useGameState";
+import { ResearchState } from "../state/FactoryGameState";
 import { Region } from "../types";
 import { entityIconLookupByKind } from "../utils";
 import { RemainingRegionBuildingCapacity } from "../region";

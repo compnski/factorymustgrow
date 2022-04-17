@@ -1,9 +1,10 @@
 import { GameDispatch } from "./GameDispatch";
-import { CurrentRegion, GameState } from "./useGameState";
+import { GameStateFunc } from "./state/FactoryGameState";
 import { GameWindow } from "./globals";
 import { NextEmptySlot } from "./building";
 import { AvailableResearchList } from "./availableResearch";
 import { NewEntityStack } from "./types";
+import { CurrentRegion } from "./state/region";
 
 export type MacroName = "redsci" | "allresearch";
 
@@ -21,7 +22,7 @@ export function Macro(name: MacroName): any {
 function doAllResearch() {
   AvailableResearchList.forEach((r) => {
     if (r)
-      GameState.Research.Progress.set(
+      GameStateFunc().Research.Progress.set(
         r.Id,
         NewEntityStack(
           r.Id,

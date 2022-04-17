@@ -11,7 +11,7 @@ import {
   Recipe,
   Research,
 } from "./types";
-import { ResearchState } from "./useGameState";
+import { ResearchState } from "./state/FactoryGameState";
 
 export type Lab = {
   kind: "Lab";

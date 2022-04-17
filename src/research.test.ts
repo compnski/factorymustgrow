@@ -2,7 +2,7 @@ import { EntityStack, FillEntityStack, NewEntityStack } from "./types";
 import { TicksPerSecond } from "./constants";
 import { Lab, NewLab, ResearchInLab } from "./research";
 import { TestResearchBook } from "./test_research_defs";
-import { ResearchState } from "./useGameState";
+import { ResearchState } from "./state/FactoryGameState";
 import { AddItemsToFixedBuffer } from "./test_utils";
 
 describe("Labs", () => {

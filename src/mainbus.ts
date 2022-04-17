@@ -18,6 +18,12 @@ export const NewBusLane = (
   inv.getEntity = getEntity;
   return inv;
 };
+
+export interface ReadOnlyMainBus {
+  HasLane(id: number): boolean;
+  CanAddLane(): boolean;
+}
+
 export class MainBus {
   lanes: Map<number, ItemBuffer>;
   nextLaneId = 1;

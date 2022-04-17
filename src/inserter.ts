@@ -1,6 +1,8 @@
 import { Building } from "./building";
 import { PushToOtherProducer } from "./movement";
 
+export type ReadOnlyInserter = Readonly<Inserter>;
+
 export type Inserter = {
   kind: "Inserter";
   subkind: "inserter" | "fast-inserter" | "stack-inserter";

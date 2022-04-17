@@ -7,6 +7,11 @@ export function IsItemBuffer(i: ItemBuffer | EntityStack): boolean {
   return (i as ItemBuffer).AvailableSpace !== undefined;
 }
 
+export type ReadOnlyItemBuffer = Omit<
+  ItemBuffer,
+  "Add" | "AddFromItemBuffer" | "Remove"
+>;
+
 export interface ItemBuffer {
   Accepts(entity: string): boolean;
   // How many of this item can fit
@@ -129,6 +134,8 @@ export type Entity = {
   Row: number;
   Col: number;
 };
+
+export type ReadOnlyBeltConnection = Readonly<BeltConnection>;
 
 export type BeltConnection =
   | {

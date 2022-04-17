@@ -10,7 +10,7 @@ import {
 } from "./types";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
-import { GameState } from "./useGameState";
+import { GameStateFunc } from "./state/FactoryGameState";
 import { FixedInventory } from "./inventory";
 import { productionPerTick, producableItemsForInput } from "./productionUtils";
 
@@ -59,7 +59,7 @@ export function UpdateBuildingRecipe(
     oldInputBuffers.Entities().forEach(([entity]) => {
       if (recipe.Input.findIndex((e) => e.Entity === entity) < 0) {
         //Not in input, remove
-        GameState.Inventory.AddFromItemBuffer(
+        GameStateFunc().Inventory.AddFromItemBuffer(
           oldInputBuffers,
           entity,
           Infinity,
@@ -84,7 +84,7 @@ export function UpdateBuildingRecipe(
       if (recipe.Output.findIndex((e) => e.Entity === entity) < 0) {
         //Not in output, remove
 
-        GameState.Inventory.AddFromItemBuffer(
+        GameStateFunc().Inventory.AddFromItemBuffer(
           oldOutputBuffers,
           entity,
           Infinity,

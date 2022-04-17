@@ -1,6 +1,6 @@
 import { GameDispatch } from "./GameDispatch";
 import { GameAction } from "./GameAction";
-import { FactoryGameState } from "./useGameState";
+import { FactoryGameState } from "./state/FactoryGameState";
 
 import { UIAction } from "./uiState";
 import { MacroName } from "./macro_def";

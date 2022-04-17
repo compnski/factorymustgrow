@@ -17,7 +17,7 @@ import { IsResearchComplete, Lab, ResearchInLab } from "./research";
 import { Chest, UpdateChest } from "./storage";
 import { UpdateBeltLine } from "./transport";
 import { Region } from "./types";
-import { GameState } from "./useGameState";
+import { GameStateFunc, GameStateMutableFunc } from "./state/FactoryGameState";
 
 export async function UpdateGameState(
   tick: number,
@@ -26,14 +26,14 @@ export async function UpdateGameState(
 ) {
   try {
     //const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
-    for (const [, currentBeltLine] of GameState.BeltLines) {
-      UpdateBeltLine(tick, GameState.Regions, currentBeltLine);
+    for (const [, currentBeltLine] of GameStateFunc().BeltLines) {
+      UpdateBeltLine(tick, GameStateFunc().Regions, currentBeltLine);
     }
-    for (const [, currentRegion] of GameState.Regions) {
+    for (const [, currentRegion] of GameStateFunc().Regions) {
       UpdateGameStateForRegion(tick, currentRegion);
     }
     // Check Research Completion
-    if (IsResearchComplete(GameState.Research)) {
+    if (IsResearchComplete(GameStateFunc().Research)) {
       console.log("Research Complete!");
       GameDispatch({ type: "CompleteResearch" });
       await showResearchSelector(generalDialog);
@@ -47,10 +47,10 @@ export async function UpdateGameState(
 function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
   // Reset rocket 10s after launch
   if (
-    GameState.RocketLaunchingAt > 0 &&
-    tick - GameState.RocketLaunchingAt > 10000
+    GameStateFunc().RocketLaunchingAt > 0 &&
+    tick - GameStateFunc().RocketLaunchingAt > 10000
   ) {
-    GameState.RocketLaunchingAt = 0;
+    GameStateMutableFunc().RocketLaunchingAt = 0;
   }
   fixOutputStatus(currentRegion);
   //fixBeltConnections(currentRegion.BuildingSlots, currentRegion.Bus);
@@ -64,7 +64,7 @@ function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
         ProduceFromExtractor(building as Extractor, currentRegion, GetRecipe);
         break;
       case "Lab":
-        ResearchInLab(building as Lab, GameState.Research, GetResearch);
+        ResearchInLab(building as Lab, GameStateFunc().Research, GetResearch);
         break;
       case "Chest":
         UpdateChest(building as Chest, tick);
