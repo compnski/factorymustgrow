@@ -170,7 +170,6 @@ export type Region = {
   LaneSize: number;
   MainBusCount: number;
   BuildingSlots: BuildingSlot[];
-  //Inserters: Inserter[];
   Bus: MainBus;
 };
 
