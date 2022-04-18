@@ -1,5 +1,5 @@
 import { Inventory } from "./inventory";
-import { EntityStack, ItemBuffer, NewEntityStack, OutputStatus } from "./types";
+import { EntityStack, ItemBuffer, NewEntityStack } from "./types";
 
 export type Chest = {
   kind: "Chest";
@@ -7,7 +7,6 @@ export type Chest = {
   ProducerType: string;
   inputBuffers: ItemBuffer;
   outputBuffers: ItemBuffer;
-  outputStatus: OutputStatus;
   BuildingCount: number;
 };
 
@@ -26,7 +25,6 @@ export function NewChest(
     BuildingCount: size,
     inputBuffers: sharedStorage,
     outputBuffers: sharedStorage,
-    outputStatus: { beltConnections: [] },
   };
 }
 

@@ -4,13 +4,7 @@ import { GetResearch } from "./gen/research";
 import { FixedInventory } from "./inventory";
 import { StackCapacity } from "./movement";
 import { producableItemsForInput, productionPerTick } from "./productionUtils";
-import {
-  ItemBuffer,
-  NewEntityStack,
-  OutputStatus,
-  Recipe,
-  Research,
-} from "./types";
+import { ItemBuffer, NewEntityStack, Recipe, Research } from "./types";
 import { ResearchState } from "./useGameState";
 
 export type Lab = {
@@ -21,7 +15,6 @@ export type Lab = {
   inputBuffers: ItemBuffer;
   outputBuffers: ResearchOutput;
   BuildingCount: number;
-  outputStatus: OutputStatus;
 };
 
 // TODO Only show science packs that you have access to
@@ -101,7 +94,6 @@ export function NewLab(initialProduceCount = 0): Lab {
     inputBuffers: FixedInventory(
       initialLabInput.map((input) => NewEntityStack(input.Entity, 0, 50))
     ),
-    outputStatus: { beltConnections: [] },
     RecipeId: "",
     BuildingCount: initialProduceCount,
   };

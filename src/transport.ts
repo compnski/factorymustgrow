@@ -1,13 +1,7 @@
 import { Inventory } from "./inventory";
 import { stackTransfer } from "./movement";
 import { randomName } from "./namegen";
-import {
-  EntityStack,
-  ItemBuffer,
-  NewEntityStack,
-  OutputStatus,
-  Region,
-} from "./types";
+import { EntityStack, ItemBuffer, NewEntityStack, Region } from "./types";
 
 // Thoughts
 // Beltline has two BeltLineDepots
@@ -92,7 +86,6 @@ export type BeltLineDepot = {
   ProducerType: "Depot";
   inputBuffers: ItemBuffer;
   outputBuffers: ItemBuffer;
-  outputStatus: OutputStatus;
   otherRegionId: string;
   length: number;
   direction: "TO_REGION" | "FROM_REGION";
@@ -159,7 +152,6 @@ export function NewBeltLinePair(
     BuildingCount: initialLaneCount,
     inputBuffers: new Inventory(0),
     outputBuffers: new Inventory(1),
-    outputStatus: { beltConnections: [] },
     otherRegionId: fromRegion.Id,
     direction: "TO_REGION",
     length: length,
@@ -174,7 +166,6 @@ export function NewBeltLinePair(
     BuildingCount: initialLaneCount,
     inputBuffers: new Inventory(1),
     outputBuffers: new Inventory(0),
-    outputStatus: { beltConnections: [] },
     otherRegionId: toRegion.Id,
     direction: "FROM_REGION",
     length: length,
@@ -203,6 +194,5 @@ export function NewBeltLinePair(
 //   ProducerType: string;
 //   inputBuffers: Map<string, EntityStack>;
 //   outputBuffers: Map<string, EntityStack>;
-//   outputStatus: OutputStatus;
 //   routeId: string;
 // };

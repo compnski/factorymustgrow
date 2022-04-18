@@ -1,9 +1,8 @@
 import { InserterTransferRate } from "./inserter";
 import { MainBus } from "./mainbus";
-import { OutputStatus, EntityStack, ItemBuffer, BeltConnection } from "./types";
+import { BeltConnection, EntityStack, ItemBuffer } from "./types";
 
 interface MainBusConnector {
-  outputStatus: OutputStatus;
   inputBuffers: ItemBuffer;
   outputBuffers: ItemBuffer;
   BuildingCount?: number;

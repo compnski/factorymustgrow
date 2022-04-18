@@ -59,16 +59,11 @@ export const BuildingCard = ({
   };
 
   const beltConnectionClicked = (connectionIdx: number) => {
-    if (!building.outputStatus) return;
     GameDispatch({
       type: "RemoveMainBusConnection",
       buildingIdx: buildingIdx,
       connectionIdx,
     });
-    /* const connectIdx = building.outputStatus.beltConnections.findIndex(
-     *   (v) => v.beltId === laneId
-     * );
-     * building.outputStatus.beltConnections.splice(connectIdx, 1); */
   };
   const [dragging, setDragging] = useState(false);
 

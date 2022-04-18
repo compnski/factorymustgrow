@@ -52,7 +52,7 @@ function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
   ) {
     GameState.RocketLaunchingAt = 0;
   }
-  fixOutputStatus(currentRegion);
+  fixInserters(currentRegion);
   //fixBeltConnections(currentRegion.BuildingSlots, currentRegion.Bus);
   currentRegion.BuildingSlots.forEach((slot, idx) => {
     const building = slot.Building;
@@ -81,17 +81,7 @@ function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
   });
 }
 
-// function fixBeltConnections(BuildingSlots: BuildingSlot[], bus: MainBus) {
-//   // BuildingSlots.forEach((slot) => {
-//   //   const building = slot.Building;
-//   //   building.outputStatus.beltConnections.forEach((beltConn, idx) => {
-//   //     if (beltConn.laneId !== undefined && !bus.HasLane(beltConn.laneId))
-//   //       building.outputStatus.beltConnections.splice(idx, 1);
-//   //   });
-//   // });
-// }
-
-export function fixOutputStatus(region: { BuildingSlots: BuildingSlot[] }) {
+export function fixInserters(region: { BuildingSlots: BuildingSlot[] }) {
   // TODO: Fix Inserters
   region.BuildingSlots.forEach((slot, idx) => {
     const i = slot.Inserter;

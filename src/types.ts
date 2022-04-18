@@ -41,7 +41,6 @@ export interface Producer {
   inputBuffers: ItemBuffer;
   outputBuffers: ItemBuffer;
   BuildingCount: number;
-  outputStatus: OutputStatus;
 }
 
 export type Research = {
@@ -141,10 +140,6 @@ export type BeltConnection =
       laneId: undefined;
       direction: undefined;
     };
-
-export type OutputStatus = {
-  beltConnections: BeltConnection[];
-};
 
 export type RegionInfo = {
   Id: string;

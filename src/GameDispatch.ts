@@ -6,7 +6,7 @@ import {
   NewEmptyLane,
   NextEmptySlot,
 } from "./building";
-import { fixOutputStatus } from "./factoryGame";
+import { fixInserters } from "./factoryGame";
 import { GameAction, InventoryTransferAction } from "./GameAction";
 import { GetEntity } from "./gen/entities";
 import { GetResearch } from "./gen/research";
@@ -643,7 +643,7 @@ function ReorderBuildings(
       region.BuildingSlots[action.buildingIdx].Building = NewEmptyLane();
       AddBuildingOverEmptyOrAtEnd(region, b);
     }
-    fixOutputStatus(region);
+    fixInserters(region);
   })();
 }
 

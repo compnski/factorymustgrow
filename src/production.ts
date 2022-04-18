@@ -3,7 +3,6 @@ import {
   EntityStack,
   Recipe,
   Region,
-  OutputStatus,
   Entity,
   BuildingType,
   ItemBuffer,
@@ -26,7 +25,6 @@ export type Extractor = {
 
   inputBuffers: ItemBuffer; //Map<string, EntityStack>;
   outputBuffers: ItemBuffer; // Map<string, EntityStack>;
-  outputStatus: OutputStatus;
   RecipeId: string;
   BuildingCount: number;
 };
@@ -114,7 +112,6 @@ export function NewExtractor(
     ProducerType: ProducerTypeFromEntity(subkind),
     inputBuffers: FixedInventory([]),
     outputBuffers: FixedInventory([]),
-    outputStatus: { beltConnections: [] },
     RecipeId: "",
     BuildingCount: initialProduceCount,
   };
@@ -216,7 +213,6 @@ export type Factory = {
   outputBuffers: ItemBuffer;
   RecipeId: string;
   BuildingCount: number;
-  outputStatus: OutputStatus;
   progressTrackers: number[];
 };
 
@@ -301,7 +297,6 @@ export function NewFactory(
     subkind,
     outputBuffers: FixedInventory([]),
     inputBuffers: FixedInventory([]),
-    outputStatus: { beltConnections: [] },
     RecipeId: "",
     BuildingCount: initialProduceCount,
     progressTrackers: [],
@@ -404,5 +399,4 @@ export type TrainStation = {
   ProducerType: string;
   outputBuffers: ItemBuffer;
   inputBuffers: ItemBuffer;
-  outputStatus: OutputStatus;
 };
