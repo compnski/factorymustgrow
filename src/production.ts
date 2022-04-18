@@ -1,17 +1,16 @@
+import { GetEntity, GetRecipe } from "./gen/entities";
+import { FixedInventory } from "./inventory";
+import { producableItemsForInput, productionPerTick } from "./productionUtils";
 import {
-  NewEntityStack,
+  BuildingType,
   EntityStack,
+  ItemBuffer,
+  NewEntityStack,
   Recipe,
   Region,
-  Entity,
-  BuildingType,
-  ItemBuffer,
 } from "./types";
-import { GetEntity, GetRecipe } from "./gen/entities";
-import { BuildingHasInput, BuildingHasOutput } from "./utils";
 import { GameState } from "./useGameState";
-import { FixedInventory } from "./inventory";
-import { productionPerTick, producableItemsForInput } from "./productionUtils";
+import { BuildingHasInput, BuildingHasOutput } from "./utils";
 
 // Extractor
 export type Extractor = {
@@ -32,7 +31,6 @@ export type Extractor = {
 export function UpdateBuildingRecipe(
   b: Factory | Extractor,
   recipeId: string,
-  getEntity: (e: string) => Entity = GetEntity,
   getRecipe: (e: string) => Recipe = GetRecipe
 ) {
   const recipe = getRecipe(recipeId);
@@ -42,13 +40,13 @@ export function UpdateBuildingRecipe(
 
   switch (b.kind) {
     case "Extractor":
-      b.inputBuffers = inputItemBufferForExtractor(recipe, getEntity);
-      b.outputBuffers = outputItemBufferForExtractor(recipe, getEntity);
+      b.inputBuffers = inputItemBufferForExtractor(recipe);
+      b.outputBuffers = outputItemBufferForExtractor(recipe);
       break;
 
     case "Factory":
-      b.inputBuffers = inputItemBufferForFactory(recipe, getEntity);
-      b.outputBuffers = outputItemBufferForFactory(recipe, getEntity);
+      b.inputBuffers = inputItemBufferForFactory(recipe);
+      b.outputBuffers = outputItemBufferForFactory(recipe);
   }
   b.RecipeId = recipeId;
 
@@ -117,17 +115,11 @@ export function NewExtractor(
   };
 }
 
-function inputItemBufferForExtractor(
-  r: Recipe,
-  getEntity: (e: string) => Entity
-): ItemBuffer {
-  return FixedInventory([NewEntityStack(r.Output[0].Entity, 0, 0)], getEntity);
+function inputItemBufferForExtractor(r: Recipe): ItemBuffer {
+  return FixedInventory([NewEntityStack(r.Output[0].Entity, 0, 0)]);
 }
-function outputItemBufferForExtractor(
-  r: Recipe,
-  getEntity: (e: string) => Entity
-): ItemBuffer {
-  return FixedInventory([NewEntityStack(r.Output[0].Entity, 0, 50)], getEntity);
+function outputItemBufferForExtractor(r: Recipe): ItemBuffer {
+  return FixedInventory([NewEntityStack(r.Output[0].Entity, 0, 50)]);
 }
 
 export function ProduceFromExtractor(
@@ -218,11 +210,9 @@ export type Factory = {
 
 function EntityStackForEntity(
   entity: string,
-  getEntity: (e: string) => Entity | undefined,
   stackSizeMinimum = 0
 ): EntityStack {
-  const e = getEntity(entity);
-  if (!e) console.error("Failed to find entity for ", entity);
+  const e = GetEntity(entity);
   return NewEntityStack(
     entity,
     0,
@@ -303,26 +293,14 @@ export function NewFactory(
   };
 }
 
-function inputItemBufferForFactory(
-  r: Recipe,
-  getEntity: (e: string) => Entity
-): ItemBuffer {
+function inputItemBufferForFactory(r: Recipe): ItemBuffer {
   return FixedInventory(
-    r.Input.map((input) =>
-      EntityStackForEntity(input.Entity, getEntity, input.Count)
-    ),
-    getEntity
+    r.Input.map((input) => EntityStackForEntity(input.Entity, input.Count))
   );
 }
-function outputItemBufferForFactory(
-  r: Recipe,
-  getEntity: (e: string) => Entity
-): ItemBuffer {
+function outputItemBufferForFactory(r: Recipe): ItemBuffer {
   return FixedInventory(
-    r.Output.map((output) =>
-      EntityStackForEntity(output.Entity, getEntity, output.Count)
-    ),
-    getEntity
+    r.Output.map((output) => EntityStackForEntity(output.Entity, output.Count))
   );
 }
 

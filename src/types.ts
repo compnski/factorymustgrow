@@ -168,8 +168,7 @@ export const NewRegion = (
   LaneSize: number,
   MainBusCount: number,
   ore: EntityStack[],
-  BuildingSlots: BuildingSlot[] = [],
-  getEntity?: (e: string) => Entity
+  BuildingSlots: BuildingSlot[] = []
 ): Region => {
   if (BuildingSlots.length > LaneCount) {
     throw new Error(
@@ -185,7 +184,7 @@ export const NewRegion = (
     LaneCount,
     LaneSize,
     MainBusCount,
-    Ore: FixedInventory(ore, getEntity),
+    Ore: FixedInventory(ore),
     BuildingSlots,
     Bus: new MainBus(),
   };

@@ -1,3 +1,8 @@
+import { Building, NewBuildingSlot } from "./building";
+import { NewInserter } from "./inserter";
+import { MainBus } from "./mainbus";
+import { PushPullFromMainBus } from "./MainBusMovement";
+import { PushToOtherProducer } from "./movement";
 import {
   Extractor,
   Factory,
@@ -10,21 +15,7 @@ import {
   EntityStack,
   ItemBuffer,
   NewEntityStack,
-  Producer,
 } from "./types";
-
-import {
-  TestRecipe,
-  TestOreRecipe,
-  TestItemConsumerRecipe,
-  TestRecipeBook,
-} from "./test_recipe_defs";
-import { PushToOtherProducer } from "./movement";
-import { PushPullFromMainBus } from "./MainBusMovement";
-import { TestEntityList } from "./test_entity_defs";
-import { MainBus } from "./mainbus";
-import { Building, NewBuildingSlot } from "./building";
-import { NewInserter } from "./inserter";
 
 function AddItemsToFixedBuffer(buffer: ItemBuffer, count: number) {
   buffer
@@ -34,23 +25,13 @@ function AddItemsToFixedBuffer(buffer: ItemBuffer, count: number) {
 
 function NewTestFactory(r: string, count: number = 1): Factory {
   const factory = NewFactory({ subkind: "assembling-machine-1" }, count);
-  UpdateBuildingRecipe(
-    factory,
-    r,
-    (e) => TestEntityList.get(e)!,
-    (r) => TestRecipeBook.get(r)!
-  );
+  UpdateBuildingRecipe(factory, r);
   return factory;
 }
 
 function NewTestExtractor(r: string, count: number = 1): Extractor {
   const factory = NewExtractor({ subkind: "burner-mining-drill" }, count);
-  UpdateBuildingRecipe(
-    factory,
-    r,
-    (e) => TestEntityList.get(e)!,
-    (r) => TestRecipeBook.get(r)!
-  );
+  UpdateBuildingRecipe(factory, r);
   return factory;
 }
 
@@ -169,7 +150,6 @@ describe("PushPullFromMainBus", () => {
 
   it("Moves between Factory and MainBus", () => {
     const mb = new MainBus();
-    mb.getEntity = (e) => TestEntityList.get(e)!;
     const testItemLane = mb.AddLane("test-item", 0);
     mb.AddLane("test-ore", 5);
     mb.AddLane("test-slow-ore", 10);

@@ -1,9 +1,7 @@
-import { GetEntity } from "./gen/entities";
 import { FixedInventory } from "./inventory";
-import { Entity, ItemBuffer } from "./types";
+import { ItemBuffer } from "./types";
 
 export const NewBusLane = (
-  getEntity: (e: string) => Entity,
   Id: number,
   Entity: string,
   initialCount = 0
@@ -15,27 +13,21 @@ export const NewBusLane = (
       MaxCount: 50,
     },
   ]);
-  inv.getEntity = getEntity;
   return inv;
 };
 export class MainBus {
   lanes: Map<number, ItemBuffer>;
   nextLaneId = 1;
   kind = "MainBus";
-  getEntity: (e: string) => Entity;
 
   constructor(firstLaneId = 1, lanes: Map<number, ItemBuffer> = new Map()) {
     this.lanes = lanes;
     this.nextLaneId = firstLaneId;
-    this.getEntity = GetEntity;
   }
 
   AddLane(Entity: string, initialCount = 0): number {
     const laneId = this.nextLaneId++;
-    this.lanes.set(
-      laneId,
-      NewBusLane(this.getEntity, laneId, Entity, initialCount)
-    );
+    this.lanes.set(laneId, NewBusLane(laneId, Entity, initialCount));
     return laneId;
   }
 

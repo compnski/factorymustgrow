@@ -1,3 +1,4 @@
+import { TicksPerSecond } from "./constants";
 import {
   AddProgressTracker,
   Extractor,
@@ -10,46 +11,29 @@ import {
   TickProgressTracker,
   UpdateBuildingRecipe,
 } from "./production";
-import {
-  EntityStack,
-  FillEntityStack,
-  ItemBuffer,
-  NewEntityStack,
-  NewRegion,
-  Region,
-} from "./types";
-import {
-  TestRecipeBook,
-  TestRecipe,
-  TestSlowRecipe,
-  TestOreRecipe,
-  TestSlowOreRecipe,
-  GetTestRecipe,
-} from "./test_recipe_defs";
-import { TicksPerSecond } from "./constants";
-import { GetTestEntity, TestEntityList } from "./test_entity_defs";
-import { Inventory } from "./inventory";
+import { GetTestRecipe, TestRecipeBook } from "./test_recipe_defs";
 import { AddItemsToFixedBuffer } from "./test_utils";
+import { EntityStack, NewEntityStack, NewRegion, Region } from "./types";
 
-function NewTestFactory(r: string, count: number = 1): Factory {
+function NewTestFactory(r: string, count = 1): Factory {
   const factory = NewFactory({ subkind: "assembling-machine-1" }, count);
-  UpdateBuildingRecipe(factory, r, GetTestEntity, GetTestRecipe);
+  UpdateBuildingRecipe(factory, r, GetTestRecipe);
   return factory;
 }
 
-function NewTestExtractor(r: string, count: number = 1): Extractor {
+function NewTestExtractor(r: string, count = 1): Extractor {
   const factory = NewExtractor({ subkind: "burner-mining-drill" }, count);
-  UpdateBuildingRecipe(factory, r, GetTestEntity, GetTestRecipe);
+  UpdateBuildingRecipe(factory, r, GetTestRecipe);
   return factory;
 }
 
 function NewTestRegion(ore: EntityStack[]): Region {
-  return NewRegion("start", 2, 2, 2, ore, [], GetTestEntity);
+  return NewRegion("start", 2, 2, 2, ore, []);
 }
 
 describe("Progress Trackers", () => {
   function tracker(
-    count: number = 1,
+    count = 1,
     trackers: number[] = []
   ): {
     progressTrackers: number[];
@@ -140,13 +124,13 @@ describe("Factories", () => {
       );
     });
 
-    for (var expectedOutput of expected.outputBuffers) {
+    for (const expectedOutput of expected.outputBuffers) {
       expect(factory.outputBuffers.Count(expectedOutput.Entity)).toBe(
         expectedOutput.Count
       );
     }
 
-    for (var expectedInput of expected.inputBuffers) {
+    for (const expectedInput of expected.inputBuffers) {
       expect(factory.inputBuffers.Count(expectedInput.Entity)).toBe(
         expectedInput.Count
       );
@@ -244,7 +228,7 @@ describe("Extractors", () => {
       regionalOre: EntityStack[];
     }
   ) {
-    for (var i = 0; i < TicksPerSecond; i++) {
+    for (let i = 0; i < TicksPerSecond; i++) {
       ProduceFromExtractor(
         extractor,
         region,
@@ -252,13 +236,13 @@ describe("Extractors", () => {
       );
     }
 
-    for (var expectedOutput of expected.outputBuffers) {
+    for (const expectedOutput of expected.outputBuffers) {
       expect(extractor.outputBuffers.Count(expectedOutput.Entity)).toBe(
         expectedOutput.Count
       );
     }
 
-    for (var expectedOre of expected.regionalOre) {
+    for (const expectedOre of expected.regionalOre) {
       expect(region.Ore.Count(expectedOre.Entity)).toBe(expectedOre.Count);
     }
   }

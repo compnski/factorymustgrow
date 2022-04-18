@@ -1,15 +1,12 @@
 import { GetEntity } from "./gen/entities";
 import { StackCapacity, stackTransfer } from "./movement";
-import { Entity, EntityStack, ItemBuffer, NewEntityStack } from "./types";
+import { EntityStack, ItemBuffer, NewEntityStack } from "./types";
 
-export function FixedInventory(
-  slotTemplate: EntityStack[],
-  getEntity?: (e: string) => Entity
-): Inventory {
+export function FixedInventory(slotTemplate: EntityStack[]): Inventory {
   const slots = slotTemplate.map((stack: EntityStack) =>
     Object.assign({}, stack)
   );
-  return new Inventory(slots.length, slots, true, getEntity);
+  return new Inventory(slots.length, slots, true);
 }
 
 export class Inventory implements ItemBuffer {
@@ -17,17 +14,14 @@ export class Inventory implements ItemBuffer {
   Capacity: number;
   // ImmutableSlots is used for fixed inventories. Slots won't be added on overflow or removed when empty.
   immutableSlots: boolean;
-  getEntity: (e: string) => Entity;
 
   constructor(
     maxCapacity = 8,
     slots: EntityStack[] = [],
-    immutableSlots = false,
-    getEntity: (e: string) => Entity = GetEntity
+    immutableSlots = false
   ) {
     this.Capacity = maxCapacity;
     this.slots = slots;
-    this.getEntity = getEntity;
     this.immutableSlots = immutableSlots;
   }
 
@@ -40,7 +34,7 @@ export class Inventory implements ItemBuffer {
   }
 
   AvailableSpace(entity: string): number {
-    const stackSize = this.getEntity(entity).StackSize,
+    const stackSize = GetEntity(entity).StackSize,
       availableSlots = this.Capacity - this.slots.length,
       existingSlot = this.slots[this.unfilledSlotForEntity(entity)];
     if (existingSlot)
@@ -91,7 +85,7 @@ export class Inventory implements ItemBuffer {
     exceedCapacity = false,
     integersOnly = true
   ): number {
-    const entity = this.getEntity(fromStack.Entity);
+    const entity = GetEntity(fromStack.Entity);
     if (!entity) console.error(`Failed to find entity  ${fromStack.Entity}`);
     const stackSize = entity.StackSize,
       existingSlotIdx = this.unfilledSlotForEntity(fromStack.Entity),
@@ -143,7 +137,7 @@ export class Inventory implements ItemBuffer {
     exceedCapacity = false,
     integersOnly = true
   ): number {
-    const stackSize = this.getEntity(entity).StackSize;
+    const stackSize = GetEntity(entity).StackSize;
 
     const existingSlotIdx = this.unfilledSlotForEntity(entity),
       existingSlot = this.slots[existingSlotIdx],
@@ -189,7 +183,7 @@ export class Inventory implements ItemBuffer {
   // transfering it into toStack. Defaults to 1 stack
   // Returns the number of items moved
   Remove(toStack: EntityStack, count?: number, integersOnly = true): number {
-    const entity = this.getEntity(toStack.Entity);
+    const entity = GetEntity(toStack.Entity);
     if (!entity) console.error(`Failed to find entity  ${toStack.Entity}`);
     const stackSize = entity.StackSize,
       totalAmountInInventory = this.Count(toStack.Entity);
