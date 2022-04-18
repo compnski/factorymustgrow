@@ -2,7 +2,10 @@ import { useGeneralDialog } from "../GeneralDialogProvider";
 import { GameState } from "../useGameState";
 import { showPlaceBuildingSelector } from "./selectors";
 
-export function EmptyLaneCard(props: { buildingIdx: number }) {
+export function EmptyLaneCard(props: {
+  regionId: string;
+  buildingIdx: number;
+}) {
   const generalDialog = useGeneralDialog();
 
   return (
@@ -16,6 +19,7 @@ export function EmptyLaneCard(props: { buildingIdx: number }) {
             void showPlaceBuildingSelector(
               generalDialog,
               GameState.Inventory,
+              props.regionId,
               props.buildingIdx
             );
           }}

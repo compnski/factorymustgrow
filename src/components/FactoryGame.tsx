@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { TicksPerSecond } from "../constants";
 import { UpdateGameState } from "../factoryGame";
 import { GameDispatch } from "../GameDispatch";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { saveStateToLocalStorage } from "../localstorage";
+import { setMacroRegionId } from "../macro_def";
 import { useInterval } from "../reactUtils";
 import { ReactComponent as RocketShip } from "../rocket-launch.svg";
 import { GameState, useGameState } from "../useGameState";
@@ -17,6 +19,10 @@ import { showHelpCard } from "./selectors";
 
 export const FactoryGame = () => {
   const [gameState, setGameState] = useGameState();
+  const [currentRegionId, setCurrentRegionId] = useState<string>(
+    gameState.Regions.keys().next().value || ""
+  );
+  setMacroRegionId(currentRegionId);
   const generalDialog = useGeneralDialog();
 
   useInterval(async () => {
@@ -32,9 +38,9 @@ export const FactoryGame = () => {
 
   try {
     const regionIds = [...gameState.Regions.keys()];
-    const currentRegion = gameState.Regions.get(gameState.CurrentRegionId);
+    const currentRegion = gameState.Regions.get(currentRegionId);
     if (!currentRegion)
-      throw new Error("Missing current region: " + gameState.CurrentRegionId);
+      throw new Error("Missing current region: " + currentRegionId);
 
     const showHelp = () => {
       void showHelpCard(generalDialog);
@@ -48,10 +54,11 @@ export const FactoryGame = () => {
         />
         <div className="top-bar">
           <RegionTabBar
-            currentRegionId={gameState.CurrentRegionId}
+            currentRegionId={currentRegionId}
             regionIds={regionIds}
             gameDispatch={GameDispatch}
             inventory={gameState.Inventory}
+            setCurrentRegionId={setCurrentRegionId}
           />
           <div onClick={showHelp} className="help-icon">
             <span className="material-icons">help_outline</span>
@@ -65,6 +72,7 @@ export const FactoryGame = () => {
           <MainBusHeader
             mainBus={currentRegion.Bus}
             researchState={gameState.Research}
+            regionId={currentRegion.Id}
           />
         </div>
         <div className="scroller">

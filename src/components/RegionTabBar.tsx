@@ -11,6 +11,7 @@ type RegionTabBarProps = {
   currentRegionId: string;
   gameDispatch(a: GameAction): void;
   inventory: Inventory;
+  setCurrentRegionId: (regionId: string) => void;
 };
 
 const regionIdClaimNew = "claim-new";
@@ -20,6 +21,7 @@ export function RegionTabBar({
   currentRegionId,
   gameDispatch,
   inventory,
+  setCurrentRegionId,
 }: RegionTabBarProps) {
   const generalDialog = useGeneralDialog();
 
@@ -30,7 +32,7 @@ export function RegionTabBar({
     if (regionId === regionIdClaimNew) {
       void showClaimRegionSelector(generalDialog, inventory, regionIds);
     } else if (regionId) {
-      gameDispatch({ type: "ChangeRegion", regionId });
+      setCurrentRegionId(regionId);
     }
   }
 

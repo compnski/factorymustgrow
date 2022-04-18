@@ -25,12 +25,11 @@ export async function UpdateGameState(
   generalDialog: (arg0: GeneralDialogConfig) => Promise<any[] | false>
 ) {
   try {
-    //const currentRegion = GameState.Regions.get(GameState.CurrentRegionId)!;
     for (const [, currentBeltLine] of GameState.BeltLines) {
       UpdateBeltLine(tick, GameState.Regions, currentBeltLine);
     }
-    for (const [, currentRegion] of GameState.Regions) {
-      UpdateGameStateForRegion(tick, currentRegion);
+    for (const [, region] of GameState.Regions) {
+      UpdateGameStateForRegion(tick, region);
     }
     // Check Research Completion
     if (IsResearchComplete(GameState.Research)) {
@@ -44,7 +43,7 @@ export async function UpdateGameState(
   }
 }
 
-function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
+function UpdateGameStateForRegion(tick: number, region: Region) {
   // Reset rocket 10s after launch
   if (
     GameState.RocketLaunchingAt > 0 &&
@@ -52,16 +51,16 @@ function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
   ) {
     GameState.RocketLaunchingAt = 0;
   }
-  fixInserters(currentRegion);
-  //fixBeltConnections(currentRegion.BuildingSlots, currentRegion.Bus);
-  currentRegion.BuildingSlots.forEach((slot, idx) => {
+  fixInserters(region);
+
+  region.BuildingSlots.forEach((slot, idx) => {
     const building = slot.Building;
     switch (building.kind) {
       case "Factory":
         ProduceFromFactory(building as Factory, tick, GetRecipe);
         break;
       case "Extractor":
-        ProduceFromExtractor(building as Extractor, currentRegion, GetRecipe);
+        ProduceFromExtractor(building as Extractor, region, GetRecipe);
         break;
       case "Lab":
         ResearchInLab(building as Lab, GameState.Research, GetResearch);
@@ -70,14 +69,14 @@ function UpdateGameStateForRegion(tick: number, currentRegion: Region) {
         UpdateChest(building as Chest, tick);
     }
 
-    if (idx < currentRegion.BuildingSlots.length - 1)
+    if (idx < region.BuildingSlots.length - 1)
       MoveViaInserter(
         slot.Inserter,
-        currentRegion.BuildingSlots[idx].Building,
-        currentRegion.BuildingSlots[idx + 1].Building
+        region.BuildingSlots[idx].Building,
+        region.BuildingSlots[idx + 1].Building
       );
 
-    PushPullFromMainBus(slot, currentRegion.Bus);
+    PushPullFromMainBus(slot, region.Bus);
   });
 }
 

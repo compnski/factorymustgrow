@@ -12,10 +12,11 @@ export const BuildingCardList = ({
   mainBus,
   regionalOre,
 }: {
-  region: { BuildingSlots: BuildingSlot[] };
+  region: { Id: string; BuildingSlots: BuildingSlot[] };
   mainBus: MainBus;
   regionalOre: ItemBuffer;
 }) => {
+  const regionId = region.Id;
   const [dragIdx, setDragIdx] = useState(-1);
 
   const handleDrag = (buildingIdx: number) => () => {
@@ -30,6 +31,7 @@ export const BuildingCardList = ({
       console.log(dragIdx, dropIdx);
       GameDispatch({
         type: "ReorderBuildings",
+        regionId,
         buildingIdx: dragIdx,
         dropBuildingIdx: dropIdx,
         isDropOnLastBuilding,
@@ -43,6 +45,7 @@ export const BuildingCardList = ({
       if (region.BuildingSlots[i].Building.kind === "Empty") {
         GameDispatch({
           type: "ReorderBuildings",
+          regionId,
           buildingIdx: buildingIdx,
           dropBuildingIdx: i,
           isDropOnLastBuilding: false,
@@ -59,6 +62,7 @@ export const BuildingCardList = ({
       if (region.BuildingSlots[i].Building.kind === "Empty") {
         GameDispatch({
           type: "ReorderBuildings",
+          regionId,
           buildingIdx: buildingIdx,
           dropBuildingIdx: i,
           isDropOnLastBuilding: false,
@@ -84,6 +88,7 @@ export const BuildingCardList = ({
         )}
         <BuildingCard
           key={`b-${idx}`}
+          regionId={regionId}
           buildingIdx={idx}
           buildingSlot={buildingSlot}
           building={buildingSlot.Building}
@@ -100,7 +105,7 @@ export const BuildingCardList = ({
             key={`i-${idx}`}
             variant="wide"
             inserter={buildingSlot.Inserter}
-            inserterId={InserterIdForBuilding(idx)}
+            inserterId={InserterIdForBuilding(regionId, idx)}
           />
         )}
       </div>

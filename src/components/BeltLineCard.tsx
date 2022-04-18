@@ -6,6 +6,7 @@ import "./BuildingCard.scss";
 export type BeltLineCardProps = {
   building: BeltLineDepot;
   buildingIdx: number;
+  regionId: string;
 };
 
 function direction(d: "FROM_REGION" | "TO_REGION"): string {
@@ -18,7 +19,7 @@ function direction(d: "FROM_REGION" | "TO_REGION"): string {
 }
 
 export function BeltLineCard(props: BeltLineCardProps) {
-  const { building, buildingIdx } = props;
+  const { building, buildingIdx, regionId } = props;
 
   const inputBuffersForDisplay = building.inputBuffers,
     outputBuffersForDisplay = building.outputBuffers;
@@ -42,6 +43,7 @@ export function BeltLineCard(props: BeltLineCardProps) {
           outputBuffers={outputBuffersForDisplay}
           buildingIdx={buildingIdx}
           entityIconLookup={entityIconLookupByKind(building.kind)}
+          regionId={regionId}
         />
       </div>
     </div>

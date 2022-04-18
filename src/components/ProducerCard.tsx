@@ -17,6 +17,7 @@ export type ProducerCardProps = {
   buildingIdx: number;
   //  mainBus: MainBus;
   regionalOre: ItemBuffer;
+  regionId: string;
 };
 
 function formatRecipeName(s: string): string {
@@ -31,6 +32,7 @@ export function ProducerCard({
   producer,
   buildingIdx,
   regionalOre,
+  regionId,
 }: ProducerCardProps) {
   const generalDialog = useGeneralDialog();
 
@@ -51,6 +53,7 @@ export function ProducerCard({
           onClick={async () => {
             await showChangeProducerRecipeSelector(
               producer.ProducerType,
+              regionId,
               buildingIdx,
               generalDialog
             );
@@ -71,12 +74,14 @@ export function ProducerCard({
             GameDispatch({
               type: "DecreaseBuildingCount",
               buildingIdx,
+              regionId,
             })
           }
           plusClickHandler={() =>
             GameDispatch({
               type: "IncreaseBuildingCount",
               buildingIdx,
+              regionId,
             })
           }
         />
@@ -87,6 +92,7 @@ export function ProducerCard({
           outputBuffers={producer.outputBuffers}
           buildingIdx={buildingIdx}
           entityIconLookup={entityIconLookupByKind(producer.kind)}
+          regionId={regionId}
         />
         <div className="spacer" />
       </div>

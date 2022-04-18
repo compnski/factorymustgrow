@@ -7,11 +7,8 @@ import { useProperties } from "../svg";
 
 export type RegionSelectorProps = {
   regionIds: string[];
-  //  currentRegionId: string;
-  //regionMap?: Map<string, RegionInfo>;
   inventory: Inventory;
   onConfirm: (evt: SyntheticEvent, regionId: string) => void;
-  //gameDispatch(a: GameAction): void;
 };
 
 export function RegionSelector({ regionIds, onConfirm }: RegionSelectorProps) {

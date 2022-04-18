@@ -8,12 +8,14 @@ export function BuildingBufferDisplay({
   buildingIdx,
   entityIconLookup = (entity: string): string => entity,
   outputInteractable = true,
+  regionId,
 }: {
   inputBuffers?: ItemBuffer;
   outputBuffers?: ItemBuffer;
   entityIconLookup?: (entity: string) => string;
   buildingIdx: number;
   outputInteractable?: boolean;
+  regionId: string;
 }) {
   const addClickHandler = function addClickHandler(entity: string) {
       GameDispatch({
@@ -21,6 +23,7 @@ export function BuildingBufferDisplay({
         entity,
         buildingIdx,
         otherStackKind: "Building",
+        regionId,
       });
     },
     remClickHandler = function remClickHandler(entity: string) {
@@ -29,6 +32,7 @@ export function BuildingBufferDisplay({
         entity,
         buildingIdx,
         otherStackKind: "Building",
+        regionId,
       });
     };
 

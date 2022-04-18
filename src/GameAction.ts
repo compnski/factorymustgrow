@@ -20,17 +20,25 @@ type LaneAction =
   | {
       type: "RemoveLane";
       laneId: number;
+      regionId: string;
     }
   | {
       type: "AddLane";
       entity: string;
+      regionId: string;
     };
-type RegionAction = {
-  type: "ClaimRegion" | "ChangeRegion";
-  regionId: string;
-};
+type RegionAction =
+  | {
+      type: "ClaimRegion";
+      regionId: string;
+    }
+  | {
+      type: "NewLab";
+      regionId: string;
+    };
 type DragBuildingAction = {
   type: "ReorderBuildings";
+  regionId: string;
   buildingIdx: number;
   dropBuildingIdx: number;
   isDropOnLastBuilding: boolean;
@@ -40,19 +48,22 @@ type ProducerAction = {
   producerName: string;
 };
 type BasicAction = {
-  type: "NewLab" | "CompleteResearch" | "Reset";
+  type: "CompleteResearch" | "Reset";
 };
+
 type BuildingAction =
   | {
       type:
         | "RemoveBuilding"
         | "IncreaseBuildingCount"
         | "DecreaseBuildingCount";
+      regionId: string;
       buildingIdx: number;
     }
   | {
       type: "PlaceBuilding";
       entity: string;
+      regionId: string;
       buildingIdx?: number;
     }
   | {
@@ -63,22 +74,26 @@ type BuildingAction =
         | "express-transport-belt";
       beltLength: number;
       targetRegion: string;
+      regionId: string;
       buildingIdx?: number;
     }
   | {
       type: "AddMainBusConnection";
+      regionId: string;
       buildingIdx: number;
       laneId: number;
       direction: "FROM_BUS" | "TO_BUS";
     }
   | {
       type: "RemoveMainBusConnection";
+      regionId: string;
       buildingIdx: number;
       connectionIdx: number;
     };
 
 type LaunchRocketAction = {
   type: "LaunchRocket";
+  regionId: string;
   buildingIdx: number;
 };
 
@@ -94,6 +109,7 @@ type InserterAction = {
 
 type ChangeRecipeAction = {
   type: "ChangeRecipe";
+  regionId: string;
   buildingIdx: number;
   recipeId: string;
 };
@@ -103,11 +119,13 @@ export type InventoryTransferAction =
       entity: string;
       otherStackKind: "MainBus";
       laneId: number;
+      regionId: string;
     }
   | {
       type: "TransferToInventory" | "TransferFromInventory";
       entity: string;
       otherStackKind: "Building";
+      regionId: string;
       buildingIdx: number;
     }
   | {

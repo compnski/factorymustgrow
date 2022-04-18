@@ -16,20 +16,20 @@ describe("Labs", () => {
       progress: EntityStack[];
     }
   ) {
-    for (var i = 0; i < TicksPerSecond; i++) {
-      const produced = ResearchInLab(
-        lab,
-        researchState,
-        TestResearchBook.get.bind(TestResearchBook)
-      );
+    for (let i = 0; i < TicksPerSecond; i++) {
+      const produced = ResearchInLab(lab, researchState, (id) => {
+        const r = TestResearchBook.get(id);
+        if (!r) throw new Error("Failed to find id");
+        return r;
+      });
     }
     expect(lab.RecipeId).toBe(expected.recipeId);
-    for (var expectedOutput of expected.outputBuffers) {
+    for (const expectedOutput of expected.outputBuffers) {
       expect(lab.outputBuffers.Count(expectedOutput.Entity)).toBe(
         expectedOutput.Count
       );
     }
-    for (var expectedInput of expected.inputBuffers) {
+    for (const expectedInput of expected.inputBuffers) {
       expect(lab.inputBuffers.Count(expectedInput.Entity)).toBe(
         expectedInput.Count
       );

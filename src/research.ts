@@ -111,14 +111,14 @@ export function IsResearchComplete(researchState: ResearchState): boolean {
 export function ResearchInLab(
   l: Lab,
   researchState: ResearchState,
-  GetResearch: (s: string) => Research | undefined
+  GetResearch: (s: string) => Research
 ): number {
   const currentResearchId = (l.RecipeId = researchState.CurrentResearchId);
-  const research = GetResearch(l.RecipeId);
-  if (!research) {
+  if (!l.RecipeId) {
     l.outputBuffers.SetResearch("", 0, 0);
     return 0;
   }
+  const research = GetResearch(l.RecipeId);
   if (!researchState.Progress.has(currentResearchId))
     researchState.Progress.set(
       currentResearchId,

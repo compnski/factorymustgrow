@@ -8,10 +8,15 @@ const ProducerIcon = (p: { subkind: string }): string => p.subkind;
 
 export type RocketSiloCardProps = {
   building: Factory;
+  regionId: string;
   buildingIdx: number;
 };
 
-export function RocketSiloCard({ building, buildingIdx }: RocketSiloCardProps) {
+export function RocketSiloCard({
+  regionId,
+  building,
+  buildingIdx,
+}: RocketSiloCardProps) {
   const readyToLaunch = building.outputBuffers.Count("rocket-part") >= 100;
   // TODO: 'Launch in Progress' text while launching
   const buildingTitle = readyToLaunch
@@ -31,7 +36,7 @@ export function RocketSiloCard({ building, buildingIdx }: RocketSiloCardProps) {
       <div className="bottom-area">
         <div
           onClick={async () => {
-            GameDispatch({ type: "LaunchRocket", buildingIdx });
+            GameDispatch({ type: "LaunchRocket", buildingIdx, regionId });
           }}
           className={`building-card-button clickable ${
             (!readyToLaunch && "disabled") || ""
@@ -46,6 +51,7 @@ export function RocketSiloCard({ building, buildingIdx }: RocketSiloCardProps) {
           buildingIdx={buildingIdx}
           outputInteractable={false}
           entityIconLookup={entityIconLookupByKind(building.kind)}
+          regionId={regionId}
         />
         <div className="spacer" />
       </div>

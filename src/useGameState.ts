@@ -1,16 +1,18 @@
 import { useState } from "react";
-import {
-  NewEntityStack,
-  Region,
-  EntityStack,
-  NewRegionFromInfo,
-} from "./types";
 import { GetEntity } from "./gen/entities";
-import { loadStateFromLocalStorage } from "./localstorage";
+import { GameWindow } from "./globals";
+import { Inserter } from "./inserter";
 import { Inventory } from "./inventory";
+import { loadStateFromLocalStorage } from "./localstorage";
 import { GetRegionInfo } from "./region";
 import { BeltLine } from "./transport";
-import { GameWindow } from "./globals";
+import {
+  BeltConnection,
+  EntityStack,
+  NewEntityStack,
+  NewRegionFromInfo,
+  Region,
+} from "./types";
 
 export const CurrentGameStateVersion = "0.1.6";
 
@@ -23,7 +25,6 @@ export type ResearchState = {
 
 export type FactoryGameState = {
   RocketLaunchingAt: number;
-  CurrentRegionId: string;
   Research: ResearchState;
   Inventory: Inventory;
   Regions: Map<string, Region>;
@@ -44,7 +45,6 @@ export const initialFactoryGameState = () => ({
     ),
     CurrentResearchId: "",
   },
-  CurrentRegionId: "region0",
   Inventory: new Inventory(initialInventorySize, [
     NewEntityStack(GetEntity("burner-mining-drill"), 5),
     NewEntityStack(GetEntity("assembling-machine-1"), 5),
@@ -66,9 +66,8 @@ export let GameState = loadStateFromLocalStorage(initialFactoryGameState());
 
 (window as unknown as GameWindow).GameState = () => GameState;
 
-export function CurrentRegion(): Region {
-  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId);
-  if (!currentRegion)
-    throw new Error("Cannot find current region " + GameState.CurrentRegionId);
-  return currentRegion;
+export function GetRegion(regionId: string): Region {
+  const region = GameState.Regions.get(regionId);
+  if (!region) throw new Error("Cannot find current region " + regionId);
+  return region;
 }

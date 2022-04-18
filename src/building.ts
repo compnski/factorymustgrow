@@ -15,27 +15,35 @@ export type BuildingSlot = {
 export type InserterId =
   | {
       location: "BUILDING";
+      regionId: string;
       buildingIdx: number;
     }
   | {
       location: "BELT";
+      regionId: string;
       buildingIdx: number;
       connectionIdx: number;
     };
 
-export function InserterIdForBuilding(buildingIdx: number): InserterId {
+export function InserterIdForBuilding(
+  regionId: string,
+  buildingIdx: number
+): InserterId {
   return {
     location: "BUILDING",
+    regionId,
     buildingIdx,
   };
 }
 
 export function InserterIdForBelt(
+  regionId: string,
   buildingIdx: number,
   connectionIdx: number
 ): InserterId {
   return {
     location: "BELT",
+    regionId,
     buildingIdx,
     connectionIdx,
   };

@@ -38,8 +38,8 @@ AvailableResearchList.forEach((research) => {
 });
 
 function getAllReserachPreReqs(researchId: string): Set<string> {
+  if (!researchId) return new Set([]);
   const r = GetResearch(researchId);
-  if (!r) return new Set([]);
   const p = new Set<string>(r.Prereqs);
   r.Prereqs.forEach((rId) => {
     getAllReserachPreReqs(rId).forEach((r) => p.add(r));
@@ -49,8 +49,7 @@ function getAllReserachPreReqs(researchId: string): Set<string> {
 }
 
 function getAllResearchDirectlyUnlockedBy(researchId: string): Set<string> {
-  const r = GetResearch(researchId);
-  if (!r) return new Set([]);
+  if (!researchId) return new Set([]);
   return new Set(
     AvailableResearchList.filter((research) =>
       research.Prereqs.has(researchId)

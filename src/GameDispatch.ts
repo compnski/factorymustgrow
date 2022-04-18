@@ -36,11 +36,10 @@ import {
   Producer,
   Region,
 } from "./types";
-import { CurrentRegion, GameState, ResetGameState } from "./useGameState";
+import { GameState, GetRegion, ResetGameState } from "./useGameState";
 import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
 
 export const GameDispatch = (action: GameAction) => {
-  const currentRegion = CurrentRegion();
   switch (action.type) {
     case "Reset":
       ResetGameState();
@@ -48,11 +47,11 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "RemoveLane":
-      removeLane(currentRegion, action);
+      removeLane(GetRegion(action.regionId), action);
       break;
 
     case "AddLane":
-      currentRegion.Bus.AddLane(action.entity);
+      GetRegion(action.regionId).Bus.AddLane(action.entity);
       break;
 
     case "ChangeResearch":
@@ -67,35 +66,27 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "NewLab":
-      AddBuildingOverEmptyOrAtEnd(currentRegion, NewLab());
+      AddBuildingOverEmptyOrAtEnd(GetRegion(action.regionId), NewLab());
       break;
 
     case "ChangeRecipe":
-      (() => {
-        const b = building(action);
-        console.log("Change recipe for ", b, "to", action.recipeId);
-        // Change Recipe
-        // Move any Input / Output that no longer matches a buffer into inventory
-        // Update input/output buffers
-        if (b && (b.kind === "Factory" || b.kind === "Extractor"))
-          UpdateBuildingRecipe(b, action.recipeId);
-      })();
+      changeRecipe(action);
       break;
 
     case "ReorderBuildings":
-      ReorderBuildings(action, currentRegion);
+      ReorderBuildings(action, GetRegion(action.regionId));
       break;
 
     case "RemoveBuilding":
-      RemoveBuilding(action, currentRegion);
+      RemoveBuilding(action, GetRegion(action.regionId));
       break;
 
     case "PlaceBeltLine":
-      PlaceBeltLine(action, currentRegion);
+      PlaceBeltLine(action, GetRegion(action.regionId));
       break;
 
     case "PlaceBuilding":
-      PlaceBuilding(action, currentRegion);
+      PlaceBuilding(action, GetRegion(action.regionId));
       break;
 
     case "IncreaseBuildingCount":
@@ -115,7 +106,7 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "ToggleInserterDirection":
-      toggleInserterDirection(action, currentRegion);
+      toggleInserterDirection(action);
       break;
 
     case "RemoveMainBusConnection":
@@ -134,11 +125,6 @@ export const GameDispatch = (action: GameAction) => {
       transferFromInventory(action);
       break;
 
-    case "ChangeRegion":
-      if (GameState.Regions.has(action.regionId))
-        GameState.CurrentRegionId = action.regionId;
-      break;
-
     case "ClaimRegion":
       claimRegion(action);
       break;
@@ -148,38 +134,48 @@ export const GameDispatch = (action: GameAction) => {
   }
 };
 
-function launchRocket(action: { type: "LaunchRocket"; buildingIdx: number }) {
-  (() => {
-    const b = building(action); // as Producer;
-    if (!b) return;
-    // If RocketSilo, then check for launch
-    if (b.subkind === "rocket-silo") {
-      if (b.outputBuffers.Count("rocket-part") === 100) {
-        // TODO: Better launch update
-        // TODO: Use actual tick for launching?
-        GameState.RocketLaunchingAt = new Date().getTime();
-        showUserError("Congratulations!");
-        b.outputBuffers.Remove(NewEntityStack("rocket-part", 0, Infinity), 100);
-      }
-    }
-  })();
+function changeRecipe(action: {
+  buildingIdx: number;
+  regionId: string;
+  recipeId: string;
+}) {
+  const b = building(action);
+  console.log("Change recipe for ", b, "to", action.recipeId);
+  // Change Recipe
+  // Move any Input / Output that no longer matches a buffer into inventory
+  // Update input/output buffers
+  if (b && (b.kind === "Factory" || b.kind === "Extractor"))
+    UpdateBuildingRecipe(b, action.recipeId);
 }
 
-function claimRegion(action: {
-  type: "ClaimRegion" | "ChangeRegion";
+function launchRocket(action: {
+  type: "LaunchRocket";
   regionId: string;
+  buildingIdx: number;
 }) {
-  (() => {
-    if (GameState.Regions.has(action.regionId)) {
-      console.log("Region already unlocked", action.regionId);
-      return;
+  const b = building(action); // as Producer;
+  if (!b) return;
+  // If RocketSilo, then check for launch
+  if (b.subkind === "rocket-silo") {
+    if (b.outputBuffers.Count("rocket-part") === 100) {
+      // TODO: Better launch update
+      // TODO: Use actual tick for launching?
+      GameState.RocketLaunchingAt = new Date().getTime();
+      showUserError("Congratulations!");
+      b.outputBuffers.Remove(NewEntityStack("rocket-part", 0, Infinity), 100);
     }
-    const regionInfo = GetRegionInfo(action.regionId);
-    if (regionInfo) {
-      GameState.Regions.set(action.regionId, NewRegionFromInfo(regionInfo));
-      GameState.CurrentRegionId = action.regionId;
-    }
-  })();
+  }
+}
+
+function claimRegion(action: { type: "ClaimRegion"; regionId: string }) {
+  if (GameState.Regions.has(action.regionId)) {
+    console.log("Region already unlocked", action.regionId);
+    return;
+  }
+  const regionInfo = GetRegionInfo(action.regionId);
+  if (regionInfo) {
+    GameState.Regions.set(action.regionId, NewRegionFromInfo(regionInfo));
+  }
 }
 
 function transferFromInventory(
@@ -189,6 +185,7 @@ function transferFromInventory(
         entity: string;
         otherStackKind: "MainBus";
         laneId: number;
+        regionId: string;
       }
     | {
         type: "TransferToInventory" | "TransferFromInventory";
@@ -196,6 +193,7 @@ function transferFromInventory(
         otherStackKind: "Building"; // Update input/output buffers
         // Update input/output buffers
         buildingIdx: number;
+        regionId: string;
       }
     | {
         type: "TransferToInventory" | "TransferFromInventory";
@@ -204,55 +202,31 @@ function transferFromInventory(
         count?: number | undefined;
       }
 ) {
-  (() => {
-    const toStack = inventoryTransferStack(action);
-    if (toStack) {
-      toStack.AddFromItemBuffer(GameState.Inventory, action.entity);
-    }
-  })();
+  const toStack = inventoryTransferStack(action);
+  if (toStack) {
+    toStack.AddFromItemBuffer(GameState.Inventory, action.entity);
+  }
 }
 
-function transferToInventory(
-  action:
-    | {
-        type: "TransferToInventory" | "TransferFromInventory";
-        entity: string;
-        otherStackKind: "MainBus";
-        laneId: number;
-      }
-    | {
-        type: "TransferToInventory" | "TransferFromInventory";
-        entity: string;
-        otherStackKind: "Building"; // Update input/output buffers
-        // Update input/output buffers
-        buildingIdx: number;
-      }
-    | {
-        type: "TransferToInventory" | "TransferFromInventory";
-        entity: string;
-        otherStackKind: "Void";
-        count?: number | undefined;
-      }
-) {
-  (() => {
-    const fromStack = inventoryTransferStack(action);
-    if (fromStack) {
-      const fromStackEntity = action.entity;
-      if (GameState.Inventory.AvailableSpace(fromStackEntity) > 0) {
-        GameState.Inventory.AddFromItemBuffer(
-          fromStack,
-          fromStackEntity,
-          undefined,
-          false,
-          false
-        );
-      }
+function transferToInventory(action: InventoryTransferAction) {
+  const fromStack = inventoryTransferStack(action);
+  if (fromStack) {
+    const fromStackEntity = action.entity;
+    if (GameState.Inventory.AvailableSpace(fromStackEntity) > 0) {
+      GameState.Inventory.AddFromItemBuffer(
+        fromStack,
+        fromStackEntity,
+        undefined,
+        false,
+        false
+      );
     }
-  })();
+  }
 }
 
 function addMainBusConnection(action: {
   type: "AddMainBusConnection";
+  regionId: string;
   buildingIdx: number;
   laneId: number;
   direction: "FROM_BUS" | "TO_BUS";
@@ -283,6 +257,7 @@ function addMainBusConnection(action: {
 
 function removeMainBusConnection(action: {
   type: "RemoveMainBusConnection";
+  regionId: string;
   buildingIdx: number;
   connectionIdx: number;
 }) {
@@ -301,82 +276,86 @@ function toggleInserterDirection(
           | "IncreaseInserterCount"
           | "DecreaseInserterCount"
           | "ToggleInserterDirection";
-      } & { location: "BUILDING"; buildingIdx: number })
+      } & { location: "BUILDING"; regionId: string; buildingIdx: number })
     | ({
         type:
           | "IncreaseInserterCount"
           | "DecreaseInserterCount"
           | "ToggleInserterDirection";
-      } & { location: "BELT"; buildingIdx: number; connectionIdx: number }),
-  currentRegion: Region
+      } & {
+        location: "BELT";
+        regionId: string;
+        buildingIdx: number;
+        connectionIdx: number;
+      })
 ) {
-  (() => {
-    if (action.location === "BELT") {
-      const i = inserter(action),
-        b = building(action);
+  const currentRegion = GetRegion(action.regionId);
 
-      const beltConn =
-          currentRegion.BuildingSlots[action.buildingIdx].BeltConnections[
-            action.connectionIdx
-          ],
-        mainBusLaneId = beltConn.laneId;
-      if (
-        mainBusLaneId !== undefined &&
-        currentRegion.Bus.HasLane(mainBusLaneId)
-      ) {
-        const busLane = currentRegion.Bus.lanes.get(mainBusLaneId);
-        // Check if the inserter can be toggled
-        // IF so, flip it
-        if (i && b && busLane) {
-          const canGoLeft = BuildingHasInput(b, busLane.Entities()[0][0]),
-            canGoRight = BuildingHasOutput(b, busLane.Entities()[0][0]);
+  if (action.location === "BELT") {
+    const i = inserter(action),
+      b = building(action);
 
-          if (canGoLeft && canGoRight) {
-            i.direction =
-              i.direction === "TO_BUS"
-                ? "FROM_BUS"
-                : i.direction === "FROM_BUS"
-                ? "NONE"
-                : "TO_BUS";
-          } else if (canGoLeft) {
-            i.direction = i.direction === "NONE" ? "FROM_BUS" : "NONE";
-          } else if (canGoRight) {
-            i.direction = i.direction === "NONE" ? "TO_BUS" : "NONE";
-          }
-          if (i.direction === "FROM_BUS" || i.direction === "TO_BUS") {
-            beltConn.direction = i.direction;
-          }
+    const beltConn =
+        currentRegion.BuildingSlots[action.buildingIdx].BeltConnections[
+          action.connectionIdx
+        ],
+      mainBusLaneId = beltConn.laneId;
+    if (
+      mainBusLaneId !== undefined &&
+      currentRegion.Bus.HasLane(mainBusLaneId)
+    ) {
+      const busLane = currentRegion.Bus.lanes.get(mainBusLaneId);
+      // Check if the inserter can be toggled
+      // IF so, flip it
+      if (i && b && busLane) {
+        const canGoLeft = BuildingHasInput(b, busLane.Entities()[0][0]),
+          canGoRight = BuildingHasOutput(b, busLane.Entities()[0][0]);
+
+        if (canGoLeft && canGoRight) {
+          i.direction =
+            i.direction === "TO_BUS"
+              ? "FROM_BUS"
+              : i.direction === "FROM_BUS"
+              ? "NONE"
+              : "TO_BUS";
+        } else if (canGoLeft) {
+          i.direction = i.direction === "NONE" ? "FROM_BUS" : "NONE";
+        } else if (canGoRight) {
+          i.direction = i.direction === "NONE" ? "TO_BUS" : "NONE";
+        }
+        if (i.direction === "FROM_BUS" || i.direction === "TO_BUS") {
+          beltConn.direction = i.direction;
         }
       }
-      return;
     }
+    return;
+  }
 
-    const topB = currentRegion.BuildingSlots[action.buildingIdx].Building,
-      bottomB = currentRegion.BuildingSlots[action.buildingIdx + 1].Building,
-      i = currentRegion.BuildingSlots[action.buildingIdx].Inserter;
+  const topB = currentRegion.BuildingSlots[action.buildingIdx].Building,
+    bottomB = currentRegion.BuildingSlots[action.buildingIdx + 1].Building,
+    i = currentRegion.BuildingSlots[action.buildingIdx].Inserter;
 
-    if (!topB || !bottomB || action.buildingIdx === undefined) return;
+  if (!topB || !bottomB || action.buildingIdx === undefined) return;
 
-    console.log(CanPushTo(bottomB, topB), CanPushTo(topB, bottomB));
+  console.log(CanPushTo(bottomB, topB), CanPushTo(topB, bottomB));
 
-    const canGoUp =
-        BuildingHasOutput(bottomB.kind) &&
-        BuildingHasInput(topB.kind) &&
-        CanPushTo(bottomB, topB),
-      canGoDown =
-        BuildingHasOutput(topB.kind) &&
-        BuildingHasInput(bottomB.kind) &&
-        CanPushTo(topB, bottomB);
+  const canGoUp =
+      BuildingHasOutput(bottomB.kind) &&
+      BuildingHasInput(topB.kind) &&
+      CanPushTo(bottomB, topB),
+    canGoDown =
+      BuildingHasOutput(topB.kind) &&
+      BuildingHasInput(bottomB.kind) &&
+      CanPushTo(topB, bottomB);
 
-    if (canGoUp && canGoDown) {
-      i.direction =
-        i.direction === "UP" ? "DOWN" : i.direction === "DOWN" ? "NONE" : "UP";
-    } else if (canGoUp) {
-      i.direction = i.direction === "NONE" ? "UP" : "NONE";
-    } else if (canGoDown) {
-      i.direction = i.direction === "NONE" ? "DOWN" : "NONE";
-    }
-  })();
+  if (canGoUp && canGoDown) {
+    i.direction =
+      i.direction === "UP" ? "DOWN" : i.direction === "DOWN" ? "NONE" : "UP";
+  } else if (canGoUp) {
+    i.direction = i.direction === "NONE" ? "UP" : "NONE";
+  } else if (canGoDown) {
+    i.direction = i.direction === "NONE" ? "DOWN" : "NONE";
+  }
 }
 
 function decreaseInserterCount(
@@ -386,22 +365,25 @@ function decreaseInserterCount(
           | "IncreaseInserterCount"
           | "DecreaseInserterCount"
           | "ToggleInserterDirection";
-      } & { location: "BUILDING"; buildingIdx: number })
+      } & { location: "BUILDING"; regionId: string; buildingIdx: number })
     | ({
         type:
           | "IncreaseInserterCount"
           | "DecreaseInserterCount"
           | "ToggleInserterDirection";
-      } & { location: "BELT"; buildingIdx: number; connectionIdx: number })
+      } & {
+        location: "BELT";
+        regionId: string;
+        buildingIdx: number;
+        connectionIdx: number;
+      })
 ) {
-  (() => {
-    const i = inserter(action);
+  const i = inserter(action);
 
-    if (i && i.BuildingCount > 0) {
-      GameState.Inventory.Add(NewEntityStack(i.subkind, 1, 1), 1);
-      i.BuildingCount = Math.max(0, i.BuildingCount - 1);
-    }
-  })();
+  if (i && i.BuildingCount > 0) {
+    GameState.Inventory.Add(NewEntityStack(i.subkind, 1, 1), 1);
+    i.BuildingCount = Math.max(0, i.BuildingCount - 1);
+  }
 }
 
 function increaseInserterCount(
@@ -411,70 +393,71 @@ function increaseInserterCount(
           | "IncreaseInserterCount"
           | "DecreaseInserterCount"
           | "ToggleInserterDirection";
-      } & { location: "BUILDING"; buildingIdx: number })
+      } & { location: "BUILDING"; regionId: string; buildingIdx: number })
     | ({
         type:
           | "IncreaseInserterCount"
           | "DecreaseInserterCount"
           | "ToggleInserterDirection";
-      } & { location: "BELT"; buildingIdx: number; connectionIdx: number })
+      } & {
+        location: "BELT";
+        regionId: string;
+        buildingIdx: number;
+        connectionIdx: number;
+      })
 ) {
-  (() => {
-    const i = inserter(action);
+  const i = inserter(action);
 
-    if (!i || GameState.Inventory.Count(i.subkind) <= 0) {
-      return;
-    }
-    GameState.Inventory.Remove(NewEntityStack(i.subkind, 0, 1), 1);
+  if (!i || GameState.Inventory.Count(i.subkind) <= 0) {
+    return;
+  }
+  GameState.Inventory.Remove(NewEntityStack(i.subkind, 0, 1), 1);
 
-    if (i) i.BuildingCount = Math.min(50, i.BuildingCount + 1);
-  })();
+  if (i) i.BuildingCount = Math.min(50, i.BuildingCount + 1);
 }
 
 function decreaseBuildingCount(action: {
   type: "RemoveBuilding" | "IncreaseBuildingCount" | "DecreaseBuildingCount";
+  regionId: string;
   buildingIdx: number;
 }) {
-  (() => {
-    const b = building(action) as Producer;
-    // TODO: Handle belt lines
-    if (b?.kind === "BeltLineDepot") {
-      console.log("Can't remove lanes to beltlines");
-      return;
-    }
+  const b = building(action) as Producer;
+  // TODO: Handle belt lines
+  if (b?.kind === "BeltLineDepot") {
+    console.log("Can't remove lanes to beltlines");
+    return;
+  }
 
-    if (b) {
-      if (b.BuildingCount > 0) {
-        GameState.Inventory.Add(NewEntityStack(b.subkind, 1, 1), 1);
-        b.BuildingCount = Math.max(0, b.BuildingCount - 1);
-      }
-      if (b?.kind === "Chest") UpdateChestSize(b as Chest);
-      // TODO: If factory, reduce ProgressTracker and refund materials
-      // NOTE: Only if progressTracker == BuildingCount
-      //if (b?.kind === "Factory") RemoveProgressTracker(b as Factory);
+  if (b) {
+    if (b.BuildingCount > 0) {
+      GameState.Inventory.Add(NewEntityStack(b.subkind, 1, 1), 1);
+      b.BuildingCount = Math.max(0, b.BuildingCount - 1);
     }
-  })();
+    if (b?.kind === "Chest") UpdateChestSize(b as Chest);
+    // TODO: If factory, reduce ProgressTracker and refund materials
+    // NOTE: Only if progressTracker == BuildingCount
+    //if (b?.kind === "Factory") RemoveProgressTracker(b as Factory);
+  }
 }
 
 function increaseBuildingCount(action: {
   type: "RemoveBuilding" | "IncreaseBuildingCount" | "DecreaseBuildingCount";
+  regionId: string;
   buildingIdx: number;
 }) {
-  (() => {
-    const b = building(action) as Producer;
-    // TODO: Handle belt lines
-    if (b?.kind === "BeltLineDepot") {
-      console.log("Can't add lanes to beltlines");
-      return;
-    }
-    if (GameState.Inventory.Count(b.subkind) <= 0) {
-      return;
-    }
-    GameState.Inventory.Remove(NewEntityStack(b.subkind, 0, 1), 1);
+  const b = building(action) as Producer;
+  // TODO: Handle belt lines
+  if (b?.kind === "BeltLineDepot") {
+    console.log("Can't add lanes to beltlines");
+    return;
+  }
+  if (GameState.Inventory.Count(b.subkind) <= 0) {
+    return;
+  }
+  GameState.Inventory.Remove(NewEntityStack(b.subkind, 0, 1), 1);
 
-    if (b) b.BuildingCount = Math.min(50, b.BuildingCount + 1);
-    if (b?.kind === "Chest") UpdateChestSize(b as Chest);
-  })();
+  if (b) b.BuildingCount = Math.min(50, b.BuildingCount + 1);
+  if (b?.kind === "Chest") UpdateChestSize(b as Chest);
 }
 
 function completeResearch() {
@@ -518,6 +501,7 @@ function removeLane(
           type: "RemoveMainBusConnection",
           buildingIdx: buildingSlotIdx,
           connectionIdx: beltConnIdx,
+          regionId: currentRegion.Id,
         });
       }
     });
@@ -616,41 +600,42 @@ export function AddBuildingOverEmptyOrAtEnd(
 function ReorderBuildings(
   action: {
     type: "ReorderBuildings";
+    regionId: string;
     buildingIdx: number;
     dropBuildingIdx: number;
     isDropOnLastBuilding: boolean;
   },
   region: { BuildingSlots: BuildingSlot[] }
 ) {
-  (() => {
-    const b = building(action);
-    if (!b) return;
-    // if dropBuilding is the last building AND it's not an empty lane,
-    //  then move building to end
-    // Otherwise, if not an empty lane, skip (it should never be)
-    // If it is an empty lane, swap with the building
-    //
-    const targetBuilding = building({
-        buildingIdx: action.dropBuildingIdx,
-      }),
-      targetIsEmptyLane = targetBuilding?.kind === "Empty",
-      targetIsLastBuilding = action.isDropOnLastBuilding;
+  const b = building(action);
+  if (!b) return;
+  // if dropBuilding is the last building AND it's not an empty lane,
+  //  then move building to end
+  // Otherwise, if not an empty lane, skip (it should never be)
+  // If it is an empty lane, swap with the building
+  //
+  const targetBuilding = building({
+      regionId: action.regionId,
+      buildingIdx: action.dropBuildingIdx,
+    }),
+    targetIsEmptyLane = targetBuilding?.kind === "Empty",
+    targetIsLastBuilding = action.isDropOnLastBuilding;
 
-    if (targetIsEmptyLane) {
-      region.BuildingSlots[action.dropBuildingIdx].Building = b;
-      region.BuildingSlots[action.buildingIdx].Building = NewEmptyLane();
-    } else if (targetIsLastBuilding) {
-      region.BuildingSlots[action.buildingIdx].Building = NewEmptyLane();
-      AddBuildingOverEmptyOrAtEnd(region, b);
-    }
-    fixInserters(region);
-  })();
+  if (targetIsEmptyLane) {
+    region.BuildingSlots[action.dropBuildingIdx].Building = b;
+    region.BuildingSlots[action.buildingIdx].Building = NewEmptyLane();
+  } else if (targetIsLastBuilding) {
+    region.BuildingSlots[action.buildingIdx].Building = NewEmptyLane();
+    AddBuildingOverEmptyOrAtEnd(region, b);
+  }
+  fixInserters(region);
 }
 
 const allowRemoveEmpty = false;
 function RemoveBuilding(
   action: {
     type: "RemoveBuilding" | "IncreaseBuildingCount" | "DecreaseBuildingCount";
+    regionId: string;
     buildingIdx: number;
   },
   currentRegion: Region
@@ -756,7 +741,6 @@ function RemoveBuilding(
 function inventoryTransferStack(
   action: InventoryTransferAction
 ): ItemBuffer | undefined {
-  const currentRegion = GameState.Regions.get(GameState.CurrentRegionId);
   let b: Building | undefined;
   switch (action.otherStackKind) {
     case "Void":
@@ -769,9 +753,9 @@ function inventoryTransferStack(
       ]);
 
     case "MainBus":
-      return currentRegion
-        ? currentRegion.Bus.lanes.get(action.laneId)
-        : undefined;
+      return GameState.Regions.get(action.regionId)?.Bus.lanes.get(
+        action.laneId
+      );
 
     case "Building":
       b = building(action);
@@ -829,8 +813,11 @@ export function NewBuilding(entity: string): Building {
   }
 }
 
-function building(action: { buildingIdx?: number }): Building | undefined {
-  const currentRegion = CurrentRegion();
+function building(action: {
+  buildingIdx?: number;
+  regionId: string;
+}): Building | undefined {
+  const currentRegion = GetRegion(action.regionId);
 
   return action.buildingIdx !== undefined
     ? currentRegion.BuildingSlots[action.buildingIdx].Building
@@ -839,7 +826,7 @@ function building(action: { buildingIdx?: number }): Building | undefined {
 
 function inserter(action: InserterId): Inserter | undefined {
   console.log(JSON.stringify(action));
-  const currentRegion = CurrentRegion();
+  const currentRegion = GetRegion(action.regionId);
 
   return action.location === "BUILDING"
     ? currentRegion.BuildingSlots[action.buildingIdx].Inserter
@@ -849,9 +836,10 @@ function inserter(action: InserterId): Inserter | undefined {
 }
 
 function buildingSlot(action: {
+  regionId: string;
   buildingIdx?: number;
 }): BuildingSlot | undefined {
-  const currentRegion = CurrentRegion();
+  const currentRegion = GetRegion(action.regionId);
 
   return action.buildingIdx !== undefined
     ? currentRegion.BuildingSlots[action.buildingIdx]

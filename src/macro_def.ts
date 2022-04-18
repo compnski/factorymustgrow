@@ -1,9 +1,9 @@
-import { GameDispatch } from "./GameDispatch";
-import { CurrentRegion, GameState } from "./useGameState";
-import { GameWindow } from "./globals";
-import { NextEmptySlot } from "./building";
 import { AvailableResearchList } from "./availableResearch";
+import { NextEmptySlot } from "./building";
+import { GameDispatch } from "./GameDispatch";
+import { GameWindow } from "./globals";
 import { NewEntityStack } from "./types";
+import { GameState, GetRegion } from "./useGameState";
 
 export type MacroName = "redsci" | "allresearch";
 
@@ -48,6 +48,11 @@ function buildRedSci() {
   return null;
 }
 
+let regionId = "region0";
+export function setMacroRegionId(r: string) {
+  regionId = r;
+}
+
 function addProducers(
   producerList: {
     kind: string;
@@ -59,7 +64,7 @@ function addProducers(
     };
   }[]
 ) {
-  const currentRegion = CurrentRegion();
+  const currentRegion = GetRegion(regionId);
 
   const upperToggles: number[] = [],
     lowerToggles: number[] = [];
@@ -78,7 +83,7 @@ function addProducers(
       count: 1,
     });
 
-    GameDispatch({ type: "PlaceBuilding", entity: kind });
+    GameDispatch({ type: "PlaceBuilding", regionId, entity: kind });
 
     const nextBuildingIdx = NextEmptySlot(currentRegion.BuildingSlots) || 0;
 
@@ -89,11 +94,13 @@ function addProducers(
       GameDispatch({
         type: "IncreaseInserterCount",
         buildingIdx: buildingIdx - 1,
+        regionId,
         location: "BUILDING",
       });
 
     GameDispatch({
       type: "ChangeRecipe",
+      regionId,
       buildingIdx: buildingIdx,
       recipeId: recipe,
     });
@@ -104,6 +111,7 @@ function addProducers(
   lowerToggles.forEach((buildingIdx) => {
     GameDispatch({
       type: "ToggleInserterDirection",
+      regionId,
       buildingIdx: buildingIdx,
       location: "BUILDING",
     });
@@ -112,6 +120,7 @@ function addProducers(
   upperToggles.forEach((buildingIdx) => {
     GameDispatch({
       type: "ToggleInserterDirection",
+      regionId,
       buildingIdx: buildingIdx - 1,
       location: "BUILDING",
     });

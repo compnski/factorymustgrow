@@ -16,6 +16,7 @@ const entityIconDoubleClickHandler = (
     //target: { hasOwnProperty(p: string): boolean };
     nativeEvent: { offsetX: number; offsetY: number };
   },
+  regionId: string,
   laneId: number,
   entity: string,
   lane: ItemBuffer
@@ -29,6 +30,7 @@ const entityIconDoubleClickHandler = (
     GameDispatch({
       type: "TransferFromInventory",
       entity: entity,
+      regionId,
       otherStackKind: "MainBus",
       laneId,
     });
@@ -38,6 +40,7 @@ const entityIconDoubleClickHandler = (
     GameDispatch({
       type: "TransferToInventory",
       entity: entity,
+      regionId,
       otherStackKind: "MainBus",
       laneId,
     });
@@ -46,15 +49,17 @@ const entityIconDoubleClickHandler = (
 
 export const MainBusHeader = ({
   mainBus,
+  regionId,
 }: {
   mainBus: MainBus;
+  regionId: string;
   researchState: ResearchState;
 }) => {
   const generalDialog = useGeneralDialog();
 
   async function addLane(evt: SyntheticEvent) {
     if (mainBus.CanAddLane()) {
-      void showAddLaneItemSelector(generalDialog);
+      void showAddLaneItemSelector(generalDialog, regionId);
     } else {
       showUserError("Out of lane capacity");
     }
@@ -68,7 +73,7 @@ export const MainBusHeader = ({
     lanes.push(
       <div
         onDoubleClick={(evt) =>
-          entityIconDoubleClickHandler(evt, laneId, entity, lane)
+          entityIconDoubleClickHandler(evt, regionId, laneId, entity, lane)
         }
         key={laneId}
         className="lane-header-item-stack"
@@ -93,6 +98,7 @@ export const MainBusHeader = ({
     GameDispatch({
       type: "RemoveLane",
       laneId: laneId,
+      regionId,
     });
   };
 

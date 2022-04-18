@@ -26,6 +26,7 @@ export type BuildingCardProps = {
   handleDrop: undefined | ((evt: SyntheticEvent) => void);
   moveUp: (evt: SyntheticEvent) => void;
   moveDown: (evt: SyntheticEvent) => void;
+  regionId: string;
 };
 
 export const BuildingCard = ({
@@ -38,12 +39,14 @@ export const BuildingCard = ({
   handleDrop,
   moveUp,
   moveDown,
+  regionId,
 }: BuildingCardProps) => {
   // TOOD: Change to use Events
   const busLaneClicked = (laneId: number, entity: string) => {
     if (BuildingHasOutput(building, entity)) {
       GameDispatch({
         type: "AddMainBusConnection",
+        regionId,
         buildingIdx: buildingIdx,
         laneId,
         direction: "TO_BUS",
@@ -51,6 +54,7 @@ export const BuildingCard = ({
     } else if (BuildingHasInput(building, entity)) {
       GameDispatch({
         type: "AddMainBusConnection",
+        regionId,
         buildingIdx: buildingIdx,
         laneId,
         direction: "FROM_BUS",
@@ -61,6 +65,7 @@ export const BuildingCard = ({
   const beltConnectionClicked = (connectionIdx: number) => {
     GameDispatch({
       type: "RemoveMainBusConnection",
+      regionId,
       buildingIdx: buildingIdx,
       connectionIdx,
     });
@@ -76,24 +81,42 @@ export const BuildingCard = ({
   const removeBuilding = () => {
     GameDispatch({
       type: "RemoveBuilding",
+      regionId,
       buildingIdx: buildingIdx,
     });
   };
 
   const card =
     building.kind === "BeltLineDepot" ? (
-      <BeltLineCard building={building} buildingIdx={buildingIdx} />
+      <BeltLineCard
+        building={building}
+        regionId={regionId}
+        buildingIdx={buildingIdx}
+      />
     ) : building.kind === "Chest" ? (
-      <StorageCard storage={building} buildingIdx={buildingIdx} />
+      <StorageCard
+        storage={building}
+        regionId={regionId}
+        buildingIdx={buildingIdx}
+      />
     ) : building.kind === "Empty" ? (
-      <EmptyLaneCard buildingIdx={buildingIdx} />
+      <EmptyLaneCard regionId={regionId} buildingIdx={buildingIdx} />
     ) : building.kind === "Lab" ? (
-      <LabCard building={building} buildingIdx={buildingIdx} />
+      <LabCard
+        building={building}
+        regionId={regionId}
+        buildingIdx={buildingIdx}
+      />
     ) : building.subkind === "rocket-silo" ? (
-      <RocketSiloCard building={building} buildingIdx={buildingIdx} />
+      <RocketSiloCard
+        building={building}
+        regionId={regionId}
+        buildingIdx={buildingIdx}
+      />
     ) : (
       <ProducerCard
         producer={building as Producer}
+        regionId={regionId}
         buildingIdx={buildingIdx}
         regionalOre={regionalOre}
       />
@@ -104,7 +127,7 @@ export const BuildingCard = ({
       key={idx}
       variant="small"
       inserter={beltConn.Inserter}
-      inserterId={InserterIdForBelt(buildingIdx, idx)}
+      inserterId={InserterIdForBelt(regionId, buildingIdx, idx)}
     />
   ));
   return (

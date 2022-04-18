@@ -13,6 +13,7 @@ export type StorageCardProps = {
    * uiDispatch: (a: UIAction) => void; */
   buildingIdx: number;
   //  mainBus: MainBus;
+  regionId: string;
 };
 
 function formatName(n: string) {
@@ -21,7 +22,11 @@ function formatName(n: string) {
     " "
   );
 }
-export function StorageCard({ storage, buildingIdx }: StorageCardProps) {
+export function StorageCard({
+  regionId,
+  storage,
+  buildingIdx,
+}: StorageCardProps) {
   const generalDialog = useGeneralDialog();
 
   return (
@@ -34,12 +39,14 @@ export function StorageCard({ storage, buildingIdx }: StorageCardProps) {
           minusClickHandler={() =>
             GameDispatch({
               type: "DecreaseBuildingCount",
+              regionId,
               buildingIdx,
             })
           }
           plusClickHandler={() =>
             GameDispatch({
               type: "IncreaseBuildingCount",
+              regionId,
               buildingIdx,
             })
           }
@@ -51,6 +58,7 @@ export function StorageCard({ storage, buildingIdx }: StorageCardProps) {
             await showMoveItemToFromInventorySelector(
               generalDialog,
               "TransferFromInventory",
+              regionId,
               buildingIdx
             );
           }}
@@ -63,6 +71,7 @@ export function StorageCard({ storage, buildingIdx }: StorageCardProps) {
           outputBuffers={undefined}
           buildingIdx={buildingIdx}
           entityIconLookup={entityIconLookupByKind(storage.kind)}
+          regionId={regionId}
         />
       </div>
     </div>

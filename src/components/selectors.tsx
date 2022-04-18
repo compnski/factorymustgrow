@@ -39,6 +39,7 @@ async function showIconSelector(
 export async function showMoveItemToFromInventorySelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
   direction: "TransferToInventory" | "TransferFromInventory",
+  regionId?: string,
   buildingIdx?: number,
   filter?: (entity: string) => boolean
 ): Promise<void> {
@@ -50,7 +51,7 @@ export async function showMoveItemToFromInventorySelector(
 
   if (recipe)
     GameDispatch(
-      buildingIdx === undefined
+      buildingIdx === undefined || regionId === undefined
         ? {
             type: direction,
             entity: recipe,
@@ -61,12 +62,14 @@ export async function showMoveItemToFromInventorySelector(
             entity: recipe,
             otherStackKind: "Building",
             buildingIdx: buildingIdx,
+            regionId,
           }
     );
 }
 
 export async function showAddLaneItemSelector(
-  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>
+  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
+  regionId: string
 ): Promise<void> {
   const item = await showIconSelector(
     showDialog,
@@ -77,11 +80,13 @@ export async function showAddLaneItemSelector(
     GameDispatch({
       type: "AddLane",
       entity: item,
+      regionId,
     });
 }
 
 export async function showChangeProducerRecipeSelector(
   producerType: string,
+  regionId: string,
   buildingIdx: number,
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>
 ): Promise<void> {
@@ -95,12 +100,14 @@ export async function showChangeProducerRecipeSelector(
       return r.ProducerType === producerType;
     })
   );
-  if (recipeId) GameDispatch({ type: "ChangeRecipe", buildingIdx, recipeId });
+  if (recipeId)
+    GameDispatch({ type: "ChangeRecipe", buildingIdx, regionId, recipeId });
 }
 
 export async function showPlaceBuildingSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
   inventory: Inventory,
+  regionId: string,
   buildingIdx?: number
 ) {
   const item = await showIconSelector(showDialog, "Choose Building", [
@@ -117,6 +124,7 @@ export async function showPlaceBuildingSelector(
       showDialog,
       inventory,
       GameState.Regions,
+      regionId,
       buildingIdx
     );
   } else if (item)
@@ -124,6 +132,7 @@ export async function showPlaceBuildingSelector(
       type: "PlaceBuilding",
       entity: item,
       buildingIdx,
+      regionId,
     });
 }
 
@@ -152,6 +161,7 @@ export async function showPlaceBeltLineSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
   inventory: Inventory,
   regions: Map<string, Region>,
+  regionId: string,
   buildingIdx?: number
 ) {
   const result = await showDialog({
@@ -172,6 +182,7 @@ export async function showPlaceBeltLineSelector(
       targetRegion,
       entity: beltType,
       beltLength: 100,
+      regionId,
       buildingIdx,
     });
   }

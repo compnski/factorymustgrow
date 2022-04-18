@@ -16,9 +16,10 @@ export type LabCardProps = {
   /* dispatch: (a: GameAction) => void;
    * uiDispatch: (a: UIAction) => void; */
   buildingIdx: number;
+  regionId: string;
 };
 
-export function LabCard({ building, buildingIdx }: LabCardProps) {
+export function LabCard({ building, buildingIdx, regionId }: LabCardProps) {
   const generalDialog = useGeneralDialog();
   const title = building.RecipeId
     ? `Researching ${GetResearch(building.RecipeId).Name}`
@@ -43,12 +44,14 @@ export function LabCard({ building, buildingIdx }: LabCardProps) {
             GameDispatch({
               type: "DecreaseBuildingCount",
               buildingIdx,
+              regionId,
             })
           }
           plusClickHandler={() =>
             GameDispatch({
               type: "IncreaseBuildingCount",
               buildingIdx,
+              regionId,
             })
           }
         />
@@ -61,6 +64,7 @@ export function LabCard({ building, buildingIdx }: LabCardProps) {
           buildingIdx={buildingIdx}
           outputInteractable={false}
           entityIconLookup={entityIconLookupByKind(building.kind)}
+          regionId={regionId}
         />
       </div>
     </div>
