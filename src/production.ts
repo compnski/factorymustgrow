@@ -28,13 +28,8 @@ export type Extractor = {
   BuildingCount: number;
 };
 
-export function UpdateBuildingRecipe(
-  b: Factory | Extractor,
-  recipeId: string,
-  getRecipe: (e: string) => Recipe = GetRecipe
-) {
-  const recipe = getRecipe(recipeId);
-  if (!recipe) throw new Error("No recipe found for " + recipeId);
+export function UpdateBuildingRecipe(b: Factory | Extractor, recipeId: string) {
+  const recipe = GetRecipe(recipeId);
   const oldInputBuffers = b.inputBuffers,
     oldOutputBuffers = b.outputBuffers;
 
@@ -122,23 +117,18 @@ function outputItemBufferForExtractor(r: Recipe): ItemBuffer {
   return FixedInventory([NewEntityStack(r.Output[0].Entity, 0, 50)]);
 }
 
-export function ProduceFromExtractor(
-  e: Extractor,
-  region: Region,
-  GetRecipe: (s: string) => Recipe | undefined
-) {
+export function ProduceFromExtractor(e: Extractor, region: Region) {
+  if (!e.RecipeId) return 0;
   const recipe = GetRecipe(e.RecipeId);
-  if (recipe) {
-    recipe.Output.forEach((entityStack) => {
-      e.outputBuffers.AddFromItemBuffer(
-        region.Ore,
-        entityStack.Entity,
-        productionPerTick(e, recipe) * entityStack.Count,
-        false,
-        false
-      );
-    });
-  }
+  recipe.Output.forEach((entityStack) => {
+    e.outputBuffers.AddFromItemBuffer(
+      region.Ore,
+      entityStack.Entity,
+      productionPerTick(e, recipe) * entityStack.Count,
+      false,
+      false
+    );
+  });
 }
 
 // Factory
@@ -304,14 +294,9 @@ function outputItemBufferForFactory(r: Recipe): ItemBuffer {
   );
 }
 
-export function ProduceFromFactory(
-  f: Factory,
-  currentTick: number,
-  GetRecipe: (s: string) => Recipe | undefined
-) {
+export function ProduceFromFactory(f: Factory, currentTick: number) {
   if (!f.RecipeId) return 0;
   const recipe = GetRecipe(f.RecipeId);
-  if (!recipe) return 0;
 
   // Check empty factories
   const emptyFactoriesToStart = Math.min(

@@ -57,10 +57,10 @@ function UpdateGameStateForRegion(tick: number, region: Region) {
     const building = slot.Building;
     switch (building.kind) {
       case "Factory":
-        ProduceFromFactory(building as Factory, tick, GetRecipe);
+        ProduceFromFactory(building as Factory, tick);
         break;
       case "Extractor":
-        ProduceFromExtractor(building as Extractor, region, GetRecipe);
+        ProduceFromExtractor(building as Extractor, region);
         break;
       case "Lab":
         ResearchInLab(building as Lab, GameState.Research, GetResearch);

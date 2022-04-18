@@ -11,19 +11,19 @@ import {
   TickProgressTracker,
   UpdateBuildingRecipe,
 } from "./production";
-import { GetTestRecipe, TestRecipeBook } from "./test_recipe_defs";
+import { TestRecipeBook } from "./test_recipe_defs";
 import { AddItemsToFixedBuffer } from "./test_utils";
 import { EntityStack, NewEntityStack, NewRegion, Region } from "./types";
 
 function NewTestFactory(r: string, count = 1): Factory {
   const factory = NewFactory({ subkind: "assembling-machine-1" }, count);
-  UpdateBuildingRecipe(factory, r, GetTestRecipe);
+  UpdateBuildingRecipe(factory, r);
   return factory;
 }
 
 function NewTestExtractor(r: string, count = 1): Extractor {
   const factory = NewExtractor({ subkind: "burner-mining-drill" }, count);
-  UpdateBuildingRecipe(factory, r, GetTestRecipe);
+  UpdateBuildingRecipe(factory, r);
   return factory;
 }
 
@@ -117,11 +117,7 @@ describe("Factories", () => {
     }
   ) {
     [0, 1000].forEach((tick) => {
-      ProduceFromFactory(
-        factory,
-        tick,
-        TestRecipeBook.get.bind(TestRecipeBook)
-      );
+      ProduceFromFactory(factory, tick);
     });
 
     for (const expectedOutput of expected.outputBuffers) {
@@ -229,11 +225,7 @@ describe("Extractors", () => {
     }
   ) {
     for (let i = 0; i < TicksPerSecond; i++) {
-      ProduceFromExtractor(
-        extractor,
-        region,
-        TestRecipeBook.get.bind(TestRecipeBook)
-      );
+      ProduceFromExtractor(extractor, region);
     }
 
     for (const expectedOutput of expected.outputBuffers) {
