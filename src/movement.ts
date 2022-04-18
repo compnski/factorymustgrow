@@ -13,9 +13,8 @@ export function CanPushTo(
         .Entities()
         .reduce<boolean>((accum: boolean, [entity]): boolean => {
           return (
-            (accum ?? true) &&
-            (to.inputBuffers.Accepts(entity) ||
-              to.inputBuffers.Count(entity) > 0)
+            ((accum ?? true) && to.inputBuffers.Accepts(entity)) ||
+            to.inputBuffers.Count(entity) > 0
           );
         }, true)
   );

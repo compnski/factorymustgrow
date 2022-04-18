@@ -12,6 +12,12 @@
 *** Auto-select recipe for oil, water pumps
 *** Better re-arranging? (Maybe with research)
 *** Can't build rocket silo, factory doesn't fit enough resources
+** Read-Only State
+** Save UI state
+*** Scroll position on page
+*** Last page visited?
+*** Links?
+
 ** Factory inventory upgrade -- Hold 2x required materials per factory
 ** Better UI for deleting belt lines
 ** Save progress during upgrades?

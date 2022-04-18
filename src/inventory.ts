@@ -43,6 +43,7 @@ export class Inventory implements ItemBuffer {
   }
 
   Accepts(entity: string): boolean {
+    if (entity === "rocket-part") return false;
     return this.AvailableSpace(entity) > 0;
   }
 
