@@ -3,13 +3,20 @@ import { Inventory } from "./inventory";
 import { MainBus } from "./mainbus";
 import { ResearchOutput } from "./research";
 import { NewChest } from "./storage";
+import { ImmutableMap } from "./immutable";
+import { isImmutable, isMap } from "immutable";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const replacer = (key: string, value: any): any =>
-  value instanceof Map
+const replacer = (key: string, value: any): any => {
+  return value instanceof Map
     ? {
         dataType: "Map",
         value: [...value],
+      }
+    : isImmutable(value) && isMap(value)
+    ? {
+        dataType: "ImmutableMap",
+        value: [...value.entries()],
       }
     : value instanceof Set
     ? {
@@ -39,7 +46,7 @@ const replacer = (key: string, value: any): any =>
     : value === Infinity
     ? "Infinity"
     : value;
-
+};
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const reviver = (key: string, value: any): any => {
   return value === "Infinity"
@@ -48,6 +55,8 @@ const reviver = (key: string, value: any): any => {
     ? value
     : value.dataType === "Map"
     ? new Map(value.value)
+    : value.dataType === "ImmutableMap"
+    ? ImmutableMap(value.value)
     : value.dataType === "Set"
     ? new Set(value.value)
     : value.dataType === "MainBus"
@@ -62,9 +71,9 @@ const reviver = (key: string, value: any): any => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const serialize = (obj: any): string => JSON.stringify(obj, replacer);
+export const serialize = (obj: any): string => JSON.stringify(obj, replacer);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const parse = (s: string): any => JSON.parse(s, reviver);
+export const parse = (s: string): any => JSON.parse(s, reviver);
 
 export const saveStateToLocalStorage = (gs: FactoryGameState) => {
   localStorage.setItem("FactoryGameState", serialize(gs));
