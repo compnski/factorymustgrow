@@ -1,15 +1,20 @@
+import { Map } from "immutable";
 import { SyntheticEvent } from "react";
 import { AddBuildingOverEmptyOrAtEnd, NewBuilding } from "../GameDispatch";
+import { ReactComponent as HelpOverlay } from "../helpTemplate.svg";
+import { Inventory } from "../inventory";
+import { ReadonlyMainBus } from "../mainbus";
 import { Extractor, Factory, UpdateBuildingRecipe } from "../production";
 import { GetRegionInfo } from "../region";
-import { NewEntityStack, NewRegionFromInfo, Region } from "../types";
+import {
+  EntityStack,
+  NewEntityStack,
+  NewRegionFromInfo,
+  Region,
+} from "../types";
+import { ReadonlyRegion, ReadonlyResearchState } from "../useGameState";
 import { BuildingCardList } from "./BuildingCardList";
-import { ReactComponent as HelpOverlay } from "../helpTemplate.svg";
-
 import "./HelpCard.scss";
-import { GameState, ReadonlyRegion } from "../useGameState";
-import { ReadonlyMainBus } from "../mainbus";
-import { Inventory } from "../inventory";
 
 export type HelpCardProps = {
   onConfirm: (evt: SyntheticEvent, recipe: string) => void;
@@ -67,6 +72,10 @@ function buildHelpRegion(): Region {
 }
 
 const inventory = new Inventory();
+const researchState: ReadonlyResearchState = {
+  Progress: Map<string, Readonly<EntityStack>>(),
+  CurrentResearchId: "logistic-science-pack",
+};
 
 const helpRegion = buildHelpRegion() as ReadonlyRegion;
 
@@ -93,7 +102,7 @@ export const HelpCard = function HelpCard({ onConfirm }: HelpCardProps) {
             region={helpRegion}
             regionalOre={helpRegion.Ore}
             inventory={inventory}
-            researchState={GameState.Research}
+            researchState={researchState}
           />
           <HelpOverlay />
         </div>
