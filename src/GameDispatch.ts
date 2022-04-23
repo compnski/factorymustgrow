@@ -764,7 +764,7 @@ function inventoryTransferStack(
 
     case "Building":
       b = building(action);
-      if (b) {
+      if (b && b.kind != "Lab") {
         if (
           BuildingHasOutput(b.kind) &&
           (b.outputBuffers.AvailableSpace(action.entity) > 0 ||

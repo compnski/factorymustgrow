@@ -1,19 +1,25 @@
 import { AvailableResearchList } from "./availableResearch";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { GetResearch } from "./gen/research";
-import { FixedInventory } from "./inventory";
+import { FixedInventory, ReadonlyFixedInventory } from "./inventory";
 import { StackCapacity } from "./movement";
 import { producableItemsForInput, productionPerTick } from "./productionUtils";
 import { StateVMAction } from "./stateVm";
-import { ItemBuffer, NewEntityStack, Recipe, Research } from "./types";
-import { ReadonlyResearchState } from "./useGameState";
+import {
+  EntityStack,
+  ItemBuffer,
+  NewEntityStack,
+  Recipe,
+  Research,
+} from "./types";
+import { ReadonlyItemBuffer, ReadonlyResearchState } from "./useGameState";
 
 export type Lab = {
   kind: "Lab";
   subkind: "lab";
   RecipeId: string;
   ProducerType: string;
-  inputBuffers: ItemBuffer;
+  inputBuffers: ReadonlyItemBuffer;
   outputBuffers: ResearchOutput;
   BuildingCount: number;
 };
@@ -29,7 +35,7 @@ const initialLabInput = [
   //  { Entity: "space-science-pack", Count: 0 },
 ];
 
-export class ResearchOutput implements ItemBuffer {
+export class ResearchOutput implements ReadonlyItemBuffer {
   researchId = "";
   progress = 0;
   maxProgress = 0;
@@ -63,6 +69,12 @@ export class ResearchOutput implements ItemBuffer {
     return this.progress;
   }
 
+  AddItems(): ReadonlyItemBuffer {
+    throw new Error("NYI");
+  }
+  Remove(): number {
+    throw new Error("NYI");
+  }
   Add(): number {
     throw new Error("NYI");
   }
@@ -71,7 +83,7 @@ export class ResearchOutput implements ItemBuffer {
     throw new Error("NYI");
   }
 
-  Remove(): number {
+  RemoveItems(): ReadonlyItemBuffer {
     throw new Error("NYI");
   }
 
@@ -92,7 +104,7 @@ export function NewLab(initialProduceCount = 0): Lab {
     subkind: "lab",
     ProducerType: "Lab",
     outputBuffers: new ResearchOutput(),
-    inputBuffers: FixedInventory(
+    inputBuffers: ReadonlyFixedInventory(
       initialLabInput.map((input) => NewEntityStack(input.Entity, 0, 50))
     ),
     RecipeId: "",

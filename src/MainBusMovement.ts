@@ -1,10 +1,20 @@
 import { InserterTransferRate } from "./inserter";
 import { MainBus } from "./mainbus";
-import { BeltConnection, EntityStack, ItemBuffer } from "./types";
+import { BeltConnection, CountRemover, EntityStack, ItemBuffer } from "./types";
+
+interface Adder extends CountRemover {
+  AddFromItemBuffer(
+    from: ItemBuffer,
+    entity: string,
+    itemCount?: number,
+    exceedCapacity?: boolean,
+    integersOnly?: boolean
+  ): number;
+}
 
 interface MainBusConnector {
-  inputBuffers: ItemBuffer;
-  outputBuffers: ItemBuffer;
+  inputBuffers: Adder;
+  outputBuffers: Adder;
   BuildingCount?: number;
 }
 
@@ -57,7 +67,7 @@ export function PushPullFromMainBus(
 function PushPullLaneFromMainBus(
   entity: string,
   busLane: ItemBuffer,
-  producerBuffer: ItemBuffer,
+  producerBuffer: Adder,
   direction: "TO_BUS" | "FROM_BUS",
   maxTransfered: number
 ): number {

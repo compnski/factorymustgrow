@@ -1,8 +1,7 @@
-import { TicksPerSecond } from "./constants";
 import { ImmutableMap } from "./immutable";
 import { Lab, NewLab, ResearchInLab } from "./research";
 import { TestResearchBook } from "./test_research_defs";
-import { AddItemsToFixedBuffer } from "./test_utils";
+import { AddItemsToReadonlyFixedBuffer as AddItemsToFixedBuffer } from "./test_utils";
 import { EntityStack, NewEntityStack } from "./types";
 import { ReadonlyResearchState } from "./useGameState";
 
@@ -63,7 +62,7 @@ describe("Labs", () => {
   it("Produces a single item", () => {
     const lab = NewLab(1);
 
-    AddItemsToFixedBuffer(lab.inputBuffers, 10);
+    lab.inputBuffers = AddItemsToFixedBuffer(lab.inputBuffers, 10);
 
     TestLab(lab, testResearchState(), {
       outputBuffers: [NewEntityStack("test-research", 1)],
@@ -80,7 +79,7 @@ describe("Labs", () => {
   it("Requires the correct types of science", () => {
     const lab = NewLab(1);
     lab.RecipeId = "test-research";
-    lab.inputBuffers.Add(NewEntityStack("automation-science-pack", 1));
+    lab.inputBuffers = lab.inputBuffers.AddItems("automation-science-pack", 1);
 
     TestLab(lab, testResearchState(), {
       outputBuffers: [],
@@ -97,10 +96,7 @@ describe("Labs", () => {
       "test-research",
       NewEntityStack("test-research", 150, 150)
     );
-
-    lab.inputBuffers
-      .Entities()
-      .forEach(([entity]) => lab.inputBuffers.Add(NewEntityStack(entity, 10)));
+    lab.inputBuffers = AddItemsToFixedBuffer(lab.inputBuffers, 10);
 
     TestLab(lab, researchState, {
       outputBuffers: [],

@@ -2,7 +2,7 @@ import { Map } from "immutable";
 import { SyntheticEvent } from "react";
 import { AddBuildingOverEmptyOrAtEnd, NewBuilding } from "../GameDispatch";
 import { ReactComponent as HelpOverlay } from "../helpTemplate.svg";
-import { Inventory } from "../inventory";
+import { Inventory, ReadonlyInventory } from "../inventory";
 import { ReadonlyMainBus } from "../mainbus";
 import { Extractor, Factory, UpdateBuildingRecipe } from "../production";
 import { GetRegionInfo } from "../region";
@@ -76,8 +76,12 @@ const researchState: ReadonlyResearchState = {
   Progress: Map<string, Readonly<EntityStack>>(),
   CurrentResearchId: "logistic-science-pack",
 };
-
-const helpRegion = buildHelpRegion() as ReadonlyRegion;
+const region = buildHelpRegion();
+const helpRegion = {
+  ...region,
+  Ore: new ReadonlyInventory(region.Ore),
+  Bus: new ReadonlyMainBus(region.Bus),
+};
 
 export const HelpCard = function HelpCard({ onConfirm }: HelpCardProps) {
   return (

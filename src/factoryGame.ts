@@ -88,7 +88,7 @@ function UpdateGameStateForRegion(tick: number, region: Region) {
         region.BuildingSlots[idx + 1].Building
       );
 
-    PushPullFromMainBus(slot, region.Bus);
+    if (building.kind != "Lab") PushPullFromMainBus(slot, region.Bus);
   });
 
   applyStateChangeActions(GameState, vmActions);

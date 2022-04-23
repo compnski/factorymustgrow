@@ -4,7 +4,7 @@ import { GetEntity } from "./gen/entities";
 import { GameWindow } from "./globals";
 import { ImmutableMap } from "./immutable";
 import { Inserter } from "./inserter";
-import { Inventory } from "./inventory";
+import { Inventory, ReadonlyInventory } from "./inventory";
 import { loadStateFromLocalStorage } from "./localstorage";
 import { ReadonlyMainBus } from "./mainbus";
 import { GetRegionInfo } from "./region";
@@ -12,6 +12,7 @@ import { BeltLine, BeltLineDepot } from "./transport";
 import {
   BeltConnection,
   EntityStack,
+  ItemBuffer,
   NewEntityStack,
   NewRegionFromInfo,
   Region,
@@ -19,10 +20,29 @@ import {
 
 export type ReadonlyItemBuffer = {
   readonly Capacity: number;
+  AddItems(entity: string, count: number): ReadonlyItemBuffer;
+  RemoveItems(entity: string, count: number): ReadonlyItemBuffer;
+
+  AvailableSpace(entity: string): number;
   Entities(): Readonly<[entity: string, count: number][]>;
   Count(entity: string): number;
   Accepts(entity: string): boolean;
   SlotsUsed(): number;
+
+  Remove(toStack: EntityStack, count?: number, integersOnly?: boolean): number;
+  Add(
+    fromStack: EntityStack,
+    count?: number,
+    exceedCapacity?: boolean,
+    integersOnly?: boolean
+  ): number;
+  AddFromItemBuffer(
+    from: ItemBuffer,
+    entity: string,
+    itemCount?: number,
+    exceedCapacity?: boolean,
+    integersOnly?: boolean
+  ): number;
 };
 
 export interface ReadonlyResearchState {
@@ -126,7 +146,11 @@ export function GetRegion(regionId: string): Region {
 export function GetReadonlyRegion(regionId: string): ReadonlyRegion {
   const region = GameState.Regions.get(regionId);
   if (!region) throw new Error("Cannot find current region " + regionId);
-  return { ...region, Bus: new ReadonlyMainBus(region.Bus) };
+  return {
+    ...region,
+    Ore: new ReadonlyInventory(region.Ore),
+    Bus: new ReadonlyMainBus(region.Bus),
+  };
 }
 
 export function GetResearchState(): ReadonlyResearchState {

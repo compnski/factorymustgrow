@@ -30,6 +30,7 @@ export function MoveViaInserter(
   currentBuilding: Building,
   nextBuilding: Building
 ) {
+  if (currentBuilding.kind == "Lab" || nextBuilding.kind == "Lab") return;
   if (InserterTransferRate(i) > 0) {
     if (i.direction === "DOWN") {
       PushToOtherProducer(

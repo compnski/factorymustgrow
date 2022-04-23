@@ -1,7 +1,7 @@
 import { GetEntity } from "./gen/entities";
 import { ImmutableMap } from "./immutable";
 import { StackCapacity, stackTransfer } from "./movement";
-import { EntityStack, ItemBuffer, NewEntityStack } from "./types";
+import { CountRemover, EntityStack, ItemBuffer, NewEntityStack } from "./types";
 import { ReadonlyItemBuffer } from "./useGameState";
 
 export function FixedInventory(slotTemplate: EntityStack[]): Inventory {
@@ -19,6 +19,16 @@ export function FixedInventory(slotTemplate: EntityStack[]): Inventory {
 //   //
 // }
 
+export function ReadonlyFixedInventory(
+  slotTemplate: EntityStack[]
+): ReadonlyInventory {
+  const slots = ImmutableMap(
+    slotTemplate.map((stack: EntityStack) => [stack.Entity, stack.Count])
+  );
+  // TODO: Fixed inventory with multiple stacks of one item
+  return new ReadonlyInventory(slotTemplate.length, slots, true);
+}
+
 // TODO: Handle fixed inventory
 export class ReadonlyInventory implements ReadonlyItemBuffer {
   //readonly slots: Readonly<EntityStack>[];
@@ -27,34 +37,66 @@ export class ReadonlyInventory implements ReadonlyItemBuffer {
   readonly Capacity: number;
   readonly Data: ImmutableMap<string, number>;
 
+  Remove(toStack: EntityStack, count?: number, integersOnly?: boolean): number {
+    throw new Error("NYI");
+  }
+  Add(
+    fromStack: EntityStack,
+    count?: number,
+    exceedCapacity?: boolean,
+    integersOnly?: boolean
+  ): number {
+    throw new Error("NYI");
+  }
+  AddFromItemBuffer(
+    from: ItemBuffer,
+    entity: string,
+    itemCount?: number,
+    exceedCapacity?: boolean,
+    integersOnly?: boolean
+  ): number {
+    throw new Error("NYI");
+  }
+
   constructor(
-    maxCapacity: number,
+    maxCapacity: number | Inventory,
     Data?: ImmutableMap<string, number>,
     immutableSlots = false
   ) {
-    this.Capacity = maxCapacity;
-    this.Data = Data || ImmutableMap();
-    this.immutableSlots = immutableSlots;
+    if (maxCapacity instanceof Inventory) {
+      this.Capacity = maxCapacity.Capacity;
+      this.immutableSlots = maxCapacity.immutableSlots;
+      this.Data = ImmutableMap(maxCapacity.Entities());
+    } else {
+      this.Capacity = maxCapacity;
+      this.Data = Data || ImmutableMap();
+      this.immutableSlots = immutableSlots;
+    }
   }
 
   // throws if it cannot hold the given number
-  Add(entity: string, count: number): ReadonlyItemBuffer {
+  AddItems(entity: string, count: number): ReadonlyItemBuffer {
     if (count < 0) {
-      return this.Remove(entity, -count);
+      return this.RemoveItems(entity, -count);
     }
     if (count > this.AvailableSpace(entity)) {
       throw new Error("Not enough space for " + entity);
     }
+    const newData = this.Data.set(entity, this.Count(entity) || 0 + count);
 
-    return new ReadonlyInventory(this.Capacity, this.Data, this.immutableSlots);
+    return new ReadonlyInventory(this.Capacity, newData, this.immutableSlots);
   }
 
-  Remove(entity: string, count: number): ReadonlyItemBuffer {
+  RemoveItems(entity: string, count: number): ReadonlyItemBuffer {
+    if (count < 0) {
+      throw new Error("Cannot remove negative quantity.");
+      //return this.Add(entity, -count);
+    }
     if (this.Count(entity) + count < 0) {
       throw new Error("Not enough " + entity + " in stack");
     }
-
-    return new ReadonlyInventory(this.Capacity, this.Data, this.immutableSlots);
+    const newData = this.Data.set(entity, this.Count(entity) || 0 + count);
+    return new ReadonlyInventory(this.Capacity, newData, this.immutableSlots);
   }
 
   Count(entity: string): number {
@@ -98,6 +140,14 @@ export class Inventory implements ItemBuffer {
     return this.slots.length;
   }
 
+  AddItems(entity: string, count: number): ReadonlyItemBuffer {
+    throw new Error("NYI");
+  }
+
+  RemoveItems(entity: string, count: number): ReadonlyItemBuffer {
+    throw new Error("NYI");
+  }
+
   constructor(
     maxCapacity = 8,
     slots: EntityStack[] = [],
@@ -107,51 +157,6 @@ export class Inventory implements ItemBuffer {
     this.slots = slots;
     this.immutableSlots = immutableSlots;
   }
-
-  // Set(entity: string, count: number): number {
-  //   const stackSize = GetEntity(entity)?.StackSize;
-  //   if (!stackSize) throw new Error(`Failed to find entity  ${entity}`);
-
-  //   const existingSlotIdx = this.unfilledSlotForEntity(entity),
-  //     existingSlot = this.slots[existingSlotIdx];
-
-  //   let transferAmount = count;
-
-  //   if (existingSlot) {
-  //     const transferToExistingSlotAmount = Math.min(
-  //       transferAmount,
-  //       StackCapacity(existingSlot)
-  //     );
-  //     existingSlot.Count =
-  //     TransferAmount -= stackTransfer(
-  //       fromStack,
-  //       existingSlot,
-  //       transferToExistingSlotAmount,
-  //       integersOnly
-  //     );
-  //   } else {
-  //     if (this.immutableSlots) {
-  //       return transferAmount;
-  //     }
-  //   }
-  //   while (
-  //     Math.floor(transferAmount) > 0 &&
-  //     (exceedCapacity || this.slots.length < this.Capacity)
-  //   ) {
-  //     const transferToNewSlotAmount = Math.min(transferAmount, stackSize);
-  //     const toStack = NewEntityStack(fromStack.Entity, 0, stackSize);
-  //     this.slots.push(toStack);
-
-  //     transferAmount -= stackTransfer(
-  //       fromStack,
-  //       toStack,
-  //       transferToNewSlotAmount,
-  //       integersOnly
-  //     );
-  //   }
-  //   this.slots.sort((a, b) => a.Entity.localeCompare(b.Entity));
-  //   return transferAmount;
-  // }
 
   NextEntityStack(): EntityStack | undefined {
     for (const slot of this.slots) {
@@ -260,7 +265,7 @@ export class Inventory implements ItemBuffer {
   // Add X of this stack to the inventory. Defaults to 1 stacksize
   // Returns the count of any items which didn't fit.
   AddFromItemBuffer(
-    from: ItemBuffer,
+    from: CountRemover,
     entity: string,
     itemCount?: number,
     exceedCapacity = false,

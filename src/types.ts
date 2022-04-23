@@ -1,6 +1,6 @@
 import { BuildingSlot, NewBuildingSlot, NewEmptyLane } from "./building";
 import { Inserter } from "./inserter";
-import { FixedInventory } from "./inventory";
+import { FixedInventory, Inventory } from "./inventory";
 import { MainBus } from "./mainbus";
 import { ReadonlyItemBuffer } from "./useGameState";
 
@@ -8,6 +8,11 @@ export function IsItemBuffer(
   i: ItemBuffer | EntityStack | ReadonlyItemBuffer
 ): i is ItemBuffer {
   return (i as ItemBuffer).AvailableSpace !== undefined;
+}
+
+export interface CountRemover {
+  Remove(toStack: EntityStack, count?: number, integersOnly?: boolean): number;
+  Count(entity: string): number;
 }
 
 export interface ItemBuffer {
@@ -23,7 +28,7 @@ export interface ItemBuffer {
     integersOnly?: boolean
   ): number;
   AddFromItemBuffer(
-    from: ItemBuffer,
+    from: CountRemover,
     entity: string,
     itemCount?: number,
     exceedCapacity?: boolean,
@@ -33,6 +38,9 @@ export interface ItemBuffer {
   Remove(toStack: EntityStack, count?: number, integersOnly?: boolean): number;
   Entities(): [entity: string, count: number][];
   Capacity: number;
+
+  AddItems(entity: string, count: number): ReadonlyItemBuffer;
+  RemoveItems(entity: string, count: number): ReadonlyItemBuffer;
 }
 
 export interface Producer {
@@ -155,7 +163,7 @@ export type RegionInfo = {
 
 export type Region = {
   Id: string;
-  Ore: ItemBuffer;
+  Ore: Inventory;
   LaneCount: number;
   LaneSize: number;
   MainBusCount: number;

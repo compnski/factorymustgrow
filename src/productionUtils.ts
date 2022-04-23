@@ -1,9 +1,10 @@
 import { EntityStack, ItemBuffer } from "./types";
 import { TicksPerSecond } from "./constants";
+import { ReadonlyItemBuffer } from "./useGameState";
 
 // Requires at least Input items to produce anything
 export function producableItemsForInput(
-  inputBuffers: ItemBuffer,
+  inputBuffers: ReadonlyItemBuffer | ItemBuffer,
   recipeInputs: EntityStack[]
 ): number {
   return Math.min(

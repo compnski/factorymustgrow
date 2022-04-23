@@ -97,6 +97,8 @@ function applyStateChangeAction(
       return state;
     case "SetItemCount":
       return stateChangeSetItemCount(state, action);
+    // case "AddItemCount":
+    //   return stateChangeAddItemCount(state, action);
 
     default:
       throw new Error("Unknown action kind: " + action);
@@ -154,7 +156,9 @@ function stateChangeSetItemCount(
   if (isMainBusAddress(address)) {
     //
   } else if (isBuildingAddress(address)) {
-    //
+    const { regionId, buildingSlot, buffer } = address;
+    const region = state.Regions.get(regionId);
+    const building = region?.BuildingSlots[buildingSlot].Building;
   } else if (isInventoryAddress(address)) {
     //state.Inventory.
   } else {

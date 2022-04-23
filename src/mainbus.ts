@@ -18,14 +18,14 @@ export const NewBusLane = (
 };
 
 export class ReadonlyMainBus {
-  readonly lanes: ReadonlyMap<number, ReadonlyItemBuffer>;
+  readonly lanes: ReadonlyMap<number, ItemBuffer>;
   readonly nextLaneId: number;
 
   constructor({
     lanes,
     nextLaneId,
   }: {
-    lanes: ReadonlyMap<number, ReadonlyItemBuffer>;
+    lanes: ReadonlyMap<number, ItemBuffer>;
     nextLaneId: number;
   }) {
     this.lanes = lanes;

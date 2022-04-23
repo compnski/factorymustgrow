@@ -3,6 +3,7 @@ import { TicksPerSecond } from "../constants";
 import { UpdateGameState } from "../factoryGame";
 import { GameDispatch } from "../GameDispatch";
 import { useGeneralDialog } from "../GeneralDialogProvider";
+import { ReadonlyInventory } from "../inventory";
 import { saveStateToLocalStorage } from "../localstorage";
 import { setMacroRegionId } from "../macro_def";
 import { useInterval } from "../reactUtils";
@@ -45,7 +46,7 @@ export const FactoryGame = () => {
   try {
     const regionIds = [...gameState.Regions.keys()];
     const currentRegion = GetReadonlyRegion(currentRegionId);
-    const inventory = gameState.Inventory as ReadonlyItemBuffer;
+    const inventory = new ReadonlyInventory(gameState.Inventory);
     const researchState = gameState.Research as ReadonlyResearchState;
     const showHelp = () => {
       void showHelpCard(generalDialog);
@@ -62,7 +63,7 @@ export const FactoryGame = () => {
             currentRegionId={currentRegionId}
             regionIds={regionIds}
             gameDispatch={GameDispatch}
-            inventory={gameState.Inventory}
+            inventory={inventory}
             setCurrentRegionId={setCurrentRegionId}
           />
           <div onClick={showHelp} className="help-icon">
