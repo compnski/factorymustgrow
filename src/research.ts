@@ -4,8 +4,9 @@ import { GetResearch } from "./gen/research";
 import { FixedInventory } from "./inventory";
 import { StackCapacity } from "./movement";
 import { producableItemsForInput, productionPerTick } from "./productionUtils";
+import { StateVMAction } from "./stateVm";
 import { ItemBuffer, NewEntityStack, Recipe, Research } from "./types";
-import { ReadonlyResearchState, ResearchState } from "./useGameState";
+import { ReadonlyResearchState } from "./useGameState";
 
 export type Lab = {
   kind: "Lab";
@@ -78,8 +79,8 @@ export class ResearchOutput implements ItemBuffer {
     return [[this.researchId, this.progress]];
   }
 
-  Slots(): [entity: string, count: number][] {
-    return this.Entities();
+  SlotsUsed(): number {
+    return this.Entities().length;
   }
 
   Capacity = 0;
@@ -99,7 +100,9 @@ export function NewLab(initialProduceCount = 0): Lab {
   };
 }
 
-export function IsResearchComplete(researchState: ResearchState): boolean {
+export function IsResearchComplete(
+  researchState: ReadonlyResearchState
+): boolean {
   const researchProgress = researchState.Progress.get(
     researchState.CurrentResearchId
   );
@@ -109,8 +112,11 @@ export function IsResearchComplete(researchState: ResearchState): boolean {
 }
 
 export function ResearchInLab(
+  regionId: string,
+  buildingSlot: number,
   l: Lab,
-  researchState: ResearchState,
+  researchState: ReadonlyResearchState,
+  dispatch: (a: StateVMAction) => void,
   GetResearch: (s: string) => Research
 ): number {
   const currentResearchId = (l.RecipeId = researchState.CurrentResearchId);
@@ -118,16 +124,19 @@ export function ResearchInLab(
     l.outputBuffers.SetResearch("", 0, 0);
     return 0;
   }
+  const currentResearchProgress =
+    researchState.Progress.get(currentResearchId)?.Count || 0;
   const research = GetResearch(l.RecipeId);
-  if (!researchState.Progress.has(currentResearchId))
-    researchState.Progress.set(
-      currentResearchId,
-      NewEntityStack(
-        currentResearchId,
-        0,
-        research.ProductionRequiredForCompletion
-      )
-    );
+
+  // if (!researchState.Progress.has(currentResearchId))
+  //   researchState.Progress.set(
+  //     currentResearchId,
+  //     NewEntityStack(
+  //       currentResearchId,
+  //       0,
+  //       research.ProductionRequiredForCompletion
+  //     )
+  //   );
   const currentProgress = researchState.Progress.get(currentResearchId);
   l.outputBuffers.SetResearch(
     currentResearchId,
@@ -143,23 +152,41 @@ export function ResearchInLab(
       availableInputs,
       availableInventorySpace
     );
+
+  if (!actualProduction) return 0;
+
   for (const input of research.Input) {
-    const removed = l.inputBuffers.Remove(
-      NewEntityStack(input.Entity, 0, Infinity),
-      input.Count * actualProduction,
-      false
-    );
-    if (removed !== input.Count * actualProduction) {
-      console.error(l.inputBuffers.Entities());
-      throw new Error(
-        `Produced without enough input. Missing ${removed} ${input.Entity}`
-      );
-    }
+    const entity = input.Entity;
+    const count = l.inputBuffers.Count(entity) - input.Count * actualProduction;
+
+    dispatch({
+      kind: "SetItemCount",
+      address: { regionId, buildingSlot, buffer: "input" },
+      entity,
+      count,
+    });
+
+    // const removed = l.inputBuffers.Remove(
+    //   NewEntityStack(input.Entity, 0, Infinity),
+    //   input.Count * actualProduction,
+    //   false
+    // );
+    // if (removed !== input.Count * actualProduction) {
+    //   console.error(l.inputBuffers.Entities());
+    //   throw new Error(
+    //     `Produced without enough input. Missing ${removed} ${input.Entity}`
+    //   );
+    // }
   }
-  if (currentProgress) {
-    currentProgress.Count += actualProduction;
-  }
-  l.outputBuffers.SetProgress(currentProgress?.Count || 0);
+  //if (actualProduction)
+  dispatch({
+    kind: "SetResearchCount",
+    researchId: currentResearchId,
+    count: currentResearchProgress + actualProduction,
+    maxCount: research.ProductionRequiredForCompletion,
+  });
+
+  l.outputBuffers.SetProgress(currentResearchProgress + actualProduction || 0);
 
   return actualProduction;
 }

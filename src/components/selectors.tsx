@@ -111,7 +111,7 @@ export async function showPlaceBuildingSelector(
   const item = await showIconSelector(showDialog, "Choose Building", [
     ...new Set(
       inventory
-        .Slots()
+        .Entities()
         .map((s) => s[0])
         .filter((e) => IsBuilding(e))
     ),

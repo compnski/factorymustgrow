@@ -6,8 +6,22 @@ import { NewChest } from "./storage";
 import { ImmutableMap } from "./immutable";
 import { isImmutable, isMap } from "immutable";
 
+function toType<T>(
+  dataType: string,
+  value: T[]
+): { dataType: string; value: T[] } {
+  return {
+    dataType,
+    value,
+  };
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const replacer = (key: string, value: any): any => {
+  switch (key) {
+    case "Progress":
+      return toType("ImmutableMap", Object.entries(value));
+  }
   return value instanceof Map
     ? {
         dataType: "Map",

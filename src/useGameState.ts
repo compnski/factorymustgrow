@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Building } from "./building";
 import { GetEntity } from "./gen/entities";
 import { GameWindow } from "./globals";
+import { ImmutableMap } from "./immutable";
 import { Inserter } from "./inserter";
 import { Inventory } from "./inventory";
 import { loadStateFromLocalStorage } from "./localstorage";
@@ -17,16 +18,15 @@ import {
 } from "./types";
 
 export type ReadonlyItemBuffer = {
-  //readonly slots: Readonly<EntityStack>[];
   readonly Capacity: number;
   Entities(): Readonly<[entity: string, count: number][]>;
-  Slots(): Readonly<[entity: string, count: number][]>;
   Count(entity: string): number;
   Accepts(entity: string): boolean;
+  SlotsUsed(): number;
 };
 
 export interface ReadonlyResearchState {
-  readonly Progress: ReadonlyMap<string, Readonly<EntityStack>>;
+  readonly Progress: ImmutableMap<string, Readonly<EntityStack>>;
   readonly CurrentResearchId: string;
 }
 
@@ -71,7 +71,7 @@ export const useGameState = () => useState<FactoryGameState>(GameState);
 
 export type ResearchState = {
   CurrentResearchId: string;
-  Progress: Map<string, EntityStack>;
+  Progress: ImmutableMap<string, EntityStack>;
 };
 
 export type FactoryGameState = {
@@ -88,7 +88,7 @@ const startingResearch = ["start", "automation"];
 export const initialFactoryGameState = () => ({
   RocketLaunchingAt: 0,
   Research: {
-    Progress: new Map(
+    Progress: ImmutableMap(
       startingResearch.map((research) => [
         research,
         NewEntityStack(research, 0, 0),
@@ -127,4 +127,8 @@ export function GetReadonlyRegion(regionId: string): ReadonlyRegion {
   const region = GameState.Regions.get(regionId);
   if (!region) throw new Error("Cannot find current region " + regionId);
   return { ...region, Bus: new ReadonlyMainBus(region.Bus) };
+}
+
+export function GetResearchState(): ReadonlyResearchState {
+  return GameState.Research;
 }

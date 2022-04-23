@@ -15,13 +15,11 @@ fit("Can serialize various objects", () => {
       expected: '{"dataType":"Map","value":[["person",{"name":"jason"}]]}',
     },
     {
-      original: ImmutableMap([["person", { name: "jason" }]]),
+      original: { Progress: ImmutableMap([["person", { name: "jason" }]]) },
       expected:
-        '{"dataType":"ImmutableMap","value":[["person",{"name":"jason"}]]}',
+        '{"Progress":{"dataType":"ImmutableMap","value":[["person",{"name":"jason"}]]}}',
     },
   ];
-  const value = types[1].original;
-  console.log(isImmutable(value), isMap(value));
 
   for (const { original, expected } of types) {
     const actual = serialize(original);

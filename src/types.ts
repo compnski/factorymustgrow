@@ -14,7 +14,7 @@ export interface ItemBuffer {
   Accepts(entity: string): boolean;
   // How many of this item can fit
   AvailableSpace(entity: string): number;
-
+  SlotsUsed(): number;
   Count(entity: string): number;
   Add(
     fromStack: EntityStack,
@@ -32,7 +32,6 @@ export interface ItemBuffer {
 
   Remove(toStack: EntityStack, count?: number, integersOnly?: boolean): number;
   Entities(): [entity: string, count: number][];
-  Slots(): [entity: string, count: number][];
   Capacity: number;
 }
 

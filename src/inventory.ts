@@ -1,6 +1,8 @@
 import { GetEntity } from "./gen/entities";
+import { ImmutableMap } from "./immutable";
 import { StackCapacity, stackTransfer } from "./movement";
 import { EntityStack, ItemBuffer, NewEntityStack } from "./types";
+import { ReadonlyItemBuffer } from "./useGameState";
 
 export function FixedInventory(slotTemplate: EntityStack[]): Inventory {
   const slots = slotTemplate.map((stack: EntityStack) =>
@@ -9,11 +11,92 @@ export function FixedInventory(slotTemplate: EntityStack[]): Inventory {
   return new Inventory(slots.length, slots, true);
 }
 
+// function FillStack(
+//   entity: string,
+//   count: number,
+//   stackSize: number
+// ): EntityStack[] {
+//   //
+// }
+
+// TODO: Handle fixed inventory
+export class ReadonlyInventory implements ReadonlyItemBuffer {
+  //readonly slots: Readonly<EntityStack>[];
+  // ImmutableSlots is used for fixed inventories. Slots won't be added on overflow or removed when empty.
+  readonly immutableSlots: boolean;
+  readonly Capacity: number;
+  readonly Data: ImmutableMap<string, number>;
+
+  constructor(
+    maxCapacity: number,
+    Data?: ImmutableMap<string, number>,
+    immutableSlots = false
+  ) {
+    this.Capacity = maxCapacity;
+    this.Data = Data || ImmutableMap();
+    this.immutableSlots = immutableSlots;
+  }
+
+  // throws if it cannot hold the given number
+  Add(entity: string, count: number): ReadonlyItemBuffer {
+    if (count < 0) {
+      return this.Remove(entity, -count);
+    }
+    if (count > this.AvailableSpace(entity)) {
+      throw new Error("Not enough space for " + entity);
+    }
+
+    return new ReadonlyInventory(this.Capacity, this.Data, this.immutableSlots);
+  }
+
+  Remove(entity: string, count: number): ReadonlyItemBuffer {
+    if (this.Count(entity) + count < 0) {
+      throw new Error("Not enough " + entity + " in stack");
+    }
+
+    return new ReadonlyInventory(this.Capacity, this.Data, this.immutableSlots);
+  }
+
+  Count(entity: string): number {
+    return this.Data.get(entity, 0);
+  }
+
+  SlotsUsed(): number {
+    let slotsUsed = 0;
+    this.Data.forEach((count, entity) => {
+      const stackSize = GetEntity(entity).StackSize;
+      slotsUsed += Math.ceil(count / stackSize);
+    });
+    return slotsUsed;
+  }
+
+  AvailableSpace(entity: string): number {
+    const stackSize = GetEntity(entity).StackSize,
+      availableSlots = this.Capacity - this.SlotsUsed(),
+      count = this.Count(entity);
+    if (count) return availableSlots * stackSize + (count % stackSize);
+    return availableSlots * stackSize;
+  }
+
+  Accepts(entity: string): boolean {
+    if (entity === "rocket-part") return false;
+    return this.AvailableSpace(entity) > 0;
+  }
+
+  Entities(): [string, number][] {
+    return [...this.Data.entries()];
+  }
+}
+
 export class Inventory implements ItemBuffer {
   slots: EntityStack[];
   Capacity: number;
   // ImmutableSlots is used for fixed inventories. Slots won't be added on overflow or removed when empty.
   immutableSlots: boolean;
+
+  SlotsUsed(): number {
+    return this.slots.length;
+  }
 
   constructor(
     maxCapacity = 8,
@@ -24,6 +107,51 @@ export class Inventory implements ItemBuffer {
     this.slots = slots;
     this.immutableSlots = immutableSlots;
   }
+
+  // Set(entity: string, count: number): number {
+  //   const stackSize = GetEntity(entity)?.StackSize;
+  //   if (!stackSize) throw new Error(`Failed to find entity  ${entity}`);
+
+  //   const existingSlotIdx = this.unfilledSlotForEntity(entity),
+  //     existingSlot = this.slots[existingSlotIdx];
+
+  //   let transferAmount = count;
+
+  //   if (existingSlot) {
+  //     const transferToExistingSlotAmount = Math.min(
+  //       transferAmount,
+  //       StackCapacity(existingSlot)
+  //     );
+  //     existingSlot.Count =
+  //     TransferAmount -= stackTransfer(
+  //       fromStack,
+  //       existingSlot,
+  //       transferToExistingSlotAmount,
+  //       integersOnly
+  //     );
+  //   } else {
+  //     if (this.immutableSlots) {
+  //       return transferAmount;
+  //     }
+  //   }
+  //   while (
+  //     Math.floor(transferAmount) > 0 &&
+  //     (exceedCapacity || this.slots.length < this.Capacity)
+  //   ) {
+  //     const transferToNewSlotAmount = Math.min(transferAmount, stackSize);
+  //     const toStack = NewEntityStack(fromStack.Entity, 0, stackSize);
+  //     this.slots.push(toStack);
+
+  //     transferAmount -= stackTransfer(
+  //       fromStack,
+  //       toStack,
+  //       transferToNewSlotAmount,
+  //       integersOnly
+  //     );
+  //   }
+  //   this.slots.sort((a, b) => a.Entity.localeCompare(b.Entity));
+  //   return transferAmount;
+  // }
 
   NextEntityStack(): EntityStack | undefined {
     for (const slot of this.slots) {

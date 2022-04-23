@@ -13,10 +13,11 @@ import {
   ProduceFromFactory,
 } from "./production";
 import { IsResearchComplete, Lab, ResearchInLab } from "./research";
+import { applyStateChangeActions, StateVMAction } from "./stateVm";
 import { Chest, UpdateChest } from "./storage";
 import { UpdateBeltLine } from "./transport";
 import { Region } from "./types";
-import { GameState } from "./useGameState";
+import { GameState, GetResearchState } from "./useGameState";
 
 export async function UpdateGameState(
   tick: number,
@@ -31,10 +32,10 @@ export async function UpdateGameState(
       UpdateGameStateForRegion(tick, region);
     }
     // Check Research Completion
-    if (IsResearchComplete(GameState.Research)) {
+    if (IsResearchComplete(GetResearchState())) {
       console.log("Research Complete!");
       GameDispatch({ type: "CompleteResearch" });
-      await showResearchSelector(generalDialog, GameState.Research);
+      await showResearchSelector(generalDialog, GetResearchState());
     }
   } catch (e) {
     //TODO Show error dialog
@@ -52,6 +53,11 @@ function UpdateGameStateForRegion(tick: number, region: Region) {
   }
   fixInserters(region);
 
+  const vmActions: StateVMAction[] = [];
+  const vmDispatch = (a: StateVMAction) => {
+    vmActions.push(a);
+  };
+
   region.BuildingSlots.forEach((slot, idx) => {
     const building = slot.Building;
     switch (building.kind) {
@@ -62,7 +68,14 @@ function UpdateGameStateForRegion(tick: number, region: Region) {
         ProduceFromExtractor(building as Extractor, region);
         break;
       case "Lab":
-        ResearchInLab(building as Lab, GameState.Research, GetResearch);
+        ResearchInLab(
+          region.Id,
+          idx,
+          building as Lab,
+          GetResearchState(),
+          vmDispatch,
+          GetResearch
+        );
         break;
       case "Chest":
         UpdateChest(building as Chest, tick);
@@ -77,6 +90,8 @@ function UpdateGameStateForRegion(tick: number, region: Region) {
 
     PushPullFromMainBus(slot, region.Bus);
   });
+
+  applyStateChangeActions(GameState, vmActions);
 }
 
 export function fixInserters(region: { BuildingSlots: BuildingSlot[] }) {

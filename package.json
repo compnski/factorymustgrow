@@ -4,23 +4,21 @@
   "homepage": "https://compnski.github.io/factorymustgrow/",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^11.2.7",
-    "@testing-library/user-event": "^12.8.3",
-    "@types/jest": "^26.0.23",
-    "@types/node": "^12.20.15",
-    "@types/react": "^17.0.11",
-    "@types/react-dom": "^17.0.7",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.1.1",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.4.1",
+    "@types/node": "^16.11.27",
+    "@types/react": "^18.0.5",
+    "@types/react-dom": "^18.0.1",
     "immutable": "^4.0.0-rc.12",
     "material-design-icons": "^3.0.1",
-    "node-sass": "^6.0.0",
     "poisson-process": "^1.0.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-scripts": "^5.0.0",
-    "ts-priority-queue": "^0.1.1",
-    "typescript": "^4.3.2",
-    "web-vitals": "^1.1.2"
+    "react-scripts": "^5.0.1",
+    "saas": "^1.0.0",
+    "sass": "^1.50.1",
+    "typescript": "^4.4.2",
+    "web-vitals": "^2.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -36,10 +34,17 @@
     "check-types": "npx tsc --noEmit"
   },
   "eslintConfig": {
-    "extends": ["react-app", "react-app/jest"]
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
@@ -48,7 +53,7 @@
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.16.0",
-    "gh-pages": "^3.2.0",
+    "gh-pages": "^3.2.3",
     "prettier": "^2.3.1"
   }
 }

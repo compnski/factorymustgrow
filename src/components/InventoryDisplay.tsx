@@ -1,3 +1,4 @@
+import { GetEntity } from "../gen/entities";
 import { ReadonlyItemBuffer } from "../useGameState";
 import "./InventoryDisplay.scss";
 
@@ -59,6 +60,27 @@ function InventorySlot({
   );
 }
 
+function asSlots(
+  items: Readonly<Readonly<[string, number]>[]>
+): [string, number][] {
+  const slots: [string, number][] = [];
+  items.forEach(([entity, count]) => {
+    if (!entity) return;
+    const stackSize = GetEntity(entity).StackSize;
+    if (count === 0) {
+      // empty slots?
+      slots.push([entity, count]);
+      return;
+    }
+    while (count > stackSize) {
+      slots.push([entity, stackSize]);
+      count -= stackSize;
+    }
+    if (count) slots.push([entity, count]);
+  });
+  return slots;
+}
+
 export function InventoryDisplay({
   inventory,
   addClickHandler,
@@ -69,13 +91,14 @@ export function InventoryDisplay({
   const slots: JSX.Element[] = [];
   const allowHover = addClickHandler || remClickHandler;
 
+  const invSlots = asSlots(inventory.Entities());
   const numSlots =
     inventory.Capacity === Infinity
-      ? inventory.Slots().length
-      : Math.max(inventory.Capacity, inventory.Slots().length);
+      ? invSlots.length
+      : Math.max(inventory.Capacity, invSlots.length);
 
   for (let i = 0; i < numSlots; i++) {
-    const slotData = inventory.Slots()[i];
+    const slotData = invSlots[i];
     if (!slotData) {
       slots.push(<div key={i} className="inventory-slot" />);
     } else {
