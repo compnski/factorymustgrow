@@ -37,24 +37,13 @@ export class ReadonlyInventory implements ReadonlyItemBuffer {
   readonly Capacity: number;
   readonly Data: ImmutableMap<string, number>;
 
-  Remove(toStack: EntityStack, count?: number, integersOnly?: boolean): number {
+  Remove(): number {
     throw new Error("NYI");
   }
-  Add(
-    fromStack: EntityStack,
-    count?: number,
-    exceedCapacity?: boolean,
-    integersOnly?: boolean
-  ): number {
+  Add(): number {
     throw new Error("NYI");
   }
-  AddFromItemBuffer(
-    from: ItemBuffer,
-    entity: string,
-    itemCount?: number,
-    exceedCapacity?: boolean,
-    integersOnly?: boolean
-  ): number {
+  AddFromItemBuffer(): number {
     throw new Error("NYI");
   }
 
@@ -79,10 +68,18 @@ export class ReadonlyInventory implements ReadonlyItemBuffer {
     if (count < 0) {
       return this.RemoveItems(entity, -count);
     }
+    const newCount = (this.Count(entity) || 0) + count;
     if (count > this.AvailableSpace(entity)) {
+      // console.log(
+      //   "INAD",
+      //   entity,
+      //   newCount,
+      //   this.AvailableSpace(entity),
+      //   GetEntity(entity).StackSize
+      //      );
       throw new Error("Not enough space for " + entity);
     }
-    const newData = this.Data.set(entity, this.Count(entity) || 0 + count);
+    const newData = this.Data.set(entity, newCount);
 
     return new ReadonlyInventory(this.Capacity, newData, this.immutableSlots);
   }
@@ -95,8 +92,12 @@ export class ReadonlyInventory implements ReadonlyItemBuffer {
     if (this.Count(entity) + count < 0) {
       throw new Error("Not enough " + entity + " in stack");
     }
-    const newData = this.Data.set(entity, this.Count(entity) || 0 + count);
+    const newData = this.Data.set(entity, (this.Count(entity) || 0) - count);
     return new ReadonlyInventory(this.Capacity, newData, this.immutableSlots);
+  }
+
+  HasSlotFor(entity: string): boolean {
+    return this.Data.has(entity);
   }
 
   Count(entity: string): number {
@@ -107,7 +108,8 @@ export class ReadonlyInventory implements ReadonlyItemBuffer {
     let slotsUsed = 0;
     this.Data.forEach((count, entity) => {
       const stackSize = GetEntity(entity).StackSize;
-      slotsUsed += Math.ceil(count / stackSize);
+      if (count == 0 && this.immutableSlots) slotsUsed += 1;
+      else slotsUsed += Math.ceil(count / stackSize);
     });
     return slotsUsed;
   }
@@ -116,7 +118,9 @@ export class ReadonlyInventory implements ReadonlyItemBuffer {
     const stackSize = GetEntity(entity).StackSize,
       availableSlots = this.Capacity - this.SlotsUsed(),
       count = this.Count(entity);
-    if (count) return availableSlots * stackSize + (count % stackSize);
+
+    if (this.HasSlotFor(entity))
+      return availableSlots * stackSize + (stackSize - count);
     return availableSlots * stackSize;
   }
 
@@ -140,11 +144,11 @@ export class Inventory implements ItemBuffer {
     return this.slots.length;
   }
 
-  AddItems(entity: string, count: number): ReadonlyItemBuffer {
+  AddItems(): ReadonlyItemBuffer {
     throw new Error("NYI");
   }
 
-  RemoveItems(entity: string, count: number): ReadonlyItemBuffer {
+  RemoveItems(): ReadonlyItemBuffer {
     throw new Error("NYI");
   }
 

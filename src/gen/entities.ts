@@ -3,6 +3,11 @@ import { Map } from "immutable";
 import { TestEntityList } from "../test_entity_defs";
 import { TestRecipeBook } from "../test_recipe_defs";
 
+export function MaybeGetEntity(name: string): Entity | undefined {
+  const e = Entities.get(name);
+  return e;
+}
+
 export function GetEntity(name: string): Entity {
   const e = Entities.get(name);
   if (!e) throw new Error("Cannot find entity for " + name);

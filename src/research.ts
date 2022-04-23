@@ -1,17 +1,11 @@
 import { AvailableResearchList } from "./availableResearch";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { GetResearch } from "./gen/research";
-import { FixedInventory, ReadonlyFixedInventory } from "./inventory";
+import { ReadonlyFixedInventory } from "./inventory";
 import { StackCapacity } from "./movement";
 import { producableItemsForInput, productionPerTick } from "./productionUtils";
 import { StateVMAction } from "./stateVm";
-import {
-  EntityStack,
-  ItemBuffer,
-  NewEntityStack,
-  Recipe,
-  Research,
-} from "./types";
+import { NewEntityStack, Recipe, Research } from "./types";
 import { ReadonlyItemBuffer, ReadonlyResearchState } from "./useGameState";
 
 export type Lab = {
@@ -20,7 +14,7 @@ export type Lab = {
   RecipeId: string;
   ProducerType: string;
   inputBuffers: ReadonlyItemBuffer;
-  outputBuffers: ResearchOutput;
+  outputBuffers: ReadonlyItemBuffer; //ResearchOutput;
   BuildingCount: number;
 };
 
@@ -41,17 +35,21 @@ export class ResearchOutput implements ReadonlyItemBuffer {
   maxProgress = 0;
 
   constructor(researchId = "", progress = 0, maxProgress = 0) {
-    this.SetResearch(researchId, progress, maxProgress);
-  }
-
-  SetProgress(progress: number) {
-    this.progress = progress;
-  }
-
-  SetResearch(researchId: string, progress: number, maxProgress: number) {
     this.researchId = researchId;
     this.progress = progress;
     this.maxProgress = maxProgress;
+  }
+
+  SetProgress(progress: number): ResearchOutput {
+    return new ResearchOutput(this.researchId, progress, this.maxProgress);
+  }
+
+  SetResearch(
+    researchId: string,
+    progress: number,
+    maxProgress: number
+  ): ResearchOutput {
+    return new ResearchOutput(researchId, progress, maxProgress);
   }
 
   Accepts(entity: string): boolean {
@@ -69,9 +67,13 @@ export class ResearchOutput implements ReadonlyItemBuffer {
     return this.progress;
   }
 
-  AddItems(): ReadonlyItemBuffer {
-    throw new Error("NYI");
+  AddItems(researchId: string, count: number): ReadonlyItemBuffer {
+    if (!researchId) return this.SetResearch(researchId, 0, 0);
+
+    const maxProgress = GetResearch(researchId).ProductionRequiredForCompletion;
+    return this.SetResearch(researchId, this.progress + count, maxProgress);
   }
+
   Remove(): number {
     throw new Error("NYI");
   }
@@ -133,7 +135,13 @@ export function ResearchInLab(
 ): number {
   const currentResearchId = (l.RecipeId = researchState.CurrentResearchId);
   if (!l.RecipeId) {
-    l.outputBuffers.SetResearch("", 0, 0);
+    dispatch({
+      kind: "AddItemCount",
+      address: { regionId, buildingSlot, buffer: "output" },
+      entity: currentResearchId,
+      count: 0,
+    });
+
     return 0;
   }
   const currentResearchProgress =
@@ -150,47 +158,41 @@ export function ResearchInLab(
   //     )
   //   );
   const currentProgress = researchState.Progress.get(currentResearchId);
-  l.outputBuffers.SetResearch(
-    currentResearchId,
-    currentProgress?.Count || 0,
-    research.ProductionRequiredForCompletion
-  );
+  const availableInventorySpace = l.outputBuffers.Accepts(currentResearchId)
+    ? l.outputBuffers.AvailableSpace(currentResearchId)
+    : GetResearch(currentResearchId).ProductionRequiredForCompletion;
 
   const maxProduction = productionPerTick(l, research),
     availableInputs = producableItemsForInput(l.inputBuffers, research.Input),
-    availableInventorySpace = l.outputBuffers.AvailableSpace(currentResearchId),
     actualProduction = Math.min(
       maxProduction,
       availableInputs,
       availableInventorySpace
     );
 
+  // console.log(
+  //   l.outputBuffers.Accepts(currentResearchId),
+  //   GetResearch(currentResearchId).ProductionRequiredForCompletion,
+  //   l.outputBuffers.AvailableSpace(currentResearchId)
+  // );
+
+  // console.log(maxProduction, availableInputs, availableInventorySpace);
+  // console.log("ap", actualProduction);
+
   if (!actualProduction) return 0;
 
   for (const input of research.Input) {
     const entity = input.Entity;
-    const count = l.inputBuffers.Count(entity) - input.Count * actualProduction;
+    const count = input.Count * actualProduction;
 
     dispatch({
-      kind: "SetItemCount",
+      kind: "AddItemCount",
       address: { regionId, buildingSlot, buffer: "input" },
       entity,
-      count,
+      count: -count,
     });
-
-    // const removed = l.inputBuffers.Remove(
-    //   NewEntityStack(input.Entity, 0, Infinity),
-    //   input.Count * actualProduction,
-    //   false
-    // );
-    // if (removed !== input.Count * actualProduction) {
-    //   console.error(l.inputBuffers.Entities());
-    //   throw new Error(
-    //     `Produced without enough input. Missing ${removed} ${input.Entity}`
-    //   );
-    // }
   }
-  //if (actualProduction)
+
   dispatch({
     kind: "SetResearchCount",
     researchId: currentResearchId,
@@ -198,7 +200,12 @@ export function ResearchInLab(
     maxCount: research.ProductionRequiredForCompletion,
   });
 
-  l.outputBuffers.SetProgress(currentResearchProgress + actualProduction || 0);
+  dispatch({
+    kind: "AddItemCount",
+    address: { regionId, buildingSlot, buffer: "output" },
+    entity: currentResearchId,
+    count: actualProduction,
+  });
 
   return actualProduction;
 }

@@ -1,3 +1,4 @@
+import { StateVMAction } from "./stateVm";
 import { EntityStack, ItemBuffer } from "./types";
 import { ReadonlyItemBuffer } from "./useGameState";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
@@ -19,6 +20,50 @@ export function CanPushTo(
           );
         }, true)
   );
+}
+
+export function VMPushToOtherBuilding(
+  dispatch: (a: StateVMAction) => void,
+  regionId: string,
+  outputIdx: number,
+  { outputBuffers }: { outputBuffers: ReadonlyItemBuffer | ItemBuffer },
+  inputIdx: number,
+  { inputBuffers }: { inputBuffers: ReadonlyItemBuffer | ItemBuffer },
+  maxTransferred: number
+) {
+  let remainingMaxTransfer = maxTransferred;
+  outputBuffers.Entities().forEach(([entity]) => {
+    if (inputBuffers.Accepts(entity)) {
+      const transferAmount = Math.min(
+        remainingMaxTransfer,
+        outputBuffers.Count(entity),
+        inputBuffers.AvailableSpace(entity)
+      );
+
+      console.log(
+        "VM PUSH",
+        entity,
+        outputBuffers.Count(entity),
+        inputBuffers.AvailableSpace(entity),
+        inputBuffers.Count(entity),
+        transferAmount
+      );
+
+      remainingMaxTransfer -= transferAmount;
+      dispatch({
+        kind: "AddItemCount",
+        address: { regionId, buildingSlot: inputIdx, buffer: "input" },
+        entity,
+        count: transferAmount,
+      });
+      dispatch({
+        kind: "AddItemCount",
+        address: { regionId, buildingSlot: outputIdx, buffer: "output" },
+        entity,
+        count: -transferAmount,
+      });
+    }
+  });
 }
 
 export function PushToOtherProducer(

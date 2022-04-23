@@ -1,4 +1,4 @@
-import { GetEntity } from "../gen/entities";
+import { GetEntity, MaybeGetEntity } from "../gen/entities";
 import { ReadonlyItemBuffer } from "../useGameState";
 import "./InventoryDisplay.scss";
 
@@ -66,7 +66,7 @@ function asSlots(
   const slots: [string, number][] = [];
   items.forEach(([entity, count]) => {
     if (!entity) return;
-    const stackSize = GetEntity(entity).StackSize;
+    const stackSize = MaybeGetEntity(entity)?.StackSize || Infinity;
     if (count === 0) {
       // empty slots?
       slots.push([entity, count]);

@@ -2,7 +2,7 @@ import { Building, NewBuildingSlot } from "./building";
 import { NewInserter } from "./inserter";
 import { MainBus } from "./mainbus";
 import { PushPullFromMainBus } from "./MainBusMovement";
-import { PushToOtherProducer } from "./movement";
+import { PushToOtherProducer, VMPushToOtherBuilding } from "./movement";
 import {
   Extractor,
   Factory,
@@ -10,6 +10,9 @@ import {
   NewFactory,
   UpdateBuildingRecipe,
 } from "./production";
+import { NewLab } from "./research";
+import { NewChest } from "./storage";
+import { AddItemsToReadonlyFixedBuffer } from "./test_utils";
 import {
   BeltConnection,
   EntityStack,
@@ -34,6 +37,78 @@ function NewTestExtractor(r: string, count: number = 1): Extractor {
   UpdateBuildingRecipe(factory, r);
   return factory;
 }
+
+fdescribe("VMPushToOtherBuilding", () => {
+  function TestMovement(
+    from: any,
+    to: any,
+    maxMoved: number,
+    expected: {
+      outputBuffers: EntityStack[];
+      inputBuffers: EntityStack[];
+    }
+  ) {
+    const vmDispatch = jest.fn();
+    VMPushToOtherBuilding(vmDispatch, "testRegion", 0, from, 1, to, maxMoved);
+
+    // Check InputBuffers
+    for (const expectedInput of expected.inputBuffers) {
+      expect(vmDispatch).toHaveBeenCalledWith({
+        address: { regionId: "testRegion", buildingSlot: 1, buffer: "input" },
+        count: expectedInput.Count,
+        entity: expectedInput.Entity,
+        kind: "AddItemCount",
+      });
+    }
+
+    // Check OutputBuffers
+    for (const expectedOutput of expected.outputBuffers) {
+      expect(vmDispatch).toHaveBeenCalledWith({
+        address: { regionId: "testRegion", buildingSlot: 0, buffer: "output" },
+        count: expectedOutput.Count,
+        entity: expectedOutput.Entity,
+        kind: "AddItemCount",
+      });
+    }
+  }
+
+  it("Moves between Chest to Lab", () => {
+    const fromChest = NewChest({ subkind: "iron-chest" }, 4, [
+        NewEntityStack("automation-science-pack", 10),
+      ]),
+      toLab = NewLab(1);
+
+    TestMovement(fromChest, toLab, 3, {
+      outputBuffers: [NewEntityStack("automation-science-pack", -3)],
+      inputBuffers: [NewEntityStack("automation-science-pack", 3)],
+    });
+  });
+
+  it("Won't move more than exists from Chest to Lab", () => {
+    const fromChest = NewChest({ subkind: "iron-chest" }, 4, [
+        NewEntityStack("automation-science-pack", 1),
+      ]),
+      toLab = NewLab(1);
+
+    TestMovement(fromChest, toLab, 3, {
+      outputBuffers: [],
+      inputBuffers: [],
+    });
+  });
+
+  fit("Won't move more than fits from Chest to Lab", () => {
+    const fromChest = NewChest({ subkind: "iron-chest" }, 1, [
+        NewEntityStack("automation-science-pack", 10),
+      ]),
+      toLab = NewLab(1);
+    toLab.inputBuffers = AddItemsToReadonlyFixedBuffer(toLab.inputBuffers, 199);
+
+    TestMovement(fromChest, toLab, 3, {
+      outputBuffers: [NewEntityStack("automation-science-pack", -1)],
+      inputBuffers: [NewEntityStack("automation-science-pack", 1)],
+    });
+  });
+});
 
 describe("PushToOtherProducer", () => {
   function TestMovement(
@@ -124,22 +199,23 @@ describe("PushPullFromMainBus", () => {
       busCounts: Map<number, number>;
     }
   ) {
+    const dispatch = jest.fn();
     const building = slot.Building;
-    PushPullFromMainBus(slot, bus);
+    PushPullFromMainBus(dispatch, slot, bus);
 
-    for (var expectedOutput of expected.outputBuffers) {
+    for (const expectedOutput of expected.outputBuffers) {
       expect(building.outputBuffers.Count(expectedOutput.Entity)).toBe(
         expectedOutput.Count
       );
     }
 
-    for (var [beltId, count] of expected.busCounts) {
+    for (const [beltId, count] of expected.busCounts) {
       const lane = bus.lanes.get(beltId),
         entity = lane?.Entities()[0][0] || "";
       expect(lane?.Count(entity)).toBe(count);
     }
 
-    for (var expectedInput of expected.inputBuffers) {
+    for (const expectedInput of expected.inputBuffers) {
       expect(building.inputBuffers.Count(expectedInput.Entity)).toBe(
         expectedInput.Count
       );
@@ -187,6 +263,39 @@ describe("PushPullFromMainBus", () => {
         [3, 9],
       ]),
       outputBuffers: [NewEntityStack("test-item", 4)],
+    });
+  });
+
+  it("Moves between Lab and MainBus", () => {
+    const mb = new MainBus();
+    const testItemLane = mb.AddLane("automation-science-pack", 10);
+    const lab = NewLab(1);
+    lab.inputBuffers = AddItemsToReadonlyFixedBuffer(lab.inputBuffers, 10);
+
+    const slot = NewBuildingSlot(lab, 3);
+
+    slot.BeltConnections = [
+      {
+        direction: "TO_BUS",
+        laneId: testItemLane,
+        Inserter: NewInserter(1, "TO_BUS"),
+      },
+      {
+        direction: "FROM_BUS",
+        laneId: 2,
+        Inserter: NewInserter(1, "FROM_BUS"),
+      },
+      {
+        direction: "FROM_BUS",
+        laneId: 3,
+        Inserter: NewInserter(1, "FROM_BUS"),
+      },
+    ];
+
+    TestMovement(slot, mb, {
+      inputBuffers: [NewEntityStack("automation-science-pack", 1)],
+      busCounts: new Map([[testItemLane, 9]]),
+      outputBuffers: [],
     });
   });
 });

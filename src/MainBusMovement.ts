@@ -1,5 +1,6 @@
 import { InserterTransferRate } from "./inserter";
 import { MainBus } from "./mainbus";
+import { StateVMAction } from "./stateVm";
 import { BeltConnection, CountRemover, EntityStack, ItemBuffer } from "./types";
 
 interface Adder extends CountRemover {
@@ -26,6 +27,7 @@ export type MainBusConnection = {
 };
 
 export function PushPullFromMainBus(
+  dispatch: (a: StateVMAction) => void,
   slot: { Building: MainBusConnector; BeltConnections: BeltConnection[] },
   mb: MainBus
 ) {

@@ -1,5 +1,6 @@
 import { Building } from "./building";
-import { PushToOtherProducer } from "./movement";
+import { PushToOtherProducer, VMPushToOtherBuilding } from "./movement";
+import { StateVMAction } from "./stateVm";
 
 export type Inserter = {
   kind: "Inserter";
@@ -26,24 +27,48 @@ export function InserterTransferRate(i: Inserter): number {
 }
 
 export function MoveViaInserter(
+  dispatch: (a: StateVMAction) => void,
+  regionId: string,
   i: Inserter,
+  currentBuildingSlot: number,
   currentBuilding: Building,
   nextBuilding: Building
 ) {
-  if (currentBuilding.kind == "Lab" || nextBuilding.kind == "Lab") return;
   if (InserterTransferRate(i) > 0) {
     if (i.direction === "DOWN") {
-      PushToOtherProducer(
-        currentBuilding,
-        nextBuilding,
-        InserterTransferRate(i)
-      );
+      if (currentBuilding.kind == "Lab" || nextBuilding.kind == "Lab")
+        VMPushToOtherBuilding(
+          dispatch,
+          regionId,
+          currentBuildingSlot,
+          currentBuilding,
+          currentBuildingSlot + 1,
+          nextBuilding,
+          InserterTransferRate(i)
+        );
+      else
+        PushToOtherProducer(
+          currentBuilding,
+          nextBuilding,
+          InserterTransferRate(i)
+        );
     } else if (i.direction === "UP") {
-      PushToOtherProducer(
-        nextBuilding,
-        currentBuilding,
-        InserterTransferRate(i)
-      );
+      if (currentBuilding.kind == "Lab" || nextBuilding.kind == "Lab")
+        VMPushToOtherBuilding(
+          dispatch,
+          regionId,
+          currentBuildingSlot + 1,
+          nextBuilding,
+          currentBuildingSlot,
+          currentBuilding,
+          InserterTransferRate(i)
+        );
+      else
+        PushToOtherProducer(
+          nextBuilding,
+          currentBuilding,
+          InserterTransferRate(i)
+        );
     }
   }
 }

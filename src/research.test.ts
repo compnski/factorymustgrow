@@ -17,14 +17,12 @@ describe("Labs", () => {
     }
   ) {
     const vmDispatch = jest.fn();
-    //for (let i = 0; i < TicksPerSecond; i++) {
 
     ResearchInLab("testRegion", 0, lab, researchState, vmDispatch, (id) => {
       const r = TestResearchBook.get(id);
       if (!r) throw new Error("Failed to find id");
       return r;
     });
-    //}
 
     const r = TestResearchBook.get(expected.recipeId);
     expect(lab.RecipeId).toBe(expected.recipeId);
@@ -37,7 +35,7 @@ describe("Labs", () => {
         address: { regionId: "testRegion", buildingSlot: 0, buffer: "input" },
         count: expectedInput.Count,
         entity: expectedInput.Entity,
-        kind: "SetItemCount",
+        kind: "AddItemCount",
       });
     }
 
@@ -48,9 +46,17 @@ describe("Labs", () => {
         researchId: expectedOutput.Entity,
         kind: "SetResearchCount",
       });
-      expect(lab.outputBuffers.Count(expectedOutput.Entity)).toBe(
-        expectedOutput.Count
-      );
+
+      expect(vmDispatch).toHaveBeenCalledWith({
+        address: { regionId: "testRegion", buildingSlot: 0, buffer: "output" },
+        count: expectedOutput.Count,
+        entity: expectedOutput.Entity,
+        kind: "AddItemCount",
+      });
+
+      // expect(lab.outputBuffers.Count(expectedOutput.Entity)).toBe(
+      //   expectedOutput.Count
+      // );
     }
   }
 
@@ -68,9 +74,8 @@ describe("Labs", () => {
       outputBuffers: [NewEntityStack("test-research", 1)],
       recipeId: "test-research",
       inputBuffers: [
-        NewEntityStack("automation-science-pack", 9),
-        NewEntityStack("logistic-science-pack", 9),
-        //        NewEntityStack("production-science-pack", 10),
+        NewEntityStack("automation-science-pack", -1),
+        NewEntityStack("logistic-science-pack", -1),
       ],
       progress: [NewEntityStack("test-research", 1)],
     });

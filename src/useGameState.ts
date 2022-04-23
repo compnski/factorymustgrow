@@ -11,6 +11,7 @@ import { GetRegionInfo } from "./region";
 import { BeltLine, BeltLineDepot } from "./transport";
 import {
   BeltConnection,
+  CountRemover,
   EntityStack,
   ItemBuffer,
   NewEntityStack,
@@ -37,7 +38,7 @@ export type ReadonlyItemBuffer = {
     integersOnly?: boolean
   ): number;
   AddFromItemBuffer(
-    from: ItemBuffer,
+    from: CountRemover,
     entity: string,
     itemCount?: number,
     exceedCapacity?: boolean,
@@ -124,6 +125,7 @@ export const initialFactoryGameState = () => ({
     NewEntityStack(GetEntity("transport-belt"), 100),
     NewEntityStack(GetEntity("inserter"), 50),
     NewEntityStack(GetEntity("iron-chest"), 5),
+    NewEntityStack(GetEntity("automation-science-pack"), 100),
   ]),
   Regions: new Map([["region0", NewRegionFromInfo(GetRegionInfo("region0"))]]),
   BeltLines: new Map(),

@@ -1,3 +1,6 @@
+import { Entities } from "./gen/entities";
+import { Inventory, ReadonlyInventory } from "./inventory";
+import { ResearchOutput } from "./research";
 import { NewEntityStack } from "./types";
 import { FactoryGameState, ResearchState } from "./useGameState";
 
@@ -34,15 +37,15 @@ export type StateVMAction =
   | TransferItemAction
   | SetResearchCountAction
   | SetCurrentResearchAction
-  | SetItemAction
   | AddItemAction;
+//  | SetItemAction
 
-type SetItemAction = {
-  kind: "SetItemCount";
-  address: StateAddress;
-  entity: string;
-  count: number;
-};
+// type SetItemAction = {
+//   kind: "SetItemCount";
+//   address: StateAddress;
+//   entity: string;
+//   count: number;
+// };
 
 type AddItemAction = {
   kind: "AddItemCount";
@@ -95,10 +98,10 @@ function applyStateChangeAction(
     case "SetCurrentResearch":
       state.Research = stateChangeSetCurrentResearch(state.Research, action);
       return state;
-    case "SetItemCount":
-      return stateChangeSetItemCount(state, action);
-    // case "AddItemCount":
-    //   return stateChangeAddItemCount(state, action);
+    // case "SetItemCount":
+    //      return stateChangeSetItemCount(state, action);
+    case "AddItemCount":
+      return stateChangeAddItemCount(state, action);
 
     default:
       throw new Error("Unknown action kind: " + action);
@@ -148,9 +151,9 @@ function stateChangeTransferItems(
   return gs;
 }
 
-function stateChangeSetItemCount(
+function stateChangeAddItemCount(
   state: FactoryGameState,
-  action: SetItemAction
+  action: AddItemAction
 ): FactoryGameState {
   const { address, count, entity } = action;
   if (isMainBusAddress(address)) {
@@ -159,6 +162,36 @@ function stateChangeSetItemCount(
     const { regionId, buildingSlot, buffer } = address;
     const region = state.Regions.get(regionId);
     const building = region?.BuildingSlots[buildingSlot].Building;
+    if (building) {
+      if (buffer == "input")
+        if (building.inputBuffers instanceof Inventory) {
+          building.inputBuffers.Add(NewEntityStack(entity, count), Infinity);
+        } else if (building.inputBuffers instanceof ReadonlyInventory) {
+          building.inputBuffers = building.inputBuffers.AddItems(entity, count);
+        }
+      if (buffer == "output")
+        if (building.outputBuffers instanceof Inventory) {
+          if (count > 0)
+            building.outputBuffers.Add(NewEntityStack(entity, count), Infinity);
+          else
+            building.outputBuffers.Remove(
+              NewEntityStack(entity, 0, Infinity),
+              -count,
+              false
+            );
+        } else if (
+          building.outputBuffers instanceof ReadonlyInventory ||
+          building.outputBuffers instanceof ResearchOutput
+        ) {
+          building.outputBuffers = building.outputBuffers.AddItems(
+            entity,
+            count
+          );
+        }
+
+      region.BuildingSlots[buildingSlot].Building = building;
+      state.Regions.set(regionId, region);
+    }
   } else if (isInventoryAddress(address)) {
     //state.Inventory.
   } else {

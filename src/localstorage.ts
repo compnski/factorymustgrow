@@ -1,5 +1,5 @@
 import { CurrentGameStateVersion, FactoryGameState } from "./useGameState";
-import { Inventory } from "./inventory";
+import { Inventory, ReadonlyInventory } from "./inventory";
 import { MainBus } from "./mainbus";
 import { ResearchOutput } from "./research";
 import { NewChest } from "./storage";
@@ -50,6 +50,13 @@ const replacer = (key: string, value: any): any => {
         slots: value.slots,
         immutableSlots: value.immutableSlots,
       }
+    : value instanceof ReadonlyInventory
+    ? {
+        dataType: "ReadonlyInventory",
+        maxCapacity: value.Capacity,
+        Data: [...value.Data.entries()],
+        immutableSlots: value.immutableSlots,
+      }
     : value instanceof ResearchOutput
     ? {
         dataType: "ResearchOutput",
@@ -77,6 +84,12 @@ const reviver = (key: string, value: any): any => {
     ? new MainBus(value.nextId, value.lanes)
     : value.dataType === "Inventory"
     ? new Inventory(value.maxCapacity, value.slots, value.immutableSlots)
+    : value.dataType === "ReadonlyInventory"
+    ? new ReadonlyInventory(
+        value.maxCapacity,
+        ImmutableMap(value.Data),
+        value.immutableSlots
+      )
     : value.dataType === "ResearchOutput"
     ? new ResearchOutput(value.researchId, value.progress, value.maxProgress)
     : value.kind === "Chest"

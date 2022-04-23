@@ -15,7 +15,6 @@ export function NewChest(
   size = 4,
   initialContents: EntityStack[] = []
 ): Chest {
-  console.log("new chest");
   const sharedStorage = new Inventory(size);
   initialContents.forEach((es) => sharedStorage.Add(es));
   return {

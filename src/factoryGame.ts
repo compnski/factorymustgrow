@@ -55,6 +55,7 @@ function UpdateGameStateForRegion(tick: number, region: Region) {
 
   const vmActions: StateVMAction[] = [];
   const vmDispatch = (a: StateVMAction) => {
+    console.log(a);
     vmActions.push(a);
   };
 
@@ -83,12 +84,15 @@ function UpdateGameStateForRegion(tick: number, region: Region) {
 
     if (idx < region.BuildingSlots.length - 1)
       MoveViaInserter(
+        vmDispatch,
+        region.Id,
         slot.Inserter,
+        idx,
         region.BuildingSlots[idx].Building,
         region.BuildingSlots[idx + 1].Building
       );
 
-    if (building.kind != "Lab") PushPullFromMainBus(slot, region.Bus);
+    PushPullFromMainBus(vmDispatch, slot, region.Bus);
   });
 
   applyStateChangeActions(GameState, vmActions);
