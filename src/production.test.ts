@@ -1,17 +1,13 @@
 import { TicksPerSecond } from "./constants";
 import {
-  AddProgressTracker,
   Extractor,
   Factory,
   NewExtractor,
   NewFactory,
   ProduceFromExtractor,
   ProduceFromFactory,
-  RemoveProgressTracker,
-  TickProgressTracker,
   UpdateBuildingRecipe,
 } from "./production";
-import { TestRecipeBook } from "./test_recipe_defs";
 import { AddItemsToFixedBuffer } from "./test_utils";
 import { EntityStack, NewEntityStack, NewRegion, Region } from "./types";
 
@@ -30,105 +26,48 @@ function NewTestExtractor(r: string, count = 1): Extractor {
 function NewTestRegion(ore: EntityStack[]): Region {
   return NewRegion("start", 2, 2, 2, ore, []);
 }
-
-describe("Progress Trackers", () => {
-  function tracker(
-    count = 1,
-    trackers: number[] = []
-  ): {
-    progressTrackers: number[];
-    BuildingCount: number;
-  } {
-    return { progressTrackers: trackers, BuildingCount: count };
-  }
-
-  describe("Adding", () => {
-    it("Adds a first tracker", () => {
-      const t = tracker(1, []);
-      expect(AddProgressTracker(t, 5)).toBe(1);
-      expect(t.progressTrackers.length).toBe(1);
-      expect(t.progressTrackers[0]).toBe(5);
-    });
-
-    it("Adds an additional tracker", () => {
-      const t = tracker(2, [1]);
-      expect(AddProgressTracker(t, 2)).toBe(1);
-      expect(t.progressTrackers.length).toBe(2);
-      expect(t.progressTrackers[0]).toBe(1);
-      expect(t.progressTrackers[1]).toBe(2);
-    });
-
-    it("Won't add trackers past the BuildingCount", () => {
-      const t = tracker(2, [1, 2]);
-      expect(t.progressTrackers.length).toBe(2);
-      expect(AddProgressTracker(t, 3)).toBe(0);
-      expect(t.progressTrackers.length).toBe(2);
-    });
-  });
-
-  describe("Removing", () => {
-    it("Try removing an empty tracker", () => {
-      const t = tracker(2, []);
-      expect(RemoveProgressTracker(t)).toBe(0);
-    });
-
-    it("Removes only tracker", () => {
-      const t = tracker(2, [1]);
-      expect(RemoveProgressTracker(t)).toBe(1);
-      expect(t.progressTrackers.length).toBe(0);
-    });
-
-    it("Removes last tracker", () => {
-      const t = tracker(3, [1, 2, 3]);
-      expect(RemoveProgressTracker(t)).toBe(1);
-      expect(t.progressTrackers.length).toBe(2);
-      expect(t.progressTrackers[1]).toBe(2);
-    });
-  });
-
-  describe("Ticks", () => {
-    it("Does nothing when there are no expiring trackers", () => {
-      const t = tracker(3, [1, 2, 3]);
-      expect(TickProgressTracker(t, 5, 5, Infinity)).toBe(0);
-      expect(t.progressTrackers.length).toBe(3);
-    });
-
-    it("Returns a count of expiring trackers and removes them", () => {
-      const t = tracker(3, [1, 2, 3]);
-      expect(TickProgressTracker(t, 7, 5, Infinity)).toBe(2);
-      expect(t.progressTrackers.length).toBe(1);
-      expect(t.progressTrackers[0]).toBe(3);
-    });
-
-    it("Only removes up to maxRemoved trackers", () => {
-      const t = tracker(3, [1, 2, 3]);
-      expect(TickProgressTracker(t, 7, 5, 1)).toBe(1);
-      expect(t.progressTrackers.length).toBe(2);
-      expect(t.progressTrackers[0]).toBe(2);
-    });
-  });
-});
 describe("Factories", () => {
   function TestFactory(
     factory: Factory,
     expected: {
       outputBuffers: EntityStack[];
       inputBuffers: EntityStack[];
+      productionCount: number;
     }
   ) {
-    [0, 1000].forEach((tick) => {
-      ProduceFromFactory(factory, tick);
+    const vmDispatch = jest.fn();
+    //    vmDispatch.mockImplementation(console.log);
+    const buildingAddress = { regionId: "testRegion", buildingSlot: 0 };
+
+    ProduceFromFactory(factory, vmDispatch, buildingAddress, 0);
+
+    for (const expectedInput of expected.inputBuffers) {
+      expect(factory.inputBuffers.Count(expectedInput.Entity)).toBe(
+        expectedInput.Count
+      );
+    }
+    for (let i = 0; i < expected.productionCount; i++)
+      expect(vmDispatch).toHaveBeenCalledWith({
+        address: { regionId: "testRegion", buildingSlot: 0 },
+        count: 1,
+        currentTick: 0,
+        kind: "AddProgressTrackers",
+      });
+
+    factory.progressTrackers = new Array(expected.productionCount).fill(0);
+
+    ProduceFromFactory(factory, vmDispatch, buildingAddress, 1000);
+
+    expect(vmDispatch).toHaveBeenCalledWith({
+      address: { regionId: "testRegion", buildingSlot: 0 },
+      count: -expected.productionCount,
+      currentTick: 1000,
+      kind: "AddProgressTrackers",
     });
 
     for (const expectedOutput of expected.outputBuffers) {
       expect(factory.outputBuffers.Count(expectedOutput.Entity)).toBe(
         expectedOutput.Count
-      );
-    }
-
-    for (const expectedInput of expected.inputBuffers) {
-      expect(factory.inputBuffers.Count(expectedInput.Entity)).toBe(
-        expectedInput.Count
       );
     }
   }
@@ -139,6 +78,7 @@ describe("Factories", () => {
     AddItemsToFixedBuffer(factory.outputBuffers, 1);
 
     TestFactory(factory, {
+      productionCount: 1,
       outputBuffers: [NewEntityStack("test-item", 2)],
       inputBuffers: [
         NewEntityStack("test-ore", 8),
@@ -147,11 +87,12 @@ describe("Factories", () => {
     });
   });
 
-  it("Produces three item", () => {
+  fit("Produces three item", () => {
     const factory = NewTestFactory("test-item", 3);
     AddItemsToFixedBuffer(factory.inputBuffers, 10);
 
     TestFactory(factory, {
+      productionCount: 3,
       outputBuffers: [NewEntityStack("test-item", 3)],
       inputBuffers: [
         NewEntityStack("test-ore", 4),
@@ -179,6 +120,7 @@ describe("Factories", () => {
     AddItemsToFixedBuffer(factory.inputBuffers, 2);
 
     TestFactory(factory, {
+      productionCount: 1,
       outputBuffers: [NewEntityStack("test-item", 0)],
       inputBuffers: [
         NewEntityStack("test-ore", 2),
@@ -193,6 +135,7 @@ describe("Factories", () => {
     AddItemsToFixedBuffer(factory.outputBuffers, Infinity);
 
     TestFactory(factory, {
+      productionCount: 0,
       outputBuffers: [NewEntityStack("test-item", 50)],
       inputBuffers: [
         NewEntityStack("test-ore", 8),
@@ -207,6 +150,7 @@ describe("Factories", () => {
     AddItemsToFixedBuffer(factory.outputBuffers, 49);
 
     TestFactory(factory, {
+      productionCount: 1,
       outputBuffers: [NewEntityStack("test-item", 49)],
       inputBuffers: [NewEntityStack("test-ore", 8)],
     });

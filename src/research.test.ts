@@ -4,7 +4,9 @@ import { TestResearchBook } from "./test_research_defs";
 import { AddItemsToReadonlyFixedBuffer as AddItemsToFixedBuffer } from "./test_utils";
 import { EntityStack, NewEntityStack } from "./types";
 import { ReadonlyResearchState } from "./useGameState";
-
+// TODO: Need tests that work with progress trackers
+// maybe call state update
+// maybe split tests
 describe("Labs", () => {
   function TestLab(
     lab: Lab,
@@ -17,8 +19,9 @@ describe("Labs", () => {
     }
   ) {
     const vmDispatch = jest.fn();
-
-    ResearchInLab("testRegion", 0, lab, researchState, vmDispatch, (id) => {
+    //vmDispatch.mockImplementation(console.log);
+    const labAddress = { regionId: "testRegion", buildingSlot: 0 };
+    ResearchInLab(0, labAddress, lab, researchState, vmDispatch, (id) => {
       const r = TestResearchBook.get(id);
       if (!r) throw new Error("Failed to find id");
       return r;
@@ -27,24 +30,48 @@ describe("Labs", () => {
     const r = TestResearchBook.get(expected.recipeId);
     expect(lab.RecipeId).toBe(expected.recipeId);
 
-    for (const expectedInput of expected.inputBuffers) {
-      // expect(lab.inputBuffers.Count(expectedInput.Entity)).toBe(
-      //   expectedInput.Count
-      // );
+    const count = -expected.inputBuffers[0]?.Count;
+
+    if (count) {
       expect(vmDispatch).toHaveBeenCalledWith({
-        address: { regionId: "testRegion", buildingSlot: 0, buffer: "input" },
-        count: expectedInput.Count,
-        entity: expectedInput.Entity,
-        kind: "AddItemCount",
+        address: { regionId: "testRegion", buildingSlot: 0 },
+        count,
+        currentTick: 0,
+        kind: "AddProgressTrackers",
       });
+
+      for (const expectedInput of expected.inputBuffers) {
+        expect(vmDispatch).toHaveBeenCalledWith({
+          address: { regionId: "testRegion", buildingSlot: 0, buffer: "input" },
+          count: expectedInput.Count,
+          entity: expectedInput.Entity,
+          kind: "AddItemCount",
+        });
+      }
     }
+    // TODO: progress trackers?
+    lab.progressTrackers = new Array(count).fill(0);
+
+    ResearchInLab(1000, labAddress, lab, researchState, vmDispatch, (id) => {
+      const r = TestResearchBook.get(id);
+      if (!r) throw new Error("Failed to find id");
+      return r;
+    });
+
+    if (count)
+      expect(vmDispatch).toHaveBeenCalledWith({
+        address: { regionId: "testRegion", buildingSlot: 0 },
+        count: -count,
+        currentTick: 1000,
+        kind: "AddProgressTrackers",
+      });
 
     for (const expectedOutput of expected.outputBuffers) {
       expect(vmDispatch).toHaveBeenCalledWith({
         count: expectedOutput.Count,
         maxCount: r?.ProductionRequiredForCompletion,
         researchId: expectedOutput.Entity,
-        kind: "SetResearchCount",
+        kind: "AddResearchCount",
       });
 
       expect(vmDispatch).toHaveBeenCalledWith({
@@ -65,7 +92,7 @@ describe("Labs", () => {
     Progress: ImmutableMap<string, EntityStack>(),
   });
 
-  it("Produces a single item", () => {
+  fit("Produces a single item", () => {
     const lab = NewLab(1);
 
     lab.inputBuffers = AddItemsToFixedBuffer(lab.inputBuffers, 10);

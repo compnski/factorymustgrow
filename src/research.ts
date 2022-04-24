@@ -1,10 +1,11 @@
+import { AddProgressTrackers, TickProgressTracker } from "./AddProgressTracker";
 import { AvailableResearchList } from "./availableResearch";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { GetResearch } from "./gen/research";
 import { ReadonlyFixedInventory } from "./inventory";
 import { StackCapacity } from "./movement";
-import { producableItemsForInput, productionPerTick } from "./productionUtils";
-import { StateVMAction } from "./stateVm";
+import { productionRunsForInput, productionPerTick } from "./productionUtils";
+import { BuildingAddress, StateVMAction } from "./stateVm";
 import { NewEntityStack, Recipe, Research } from "./types";
 import { ReadonlyItemBuffer, ReadonlyResearchState } from "./useGameState";
 
@@ -16,6 +17,7 @@ export type Lab = {
   inputBuffers: ReadonlyItemBuffer;
   outputBuffers: ReadonlyItemBuffer; //ResearchOutput;
   BuildingCount: number;
+  progressTrackers: Readonly<number[]>;
 };
 
 // TODO Only show science packs that you have access to
@@ -38,10 +40,6 @@ export class ResearchOutput implements ReadonlyItemBuffer {
     this.researchId = researchId;
     this.progress = progress;
     this.maxProgress = maxProgress;
-  }
-
-  SetProgress(progress: number): ResearchOutput {
-    return new ResearchOutput(this.researchId, progress, this.maxProgress);
   }
 
   SetResearch(
@@ -68,10 +66,11 @@ export class ResearchOutput implements ReadonlyItemBuffer {
   }
 
   AddItems(researchId: string, count: number): ReadonlyItemBuffer {
-    if (!researchId) return this.SetResearch(researchId, 0, 0);
+    if (!count) return this.SetResearch(researchId, 0, 0);
 
+    // TODO: Use Set item if added?
     const maxProgress = GetResearch(researchId).ProductionRequiredForCompletion;
-    return this.SetResearch(researchId, this.progress + count, maxProgress);
+    return this.SetResearch(researchId, count, maxProgress);
   }
 
   Remove(): number {
@@ -97,7 +96,7 @@ export class ResearchOutput implements ReadonlyItemBuffer {
     return this.Entities().length;
   }
 
-  Capacity = 0;
+  Capacity = 1;
 }
 
 export function NewLab(initialProduceCount = 0): Lab {
@@ -111,6 +110,7 @@ export function NewLab(initialProduceCount = 0): Lab {
     ),
     RecipeId: "",
     BuildingCount: initialProduceCount,
+    progressTrackers: [],
   };
 }
 
@@ -121,13 +121,13 @@ export function IsResearchComplete(
     researchState.CurrentResearchId
   );
   if (researchProgress)
-    return researchProgress.Count === researchProgress.MaxCount;
+    return researchProgress.Count >= (researchProgress.MaxCount || Infinity);
   return false;
 }
 
 export function ResearchInLab(
-  regionId: string,
-  buildingSlot: number,
+  currentTick: number,
+  labAddress: BuildingAddress,
   l: Lab,
   researchState: ReadonlyResearchState,
   dispatch: (a: StateVMAction) => void,
@@ -135,76 +135,84 @@ export function ResearchInLab(
 ): number {
   const currentResearchId = (l.RecipeId = researchState.CurrentResearchId);
   if (!l.RecipeId) {
-    dispatch({
-      kind: "AddItemCount",
-      address: { regionId, buildingSlot, buffer: "output" },
-      entity: currentResearchId,
-      count: 0,
-    });
-
+    if (!l.outputBuffers.Accepts("")) {
+      console.log(l.progressTrackers);
+      // TODO: We should clear all progress trackers and refund resources (from previous recipe if possible, but i dont think we know it anymore here)
+      dispatch({
+        kind: "AddItemCount",
+        address: { ...labAddress, buffer: "output" },
+        entity: currentResearchId,
+        count: 0,
+      });
+    }
     return 0;
   }
   const currentResearchProgress =
     researchState.Progress.get(currentResearchId)?.Count || 0;
   const research = GetResearch(l.RecipeId);
+  // TODO: This should be global, otherwise we overproduce
+  const existingProgressTrackerCount = l.progressTrackers.length;
+  const remainingResearchProgress = Math.max(
+    0,
+    research.ProductionRequiredForCompletion -
+      currentResearchProgress -
+      existingProgressTrackerCount
+  );
 
-  // if (!researchState.Progress.has(currentResearchId))
-  //   researchState.Progress.set(
-  //     currentResearchId,
-  //     NewEntityStack(
-  //       currentResearchId,
-  //       0,
-  //       research.ProductionRequiredForCompletion
-  //     )
-  //   );
-  const currentProgress = researchState.Progress.get(currentResearchId);
-  const availableInventorySpace = l.outputBuffers.Accepts(currentResearchId)
-    ? l.outputBuffers.AvailableSpace(currentResearchId)
-    : GetResearch(currentResearchId).ProductionRequiredForCompletion;
+  let productionRunsRemaining = productionRunsForInput(
+    l.inputBuffers,
+    research.Input
+  );
+  // Check empty factories
+  const emptyFactoriesToStart = Math.min(
+    remainingResearchProgress,
+    productionRunsRemaining,
+    Math.max(l.BuildingCount - l.progressTrackers.length, 0)
+  );
 
-  const maxProduction = productionPerTick(l, research),
-    availableInputs = producableItemsForInput(l.inputBuffers, research.Input),
-    actualProduction = Math.min(
-      maxProduction,
-      availableInputs,
-      availableInventorySpace
-    );
-
-  // console.log(
-  //   l.outputBuffers.Accepts(currentResearchId),
-  //   GetResearch(currentResearchId).ProductionRequiredForCompletion,
-  //   l.outputBuffers.AvailableSpace(currentResearchId)
-  // );
-
-  // console.log(maxProduction, availableInputs, availableInventorySpace);
-  // console.log("ap", actualProduction);
+  const addedTrackers = AddProgressTrackers(
+    dispatch,
+    labAddress,
+    l,
+    currentTick,
+    emptyFactoriesToStart
+  );
+  productionRunsRemaining -= addedTrackers;
+  // Consume resources
+  if (addedTrackers) {
+    for (const input of research.Input) {
+      dispatch({
+        kind: "AddItemCount",
+        entity: input.Entity,
+        count: -input.Count * addedTrackers,
+        address: { ...labAddress, buffer: "input" },
+      });
+    }
+  }
+  const actualProduction = TickProgressTracker(
+    dispatch,
+    labAddress,
+    l,
+    currentTick,
+    research.DurationSeconds * 1000,
+    research.ProductionRequiredForCompletion - currentResearchProgress
+  );
 
   if (!actualProduction) return 0;
 
-  for (const input of research.Input) {
-    const entity = input.Entity;
-    const count = input.Count * actualProduction;
-
-    dispatch({
-      kind: "AddItemCount",
-      address: { regionId, buildingSlot, buffer: "input" },
-      entity,
-      count: -count,
-    });
-  }
-
   dispatch({
-    kind: "SetResearchCount",
+    kind: "AddResearchCount",
     researchId: currentResearchId,
-    count: currentResearchProgress + actualProduction,
+    count: actualProduction,
     maxCount: research.ProductionRequiredForCompletion,
   });
 
   dispatch({
+    // TODO: Use SetItem once it exists?
     kind: "AddItemCount",
-    address: { regionId, buildingSlot, buffer: "output" },
+    address: { ...labAddress, buffer: "output" },
     entity: currentResearchId,
-    count: actualProduction,
+    count: currentResearchProgress + actualProduction,
   });
 
   return actualProduction;

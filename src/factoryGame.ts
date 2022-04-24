@@ -60,18 +60,19 @@ function UpdateGameStateForRegion(tick: number, region: Region) {
   };
 
   region.BuildingSlots.forEach((slot, idx) => {
+    const address = { regionId: region.Id, buildingSlot: idx };
     const building = slot.Building;
     switch (building.kind) {
       case "Factory":
-        ProduceFromFactory(building as Factory, tick);
+        ProduceFromFactory(building as Factory, vmDispatch, address, tick);
         break;
       case "Extractor":
         ProduceFromExtractor(building as Extractor, region);
         break;
       case "Lab":
         ResearchInLab(
-          region.Id,
-          idx,
+          tick,
+          address,
           building as Lab,
           GetResearchState(),
           vmDispatch,

@@ -205,6 +205,7 @@ export class Inventory implements ItemBuffer {
       if (idx !== undefined) {
         entityCountList[idx][1] += s.Count;
       } else {
+        entityToIdx[s.Entity] = entityCountList.length;
         entityCountList.push([s.Entity, s.Count]);
       }
     });

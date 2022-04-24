@@ -38,7 +38,7 @@ function NewTestExtractor(r: string, count: number = 1): Extractor {
   return factory;
 }
 
-fdescribe("VMPushToOtherBuilding", () => {
+describe("VMPushToOtherBuilding", () => {
   function TestMovement(
     from: any,
     to: any,
@@ -96,7 +96,7 @@ fdescribe("VMPushToOtherBuilding", () => {
     });
   });
 
-  fit("Won't move more than fits from Chest to Lab", () => {
+  it("Won't move more than fits from Chest to Lab", () => {
     const fromChest = NewChest({ subkind: "iron-chest" }, 1, [
         NewEntityStack("automation-science-pack", 10),
       ]),
@@ -266,7 +266,7 @@ describe("PushPullFromMainBus", () => {
     });
   });
 
-  it("Moves between Lab and MainBus", () => {
+  it.skip("Moves between Lab and MainBus", () => {
     const mb = new MainBus();
     const testItemLane = mb.AddLane("automation-science-pack", 10);
     const lab = NewLab(1);

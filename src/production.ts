@@ -1,6 +1,8 @@
+import { AddProgressTrackers, TickProgressTracker } from "./AddProgressTracker";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { FixedInventory } from "./inventory";
-import { producableItemsForInput, productionPerTick } from "./productionUtils";
+import { productionRunsForInput, productionPerTick } from "./productionUtils";
+import { BuildingAddress, StateVMAction } from "./stateVm";
 import {
   BuildingType,
   EntityStack,
@@ -131,50 +133,6 @@ export function ProduceFromExtractor(e: Extractor, region: Region) {
   });
 }
 
-// Factory
-
-export function AddProgressTracker(
-  producer: {
-    progressTrackers: number[];
-    BuildingCount: number;
-  },
-  currentTick: number
-): number {
-  if (producer.progressTrackers.length >= producer.BuildingCount) return 0;
-  producer.progressTrackers.push(currentTick);
-  return 1;
-}
-
-export function RemoveProgressTracker(producer: {
-  progressTrackers: number[];
-}): number {
-  if (producer.progressTrackers.length === 0) return 0;
-  producer.progressTrackers.pop();
-  return 1;
-}
-
-export function TickProgressTracker(
-  producer: { progressTrackers: number[] },
-  currentTick: number,
-  progressLength: number,
-  maxRemoved: number
-): number {
-  // TODO: Return early for extra speed boost, items *should* be sorted
-  const toRemove: number[] = [];
-  producer.progressTrackers.forEach((startedAt, idx) => {
-    if (
-      toRemove.length < maxRemoved &&
-      currentTick >= startedAt + progressLength
-    ) {
-      toRemove.unshift(idx); // Add to front so we can remove back-to-front
-    }
-  });
-  toRemove.forEach((removeIdx) => {
-    producer.progressTrackers.splice(removeIdx, 1);
-  });
-  return toRemove.length;
-}
-
 export type Factory = {
   kind: "Factory";
   subkind:
@@ -294,19 +252,24 @@ function outputItemBufferForFactory(r: Recipe): ItemBuffer {
   );
 }
 
-export function ProduceFromFactory(f: Factory, currentTick: number) {
+export function ProduceFromFactory(
+  f: Factory,
+  dispatch: (a: StateVMAction) => void,
+  buildingAddress: BuildingAddress,
+  currentTick: number
+) {
   if (!f.RecipeId) return 0;
   const recipe = GetRecipe(f.RecipeId);
 
   // Check empty factories
   const emptyFactoriesToStart = Math.min(
-    producableItemsForInput(f.inputBuffers, recipe.Input),
+    productionRunsForInput(f.inputBuffers, recipe.Input),
     Math.max(f.BuildingCount - f.progressTrackers.length, 0)
   );
   for (let idx = 0; idx < emptyFactoriesToStart; idx++) {
     // Check if we have enough ingredients to start producing and add a new tracker
     //console.log(`Starting production of ${recipe.Id} at ${currentTick}`);
-    if (AddProgressTracker(f, currentTick)) {
+    if (AddProgressTrackers(dispatch, buildingAddress, f, currentTick, 1)) {
       // Consume resources
       for (const input of recipe.Input) {
         const removed = f.inputBuffers.Remove(
@@ -335,6 +298,8 @@ export function ProduceFromFactory(f: Factory, currentTick: number) {
   }, Infinity);
 
   const outputCount = TickProgressTracker(
+    dispatch,
+    buildingAddress,
     f,
     currentTick,
     recipe.DurationSeconds * 1000,

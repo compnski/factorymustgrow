@@ -1,6 +1,8 @@
 import { GameDispatch } from "../GameDispatch";
 import { GetResearch } from "../gen/research";
 import { useGeneralDialog } from "../GeneralDialogProvider";
+import { ReadonlyFixedInventory } from "../inventory";
+import { NewEntityStack } from "../types";
 import { ReadonlyBuilding, ReadonlyResearchState } from "../useGameState";
 import { entityIconLookupByKind } from "../utils";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
@@ -29,6 +31,19 @@ export function LabCard({
   const title = building.RecipeId
     ? `Researching ${GetResearch(building.RecipeId).Name}`
     : "No Research Selected";
+  const currentResearchId = researchState.CurrentResearchId,
+    currentResearchProgress =
+      researchState.Progress.get(currentResearchId)?.Count || 0,
+    maxProgress = currentResearchId
+      ? GetResearch(currentResearchId).ProductionRequiredForCompletion
+      : 1;
+
+  const outputBuffers = ReadonlyFixedInventory([
+    NewEntityStack(
+      currentResearchId,
+      (currentResearchProgress / maxProgress) * 100
+    ),
+  ]);
   return (
     <div className="main-area lab">
       <div className="top-area">
@@ -65,7 +80,7 @@ export function LabCard({
       <div className="bottom-area">
         <BuildingBufferDisplay
           inputBuffers={building.inputBuffers}
-          outputBuffers={building.outputBuffers}
+          outputBuffers={outputBuffers}
           buildingIdx={buildingIdx}
           outputInteractable={false}
           entityIconLookup={entityIconLookupByKind(building.kind)}

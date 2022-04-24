@@ -3,7 +3,7 @@ import { TicksPerSecond } from "./constants";
 import { ReadonlyItemBuffer } from "./useGameState";
 
 // Requires at least Input items to produce anything
-export function producableItemsForInput(
+export function productionRunsForInput(
   inputBuffers: ReadonlyItemBuffer | ItemBuffer,
   recipeInputs: EntityStack[]
 ): number {

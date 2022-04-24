@@ -41,10 +41,14 @@
 *** Make sure they are properly taken from inventory when building
 *** Maybe auto-build when creating main bus connection
 *** Transfer speed
-**** Show inserters between factories, maybe between factory and mainbus
 **** Each transfer point has defined speed (Items/second)
 **** Can upgrade or build more transferers to incresae rate
 **** Needs UX to show rate and to allow upgrading
+** Labs
+*** Over-research science means that you get a boost on the next one cause of leftover progress trackers
+**** Can drop these on completion
+**** Can globalize labs so that our remaining research is factored into other labs
+**** Can track in-progress research and pass it to other labs (Spy on each other?)
 
 * Next Ideas
 ** Regions UI

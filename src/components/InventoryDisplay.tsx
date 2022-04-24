@@ -8,6 +8,7 @@ export type InventoryDisplayProps = {
   entityIconLookup?: (entity: string) => string;
   addClickHandler?: (entity: string) => void;
   remClickHandler?: (entity: string) => void;
+  debugPrint?: boolean;
 };
 
 function InventorySlot({
@@ -18,6 +19,7 @@ function InventorySlot({
   remClickHandler,
   progress,
   entityIconLookup = (entity: string): string => entity,
+  debugPrint,
 }: {
   entity: string;
   count: number;
@@ -26,7 +28,9 @@ function InventorySlot({
   addClickHandler?: (s: string) => void;
   remClickHandler?: (s: string) => void;
   progress?: number;
+  debugPrint?: boolean;
 }) {
+  //if (debugPrint) console.log(entity, entityIconLookup(entity));
   return (
     <div
       className={`inventory-slot ${
@@ -65,7 +69,7 @@ function asSlots(
 ): [string, number][] {
   const slots: [string, number][] = [];
   items.forEach(([entity, count]) => {
-    if (!entity) return;
+    //if (!entity) return;
     const stackSize = MaybeGetEntity(entity)?.StackSize || Infinity;
     if (count === 0) {
       // empty slots?
@@ -87,11 +91,16 @@ export function InventoryDisplay({
   remClickHandler,
   showProgressBar,
   entityIconLookup = (entity: string): string => entity,
+  debugPrint,
 }: InventoryDisplayProps) {
   const slots: JSX.Element[] = [];
   const allowHover = addClickHandler || remClickHandler;
 
   const invSlots = asSlots(inventory.Entities());
+  if (debugPrint) {
+    console.log("S", invSlots.toString().toString());
+    console.log("E", inventory.Entities().toString());
+  }
   const numSlots =
     inventory.Capacity === Infinity
       ? invSlots.length
@@ -106,6 +115,7 @@ export function InventoryDisplay({
       const progress = showProgressBar ? count % 1 : 0;
       slots.push(
         <InventorySlot
+          debugPrint={debugPrint}
           entityIconLookup={entityIconLookup}
           addClickHandler={addClickHandler}
           remClickHandler={remClickHandler}

@@ -1,3 +1,4 @@
+import { HasProgressTrackers } from "./AddProgressTracker";
 import { Entities } from "./gen/entities";
 import { Inventory, ReadonlyInventory } from "./inventory";
 import { ResearchOutput } from "./research";
@@ -11,10 +12,10 @@ type MainBusAddress = {
   mainbusLane: number;
 };
 
-type BuildingAddress = {
+export type BuildingAddress = {
   regionId: string;
   buildingSlot: number;
-  buffer: "input" | "output";
+  buffer?: "input" | "output";
 };
 
 type InventoryAddress = {
@@ -35,9 +36,11 @@ function isInventoryAddress(s: StateAddress): s is InventoryAddress {
 
 export type StateVMAction =
   | TransferItemAction
-  | SetResearchCountAction
+  | AddResearchCountAction
   | SetCurrentResearchAction
-  | AddItemAction;
+  | AddItemAction
+  | AddProgressTrackerAction;
+
 //  | SetItemAction
 
 // type SetItemAction = {
@@ -54,6 +57,13 @@ type AddItemAction = {
   count: number;
 };
 
+type AddProgressTrackerAction = {
+  kind: "AddProgressTrackers";
+  address: BuildingAddress;
+  count: number;
+  currentTick: number;
+};
+
 type TransferItemAction = {
   kind: "TransferItems";
   from: StateAddress;
@@ -62,8 +72,8 @@ type TransferItemAction = {
   count: number;
 };
 
-type SetResearchCountAction = {
-  kind: "SetResearchCount";
+type AddResearchCountAction = {
+  kind: "AddResearchCount";
   researchId: string;
   count: number;
   maxCount: number;
@@ -92,8 +102,8 @@ function applyStateChangeAction(
   switch (action.kind) {
     case "TransferItems":
       return stateChangeTransferItems(state, action);
-    case "SetResearchCount":
-      state.Research = stateChangeSetResearchCount(state.Research, action);
+    case "AddResearchCount":
+      state.Research = stateChangeAddResearchCount(state.Research, action);
       return state;
     case "SetCurrentResearch":
       state.Research = stateChangeSetCurrentResearch(state.Research, action);
@@ -102,15 +112,17 @@ function applyStateChangeAction(
     //      return stateChangeSetItemCount(state, action);
     case "AddItemCount":
       return stateChangeAddItemCount(state, action);
+    case "AddProgressTrackers":
+      return stateChangeAddProgressTrackers(state, action);
 
     default:
-      throw new Error("Unknown action kind: " + action);
+      throw new Error("Unknown action kind: " + JSON.stringify(action));
   }
 }
 
-function stateChangeSetResearchCount(
+function stateChangeAddResearchCount(
   state: ResearchState,
-  action: SetResearchCountAction
+  action: AddResearchCountAction
 ): ResearchState {
   if (!state.Progress.has(action.researchId))
     return {
@@ -122,15 +134,17 @@ function stateChangeSetResearchCount(
     };
   else {
     const researchProgress = state.Progress.get(action.researchId)?.Count;
-    if (researchProgress != action.count) {
-      return {
-        ...state,
-        Progress: state.Progress.set(
+    return {
+      ...state,
+      Progress: state.Progress.set(
+        action.researchId,
+        NewEntityStack(
           action.researchId,
-          NewEntityStack(action.researchId, action.count, action.maxCount)
-        ),
-      };
-    }
+          (researchProgress || 0) + action.count,
+          action.maxCount
+        )
+      ),
+    };
   }
   return state;
 }
@@ -198,5 +212,28 @@ function stateChangeAddItemCount(
     throw new Error("Unknown address: " + address);
   }
   //
+  return state;
+}
+
+function stateChangeAddProgressTrackers(
+  state: FactoryGameState,
+  action: AddProgressTrackerAction
+): FactoryGameState {
+  const { address, count, currentTick } = action;
+  const { regionId, buildingSlot } = address;
+  const region = state.Regions.get(regionId);
+  const building = region?.BuildingSlots[buildingSlot].Building;
+  if (!building)
+    throw new Error("Cannot find building at " + JSON.stringify(address));
+
+  if (HasProgressTrackers(building)) {
+    if (count > 0) {
+      building.progressTrackers = building.progressTrackers.concat(
+        new Array(count).fill(currentTick)
+      );
+    } else if (count < 0) {
+      building.progressTrackers = building.progressTrackers.slice(-count);
+    }
+  }
   return state;
 }
