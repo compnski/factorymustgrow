@@ -67,7 +67,7 @@ function UpdateGameStateForRegion(tick: number, region: Region) {
         ProduceFromFactory(building as Factory, vmDispatch, address, tick);
         break;
       case "Extractor":
-        ProduceFromExtractor(building as Extractor, region);
+        ProduceFromExtractor(building as Extractor, region, vmDispatch, address, tick);
         break;
       case "Lab":
         ResearchInLab(

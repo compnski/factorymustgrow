@@ -1,6 +1,11 @@
 import { BuildingSlot, NewBuildingSlot, NewEmptyLane } from "./building";
 import { Inserter } from "./inserter";
-import { FixedInventory, Inventory } from "./inventory";
+import {
+  FixedInventory,
+  Inventory,
+  ReadonlyFixedInventory,
+  ReadonlyInventory,
+} from "./inventory";
 import { MainBus } from "./mainbus";
 import { ReadonlyItemBuffer } from "./useGameState";
 
@@ -163,7 +168,7 @@ export type RegionInfo = {
 
 export type Region = {
   Id: string;
-  Ore: Inventory;
+  Ore: ReadonlyInventory;
   LaneCount: number;
   LaneSize: number;
   MainBusCount: number;
@@ -194,7 +199,7 @@ export const NewRegion = (
     LaneCount,
     LaneSize,
     MainBusCount,
-    Ore: FixedInventory(ore),
+    Ore: ReadonlyFixedInventory(ore),
     BuildingSlots,
     Bus: new MainBus(),
   };

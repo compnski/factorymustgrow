@@ -1,5 +1,5 @@
 import { ImmutableMap } from "./immutable";
-import { Lab, NewLab, ResearchInLab } from "./research";
+import { Lab, NewLab, ResearchInLab, ResearchOutput } from "./research";
 import { TestResearchBook } from "./test_research_defs";
 import { AddItemsToReadonlyFixedBuffer as AddItemsToFixedBuffer } from "./test_utils";
 import { EntityStack, NewEntityStack } from "./types";
@@ -19,7 +19,8 @@ describe("Labs", () => {
     }
   ) {
     const vmDispatch = jest.fn();
-    //vmDispatch.mockImplementation(console.log);
+    vmDispatch.mockImplementation(console.log);
+
     const labAddress = { regionId: "testRegion", buildingSlot: 0 };
     ResearchInLab(0, labAddress, lab, researchState, vmDispatch, (id) => {
       const r = TestResearchBook.get(id);
@@ -49,8 +50,14 @@ describe("Labs", () => {
         });
       }
     }
+
     // TODO: progress trackers?
-    lab.progressTrackers = new Array(count).fill(0);
+    if (count) lab.progressTrackers = new Array(count).fill(0);
+    lab.outputBuffers = (lab.outputBuffers as ResearchOutput).SetResearch(
+      lab.RecipeId,
+      0,
+      150
+    );
 
     ResearchInLab(1000, labAddress, lab, researchState, vmDispatch, (id) => {
       const r = TestResearchBook.get(id);
@@ -58,7 +65,7 @@ describe("Labs", () => {
       return r;
     });
 
-    if (count)
+    if (expected.outputBuffers.length)
       expect(vmDispatch).toHaveBeenCalledWith({
         address: { regionId: "testRegion", buildingSlot: 0 },
         count: -count,
@@ -68,22 +75,20 @@ describe("Labs", () => {
 
     for (const expectedOutput of expected.outputBuffers) {
       expect(vmDispatch).toHaveBeenCalledWith({
-        count: expectedOutput.Count,
-        maxCount: r?.ProductionRequiredForCompletion,
-        researchId: expectedOutput.Entity,
-        kind: "AddResearchCount",
-      });
-
-      expect(vmDispatch).toHaveBeenCalledWith({
         address: { regionId: "testRegion", buildingSlot: 0, buffer: "output" },
         count: expectedOutput.Count,
         entity: expectedOutput.Entity,
         kind: "AddItemCount",
       });
+    }
 
-      // expect(lab.outputBuffers.Count(expectedOutput.Entity)).toBe(
-      //   expectedOutput.Count
-      // );
+    for (const expectedProgress of expected.progress) {
+      expect(vmDispatch).toHaveBeenCalledWith({
+        count: expectedProgress.Count,
+        maxCount: r?.ProductionRequiredForCompletion,
+        researchId: expectedProgress.Entity,
+        kind: "AddResearchCount",
+      });
     }
   }
 
@@ -92,7 +97,7 @@ describe("Labs", () => {
     Progress: ImmutableMap<string, EntityStack>(),
   });
 
-  fit("Produces a single item", () => {
+  it("Produces a single item", () => {
     const lab = NewLab(1);
 
     lab.inputBuffers = AddItemsToFixedBuffer(lab.inputBuffers, 10);
@@ -134,7 +139,7 @@ describe("Labs", () => {
       outputBuffers: [],
       recipeId: "test-research",
       inputBuffers: [],
-      progress: [NewEntityStack("test-research", 150)],
+      progress: [],
     });
   });
 });

@@ -1,6 +1,10 @@
-import { AddProgressTrackers, TickProgressTracker } from "./AddProgressTracker";
+import {
+  AddProgressTrackers,
+  ProduceWithTracker,
+  TickProgressTracker,
+} from "./AddProgressTracker";
 import { GetEntity, GetRecipe } from "./gen/entities";
-import { FixedInventory } from "./inventory";
+import { ReadonlyFixedInventory, FixedInventory } from "./inventory";
 import { productionRunsForInput, productionPerTick } from "./productionUtils";
 import { BuildingAddress, StateVMAction } from "./stateVm";
 import {
@@ -11,7 +15,7 @@ import {
   Recipe,
   Region,
 } from "./types";
-import { GameState } from "./useGameState";
+import { GameState, ReadonlyItemBuffer } from "./useGameState";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
 
 // Extractor
@@ -24,10 +28,11 @@ export type Extractor = {
     | "pumpjack";
   ProducerType: string; //"Miner" | "Pumpjack" | "WaterPump";
 
-  inputBuffers: ItemBuffer; //Map<string, EntityStack>;
-  outputBuffers: ItemBuffer; // Map<string, EntityStack>;
+  inputBuffers: ReadonlyItemBuffer;
+  outputBuffers: ReadonlyItemBuffer;
   RecipeId: string;
   BuildingCount: number;
+  progressTrackers: number[];
 };
 
 export function UpdateBuildingRecipe(b: Factory | Extractor, recipeId: string) {
@@ -105,31 +110,39 @@ export function NewExtractor(
     kind: "Extractor",
     subkind: subkind,
     ProducerType: ProducerTypeFromEntity(subkind),
-    inputBuffers: FixedInventory([]),
-    outputBuffers: FixedInventory([]),
+    inputBuffers: ReadonlyFixedInventory([]),
+    outputBuffers: ReadonlyFixedInventory([]),
     RecipeId: "",
     BuildingCount: initialProduceCount,
+    progressTrackers: [],
   };
 }
 
 function inputItemBufferForExtractor(r: Recipe): ItemBuffer {
-  return FixedInventory([NewEntityStack(r.Output[0].Entity, 0, 0)]);
+  return ReadonlyFixedInventory([NewEntityStack(r.Output[0].Entity, 0, 0)]);
 }
 function outputItemBufferForExtractor(r: Recipe): ItemBuffer {
-  return FixedInventory([NewEntityStack(r.Output[0].Entity, 0, 50)]);
+  return ReadonlyFixedInventory([NewEntityStack(r.Output[0].Entity, 0, 50)]);
 }
 
-export function ProduceFromExtractor(e: Extractor, region: Region) {
+export function ProduceFromExtractor(
+  e: Extractor,
+  region: Region,
+  dispatch: (a: StateVMAction) => void,
+  address: BuildingAddress,
+  currentTick: number
+) {
   if (!e.RecipeId) return 0;
   const recipe = GetRecipe(e.RecipeId);
-  recipe.Output.forEach((entityStack) => {
-    e.outputBuffers.AddFromItemBuffer(
-      region.Ore,
-      entityStack.Entity,
-      productionPerTick(e, recipe) * entityStack.Count,
-      false,
-      false
-    );
+
+  return ProduceWithTracker({
+    dispatch,
+    currentTick,
+    buildingAddress: address,
+    recipe,
+    building: e,
+    inputBuffers: region.Ore,
+    inputAddress: { regionId: address.regionId, buffer: "ore" },
   });
 }
 
@@ -149,8 +162,8 @@ export type Factory = {
     | "stone-furnace";
   ProducerType: string; //"Assembler" | "RocketSilo" | "ChemPlant" | "Refinery";
 
-  inputBuffers: ItemBuffer;
-  outputBuffers: ItemBuffer;
+  inputBuffers: ReadonlyItemBuffer;
+  outputBuffers: ReadonlyItemBuffer;
   RecipeId: string;
   BuildingCount: number;
   progressTrackers: number[];
@@ -233,21 +246,21 @@ export function NewFactory(
     kind: "Factory",
     ProducerType: ProducerTypeFromEntity(subkind),
     subkind,
-    outputBuffers: FixedInventory([]),
-    inputBuffers: FixedInventory([]),
+    outputBuffers: ReadonlyFixedInventory([]),
+    inputBuffers: ReadonlyFixedInventory([]),
     RecipeId: "",
     BuildingCount: initialProduceCount,
     progressTrackers: [],
   };
 }
 
-function inputItemBufferForFactory(r: Recipe): ItemBuffer {
-  return FixedInventory(
+function inputItemBufferForFactory(r: Recipe): ReadonlyItemBuffer {
+  return ReadonlyFixedInventory(
     r.Input.map((input) => EntityStackForEntity(input.Entity, input.Count))
   );
 }
-function outputItemBufferForFactory(r: Recipe): ItemBuffer {
-  return FixedInventory(
+function outputItemBufferForFactory(r: Recipe): ReadonlyItemBuffer {
+  return ReadonlyFixedInventory(
     r.Output.map((output) => EntityStackForEntity(output.Entity, output.Count))
   );
 }
@@ -255,69 +268,19 @@ function outputItemBufferForFactory(r: Recipe): ItemBuffer {
 export function ProduceFromFactory(
   f: Factory,
   dispatch: (a: StateVMAction) => void,
-  buildingAddress: BuildingAddress,
+  address: BuildingAddress,
   currentTick: number
 ) {
   if (!f.RecipeId) return 0;
   const recipe = GetRecipe(f.RecipeId);
 
-  // Check empty factories
-  const emptyFactoriesToStart = Math.min(
-    productionRunsForInput(f.inputBuffers, recipe.Input),
-    Math.max(f.BuildingCount - f.progressTrackers.length, 0)
-  );
-  for (let idx = 0; idx < emptyFactoriesToStart; idx++) {
-    // Check if we have enough ingredients to start producing and add a new tracker
-    //console.log(`Starting production of ${recipe.Id} at ${currentTick}`);
-    if (AddProgressTrackers(dispatch, buildingAddress, f, currentTick, 1)) {
-      // Consume resources
-      for (const input of recipe.Input) {
-        const removed = f.inputBuffers.Remove(
-          NewEntityStack(input.Entity, 0, Infinity),
-          input.Count
-        );
-
-        if (removed !== input.Count) {
-          console.error(f.inputBuffers.Entities());
-          throw new Error(
-            `Produced without enough input. Missing ${removed} ${input.Entity}`
-          );
-        }
-      }
-    }
-  }
-
-  const availableInventorySpace = recipe.Output.reduce((accum, entityStack) => {
-    const spaceInOutputStack = f.outputBuffers.AvailableSpace(
-      entityStack.Entity
-    );
-    return Math.min(
-      accum,
-      Math.floor(spaceInOutputStack / recipe.Output[0].Count)
-    );
-  }, Infinity);
-
-  const outputCount = TickProgressTracker(
+  return ProduceWithTracker({
     dispatch,
-    buildingAddress,
-    f,
     currentTick,
-    recipe.DurationSeconds * 1000,
-    availableInventorySpace
-  );
-  //const outputCount = Math.min(producedItems, availableInventorySpace);
-
-  for (let idx = 0; idx < outputCount; idx++) {
-    // console.log(
-    //   `Produced item ${idx + 1}/${producedItems} ${recipe.Id} at ${currentTick}`
-    // );
-    recipe.Output.forEach((outputStack) => {
-      f.outputBuffers.Add(
-        NewEntityStack(outputStack.Entity, outputStack.Count),
-        outputStack.Count
-      );
-    });
-  }
+    buildingAddress: address,
+    recipe,
+    building: f,
+  });
 }
 
 // Train Station

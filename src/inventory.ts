@@ -64,7 +64,7 @@ export class ReadonlyInventory implements ReadonlyItemBuffer {
   }
 
   // throws if it cannot hold the given number
-  AddItems(entity: string, count: number): ReadonlyItemBuffer {
+  AddItems(entity: string, count: number): ReadonlyInventory {
     if (count < 0) {
       return this.RemoveItems(entity, -count);
     }
@@ -84,7 +84,7 @@ export class ReadonlyInventory implements ReadonlyItemBuffer {
     return new ReadonlyInventory(this.Capacity, newData, this.immutableSlots);
   }
 
-  RemoveItems(entity: string, count: number): ReadonlyItemBuffer {
+  RemoveItems(entity: string, count: number): ReadonlyInventory {
     if (count < 0) {
       throw new Error("Cannot remove negative quantity.");
       //return this.Add(entity, -count);

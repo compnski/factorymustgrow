@@ -36,39 +36,38 @@ export function MoveViaInserter(
 ) {
   if (InserterTransferRate(i) > 0) {
     if (i.direction === "DOWN") {
-      if (currentBuilding.kind == "Lab" || nextBuilding.kind == "Lab")
-        VMPushToOtherBuilding(
-          dispatch,
-          regionId,
-          currentBuildingSlot,
-          currentBuilding,
-          currentBuildingSlot + 1,
-          nextBuilding,
-          InserterTransferRate(i)
-        );
-      else
-        PushToOtherProducer(
-          currentBuilding,
-          nextBuilding,
-          InserterTransferRate(i)
-        );
+      VMPushToOtherBuilding(
+        dispatch,
+        regionId,
+        currentBuildingSlot,
+        currentBuilding,
+        currentBuildingSlot + 1,
+        nextBuilding,
+        InserterTransferRate(i)
+      );
+      // else
+      //   PushToOtherProducer(
+      //     currentBuilding,
+      //     nextBuilding,
+      //     InserterTransferRate(i)
+      //        );
     } else if (i.direction === "UP") {
-      if (currentBuilding.kind == "Lab" || nextBuilding.kind == "Lab")
-        VMPushToOtherBuilding(
-          dispatch,
-          regionId,
-          currentBuildingSlot + 1,
-          nextBuilding,
-          currentBuildingSlot,
-          currentBuilding,
-          InserterTransferRate(i)
-        );
-      else
-        PushToOtherProducer(
-          nextBuilding,
-          currentBuilding,
-          InserterTransferRate(i)
-        );
+      //      if (currentBuilding.kind == "Lab" || nextBuilding.kind == "Lab")
+      VMPushToOtherBuilding(
+        dispatch,
+        regionId,
+        currentBuildingSlot + 1,
+        nextBuilding,
+        currentBuildingSlot,
+        currentBuilding,
+        InserterTransferRate(i)
+      );
+      // else
+      //   PushToOtherProducer(
+      //     nextBuilding,
+      //     currentBuilding,
+      //     InserterTransferRate(i)
+      //        );
     }
   }
 }

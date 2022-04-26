@@ -150,7 +150,6 @@ export function GetReadonlyRegion(regionId: string): ReadonlyRegion {
   if (!region) throw new Error("Cannot find current region " + regionId);
   return {
     ...region,
-    Ore: new ReadonlyInventory(region.Ore),
     Bus: new ReadonlyMainBus(region.Bus),
   };
 }

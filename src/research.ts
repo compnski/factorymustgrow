@@ -1,4 +1,8 @@
-import { AddProgressTrackers, TickProgressTracker } from "./AddProgressTracker";
+import {
+  AddProgressTrackers,
+  ProduceWithTracker,
+  TickProgressTracker,
+} from "./AddProgressTracker";
 import { AvailableResearchList } from "./availableResearch";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { GetResearch } from "./gen/research";
@@ -159,45 +163,20 @@ export function ResearchInLab(
       existingProgressTrackerCount
   );
 
-  let productionRunsRemaining = productionRunsForInput(
-    l.inputBuffers,
-    research.Input
-  );
-  // Check empty factories
-  const emptyFactoriesToStart = Math.min(
-    remainingResearchProgress,
-    productionRunsRemaining,
-    Math.max(l.BuildingCount - l.progressTrackers.length, 0)
-  );
+  const recipe = {
+    Input: research.Input,
+    Output: [NewEntityStack(research.Id, 1)],
+    DurationSeconds: research.DurationSeconds,
+  };
 
-  const addedTrackers = AddProgressTrackers(
+  const actualProduction = ProduceWithTracker({
     dispatch,
-    labAddress,
-    l,
     currentTick,
-    emptyFactoriesToStart
-  );
-  productionRunsRemaining -= addedTrackers;
-  // Consume resources
-  if (addedTrackers) {
-    for (const input of research.Input) {
-      dispatch({
-        kind: "AddItemCount",
-        entity: input.Entity,
-        count: -input.Count * addedTrackers,
-        address: { ...labAddress, buffer: "input" },
-      });
-    }
-  }
-  const actualProduction = TickProgressTracker(
-    dispatch,
-    labAddress,
-    l,
-    currentTick,
-    research.DurationSeconds * 1000,
-    research.ProductionRequiredForCompletion - currentResearchProgress
-  );
-
+    buildingAddress: labAddress,
+    recipe,
+    building: l,
+    maxTriggersAdded: remainingResearchProgress,
+  });
   if (!actualProduction) return 0;
 
   dispatch({
@@ -207,13 +186,13 @@ export function ResearchInLab(
     maxCount: research.ProductionRequiredForCompletion,
   });
 
-  dispatch({
-    // TODO: Use SetItem once it exists?
-    kind: "AddItemCount",
-    address: { ...labAddress, buffer: "output" },
-    entity: currentResearchId,
-    count: currentResearchProgress + actualProduction,
-  });
+  // dispatch({
+  //   // TODO: Use SetItem once it exists?
+  //   kind: "AddItemCount",
+  //   address: { ...labAddress, buffer: "output" },
+  //   entity: currentResearchId,
+  //   count: currentResearchProgress + actualProduction,
+  // });
 
   return actualProduction;
 }

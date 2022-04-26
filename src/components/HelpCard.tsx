@@ -33,9 +33,12 @@ function buildHelpRegion(): Region {
   UpdateBuildingRecipe(assembler, "iron-gear-wheel");
   UpdateBuildingRecipe(assembler2, "transport-belt");
 
-  miner.outputBuffers.Add(NewEntityStack("iron-ore", 10));
-  smelter.outputBuffers.Add(NewEntityStack("iron-plate", 10));
-  assembler.outputBuffers.Add(NewEntityStack("iron-gear-wheel", 10));
+  miner.outputBuffers = miner.outputBuffers.AddItems("iron-ore", 10);
+  smelter.outputBuffers = smelter.outputBuffers.AddItems("iron-plate", 10);
+  assembler.outputBuffers = assembler.outputBuffers.AddItems(
+    "iron-gear-wheel",
+    10
+  );
 
   const minerSlot = AddBuildingOverEmptyOrAtEnd(helpRegion, miner, 0),
     smelterSlot = AddBuildingOverEmptyOrAtEnd(helpRegion, smelter, 1),
@@ -79,7 +82,7 @@ const researchState: ReadonlyResearchState = {
 const region = buildHelpRegion();
 const helpRegion = {
   ...region,
-  Ore: new ReadonlyInventory(region.Ore),
+  Ore: region.Ore,
   Bus: new ReadonlyMainBus(region.Bus),
 };
 

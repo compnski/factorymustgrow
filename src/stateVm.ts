@@ -2,10 +2,14 @@ import { HasProgressTrackers } from "./AddProgressTracker";
 import { Entities } from "./gen/entities";
 import { Inventory, ReadonlyInventory } from "./inventory";
 import { ResearchOutput } from "./research";
-import { NewEntityStack } from "./types";
+import { NewEntityStack, Region } from "./types";
 import { FactoryGameState, ResearchState } from "./useGameState";
 
-export type StateAddress = MainBusAddress | BuildingAddress | InventoryAddress;
+export type StateAddress =
+  | MainBusAddress
+  | BuildingAddress
+  | InventoryAddress
+  | RegionAddress;
 
 type MainBusAddress = {
   regionId: string;
@@ -18,6 +22,11 @@ export type BuildingAddress = {
   buffer?: "input" | "output";
 };
 
+export type RegionAddress = {
+  regionId: string;
+  buffer: "ore";
+};
+
 type InventoryAddress = {
   inventory: true;
 };
@@ -27,7 +36,13 @@ function isMainBusAddress(s: StateAddress): s is MainBusAddress {
 }
 
 function isBuildingAddress(s: StateAddress): s is BuildingAddress {
-  return (s as BuildingAddress).buildingSlot !== undefined;
+  const sb = s as BuildingAddress;
+  return sb.buildingSlot !== undefined;
+}
+
+function isRegionAddress(s: StateAddress): s is RegionAddress {
+  const sr = s as RegionAddress;
+  return sr.buffer === "ore";
 }
 
 function isInventoryAddress(s: StateAddress): s is InventoryAddress {
@@ -172,6 +187,13 @@ function stateChangeAddItemCount(
   const { address, count, entity } = action;
   if (isMainBusAddress(address)) {
     //
+  } else if (isRegionAddress(address)) {
+    const { regionId, buffer } = address;
+    const region = state.Regions.get(regionId);
+    if (region && buffer === "ore") {
+      region.Ore = region.Ore.AddItems(entity, count);
+      state.Regions.set(regionId, region);
+    }
   } else if (isBuildingAddress(address)) {
     const { regionId, buildingSlot, buffer } = address;
     const region = state.Regions.get(regionId);
