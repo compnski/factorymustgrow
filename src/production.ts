@@ -57,13 +57,14 @@ export function UpdateBuildingRecipe(b: Factory | Extractor, recipeId: string) {
     oldInputBuffers.Entities().forEach(([entity]) => {
       if (recipe.Input.findIndex((e) => e.Entity === entity) < 0) {
         //Not in input, remove
-        GameState.Inventory.AddFromItemBuffer(
-          oldInputBuffers,
-          entity,
-          Infinity,
-          true,
-          false
-        );
+        GameState.Inventory
+          .AddFromItemBuffer
+          // oldInputBuffers,
+          // entity,
+          // Infinity,
+          // true,
+          // false
+          ();
       } else {
         b.inputBuffers.AddFromItemBuffer(
           oldInputBuffers,
@@ -82,13 +83,14 @@ export function UpdateBuildingRecipe(b: Factory | Extractor, recipeId: string) {
       if (recipe.Output.findIndex((e) => e.Entity === entity) < 0) {
         //Not in output, remove
 
-        GameState.Inventory.AddFromItemBuffer(
-          oldOutputBuffers,
-          entity,
-          Infinity,
-          true,
-          false
-        );
+        GameState.Inventory
+          .AddFromItemBuffer
+          // oldOutputBuffers,
+          // entity,
+          // Infinity,
+          // true,
+          // false
+          ();
       } else {
         b.outputBuffers.AddFromItemBuffer(
           oldOutputBuffers,

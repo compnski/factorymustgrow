@@ -229,7 +229,7 @@ function stateChangeAddItemCount(
       state.Regions.set(regionId, region);
     }
   } else if (isInventoryAddress(address)) {
-    //state.Inventory.
+    state.Inventory = state.Inventory.AddItems(entity, count);
   } else {
     throw new Error("Unknown address: " + address);
   }

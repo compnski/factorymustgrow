@@ -46,7 +46,7 @@ export const FactoryGame = () => {
   try {
     const regionIds = [...gameState.Regions.keys()];
     const currentRegion = GetReadonlyRegion(currentRegionId);
-    const inventory = new ReadonlyInventory(gameState.Inventory);
+    const inventory = gameState.Inventory;
     const researchState = gameState.Research as ReadonlyResearchState;
     const showHelp = () => {
       void showHelpCard(generalDialog);

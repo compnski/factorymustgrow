@@ -98,7 +98,7 @@ export type ResearchState = {
 export type FactoryGameState = {
   RocketLaunchingAt: number;
   Research: ResearchState;
-  Inventory: Inventory;
+  Inventory: ReadonlyInventory;
   Regions: Map<string, Region>;
   BeltLines: Map<number, BeltLine>;
 };
@@ -117,16 +117,19 @@ export const initialFactoryGameState = () => ({
     ),
     CurrentResearchId: "",
   },
-  Inventory: new Inventory(initialInventorySize, [
-    NewEntityStack(GetEntity("burner-mining-drill"), 5),
-    NewEntityStack(GetEntity("assembling-machine-1"), 5),
-    NewEntityStack(GetEntity("stone-furnace"), 5),
-    NewEntityStack(GetEntity("lab"), 5),
-    NewEntityStack(GetEntity("transport-belt"), 100),
-    NewEntityStack(GetEntity("inserter"), 50),
-    NewEntityStack(GetEntity("iron-chest"), 5),
-    NewEntityStack(GetEntity("automation-science-pack"), 100),
-  ]),
+  Inventory: new ReadonlyInventory(
+    initialInventorySize,
+    ImmutableMap([
+      ["burner-mining-drill", 5],
+      ["assembling-machine-1", 5],
+      ["stone-furnace", 5],
+      ["lab", 5],
+      ["transport-belt", 100],
+      ["inserter", 50],
+      ["iron-chest", 5],
+      ["automation-science-pack", 100],
+    ])
+  ),
   Regions: new Map([["region0", NewRegionFromInfo(GetRegionInfo("region0"))]]),
   BeltLines: new Map(),
 });

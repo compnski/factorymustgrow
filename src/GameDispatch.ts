@@ -215,19 +215,7 @@ function transferFromInventory(
 }
 
 function transferToInventory(action: InventoryTransferAction) {
-  const fromStack = inventoryTransferStack(action);
-  if (fromStack) {
-    const fromStackEntity = action.entity;
-    if (GameState.Inventory.AvailableSpace(fromStackEntity) > 0) {
-      GameState.Inventory.AddFromItemBuffer(
-        fromStack,
-        fromStackEntity,
-        undefined,
-        false,
-        false
-      );
-    }
-  }
+  throw new Error("NYI");
 }
 
 function addMainBusConnection(action: {
@@ -252,10 +240,11 @@ function addMainBusConnection(action: {
     // If the current count is 0, try to build one
     if (
       firstEmptyBeltConn.Inserter.BuildingCount === 0 &&
-      GameState.Inventory.Remove(
-        NewEntityStack(firstEmptyBeltConn.Inserter.subkind, 0, 1),
-        1
-      )
+      GameState.Inventory
+        .Remove
+        //        NewEntityStack(firstEmptyBeltConn.Inserter.subkind, 0, 1),
+        //        1
+        ()
     )
       firstEmptyBeltConn.Inserter.BuildingCount = 1;
   }
@@ -390,7 +379,7 @@ function decreaseInserterCount(
   const i = inserter(action);
 
   if (i && i.BuildingCount > 0) {
-    GameState.Inventory.Add(NewEntityStack(i.subkind, 1, 1), 1);
+    GameState.Inventory.Add(); //NewEntityStack(i.subkind, 1, 1), 1);
     i.BuildingCount = Math.max(0, i.BuildingCount - 1);
   }
 }
@@ -420,7 +409,7 @@ function increaseInserterCount(
   if (!i || GameState.Inventory.Count(i.subkind) <= 0) {
     return;
   }
-  GameState.Inventory.Remove(NewEntityStack(i.subkind, 0, 1), 1);
+  GameState.Inventory.Remove(); //NewEntityStack(i.subkind, 0, 1), 1);
 
   if (i) i.BuildingCount = Math.min(50, i.BuildingCount + 1);
 }
@@ -439,7 +428,7 @@ function decreaseBuildingCount(action: {
 
   if (b) {
     if (b.BuildingCount > 0) {
-      GameState.Inventory.Add(NewEntityStack(b.subkind, 1, 1), 1);
+      GameState.Inventory.Add(); //NewEntityStack(b.subkind, 1, 1), 1);
       b.BuildingCount = Math.max(0, b.BuildingCount - 1);
     }
     if (b?.kind === "Chest") UpdateChestSize(b as Chest);
@@ -463,7 +452,7 @@ function increaseBuildingCount(action: {
   if (GameState.Inventory.Count(b.subkind) <= 0) {
     return;
   }
-  GameState.Inventory.Remove(NewEntityStack(b.subkind, 0, 1), 1);
+  GameState.Inventory.Remove(); //NewEntityStack(b.subkind, 0, 1), 1);
 
   if (b) b.BuildingCount = Math.min(50, b.BuildingCount + 1);
   if (b?.kind === "Chest") UpdateChestSize(b as Chest);
@@ -499,8 +488,7 @@ function removeLane(
   const lane = currentRegion.Bus.RemoveLane(action.laneId),
     laneEntity = lane?.Entities()[0][0];
 
-  if (lane && laneEntity)
-    GameState.Inventory.AddFromItemBuffer(lane, laneEntity, Infinity, true);
+  if (lane && laneEntity) GameState.Inventory.AddFromItemBuffer(); //lane, laneEntity, Infinity, true);
 
   // Remove attached inserters
   currentRegion.BuildingSlots.forEach((buildingSlot, buildingSlotIdx) => {
@@ -537,7 +525,7 @@ function PlaceBuilding(
   const newBuilding = NewBuilding(action.entity);
   AddBuildingOverEmptyOrAtEnd(currentRegion, newBuilding, buildAtIdx);
 
-  GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 1), 1);
+  GameState.Inventory.Remove(); //NewEntityStack(action.entity, 0, 1), 1);
   // TODO: Show recipe selector
   // TODO: Finish default building recipes
   if (action.entity === "rocket-silo") {
@@ -585,7 +573,7 @@ function PlaceBeltLine(
   AddBuildingOverEmptyOrAtEnd(toRegion, toDepot, (action.buildingIdx || 0) + 1);
 
   GameState.BeltLines.set(beltLine.beltLineId, beltLine);
-  GameState.Inventory.Remove(NewEntityStack(action.entity, 0, 100), 100);
+  GameState.Inventory.Remove(); //NewEntityStack(action.entity, 0, 100), 100);
 }
 
 export function AddBuildingOverEmptyOrAtEnd(
@@ -661,20 +649,22 @@ function RemoveBuilding(
         const inserter = slot && slot.Inserter;
         // Refund inserters
         if (inserter)
-          GameState.Inventory.Add(
-            NewEntityStack(inserter.subkind, inserter.BuildingCount),
-            inserter.BuildingCount,
-            true
-          );
+          GameState.Inventory
+            .Add
+            // NewEntityStack()inserter.subkind, inserter.BuildingCount),
+            // inserter.BuildingCount,
+            //          true
+            ();
         slot.BeltConnections.forEach((beltConn) => {
-          GameState.Inventory.Add(
-            NewEntityStack(
-              beltConn.Inserter.subkind,
-              beltConn.Inserter.BuildingCount
-            ),
-            beltConn.Inserter.BuildingCount,
-            true
-          );
+          GameState.Inventory
+            .Add
+            // NewEntityStack(
+            //   beltConn.Inserter.subkind,
+            //   beltConn.Inserter.BuildingCount
+            // ),
+            // beltConn.Inserter.BuildingCount,
+            //            true
+            ();
         });
       } else {
         // Until there are no more empty ones
@@ -685,25 +675,22 @@ function RemoveBuilding(
     if (BuildingHasInput(b.kind))
       b.inputBuffers
         .Entities()
-        .forEach(([entity, count]) =>
-          GameState.Inventory.AddFromItemBuffer(
-            b.inputBuffers,
-            entity,
-            count,
-            true
-          )
-        );
+        .forEach(([entity, count]) => GameState.Inventory.AddFromItemBuffer());
+    // b.inputBuffers,
+    // entity,
+    // count,
+    // true
+    //          )
     if (BuildingHasOutput(b.kind))
-      b.outputBuffers
-        .Entities()
-        .forEach(([entity, count]) =>
-          GameState.Inventory.AddFromItemBuffer(
-            b.outputBuffers,
-            entity,
-            count,
-            true
-          )
-        );
+      b.outputBuffers.Entities().forEach(([entity, count]) =>
+        GameState.Inventory
+          .AddFromItemBuffer
+          //   b.outputBuffers,
+          //   entity,
+          //   count,
+          //   true
+          ()
+      );
     if (b.kind === "BeltLineDepot") {
       const depot = b as BeltLineDepot,
         otherRegion = GetRegion(depot.otherRegionId);
@@ -724,22 +711,24 @@ function RemoveBuilding(
           );
           return;
         }
-        GameState.Inventory.Add(
-          NewEntityStack(b.subkind, b.BuildingCount * beltLine.length),
-          b.BuildingCount * beltLine.length
-        );
+        GameState.Inventory
+          .Add
+          // NewEntityStack(b.subkind, b.BuildingCount * beltLine.length),
+          //          b.BuildingCount * beltLine.length
+          ();
         beltLine.sharedBeltBuffer.forEach((es) => {
-          if (es && es.Entity) GameState.Inventory.Add(es, Infinity, true);
+          if (es && es.Entity) GameState.Inventory.Add(); //es, Infinity, true);
         });
         GameState.BeltLines.delete(beltLine.beltLineId);
       }
     } else {
       if (b.BuildingCount > 0)
-        GameState.Inventory.Add(
-          NewEntityStack(b.subkind, b.BuildingCount),
-          b.BuildingCount,
-          true
-        );
+        GameState.Inventory
+          .Add
+          // NewEntityStack(b.subkind, b.BuildingCount),
+          // b.BuildingCount,
+          //true
+          ();
     }
     // Return space
   }
