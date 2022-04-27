@@ -23,6 +23,7 @@ import {
 } from "./production";
 import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
 import { NewLab } from "./research";
+import { DispatchFunc } from "./stateVm";
 import { Chest, NewChest, UpdateChestSize } from "./storage";
 import {
   BeltLineDepot,
@@ -46,6 +47,8 @@ import {
 import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
 
 export const GameDispatch = (action: GameAction) => {
+  // TODO: Dispatch func!
+  const dispatch: DispatchFunc = () => false;
   switch (action.type) {
     case "Reset":
       ResetGameState();
@@ -76,7 +79,7 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "ChangeRecipe":
-      changeRecipe(action);
+      changeRecipe(dispatch, action);
       break;
 
     case "ReorderBuildings":
@@ -92,7 +95,7 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "PlaceBuilding":
-      PlaceBuilding(action, GetRegion(action.regionId));
+      PlaceBuilding(dispatch, action, GetRegion(action.regionId));
       break;
 
     case "IncreaseBuildingCount":
@@ -140,18 +143,21 @@ export const GameDispatch = (action: GameAction) => {
   }
 };
 
-function changeRecipe(action: {
-  buildingIdx: number;
-  regionId: string;
-  recipeId: string;
-}) {
+function changeRecipe(
+  dispatch: DispatchFunc,
+  action: {
+    buildingIdx: number;
+    regionId: string;
+    recipeId: string;
+  }
+) {
   const b = building(action);
   console.log("Change recipe for ", b, "to", action.recipeId);
   // Change Recipe
   // Move any Input / Output that no longer matches a buffer into inventory
   // Update input/output buffers
   if (b && (b.kind === "Factory" || b.kind === "Extractor"))
-    UpdateBuildingRecipe(b, action.recipeId);
+    UpdateBuildingRecipe(dispatch, b, action.recipeId);
 }
 
 function launchRocket(action: {
@@ -506,6 +512,7 @@ function removeLane(
 }
 
 function PlaceBuilding(
+  dispatch: DispatchFunc,
   action: {
     type: "PlaceBuilding";
     entity: string;
@@ -529,7 +536,7 @@ function PlaceBuilding(
   // TODO: Show recipe selector
   // TODO: Finish default building recipes
   if (action.entity === "rocket-silo") {
-    UpdateBuildingRecipe(newBuilding as Factory, "rocket-part");
+    UpdateBuildingRecipe(dispatch, newBuilding as Factory, "rocket-part");
   }
 }
 

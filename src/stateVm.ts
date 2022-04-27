@@ -5,6 +5,8 @@ import { ResearchOutput } from "./research";
 import { NewEntityStack, Region } from "./types";
 import { FactoryGameState, ResearchState } from "./useGameState";
 
+export type DispatchFunc = (a: StateVMAction) => void;
+
 export type StateAddress =
   | MainBusAddress
   | BuildingAddress

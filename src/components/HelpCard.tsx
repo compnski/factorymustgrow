@@ -1,18 +1,13 @@
 import { Map } from "immutable";
 import { SyntheticEvent } from "react";
-import { AddBuildingOverEmptyOrAtEnd, NewBuilding } from "../GameDispatch";
+import { AddBuildingOverEmptyOrAtEnd } from "../GameDispatch";
 import { ReactComponent as HelpOverlay } from "../helpTemplate.svg";
-import { Inventory, ReadonlyInventory } from "../inventory";
+import { Inventory } from "../inventory";
 import { ReadonlyMainBus } from "../mainbus";
-import { Extractor, Factory, UpdateBuildingRecipe } from "../production";
+import { NewExtractorForRecipe, NewFactoryForRecipe } from "../production";
 import { GetRegionInfo } from "../region";
-import {
-  EntityStack,
-  NewEntityStack,
-  NewRegionFromInfo,
-  Region,
-} from "../types";
-import { ReadonlyRegion, ReadonlyResearchState } from "../useGameState";
+import { EntityStack, NewRegionFromInfo, Region } from "../types";
+import { ReadonlyResearchState } from "../useGameState";
 import { BuildingCardList } from "./BuildingCardList";
 import "./HelpCard.scss";
 
@@ -21,17 +16,23 @@ export type HelpCardProps = {
 };
 
 function buildHelpRegion(): Region {
+  // TODO: Fix help region, all readonly?
+
   const regionInfo = GetRegionInfo("HelpRegion"),
     helpRegion = NewRegionFromInfo(regionInfo),
-    miner = NewBuilding("burner-mining-drill") as Extractor,
-    smelter = NewBuilding("stone-furnace") as Factory,
-    assembler = NewBuilding("assembling-machine-1") as Factory,
-    assembler2 = NewBuilding("assembling-machine-1") as Factory;
-
-  UpdateBuildingRecipe(miner, "iron-ore");
-  UpdateBuildingRecipe(smelter, "iron-plate");
-  UpdateBuildingRecipe(assembler, "iron-gear-wheel");
-  UpdateBuildingRecipe(assembler2, "transport-belt");
+    miner = NewExtractorForRecipe(
+      { subkind: "burner-mining-drill" },
+      "iron-ore"
+    ),
+    smelter = NewFactoryForRecipe({ subkind: "stone-furnace" }, "iron-plate"),
+    assembler = NewFactoryForRecipe(
+      { subkind: "assembling-machine-1" },
+      "iron-gear-wheel"
+    ),
+    assembler2 = NewFactoryForRecipe(
+      { subkind: "assembling-machine-1" },
+      "transport-belt"
+    );
 
   miner.outputBuffers = miner.outputBuffers.AddItems("iron-ore", 10);
   smelter.outputBuffers = smelter.outputBuffers.AddItems("iron-plate", 10);

@@ -2,33 +2,33 @@ import { Building, NewBuildingSlot } from "./building";
 import { NewInserter } from "./inserter";
 import { MainBus } from "./mainbus";
 import { PushPullFromMainBus } from "./MainBusMovement";
-import { PushToOtherProducer, VMPushToOtherBuilding } from "./movement";
+import { VMPushToOtherBuilding } from "./movement";
 import {
   Extractor,
   Factory,
-  NewExtractor,
-  NewFactory,
-  UpdateBuildingRecipe,
+  NewExtractorForRecipe,
+  NewFactoryForRecipe,
 } from "./production";
 import { NewLab } from "./research";
 import { NewChest } from "./storage";
 import { AddItemsToReadonlyFixedBuffer } from "./test_utils";
-import {
-  BeltConnection,
-  EntityStack,
-  ItemBuffer,
-  NewEntityStack,
-} from "./types";
+import { BeltConnection, EntityStack, NewEntityStack } from "./types";
 
 function NewTestFactory(r: string, count = 1): Factory {
-  const factory = NewFactory({ subkind: "assembling-machine-1" }, count);
-  UpdateBuildingRecipe(factory, r);
+  const factory = NewFactoryForRecipe(
+    { subkind: "assembling-machine-1" },
+    r,
+    count
+  );
   return factory;
 }
 
 function NewTestExtractor(r: string, count = 1): Extractor {
-  const factory = NewExtractor({ subkind: "burner-mining-drill" }, count);
-  UpdateBuildingRecipe(factory, r);
+  const factory = NewExtractorForRecipe(
+    { subkind: "burner-mining-drill" },
+    r,
+    count
+  );
   return factory;
 }
 

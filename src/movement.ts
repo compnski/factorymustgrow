@@ -1,7 +1,28 @@
-import { StateVMAction } from "./stateVm";
+import { DispatchFunc, StateAddress, StateVMAction } from "./stateVm";
 import { EntityStack, ItemBuffer } from "./types";
 import { ReadonlyItemBuffer } from "./useGameState";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
+
+export function moveToInventory(
+  dispatch: DispatchFunc,
+  entity: string,
+  count: number,
+  fromAddress?: StateAddress
+) {
+  dispatch({
+    kind: "AddItemCount",
+    address: { inventory: true },
+    entity,
+    count: count,
+  });
+  if (fromAddress)
+    dispatch({
+      kind: "AddItemCount",
+      address: fromAddress,
+      entity,
+      count: -count,
+    });
+}
 
 export function CanPushTo(
   from: { kind: string; outputBuffers: ReadonlyItemBuffer },
@@ -23,7 +44,7 @@ export function CanPushTo(
 }
 
 export function VMPushToOtherBuilding(
-  dispatch: (a: StateVMAction) => void,
+  dispatch: DispatchFunc,
   regionId: string,
   outputIdx: number,
   { outputBuffers }: { outputBuffers: ReadonlyItemBuffer | ItemBuffer },

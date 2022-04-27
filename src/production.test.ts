@@ -1,25 +1,29 @@
-import { TicksPerSecond } from "./constants";
 import {
   Extractor,
   Factory,
-  NewExtractor,
-  NewFactory,
+  NewExtractorForRecipe,
+  NewFactoryForRecipe,
   ProduceFromExtractor,
   ProduceFromFactory,
-  UpdateBuildingRecipe,
 } from "./production";
 import { AddItemsToReadonlyFixedBuffer as AddItemsToFixedBuffer } from "./test_utils";
 import { EntityStack, NewEntityStack, NewRegion, Region } from "./types";
 
 function NewTestFactory(r: string, count = 1): Factory {
-  const factory = NewFactory({ subkind: "assembling-machine-1" }, count);
-  UpdateBuildingRecipe(factory, r);
+  const factory = NewFactoryForRecipe(
+    { subkind: "assembling-machine-1" },
+    r,
+    count
+  );
   return factory;
 }
 
 function NewTestExtractor(r: string, count = 1): Extractor {
-  const factory = NewExtractor({ subkind: "burner-mining-drill" }, count);
-  UpdateBuildingRecipe(factory, r);
+  const factory = NewExtractorForRecipe(
+    { subkind: "burner-mining-drill" },
+    r,
+    count
+  );
   return factory;
 }
 
