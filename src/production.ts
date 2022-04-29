@@ -1,13 +1,7 @@
-import {
-  AddProgressTrackers,
-  ProduceWithTracker,
-  TickProgressTracker,
-} from "./AddProgressTracker";
+import { ProduceWithTracker } from "./AddProgressTracker";
 import { GetEntity, GetRecipe } from "./gen/entities";
-import { ReadonlyFixedInventory, FixedInventory } from "./inventory";
-import { moveToInventory } from "./movement";
-import { productionRunsForInput, productionPerTick } from "./productionUtils";
-import { BuildingAddress, DispatchFunc, StateVMAction } from "./stateVm";
+import { ReadonlyFixedInventory, ReadonlyInventory } from "./inventory";
+import { BuildingAddress, StateVMAction } from "./stateVm";
 import {
   BuildingType,
   EntityStack,
@@ -16,7 +10,7 @@ import {
   Recipe,
   Region,
 } from "./types";
-import { GameState, ReadonlyItemBuffer } from "./useGameState";
+import { ReadonlyItemBuffer } from "./useGameState";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
 
 // Extractor
@@ -37,44 +31,49 @@ export type Extractor = {
 };
 
 export function UpdateBuildingRecipe(
-  dispatch: DispatchFunc,
+  inventory: ReadonlyInventory,
   b: Factory | Extractor,
-  recipeId: string
-) {
-  const recipe = GetRecipe(recipeId);
-  const oldInputBuffers = b.inputBuffers,
-    oldOutputBuffers = b.outputBuffers;
+  RecipeId: string
+): { building: Factory | Extractor; inventory: ReadonlyInventory } {
+  const recipe = GetRecipe(RecipeId);
+  //Not in output, add to inventory
+  if (BuildingHasInput(b.kind)) {
+    b.inputBuffers.Entities().forEach(([entity, count]) => {
+      if (recipe.Input.findIndex((e) => e.Entity === entity) < 0) {
+        inventory = inventory.AddItems(entity, count);
+      }
+    });
+  }
+  if (BuildingHasOutput(b.kind)) {
+    b.outputBuffers.Entities().forEach(([entity, count]) => {
+      if (recipe.Output.findIndex((e) => e.Entity === entity) < 0) {
+        inventory = inventory.AddItems(entity, count);
+      }
+    });
+  }
 
   switch (b.kind) {
     case "Extractor":
-      b.inputBuffers = inputItemBufferForExtractor(recipe, b.inputBuffers);
-      b.outputBuffers = outputItemBufferForExtractor(recipe, b.outputBuffers);
-      break;
+      return {
+        inventory,
+        building: {
+          ...b,
+          RecipeId,
+          inputBuffers: inputItemBufferForExtractor(recipe, b.inputBuffers),
+          outputBuffers: outputItemBufferForExtractor(recipe, b.outputBuffers),
+        },
+      };
 
     case "Factory":
-      b.inputBuffers = inputItemBufferForFactory(recipe, b.inputBuffers);
-      b.outputBuffers = outputItemBufferForFactory(recipe, b.outputBuffers);
-  }
-  b.RecipeId = recipeId;
-
-  // Remove from input buffers
-  if (BuildingHasInput(b.kind)) {
-    oldInputBuffers.Entities().forEach(([entity, count]) => {
-      if (recipe.Input.findIndex((e) => e.Entity === entity) < 0) {
-        //Not in input, add to inventory
-        moveToInventory(dispatch, entity, count);
-      }
-    });
-  }
-
-  // Remove from output buffers
-  if (BuildingHasOutput(b.kind)) {
-    oldOutputBuffers.Entities().forEach(([entity, count]) => {
-      if (recipe.Output.findIndex((e) => e.Entity === entity) < 0) {
-        //Not in output, add to inventory
-        moveToInventory(dispatch, entity, count);
-      }
-    });
+      return {
+        inventory,
+        building: {
+          ...b,
+          RecipeId,
+          inputBuffers: inputItemBufferForFactory(recipe, b.inputBuffers),
+          outputBuffers: outputItemBufferForFactory(recipe, b.outputBuffers),
+        },
+      };
   }
 }
 
@@ -99,8 +98,12 @@ export function NewExtractorForRecipe(
 
 export function NewExtractor(
   { subkind }: Pick<Extractor, "subkind">,
-  initialProduceCount = 0
+  initialProduceCount = 0,
+  recipeId?: string
 ): Extractor {
+  if (recipeId)
+    return NewExtractorForRecipe({ subkind }, recipeId, initialProduceCount);
+
   return {
     kind: "Extractor",
     subkind: subkind,
@@ -266,8 +269,11 @@ export function NewFactoryForRecipe(
 
 export function NewFactory(
   { subkind }: Pick<Factory, "subkind">,
-  initialProduceCount = 0
+  initialProduceCount = 0,
+  recipeId?: string
 ): Factory {
+  if (recipeId)
+    return NewFactoryForRecipe({ subkind }, recipeId, initialProduceCount);
   return {
     kind: "Factory",
     ProducerType: ProducerTypeFromEntity(subkind),
@@ -288,7 +294,7 @@ function inputItemBufferForFactory(
     r.Input.map((input) =>
       EntityStackForEntity(
         input.Entity,
-        existingItems ? existingItems.Count(input.entity) : 0,
+        existingItems ? existingItems.Count(input.Entity) : 0,
         input.Count
       )
     )
@@ -302,7 +308,7 @@ function outputItemBufferForFactory(
     r.Output.map((output) =>
       EntityStackForEntity(
         output.Entity,
-        existingItems ? existingItems.Count(output.entity) : 0,
+        existingItems ? existingItems.Count(output.Entity) : 0,
         output.Count
       )
     )

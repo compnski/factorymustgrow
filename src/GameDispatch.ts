@@ -13,17 +13,17 @@ import { GetResearch } from "./gen/research";
 import { GameWindow } from "./globals";
 import { Inserter } from "./inserter";
 import { FixedInventory } from "./inventory";
-import { CanPushTo } from "./movement";
-import {
-  Factory,
-  NewExtractor,
-  NewFactory,
-  ProducerTypeFromEntity,
-  UpdateBuildingRecipe,
-} from "./production";
+import { CanPushTo, moveToInventory } from "./movement";
+import { NewExtractor, NewFactory, ProducerTypeFromEntity } from "./production";
 import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
 import { NewLab } from "./research";
-import { DispatchFunc } from "./stateVm";
+import {
+  applyStateChangeActions,
+  BuildingAddress,
+  DispatchFunc,
+  StateAddress,
+  StateVMAction,
+} from "./stateVm";
 import { Chest, NewChest, UpdateChestSize } from "./storage";
 import {
   BeltLineDepot,
@@ -42,13 +42,19 @@ import {
   GameState,
   GetReadonlyRegion,
   GetRegion,
+  ReadonlyBuilding,
   ResetGameState,
 } from "./useGameState";
 import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
 
 export const GameDispatch = (action: GameAction) => {
   // TODO: Dispatch func!
-  const dispatch: DispatchFunc = () => false;
+  const vmActions: StateVMAction[] = [];
+  const dispatch = (a: StateVMAction) => {
+    console.log(a);
+    vmActions.push(a);
+  };
+
   switch (action.type) {
     case "Reset":
       ResetGameState();
@@ -127,11 +133,11 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "TransferToInventory":
-      transferToInventory(action);
+      transferToInventory(dispatch, action);
       break;
 
     case "TransferFromInventory":
-      transferFromInventory(action);
+      transferFromInventory(dispatch, action);
       break;
 
     case "ClaimRegion":
@@ -141,6 +147,7 @@ export const GameDispatch = (action: GameAction) => {
     case "LaunchRocket":
       launchRocket(action);
   }
+  applyStateChangeActions(GameState, vmActions);
 };
 
 function changeRecipe(
@@ -156,8 +163,14 @@ function changeRecipe(
   // Change Recipe
   // Move any Input / Output that no longer matches a buffer into inventory
   // Update input/output buffers
-  if (b && (b.kind === "Factory" || b.kind === "Extractor"))
-    UpdateBuildingRecipe(dispatch, b, action.recipeId);
+  if (b && (b.kind === "Factory" || b.kind === "Extractor")) {
+    const address: BuildingAddress = {
+      regionId: action.regionId,
+      buildingSlot: action.buildingIdx,
+    };
+    dispatch({ kind: "SetRecipe", address, recipeId: action.recipeId });
+  }
+  //UpdateBuildingRecipe(dispatch, b, action.recipeId);
 }
 
 function launchRocket(action: {
@@ -191,6 +204,7 @@ function claimRegion(action: { type: "ClaimRegion"; regionId: string }) {
 }
 
 function transferFromInventory(
+  dispatch: DispatchFunc,
   action:
     | {
         type: "TransferToInventory" | "TransferFromInventory";
@@ -214,14 +228,37 @@ function transferFromInventory(
         count?: number | undefined;
       }
 ) {
-  const toStack = inventoryTransferStack(action);
-  if (toStack) {
-    toStack.AddFromItemBuffer(GameState.Inventory, action.entity);
+  const target = addressAndCountForTransfer(action, "to");
+  const entity = GetEntity(action.entity);
+  const count = Math.min(
+    target.count || 0,
+    GameState.Inventory.Count(action.entity),
+    entity.StackSize
+  );
+
+  if (count) {
+    if (!target.address)
+      return moveToInventory(dispatch, action.entity, -count);
+    moveToInventory(dispatch, action.entity, -count, target.address);
   }
 }
 
-function transferToInventory(action: InventoryTransferAction) {
-  throw new Error("NYI");
+function transferToInventory(
+  dispatch: DispatchFunc,
+  action: InventoryTransferAction
+) {
+  const target = addressAndCountForTransfer(action, "from");
+  const entity = GetEntity(action.entity);
+  const count = Math.min(
+    target.count || 0,
+    GameState.Inventory.AvailableSpace(action.entity),
+    entity.StackSize
+  );
+
+  if (count) {
+    if (!target.address) return moveToInventory(dispatch, action.entity, count);
+    moveToInventory(dispatch, action.entity, count, target.address);
+  }
 }
 
 function addMainBusConnection(action: {
@@ -529,15 +566,18 @@ function PlaceBuilding(
   // if buildingIdx, and buildingIDx is empty, then build it here.
   const buildAtIdx: number | undefined =
     action.buildingIdx ?? NextEmptySlot(currentRegion.BuildingSlots);
-  const newBuilding = NewBuilding(action.entity);
+  const newBuilding = NewBuilding(
+    action.entity,
+    action.entity === "rocket-silo" ? "rocket-part" : undefined
+  );
   AddBuildingOverEmptyOrAtEnd(currentRegion, newBuilding, buildAtIdx);
 
   GameState.Inventory.Remove(); //NewEntityStack(action.entity, 0, 1), 1);
   // TODO: Show recipe selector
   // TODO: Finish default building recipes
-  if (action.entity === "rocket-silo") {
-    UpdateBuildingRecipe(dispatch, newBuilding as Factory, "rocket-part");
-  }
+  // if (action.entity === "rocket-silo") {
+  //   UpdateBuildingRecipe(dispatch, newBuilding as Factory, "rocket-part");
+  // }
 }
 
 function PlaceBeltLine(
@@ -741,51 +781,69 @@ function RemoveBuilding(
   }
 }
 
-function inventoryTransferStack(
-  action: InventoryTransferAction
-): ItemBuffer | undefined {
-  let b: Building | undefined;
+// TODO: PAss direction (to/from)so we can grab availabe space vs count accordingly
+function addressAndCountForTransfer(
+  action: InventoryTransferAction,
+  direction: "to" | "from"
+): { address: StateAddress | undefined; count: number } {
+  let b: ReadonlyBuilding;
   switch (action.otherStackKind) {
     case "Void":
-      return FixedInventory([
-        NewEntityStack(
-          action.entity,
-          action.count ?? (GetEntity(action.entity).StackSize || 50),
-          action.count ?? Infinity
-        ),
-      ]);
-
+      return { address: undefined, count: Infinity };
     case "MainBus":
-      return GetRegion(action.regionId).Bus.lanes.get(action.laneId);
-
+      return {
+        address: { regionId: action.regionId, mainbusLane: action.laneId },
+        count:
+          GetRegion(action.regionId)
+            .Bus.lanes.get(action.laneId)
+            ?.Count(action.entity) || 0,
+      };
     case "Building":
-      b = building(action);
+      b = GetReadonlyRegion(action.regionId).BuildingSlots[action.buildingIdx]
+        .Building;
+      if (!b) break;
       if (
-        b &&
-        b.kind != "Lab" &&
-        b.kind != "Factory" &&
-        b.kind != "Extractor"
+        BuildingHasOutput(b.kind) &&
+        ((direction == "to" &&
+          b.outputBuffers.AvailableSpace(action.entity) > 0) ||
+          (direction == "from" && b.outputBuffers.Count(action.entity) > 0))
       ) {
-        if (
-          BuildingHasOutput(b.kind) &&
-          (b.outputBuffers.AvailableSpace(action.entity) > 0 ||
-            b.outputBuffers.Count(action.entity) > 0)
-        ) {
-          return b.outputBuffers;
-        }
-        if (
-          BuildingHasInput(b.kind) &&
-          (b?.inputBuffers.AvailableSpace(action.entity) > 0 ||
-            b?.inputBuffers.Count(action.entity) > 0)
-        ) {
-          return b.inputBuffers;
-        }
+        return {
+          address: {
+            regionId: action.regionId,
+            buildingSlot: action.buildingIdx,
+            buffer: "output",
+          },
+          count:
+            direction == "to"
+              ? b.outputBuffers.AvailableSpace(action.entity)
+              : b.outputBuffers.Count(action.entity),
+        };
+      }
+      if (
+        BuildingHasInput(b.kind) &&
+        ((direction == "to" &&
+          b.inputBuffers.AvailableSpace(action.entity) > 0) ||
+          (direction == "from" && b.inputBuffers.Count(action.entity) > 0))
+      ) {
+        return {
+          address: {
+            regionId: action.regionId,
+            buildingSlot: action.buildingIdx,
+            buffer: "input",
+          },
+          count:
+            direction == "to"
+              ? b.inputBuffers.AvailableSpace(action.entity)
+              : b.inputBuffers.Count(action.entity),
+        };
       }
   }
-  return;
+  return { address: undefined, count: 0 };
+  //throw new Error("Cant find inventory to transfer " + direction);
 }
 
-export function NewBuilding(entity: string): Building {
+export function NewBuilding(entity: string, recipeId?: string): Building {
   switch (ProducerTypeFromEntity(entity)) {
     case "Assembler":
     case "Smelter":
@@ -793,13 +851,14 @@ export function NewBuilding(entity: string): Building {
     case "RocketSilo":
     case "Refinery":
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return NewFactory({ subkind: entity } as any, 1);
+
+      return NewFactory({ subkind: entity } as any, 1, recipeId);
 
     case "Miner":
     case "Pumpjack":
     case "WaterPump":
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return NewExtractor({ subkind: entity } as any, 1);
+      return NewExtractor({ subkind: entity } as any, 1, recipeId);
 
     case "Lab":
       return NewLab(1);

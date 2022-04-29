@@ -1,8 +1,8 @@
 import { HasProgressTrackers } from "./AddProgressTracker";
-import { Entities } from "./gen/entities";
 import { Inventory, ReadonlyInventory } from "./inventory";
+import { UpdateBuildingRecipe } from "./production";
 import { ResearchOutput } from "./research";
-import { NewEntityStack, Region } from "./types";
+import { NewEntityStack } from "./types";
 import { FactoryGameState, ResearchState } from "./useGameState";
 
 export type DispatchFunc = (a: StateVMAction) => void;
@@ -56,7 +56,8 @@ export type StateVMAction =
   | AddResearchCountAction
   | SetCurrentResearchAction
   | AddItemAction
-  | AddProgressTrackerAction;
+  | AddProgressTrackerAction
+  | SetRecipeAction;
 
 //  | SetItemAction
 
@@ -66,6 +67,12 @@ export type StateVMAction =
 //   entity: string;
 //   count: number;
 // };
+
+type SetRecipeAction = {
+  kind: "SetRecipe";
+  address: BuildingAddress;
+  recipeId: string;
+};
 
 type AddItemAction = {
   kind: "AddItemCount";
@@ -131,6 +138,8 @@ function applyStateChangeAction(
       return stateChangeAddItemCount(state, action);
     case "AddProgressTrackers":
       return stateChangeAddProgressTrackers(state, action);
+    case "SetRecipe":
+      return stateChangeSetRecipe(state, action);
 
     default:
       throw new Error("Unknown action kind: " + JSON.stringify(action));
@@ -182,6 +191,33 @@ function stateChangeTransferItems(
   return gs;
 }
 
+function stateChangeSetRecipe(
+  state: FactoryGameState,
+  action: SetRecipeAction
+): FactoryGameState {
+  const {
+    address: { regionId, buildingSlot },
+    recipeId,
+  } = action;
+  const region = state.Regions.get(regionId);
+  if (!region) throw new Error("Missing region");
+  const currentBuilding = region.BuildingSlots[buildingSlot].Building;
+  if (
+    currentBuilding.kind == "Factory" ||
+    currentBuilding.kind == "Extractor"
+  ) {
+    const { inventory, building } = UpdateBuildingRecipe(
+      state.Inventory,
+      currentBuilding,
+      recipeId
+    );
+    state.Inventory = inventory;
+    region.BuildingSlots[buildingSlot].Building = building;
+    state.Regions.set(regionId, region);
+  }
+  return state;
+}
+
 function stateChangeAddItemCount(
   state: FactoryGameState,
   action: AddItemAction
@@ -197,39 +233,7 @@ function stateChangeAddItemCount(
       state.Regions.set(regionId, region);
     }
   } else if (isBuildingAddress(address)) {
-    const { regionId, buildingSlot, buffer } = address;
-    const region = state.Regions.get(regionId);
-    const building = region?.BuildingSlots[buildingSlot].Building;
-    if (building) {
-      if (buffer == "input")
-        if (building.inputBuffers instanceof Inventory) {
-          building.inputBuffers.Add(NewEntityStack(entity, count), Infinity);
-        } else if (building.inputBuffers instanceof ReadonlyInventory) {
-          building.inputBuffers = building.inputBuffers.AddItems(entity, count);
-        }
-      if (buffer == "output")
-        if (building.outputBuffers instanceof Inventory) {
-          if (count > 0)
-            building.outputBuffers.Add(NewEntityStack(entity, count), Infinity);
-          else
-            building.outputBuffers.Remove(
-              NewEntityStack(entity, 0, Infinity),
-              -count,
-              false
-            );
-        } else if (
-          building.outputBuffers instanceof ReadonlyInventory ||
-          building.outputBuffers instanceof ResearchOutput
-        ) {
-          building.outputBuffers = building.outputBuffers.AddItems(
-            entity,
-            count
-          );
-        }
-
-      region.BuildingSlots[buildingSlot].Building = building;
-      state.Regions.set(regionId, region);
-    }
+    addItemsToBuilding(address, state, entity, count);
   } else if (isInventoryAddress(address)) {
     state.Inventory = state.Inventory.AddItems(entity, count);
   } else {
@@ -237,6 +241,44 @@ function stateChangeAddItemCount(
   }
   //
   return state;
+}
+
+function addItemsToBuilding(
+  address: BuildingAddress,
+  state: FactoryGameState,
+  entity: string,
+  count: number
+) {
+  const { regionId, buildingSlot, buffer } = address;
+  const region = state.Regions.get(regionId);
+  const building = region?.BuildingSlots[buildingSlot].Building;
+  if (building) {
+    if (buffer == "input")
+      if (building.inputBuffers instanceof Inventory) {
+        building.inputBuffers.Add(NewEntityStack(entity, count), Infinity);
+      } else if (building.inputBuffers instanceof ReadonlyInventory) {
+        building.inputBuffers = building.inputBuffers.AddItems(entity, count);
+      }
+    if (buffer == "output")
+      if (building.outputBuffers instanceof Inventory) {
+        if (count > 0)
+          building.outputBuffers.Add(NewEntityStack(entity, count), Infinity);
+        else
+          building.outputBuffers.Remove(
+            NewEntityStack(entity, 0, Infinity),
+            -count,
+            false
+          );
+      } else if (
+        building.outputBuffers instanceof ReadonlyInventory ||
+        building.outputBuffers instanceof ResearchOutput
+      ) {
+        building.outputBuffers = building.outputBuffers.AddItems(entity, count);
+      }
+
+    region.BuildingSlots[buildingSlot].Building = building;
+    state.Regions.set(regionId, region);
+  }
 }
 
 function stateChangeAddProgressTrackers(

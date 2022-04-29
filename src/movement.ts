@@ -1,4 +1,4 @@
-import { DispatchFunc, StateAddress, StateVMAction } from "./stateVm";
+import { DispatchFunc, StateAddress } from "./stateVm";
 import { EntityStack, ItemBuffer } from "./types";
 import { ReadonlyItemBuffer } from "./useGameState";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
