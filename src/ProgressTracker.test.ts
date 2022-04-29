@@ -17,11 +17,11 @@ describe("Progress Trackers", () => {
   }
 
   const vmDispatch = jest.fn();
-  const address: BuildingAddress = { regionId: "testRegion", buildingSlot: 0 };
+  const address: BuildingAddress = { regionId: "testRegion", buildingIdx: 0 };
 
   const expectTracker = (count: number, currentTick = 0) => {
     expect(vmDispatch).toHaveBeenCalledWith({
-      address: { regionId: "testRegion", buildingSlot: 0 },
+      address: { regionId: "testRegion", buildingIdx: 0 },
       count,
       currentTick,
       kind: "AddProgressTrackers",

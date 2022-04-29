@@ -1,9 +1,11 @@
 import { HasProgressTrackers } from "./AddProgressTracker";
+import { InserterId } from "./building";
+import { Inserter } from "./inserter";
 import { Inventory, ReadonlyInventory } from "./inventory";
 import { UpdateBuildingRecipe } from "./production";
 import { ResearchOutput } from "./research";
 import { NewEntityStack } from "./types";
-import { FactoryGameState, ResearchState } from "./useGameState";
+import { FactoryGameState, GetRegion, ResearchState } from "./useGameState";
 
 export type DispatchFunc = (a: StateVMAction) => void;
 
@@ -20,7 +22,7 @@ type MainBusAddress = {
 
 export type BuildingAddress = {
   regionId: string;
-  buildingSlot: number;
+  buildingIdx: number;
   buffer?: "input" | "output";
 };
 
@@ -39,7 +41,7 @@ function isMainBusAddress(s: StateAddress): s is MainBusAddress {
 
 function isBuildingAddress(s: StateAddress): s is BuildingAddress {
   const sb = s as BuildingAddress;
-  return sb.buildingSlot !== undefined;
+  return sb.buildingIdx !== undefined;
 }
 
 function isRegionAddress(s: StateAddress): s is RegionAddress {
@@ -57,7 +59,8 @@ export type StateVMAction =
   | SetCurrentResearchAction
   | AddItemAction
   | AddProgressTrackerAction
-  | SetRecipeAction;
+  | SetRecipeAction
+  | SetPropertyAction;
 
 //  | SetItemAction
 
@@ -67,6 +70,21 @@ export type StateVMAction =
 //   entity: string;
 //   count: number;
 // };
+
+type InserterAddress = InserterId;
+// type SetPropertyAction = SetInserterPropertyAction<
+//   keyof Omit<Inserter, "kind">
+// >;
+type SetPropertyAction =
+  | SetInserterPropertyAction<"direction">
+  | SetInserterPropertyAction<"BuildingCount">;
+
+type SetInserterPropertyAction<P extends keyof Omit<Inserter, "kind">> = {
+  kind: "SetProperty";
+  address: InserterAddress;
+  property: P;
+  value: Inserter[P];
+};
 
 type SetRecipeAction = {
   kind: "SetRecipe";
@@ -140,10 +158,32 @@ function applyStateChangeAction(
       return stateChangeAddProgressTrackers(state, action);
     case "SetRecipe":
       return stateChangeSetRecipe(state, action);
-
+    case "SetProperty":
+      return stateChangeSetProperty(state, action);
     default:
       throw new Error("Unknown action kind: " + JSON.stringify(action));
   }
+}
+
+function stateChangeSetProperty(
+  state: FactoryGameState,
+  action: SetPropertyAction
+): FactoryGameState {
+  if (!isInserterAddress(action.address)) throw new Error("NYI");
+
+  const { regionId, buildingIdx, location } = action.address;
+  if (location != "BUILDING") throw new Error("NYI");
+  const region = GetRegion(regionId);
+
+  const buildingSlot = region.BuildingSlots[buildingIdx];
+  if (buildingSlot) {
+    buildingSlot.Inserter = {
+      ...buildingSlot.Inserter,
+      [action.property]: action.value,
+    };
+  }
+  state.Regions.set(regionId, region);
+  return state;
 }
 
 function stateChangeAddResearchCount(
@@ -196,12 +236,12 @@ function stateChangeSetRecipe(
   action: SetRecipeAction
 ): FactoryGameState {
   const {
-    address: { regionId, buildingSlot },
+    address: { regionId, buildingIdx },
     recipeId,
   } = action;
   const region = state.Regions.get(regionId);
   if (!region) throw new Error("Missing region");
-  const currentBuilding = region.BuildingSlots[buildingSlot].Building;
+  const currentBuilding = region.BuildingSlots[buildingIdx].Building;
   if (
     currentBuilding.kind == "Factory" ||
     currentBuilding.kind == "Extractor"
@@ -212,7 +252,7 @@ function stateChangeSetRecipe(
       recipeId
     );
     state.Inventory = inventory;
-    region.BuildingSlots[buildingSlot].Building = building;
+    region.BuildingSlots[buildingIdx].Building = building;
     state.Regions.set(regionId, region);
   }
   return state;
@@ -249,9 +289,9 @@ function addItemsToBuilding(
   entity: string,
   count: number
 ) {
-  const { regionId, buildingSlot, buffer } = address;
+  const { regionId, buildingIdx, buffer } = address;
   const region = state.Regions.get(regionId);
-  const building = region?.BuildingSlots[buildingSlot].Building;
+  const building = region?.BuildingSlots[buildingIdx].Building;
   if (building) {
     if (buffer == "input")
       if (building.inputBuffers instanceof Inventory) {
@@ -276,7 +316,7 @@ function addItemsToBuilding(
         building.outputBuffers = building.outputBuffers.AddItems(entity, count);
       }
 
-    region.BuildingSlots[buildingSlot].Building = building;
+    region.BuildingSlots[buildingIdx].Building = building;
     state.Regions.set(regionId, region);
   }
 }
@@ -286,9 +326,9 @@ function stateChangeAddProgressTrackers(
   action: AddProgressTrackerAction
 ): FactoryGameState {
   const { address, count, currentTick } = action;
-  const { regionId, buildingSlot } = address;
+  const { regionId, buildingIdx } = address;
   const region = state.Regions.get(regionId);
-  const building = region?.BuildingSlots[buildingSlot].Building;
+  const building = region?.BuildingSlots[buildingIdx].Building;
   if (!building)
     throw new Error("Cannot find building at " + JSON.stringify(address));
 
@@ -302,4 +342,8 @@ function stateChangeAddProgressTrackers(
     }
   }
   return state;
+}
+
+function isInserterAddress(address: StateAddress): address is InserterAddress {
+  return (address as InserterAddress).location !== undefined;
 }

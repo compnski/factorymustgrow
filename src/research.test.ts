@@ -1,5 +1,6 @@
 import { ImmutableMap } from "./immutable";
 import { Lab, NewLab, ResearchInLab, ResearchOutput } from "./research";
+import { BuildingAddress } from "./stateVm";
 import { TestResearchBook } from "./test_research_defs";
 import { AddItemsToReadonlyFixedBuffer as AddItemsToFixedBuffer } from "./test_utils";
 import { EntityStack, NewEntityStack } from "./types";
@@ -21,7 +22,10 @@ describe("Labs", () => {
     const vmDispatch = jest.fn();
     vmDispatch.mockImplementation(console.log);
 
-    const labAddress = { regionId: "testRegion", buildingSlot: 0 };
+    const labAddress: BuildingAddress = {
+      regionId: "testRegion",
+      buildingIdx: 0,
+    };
     ResearchInLab(0, labAddress, lab, researchState, vmDispatch, (id) => {
       const r = TestResearchBook.get(id);
       if (!r) throw new Error("Failed to find id");
@@ -35,7 +39,7 @@ describe("Labs", () => {
 
     if (count) {
       expect(vmDispatch).toHaveBeenCalledWith({
-        address: { regionId: "testRegion", buildingSlot: 0 },
+        address: { regionId: "testRegion", buildingIdx: 0 },
         count,
         currentTick: 0,
         kind: "AddProgressTrackers",
@@ -43,7 +47,7 @@ describe("Labs", () => {
 
       for (const expectedInput of expected.inputBuffers) {
         expect(vmDispatch).toHaveBeenCalledWith({
-          address: { regionId: "testRegion", buildingSlot: 0, buffer: "input" },
+          address: { regionId: "testRegion", buildingIdx: 0, buffer: "input" },
           count: expectedInput.Count,
           entity: expectedInput.Entity,
           kind: "AddItemCount",
@@ -67,7 +71,7 @@ describe("Labs", () => {
 
     if (expected.outputBuffers.length)
       expect(vmDispatch).toHaveBeenCalledWith({
-        address: { regionId: "testRegion", buildingSlot: 0 },
+        address: { regionId: "testRegion", buildingIdx: 0 },
         count: -count,
         currentTick: 1000,
         kind: "AddProgressTrackers",
@@ -75,7 +79,7 @@ describe("Labs", () => {
 
     for (const expectedOutput of expected.outputBuffers) {
       expect(vmDispatch).toHaveBeenCalledWith({
-        address: { regionId: "testRegion", buildingSlot: 0, buffer: "output" },
+        address: { regionId: "testRegion", buildingIdx: 0, buffer: "output" },
         count: expectedOutput.Count,
         entity: expectedOutput.Entity,
         kind: "AddItemCount",

@@ -113,15 +113,15 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "IncreaseInserterCount":
-      increaseInserterCount(action);
+      increaseInserterCount(dispatch, action);
       break;
 
     case "DecreaseInserterCount":
-      decreaseInserterCount(action);
+      decreaseInserterCount(dispatch, action);
       break;
 
     case "ToggleInserterDirection":
-      toggleInserterDirection(action);
+      toggleInserterDirection(dispatch, action);
       break;
 
     case "RemoveMainBusConnection":
@@ -166,7 +166,7 @@ function changeRecipe(
   if (b && (b.kind === "Factory" || b.kind === "Extractor")) {
     const address: BuildingAddress = {
       regionId: action.regionId,
-      buildingSlot: action.buildingIdx,
+      buildingIdx: action.buildingIdx,
     };
     dispatch({ kind: "SetRecipe", address, recipeId: action.recipeId });
   }
@@ -308,6 +308,7 @@ function removeMainBusConnection(action: {
 }
 
 function toggleInserterDirection(
+  dispatch: DispatchFunc,
   action:
     | ({
         type:
@@ -369,7 +370,7 @@ function toggleInserterDirection(
     }
     return;
   }
-
+  const { regionId, buildingIdx, location } = action;
   const topB = currentRegion.BuildingSlots[action.buildingIdx].Building,
     bottomB = currentRegion.BuildingSlots[action.buildingIdx + 1].Building,
     i = currentRegion.BuildingSlots[action.buildingIdx].Inserter;
@@ -387,19 +388,44 @@ function toggleInserterDirection(
       BuildingHasInput(bottomB.kind) &&
       CanPushTo(topB, bottomB);
 
-  if (canGoUp && canGoDown) {
-    (i as Pick<Inserter, "direction">).direction =
-      i.direction === "UP" ? "DOWN" : i.direction === "DOWN" ? "NONE" : "UP";
-  } else if (canGoUp) {
-    (i as Pick<Inserter, "direction">).direction =
-      i.direction === "NONE" ? "UP" : "NONE";
-  } else if (canGoDown) {
-    (i as Pick<Inserter, "direction">).direction =
-      i.direction === "NONE" ? "DOWN" : "NONE";
-  }
+  const newDirection =
+    canGoUp && canGoDown
+      ? i.direction === "UP"
+        ? "DOWN"
+        : i.direction === "DOWN"
+        ? "NONE"
+        : "UP"
+      : canGoUp
+      ? i.direction === "NONE"
+        ? "UP"
+        : "NONE"
+      : canGoDown
+      ? i.direction === "NONE"
+        ? "DOWN"
+        : "NONE"
+      : i.direction;
+
+  dispatch({
+    kind: "SetProperty",
+    address: { regionId, buildingIdx, location },
+    property: "direction",
+    value: newDirection,
+  });
+
+  // if (canGoUp && canGoDown) {
+  //   (i as Pick<Inserter, "direction">).direction =
+  //     i.direction === "UP" ? "DOWN" : i.direction === "DOWN" ? "NONE" : "UP";
+  // } else if (canGoUp) {
+  //   (i as Pick<Inserter, "direction">).direction =
+  //     i.direction === "NONE" ? "UP" : "NONE";
+  // } else if (canGoDown) {
+  //   (i as Pick<Inserter, "direction">).direction =
+  //     i.direction === "NONE" ? "DOWN" : "NONE";
+  // }
 }
 
 function decreaseInserterCount(
+  dispatch: DispatchFunc,
   action:
     | ({
         type:
@@ -419,15 +445,30 @@ function decreaseInserterCount(
         connectionIdx: number;
       })
 ) {
+  const { regionId, buildingIdx, location } = action;
   const i = inserter(action);
 
   if (i && i.BuildingCount > 0) {
-    GameState.Inventory.Add(); //NewEntityStack(i.subkind, 1, 1), 1);
-    i.BuildingCount = Math.max(0, i.BuildingCount - 1);
+    //GameState.Inventory.Add(); //NewEntityStack(i.subkind, 1, 1), 1);
+    if (location == "BELT") i.BuildingCount = Math.max(0, i.BuildingCount - 1);
+    else
+      dispatch({
+        kind: "SetProperty",
+        address: { regionId, buildingIdx, location: "BUILDING" },
+        property: "BuildingCount",
+        value: Math.max(i.BuildingCount - 1, 0),
+      });
+    dispatch({
+      kind: "AddItemCount",
+      address: { inventory: true },
+      entity: i.subkind,
+      count: 1,
+    });
   }
 }
 
 function increaseInserterCount(
+  dispatch: DispatchFunc,
   action:
     | ({
         type:
@@ -448,13 +489,29 @@ function increaseInserterCount(
       })
 ) {
   const i = inserter(action);
+  const { regionId, buildingIdx, location } = action;
 
-  if (!i || GameState.Inventory.Count(i.subkind) <= 0) {
+  if (
+    !i ||
+    GameState.Inventory.Count(i.subkind) <= 0 ||
+    i.BuildingCount >= 50
+  ) {
     return;
   }
-  GameState.Inventory.Remove(); //NewEntityStack(i.subkind, 0, 1), 1);
-
-  if (i) i.BuildingCount = Math.min(50, i.BuildingCount + 1);
+  if (location == "BELT") i.BuildingCount = Math.min(50, i.BuildingCount + 1);
+  else
+    dispatch({
+      kind: "SetProperty",
+      address: { regionId, buildingIdx, location: "BUILDING" },
+      property: "BuildingCount",
+      value: Math.min(50, i.BuildingCount + 1),
+    });
+  dispatch({
+    kind: "AddItemCount",
+    address: { inventory: true },
+    entity: i.subkind,
+    count: -1,
+  });
 }
 
 function decreaseBuildingCount(action: {
@@ -811,7 +868,7 @@ function addressAndCountForTransfer(
         return {
           address: {
             regionId: action.regionId,
-            buildingSlot: action.buildingIdx,
+            buildingIdx: action.buildingIdx,
             buffer: "output",
           },
           count:
@@ -829,7 +886,7 @@ function addressAndCountForTransfer(
         return {
           address: {
             regionId: action.regionId,
-            buildingSlot: action.buildingIdx,
+            buildingIdx: action.buildingIdx,
             buffer: "input",
           },
           count:

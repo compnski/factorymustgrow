@@ -42,7 +42,7 @@ describe("Factories", () => {
   ) {
     const vmDispatch = jest.fn();
     //vmDispatch.mockImplementation(console.log);
-    const buildingAddress = { regionId: "testRegion", buildingSlot: 0 };
+    const buildingAddress = { regionId: "testRegion", buildingIdx: 0 };
 
     ProduceFromFactory(factory, vmDispatch, buildingAddress, 0);
 
@@ -51,7 +51,7 @@ describe("Factories", () => {
 
       if (count) {
         expect(vmDispatch).toHaveBeenCalledWith({
-          address: { regionId: "testRegion", buildingSlot: 0, buffer: "input" },
+          address: { regionId: "testRegion", buildingIdx: 0, buffer: "input" },
           count: expectedInput.Count,
           entity: expectedInput.Entity,
           kind: "AddItemCount",
@@ -60,7 +60,7 @@ describe("Factories", () => {
     }
     if (expected.productionCount)
       expect(vmDispatch).toHaveBeenCalledWith({
-        address: { regionId: "testRegion", buildingSlot: 0 },
+        address: { regionId: "testRegion", buildingIdx: 0 },
         count: expected.productionCount,
         currentTick: 0,
         kind: "AddProgressTrackers",
@@ -73,7 +73,7 @@ describe("Factories", () => {
 
     if (expected.outputCount)
       expect(vmDispatch).toHaveBeenCalledWith({
-        address: { regionId: "testRegion", buildingSlot: 0 },
+        address: { regionId: "testRegion", buildingIdx: 0 },
         count: -expected.outputCount,
         currentTick: 1000,
         kind: "AddProgressTrackers",
@@ -83,7 +83,7 @@ describe("Factories", () => {
 
     for (const expectedOutput of expected.outputBuffers) {
       expect(vmDispatch).toHaveBeenCalledWith({
-        address: { regionId: "testRegion", buildingSlot: 0, buffer: "output" },
+        address: { regionId: "testRegion", buildingIdx: 0, buffer: "output" },
         count: expectedOutput.Count,
         entity: expectedOutput.Entity,
         kind: "AddItemCount",
@@ -208,12 +208,12 @@ describe("Extractors", () => {
   ) {
     const vmDispatch = jest.fn();
     //vmDispatch.mockImplementation(console.log);
-    const address = { regionId: "testRegion", buildingSlot: 0 };
+    const address = { regionId: "testRegion", buildingIdx: 0 };
 
     ProduceFromExtractor(extractor, region, vmDispatch, address, 0);
     if (expected.productionCount) {
       expect(vmDispatch).toHaveBeenCalledWith({
-        address: { regionId: "testRegion", buildingSlot: 0 },
+        address: { regionId: "testRegion", buildingIdx: 0 },
         count: expected.productionCount,
         currentTick: 0,
         kind: "AddProgressTrackers",
@@ -238,7 +238,7 @@ describe("Extractors", () => {
 
     if (expected.outputCount)
       expect(vmDispatch).toHaveBeenCalledWith({
-        address: { regionId: "testRegion", buildingSlot: 0 },
+        address: { regionId: "testRegion", buildingIdx: 0 },
         count: -expected.outputCount,
         currentTick: 1000,
         kind: "AddProgressTrackers",
@@ -246,7 +246,7 @@ describe("Extractors", () => {
 
     for (const expectedOutput of expected.outputBuffers) {
       expect(vmDispatch).toHaveBeenCalledWith({
-        address: { regionId: "testRegion", buildingSlot: 0, buffer: "output" },
+        address: { regionId: "testRegion", buildingIdx: 0, buffer: "output" },
         count: expectedOutput.Count,
         entity: expectedOutput.Entity,
         kind: "AddItemCount",

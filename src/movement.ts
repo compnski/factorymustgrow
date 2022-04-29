@@ -73,13 +73,13 @@ export function VMPushToOtherBuilding(
       remainingMaxTransfer -= transferAmount;
       dispatch({
         kind: "AddItemCount",
-        address: { regionId, buildingSlot: inputIdx, buffer: "input" },
+        address: { regionId, buildingIdx: inputIdx, buffer: "input" },
         entity,
         count: transferAmount,
       });
       dispatch({
         kind: "AddItemCount",
-        address: { regionId, buildingSlot: outputIdx, buffer: "output" },
+        address: { regionId, buildingIdx: outputIdx, buffer: "output" },
         entity,
         count: -transferAmount,
       });

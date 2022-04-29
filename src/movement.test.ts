@@ -48,7 +48,7 @@ describe("VMPushToOtherBuilding", () => {
     // Check InputBuffers
     for (const expectedInput of expected.inputBuffers) {
       expect(vmDispatch).toHaveBeenCalledWith({
-        address: { regionId: "testRegion", buildingSlot: 1, buffer: "input" },
+        address: { regionId: "testRegion", buildingIdx: 1, buffer: "input" },
         count: expectedInput.Count,
         entity: expectedInput.Entity,
         kind: "AddItemCount",
@@ -58,7 +58,7 @@ describe("VMPushToOtherBuilding", () => {
     // Check OutputBuffers
     for (const expectedOutput of expected.outputBuffers) {
       expect(vmDispatch).toHaveBeenCalledWith({
-        address: { regionId: "testRegion", buildingSlot: 0, buffer: "output" },
+        address: { regionId: "testRegion", buildingIdx: 0, buffer: "output" },
         count: expectedOutput.Count,
         entity: expectedOutput.Entity,
         kind: "AddItemCount",
