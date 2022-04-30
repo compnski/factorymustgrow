@@ -273,7 +273,7 @@ export function availableRecipes(
 ): string[] {
   const availableRecipesIds: string[] = [...AlwaysUnlockedRecipes];
   researchState.Progress.forEach((stack) => {
-    if (stack.Count === stack.MaxCount) {
+    if (StackCapacity(stack) === 0) {
       const research = GetResearch(stack.Entity);
       if (research) availableRecipesIds.push(...research.Unlocks);
       else console.log("Missing research entity for ", stack.Entity);

@@ -1,6 +1,7 @@
 // Factory
 
 import { Building } from "./building";
+import { moveToInventory } from "./movement";
 import { productionRunsForInput } from "./productionUtils";
 import { BuildingAddress, StateAddress, StateVMAction } from "./stateVm";
 import { EntityStack } from "./types";
@@ -117,6 +118,24 @@ type trackerProps = {
   inputAddress?: StateAddress;
   inputBuffers?: ReadonlyItemBuffer;
 };
+
+export function CancelProgressTracker({
+  dispatch,
+  recipe,
+  building,
+  buildingAddress,
+}: Pick<trackerProps, "dispatch" | "recipe" | "building" | "buildingAddress">) {
+  const trackerCount = building.progressTrackers.length;
+  dispatch({
+    kind: "AddProgressTrackers",
+    count: -trackerCount,
+    address: buildingAddress,
+    currentTick: 0,
+  });
+  for (const input of recipe.Input) {
+    moveToInventory(dispatch, input.Entity, input.Count * trackerCount);
+  }
+}
 
 export function ProduceWithTracker({
   dispatch,

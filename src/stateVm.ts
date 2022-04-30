@@ -1,5 +1,5 @@
 import { HasProgressTrackers } from "./AddProgressTracker";
-import { InserterId } from "./building";
+import { InserterId, NewEmptyLane } from "./building";
 import { Inserter } from "./inserter";
 import { Inventory, ReadonlyInventory } from "./inventory";
 import { UpdateBuildingRecipe } from "./production";
@@ -60,8 +60,8 @@ export type StateVMAction =
   | AddItemAction
   | AddProgressTrackerAction
   | SetRecipeAction
-  | SetPropertyAction;
-
+  | SetPropertyAction
+  | PlaceBuildingAction;
 //  | SetItemAction
 
 // type SetItemAction = {
@@ -126,6 +126,13 @@ type SetCurrentResearchAction = {
   researchId: string;
 };
 
+type PlaceBuildingAction = {
+  kind: "PlaceBuilding";
+  entity: "empty-lane";
+  address: BuildingAddress;
+  BuildingCount: number;
+};
+
 export function applyStateChangeActions(
   gs: FactoryGameState,
   actions: StateVMAction[]
@@ -160,6 +167,8 @@ function applyStateChangeAction(
       return stateChangeSetRecipe(state, action);
     case "SetProperty":
       return stateChangeSetProperty(state, action);
+    case "PlaceBuilding":
+      return stateChangePlaceBuilding(state, action);
     default:
       throw new Error("Unknown action kind: " + JSON.stringify(action));
   }
@@ -214,6 +223,29 @@ function stateChangeAddResearchCount(
   }
   return state;
 }
+
+function stateChangePlaceBuilding(
+  state: FactoryGameState,
+  action: PlaceBuildingAction
+): FactoryGameState {
+  if (!isBuildingAddress(action.address)) throw new Error("NYI");
+  const {
+    address: { regionId, buildingIdx },
+    entity,
+  } = action;
+  const region = state.Regions.get(regionId);
+  if (!region) throw new Error("Region Required");
+
+  switch (entity) {
+    case "empty-lane":
+      region.BuildingSlots[buildingIdx].Building = NewEmptyLane();
+      break;
+  }
+  state.Regions.set(regionId, region);
+
+  return state;
+}
+
 function stateChangeSetCurrentResearch(
   state: ResearchState,
   action: SetCurrentResearchAction

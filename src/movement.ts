@@ -60,29 +60,30 @@ export function VMPushToOtherBuilding(
         outputBuffers.Count(entity),
         inputBuffers.AvailableSpace(entity)
       );
+      if (transferAmount) {
+        console.log(
+          "VM PUSH",
+          entity,
+          outputBuffers.Count(entity),
+          inputBuffers.AvailableSpace(entity),
+          inputBuffers.Count(entity),
+          transferAmount
+        );
 
-      console.log(
-        "VM PUSH",
-        entity,
-        outputBuffers.Count(entity),
-        inputBuffers.AvailableSpace(entity),
-        inputBuffers.Count(entity),
-        transferAmount
-      );
-
-      remainingMaxTransfer -= transferAmount;
-      dispatch({
-        kind: "AddItemCount",
-        address: { regionId, buildingIdx: inputIdx, buffer: "input" },
-        entity,
-        count: transferAmount,
-      });
-      dispatch({
-        kind: "AddItemCount",
-        address: { regionId, buildingIdx: outputIdx, buffer: "output" },
-        entity,
-        count: -transferAmount,
-      });
+        remainingMaxTransfer -= transferAmount;
+        dispatch({
+          kind: "AddItemCount",
+          address: { regionId, buildingIdx: inputIdx, buffer: "input" },
+          entity,
+          count: transferAmount,
+        });
+        dispatch({
+          kind: "AddItemCount",
+          address: { regionId, buildingIdx: outputIdx, buffer: "output" },
+          entity,
+          count: -transferAmount,
+        });
+      }
     }
   });
 }
@@ -106,7 +107,7 @@ export function StackCapacity(stack: EntityStack | undefined): number {
     stack.MaxCount === Infinity
   )
     return Infinity;
-  return stack.MaxCount - stack.Count;
+  return Math.max(0, stack.MaxCount - stack.Count);
 }
 
 export function stackTransfer(

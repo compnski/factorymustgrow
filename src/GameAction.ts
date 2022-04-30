@@ -27,15 +27,10 @@ type LaneAction =
       entity: string;
       regionId: string;
     };
-type RegionAction =
-  | {
-      type: "ClaimRegion";
-      regionId: string;
-    }
-  | {
-      type: "NewLab";
-      regionId: string;
-    };
+type RegionAction = {
+  type: "ClaimRegion";
+  regionId: string;
+};
 type DragBuildingAction = {
   type: "ReorderBuildings";
   regionId: string;

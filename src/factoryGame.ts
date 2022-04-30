@@ -34,7 +34,8 @@ export async function UpdateGameState(
     // Check Research Completion
     if (IsResearchComplete(GetResearchState())) {
       console.log("Research Complete!");
-      GameDispatch({ type: "CompleteResearch" });
+      //GameDispatch({ type: "CompleteResearch" });
+      GameState.Research.CurrentResearchId = "";
       await showResearchSelector(generalDialog, GetResearchState());
     }
   } catch (e) {

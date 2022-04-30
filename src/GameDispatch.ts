@@ -1,3 +1,4 @@
+import { HasProgressTrackers } from "./AddProgressTracker";
 import {
   Building,
   BuildingSlot,
@@ -8,11 +9,10 @@ import {
 } from "./building";
 import { fixInserters } from "./factoryGame";
 import { GameAction, InventoryTransferAction } from "./GameAction";
-import { GetEntity } from "./gen/entities";
+import { GetEntity, MaybeGetRecipe } from "./gen/entities";
 import { GetResearch } from "./gen/research";
 import { GameWindow } from "./globals";
 import { Inserter } from "./inserter";
-import { FixedInventory } from "./inventory";
 import { CanPushTo, moveToInventory } from "./movement";
 import { NewExtractor, NewFactory, ProducerTypeFromEntity } from "./production";
 import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
@@ -32,7 +32,6 @@ import {
 } from "./transport";
 import {
   BeltConnection,
-  ItemBuffer,
   NewEntityStack,
   NewRegionFromInfo,
   Producer,
@@ -72,20 +71,23 @@ export const GameDispatch = (action: GameAction) => {
     case "ChangeResearch":
       if (action.producerName) {
         console.log("Set research to ", action.producerName);
-        GameState.Research.CurrentResearchId = action.producerName;
+        dispatch({
+          kind: "SetCurrentResearch",
+          researchId: action.producerName,
+        });
       }
       break;
 
     case "CompleteResearch":
-      completeResearch();
-      break;
-
-    case "NewLab":
-      AddBuildingOverEmptyOrAtEnd(GetRegion(action.regionId), NewLab());
+      completeResearch(dispatch);
       break;
 
     case "ChangeRecipe":
-      changeRecipe(dispatch, action);
+      dispatch({
+        kind: "SetRecipe",
+        address: action,
+        recipeId: action.recipeId,
+      });
       break;
 
     case "ReorderBuildings":
@@ -93,7 +95,7 @@ export const GameDispatch = (action: GameAction) => {
       break;
 
     case "RemoveBuilding":
-      RemoveBuilding(action, GetRegion(action.regionId));
+      RemoveBuilding(dispatch, action);
       break;
 
     case "PlaceBeltLine":
@@ -149,29 +151,6 @@ export const GameDispatch = (action: GameAction) => {
   }
   applyStateChangeActions(GameState, vmActions);
 };
-
-function changeRecipe(
-  dispatch: DispatchFunc,
-  action: {
-    buildingIdx: number;
-    regionId: string;
-    recipeId: string;
-  }
-) {
-  const b = building(action);
-  console.log("Change recipe for ", b, "to", action.recipeId);
-  // Change Recipe
-  // Move any Input / Output that no longer matches a buffer into inventory
-  // Update input/output buffers
-  if (b && (b.kind === "Factory" || b.kind === "Extractor")) {
-    const address: BuildingAddress = {
-      regionId: action.regionId,
-      buildingIdx: action.buildingIdx,
-    };
-    dispatch({ kind: "SetRecipe", address, recipeId: action.recipeId });
-  }
-  //UpdateBuildingRecipe(dispatch, b, action.recipeId);
-}
 
 function launchRocket(action: {
   type: "LaunchRocket";
@@ -310,23 +289,13 @@ function removeMainBusConnection(action: {
 function toggleInserterDirection(
   dispatch: DispatchFunc,
   action:
-    | ({
-        type:
-          | "IncreaseInserterCount"
-          | "DecreaseInserterCount"
-          | "ToggleInserterDirection";
-      } & { location: "BUILDING"; regionId: string; buildingIdx: number })
-    | ({
-        type:
-          | "IncreaseInserterCount"
-          | "DecreaseInserterCount"
-          | "ToggleInserterDirection";
-      } & {
+    | { location: "BUILDING"; regionId: string; buildingIdx: number }
+    | {
         location: "BELT";
         regionId: string;
         buildingIdx: number;
         connectionIdx: number;
-      })
+      }
 ) {
   const currentRegion = GetReadonlyRegion(action.regionId);
 
@@ -427,42 +396,34 @@ function toggleInserterDirection(
 function decreaseInserterCount(
   dispatch: DispatchFunc,
   action:
-    | ({
-        type:
-          | "IncreaseInserterCount"
-          | "DecreaseInserterCount"
-          | "ToggleInserterDirection";
-      } & { location: "BUILDING"; regionId: string; buildingIdx: number })
-    | ({
-        type:
-          | "IncreaseInserterCount"
-          | "DecreaseInserterCount"
-          | "ToggleInserterDirection";
-      } & {
+    | { location: "BUILDING"; regionId: string; buildingIdx: number }
+    | {
         location: "BELT";
         regionId: string;
         buildingIdx: number;
         connectionIdx: number;
-      })
+      },
+  count = 1
 ) {
   const { regionId, buildingIdx, location } = action;
   const i = inserter(action);
 
   if (i && i.BuildingCount > 0) {
     //GameState.Inventory.Add(); //NewEntityStack(i.subkind, 1, 1), 1);
-    if (location == "BELT") i.BuildingCount = Math.max(0, i.BuildingCount - 1);
+    if (location == "BELT")
+      i.BuildingCount = Math.max(0, i.BuildingCount - count);
     else
       dispatch({
         kind: "SetProperty",
         address: { regionId, buildingIdx, location: "BUILDING" },
         property: "BuildingCount",
-        value: Math.max(i.BuildingCount - 1, 0),
+        value: Math.max(i.BuildingCount - count, 0),
       });
     dispatch({
       kind: "AddItemCount",
       address: { inventory: true },
       entity: i.subkind,
-      count: 1,
+      count,
     });
   }
 }
@@ -470,23 +431,14 @@ function decreaseInserterCount(
 function increaseInserterCount(
   dispatch: DispatchFunc,
   action:
-    | ({
-        type:
-          | "IncreaseInserterCount"
-          | "DecreaseInserterCount"
-          | "ToggleInserterDirection";
-      } & { location: "BUILDING"; regionId: string; buildingIdx: number })
-    | ({
-        type:
-          | "IncreaseInserterCount"
-          | "DecreaseInserterCount"
-          | "ToggleInserterDirection";
-      } & {
+    | { location: "BUILDING"; regionId: string; buildingIdx: number }
+    | {
         location: "BELT";
         regionId: string;
         buildingIdx: number;
         connectionIdx: number;
-      })
+      },
+  count = 1
 ) {
   const i = inserter(action);
   const { regionId, buildingIdx, location } = action;
@@ -498,19 +450,21 @@ function increaseInserterCount(
   ) {
     return;
   }
-  if (location == "BELT") i.BuildingCount = Math.min(50, i.BuildingCount + 1);
+  const newCount = Math.min(50, i.BuildingCount + count);
+  if (newCount == i.BuildingCount) return;
+  if (location == "BELT") i.BuildingCount = newCount;
   else
     dispatch({
       kind: "SetProperty",
       address: { regionId, buildingIdx, location: "BUILDING" },
       property: "BuildingCount",
-      value: Math.min(50, i.BuildingCount + 1),
+      value: newCount,
     });
   dispatch({
     kind: "AddItemCount",
     address: { inventory: true },
     entity: i.subkind,
-    count: -1,
+    count: i.BuildingCount - newCount,
   });
 }
 
@@ -558,27 +512,16 @@ function increaseBuildingCount(action: {
   if (b?.kind === "Chest") UpdateChestSize(b as Chest);
 }
 
-function completeResearch() {
-  const currentResearchId = GameState.Research.CurrentResearchId,
-    currentResearchProgress =
-      GameState.Research.Progress.get(currentResearchId);
-  if (currentResearchProgress)
-    currentResearchProgress.Count = currentResearchProgress.MaxCount || 0;
-  else {
-    const r = GetResearch(currentResearchId);
-    if (r)
-      GameState.Research.Progress.set(
-        currentResearchId,
-        NewEntityStack(
-          currentResearchId,
-          r.ProductionRequiredForCompletion,
-          r.ProductionRequiredForCompletion
-        )
-      );
-    else console.log("No Research");
-  }
-  //else console.log("No research", currentResearchId);
-  GameState.Research.CurrentResearchId = "";
+function completeResearch(dispatch: DispatchFunc) {
+  const currentResearchId = GameState.Research.CurrentResearchId;
+  const r = GetResearch(currentResearchId);
+  if (r)
+    dispatch({
+      kind: "AddResearchCount",
+      count: Infinity,
+      researchId: currentResearchId,
+      maxCount: r.ProductionRequiredForCompletion,
+    });
 }
 
 function removeLane(
@@ -628,6 +571,8 @@ function PlaceBuilding(
     action.entity === "rocket-silo" ? "rocket-part" : undefined
   );
   AddBuildingOverEmptyOrAtEnd(currentRegion, newBuilding, buildAtIdx);
+
+  moveToInventory(dispatch, action.entity, -1);
 
   GameState.Inventory.Remove(); //NewEntityStack(action.entity, 0, 1), 1);
   // TODO: Show recipe selector
@@ -731,114 +676,81 @@ function ReorderBuildings(
   fixInserters(region);
 }
 
-const allowRemoveEmpty = false;
 function RemoveBuilding(
+  dispatch: DispatchFunc,
   action: {
-    type: "RemoveBuilding" | "IncreaseBuildingCount" | "DecreaseBuildingCount";
     regionId: string;
     buildingIdx: number;
-  },
-  currentRegion: Region
+  }
 ) {
+  const { regionId, buildingIdx } = action;
+  const address = { regionId, buildingIdx };
   const b = building(action); // as Producer;
-  if (b) {
-    currentRegion.BuildingSlots[action.buildingIdx].Building = NewEmptyLane();
-    for (let idx = currentRegion.BuildingSlots.length - 1; idx >= 0; idx--) {
-      // Removing the last building and it's an empty lane.
-      if (
-        allowRemoveEmpty &&
-        currentRegion.BuildingSlots[idx].Building.kind === "Empty"
-      ) {
-        const [slot] = currentRegion.BuildingSlots.splice(idx, 1);
-        const inserter = slot && slot.Inserter;
-        // Refund inserters
-        if (inserter)
-          GameState.Inventory
-            .Add
-            // NewEntityStack()inserter.subkind, inserter.BuildingCount),
-            // inserter.BuildingCount,
-            //          true
-            ();
-        slot.BeltConnections.forEach((beltConn) => {
-          GameState.Inventory
-            .Add
-            // NewEntityStack(
-            //   beltConn.Inserter.subkind,
-            //   beltConn.Inserter.BuildingCount
-            // ),
-            // beltConn.Inserter.BuildingCount,
-            //            true
-            ();
-        });
-      } else {
-        // Until there are no more empty ones
-        break;
-      }
-    }
+  if (!b) return;
+  //currentRegion.BuildingSlots[action.buildingIdx].Building = NewEmptyLane();
 
+  if (b.kind === "BeltLineDepot") {
+    const depot = b as BeltLineDepot,
+      otherRegion = GetRegion(depot.otherRegionId);
+
+    const otherDepot = FindDepotForBeltLineInRegion(
+      otherRegion,
+      depot.beltLineId,
+      depot.direction === "TO_REGION" ? "FROM_REGION" : "TO_REGION"
+    );
+    // Have to remove both depots to remove beltline
+    if (!otherDepot) {
+      // Remove BeltLine
+      const beltLine = GameState.BeltLines.get(depot.beltLineId);
+      if (!beltLine) {
+        console.error(
+          "No beltline to delete when deleting depot for ",
+          depot.beltLineId
+        );
+        return;
+      }
+      // GameState.Inventory
+      //   .Add
+      //   // NewEntityStack(b.subkind, b.BuildingCount * beltLine.length),
+      //   //          b.BuildingCount * beltLine.length
+      //   ();
+      beltLine.sharedBeltBuffer.forEach((es) => {
+        if (es && es.Entity) GameState.Inventory.Add(); //es, Infinity, true);
+      });
+      GameState.BeltLines.delete(beltLine.beltLineId);
+    }
+  } else {
+    // TODO: Progress Trackers
+    if (HasProgressTrackers(b)) {
+      const recipe = MaybeGetRecipe(b.RecipeId);
+      if (recipe) {
+        recipe.Input.forEach(({ Count, Entity }) => {
+          moveToInventory(dispatch, Entity, Count);
+        });
+      }
+      b.progressTrackers.length;
+    }
+    if (b.BuildingCount > 0)
+      moveToInventory(dispatch, b.subkind, b.BuildingCount);
     if (BuildingHasInput(b.kind))
       b.inputBuffers
         .Entities()
-        .forEach(([entity, count]) => GameState.Inventory.AddFromItemBuffer());
-    // b.inputBuffers,
-    // entity,
-    // count,
-    // true
-    //          )
-    if (BuildingHasOutput(b.kind))
-      b.outputBuffers.Entities().forEach(([entity, count]) =>
-        GameState.Inventory
-          .AddFromItemBuffer
-          //   b.outputBuffers,
-          //   entity,
-          //   count,
-          //   true
-          ()
-      );
-    if (b.kind === "BeltLineDepot") {
-      const depot = b as BeltLineDepot,
-        otherRegion = GetRegion(depot.otherRegionId);
+        .forEach(([entity, count]) => moveToInventory(dispatch, entity, count));
 
-      const otherDepot = FindDepotForBeltLineInRegion(
-        otherRegion,
-        depot.beltLineId,
-        depot.direction === "TO_REGION" ? "FROM_REGION" : "TO_REGION"
-      );
-      // Have to remove both depots to remove beltline
-      if (!otherDepot) {
-        // Remove BeltLine
-        const beltLine = GameState.BeltLines.get(depot.beltLineId);
-        if (!beltLine) {
-          console.error(
-            "No beltline to delete when deleting depot for ",
-            depot.beltLineId
-          );
-          return;
-        }
-        GameState.Inventory
-          .Add
-          // NewEntityStack(b.subkind, b.BuildingCount * beltLine.length),
-          //          b.BuildingCount * beltLine.length
-          ();
-        beltLine.sharedBeltBuffer.forEach((es) => {
-          if (es && es.Entity) GameState.Inventory.Add(); //es, Infinity, true);
-        });
-        GameState.BeltLines.delete(beltLine.beltLineId);
-      }
-    } else {
-      if (b.BuildingCount > 0)
-        GameState.Inventory
-          .Add
-          // NewEntityStack(b.subkind, b.BuildingCount),
-          // b.BuildingCount,
-          //true
-          ();
-    }
-    // Return space
+    if (BuildingHasOutput(b.kind) && !BuildingHasUnifiedInputOutput(b.kind))
+      b.outputBuffers
+        .Entities()
+        .forEach(([entity, count]) => moveToInventory(dispatch, entity, count));
   }
+  dispatch({
+    kind: "PlaceBuilding",
+    entity: "empty-lane",
+    address,
+    BuildingCount: 0,
+  });
 }
 
-// TODO: PAss direction (to/from)so we can grab availabe space vs count accordingly
+// TODO: PAss direction (to/from) so we can grab availabe space vs count accordingly
 function addressAndCountForTransfer(
   action: InventoryTransferAction,
   direction: "to" | "from"
@@ -908,7 +820,6 @@ export function NewBuilding(entity: string, recipeId?: string): Building {
     case "RocketSilo":
     case "Refinery":
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
       return NewFactory({ subkind: entity } as any, 1, recipeId);
 
     case "Miner":
@@ -947,7 +858,6 @@ function building(action: {
 }
 
 function inserter(action: InserterId): Inserter | undefined {
-  console.log(JSON.stringify(action));
   const currentRegion = GetRegion(action.regionId);
 
   return action.location === "BUILDING"
@@ -969,3 +879,7 @@ function buildingSlot(action: {
 }
 
 (window as unknown as GameWindow).GameDispatch = GameDispatch;
+
+function BuildingHasUnifiedInputOutput(kind: string) {
+  return kind === "Chest";
+}

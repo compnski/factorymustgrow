@@ -14,6 +14,11 @@ export function GetEntity(name: string): Entity {
   return e;
 }
 
+export function MaybeGetRecipe(name: string): Recipe | undefined {
+  const r = Recipes.get(name);
+  return r;
+}
+
 export function GetRecipe(name: string): Recipe {
   const r = Recipes.get(name);
   if (!r) throw new Error("Cannot find recipe for " + name);
