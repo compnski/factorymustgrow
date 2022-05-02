@@ -1,11 +1,19 @@
 import { HasProgressTrackers } from "./AddProgressTracker";
-import { InserterId, NewEmptyLane } from "./building";
+import { Building, InserterId, NewEmptyLane } from "./building";
+import { NewBuilding } from "./GameDispatch";
 import { Inserter } from "./inserter";
 import { Inventory, ReadonlyInventory } from "./inventory";
 import { UpdateBuildingRecipe } from "./production";
 import { ResearchOutput } from "./research";
-import { NewEntityStack } from "./types";
-import { FactoryGameState, GetRegion, ResearchState } from "./useGameState";
+import { NewEntityStack, NewRegionFromInfo, RegionInfo } from "./types";
+import {
+  FactoryGameState,
+  GetRegion,
+  initialFactoryGameState,
+  ResearchState,
+  ResetGameState,
+} from "./useGameState";
+import { assertNever } from "./utils";
 
 export type DispatchFunc = (a: StateVMAction) => void;
 
@@ -17,7 +25,7 @@ export type StateAddress =
 
 type MainBusAddress = {
   regionId: string;
-  mainbusLane: number;
+  laneId: number;
 };
 
 export type BuildingAddress = {
@@ -28,7 +36,7 @@ export type BuildingAddress = {
 
 export type RegionAddress = {
   regionId: string;
-  buffer: "ore";
+  buffer?: "ore";
 };
 
 type InventoryAddress = {
@@ -36,7 +44,7 @@ type InventoryAddress = {
 };
 
 function isMainBusAddress(s: StateAddress): s is MainBusAddress {
-  return (s as MainBusAddress).mainbusLane !== undefined;
+  return (s as MainBusAddress).laneId !== undefined;
 }
 
 function isBuildingAddress(s: StateAddress): s is BuildingAddress {
@@ -46,7 +54,7 @@ function isBuildingAddress(s: StateAddress): s is BuildingAddress {
 
 function isRegionAddress(s: StateAddress): s is RegionAddress {
   const sr = s as RegionAddress;
-  return sr.buffer === "ore";
+  return sr.regionId != undefined;
 }
 
 function isInventoryAddress(s: StateAddress): s is InventoryAddress {
@@ -61,35 +69,57 @@ export type StateVMAction =
   | AddProgressTrackerAction
   | SetRecipeAction
   | SetPropertyAction
-  | PlaceBuildingAction;
-//  | SetItemAction
+  | PlaceBuildingAction
+  | SwapBuildingsAction
+  | AddRegionAction
+  | ResetAction
+  | AddMainBusLaneAction
+  | RemoveMainBusLaneAction;
 
-// type SetItemAction = {
-//   kind: "SetItemCount";
-//   address: StateAddress;
-//   entity: string;
-//   count: number;
-// };
+type ResetAction = { kind: "Reset" };
 
 type InserterAddress = InserterId;
 // type SetPropertyAction = SetInserterPropertyAction<
 //   keyof Omit<Inserter, "kind">
 // >;
-type SetPropertyAction =
-  | SetInserterPropertyAction<"direction">
-  | SetInserterPropertyAction<"BuildingCount">;
 
-type SetInserterPropertyAction<P extends keyof Omit<Inserter, "kind">> = {
+type SetPropertyAction = SetInserterPropertyAction | SetBuildingPropertyAction;
+
+type SetInserterPropertyAction =
+  | TSetInserterPropertyAction<"direction">
+  | TSetInserterPropertyAction<"BuildingCount">;
+
+type SetBuildingPropertyAction = TSetBuildingPropertyAction<"BuildingCount">;
+
+type TSetInserterPropertyAction<P extends keyof Omit<Inserter, "kind">> = {
   kind: "SetProperty";
   address: InserterAddress;
   property: P;
   value: Inserter[P];
 };
 
+type TSetBuildingPropertyAction<P extends keyof Omit<Building, "kind">> = {
+  kind: "SetProperty";
+  address: BuildingAddress;
+  property: P;
+  value: Building[P];
+};
+
 type SetRecipeAction = {
   kind: "SetRecipe";
   address: BuildingAddress;
   recipeId: string;
+};
+
+type AddMainBusLaneAction = {
+  kind: "AddMainBusLane";
+  address: RegionAddress;
+  entity: string;
+};
+
+type RemoveMainBusLaneAction = {
+  kind: "RemoveMainBusLane";
+  address: MainBusAddress;
 };
 
 type AddItemAction = {
@@ -128,9 +158,21 @@ type SetCurrentResearchAction = {
 
 type PlaceBuildingAction = {
   kind: "PlaceBuilding";
-  entity: "empty-lane";
+  entity: string;
   address: BuildingAddress;
   BuildingCount: number;
+};
+
+type SwapBuildingsAction = {
+  kind: "SwapBuildings";
+  address: BuildingAddress;
+  moveToAddress: BuildingAddress;
+};
+
+type AddRegionAction = {
+  kind: "AddRegion";
+  regionInfo: RegionInfo;
+  regionId: string;
 };
 
 export function applyStateChangeActions(
@@ -149,6 +191,9 @@ function applyStateChangeAction(
   action: StateVMAction
 ): FactoryGameState {
   switch (action.kind) {
+    case "Reset":
+      ResetGameState();
+      return initialFactoryGameState();
     case "TransferItems":
       return stateChangeTransferItems(state, action);
     case "AddResearchCount":
@@ -157,8 +202,6 @@ function applyStateChangeAction(
     case "SetCurrentResearch":
       state.Research = stateChangeSetCurrentResearch(state.Research, action);
       return state;
-    // case "SetItemCount":
-    //      return stateChangeSetItemCount(state, action);
     case "AddItemCount":
       return stateChangeAddItemCount(state, action);
     case "AddProgressTrackers":
@@ -169,18 +212,57 @@ function applyStateChangeAction(
       return stateChangeSetProperty(state, action);
     case "PlaceBuilding":
       return stateChangePlaceBuilding(state, action);
+    case "SwapBuildings":
+      return stateChangeSwapBuildings(state, action);
+    case "AddRegion":
+      return stateChangeAddRegion(state, action);
+    case "AddMainBusLane":
+    case "RemoveMainBusLane":
+      throw new Error("NYI");
     default:
-      throw new Error("Unknown action kind: " + JSON.stringify(action));
+      throw assertNever(action);
   }
+}
+
+function stateChangeSwapBuildings(
+  state: FactoryGameState,
+  action: SwapBuildingsAction
+): FactoryGameState {
+  const fromRegion = state.Regions.get(action.address.regionId);
+  const toRegion = state.Regions.get(action.moveToAddress.regionId);
+  if (!fromRegion || !toRegion) throw new Error("Regions required");
+  const fromBuilding =
+    fromRegion.BuildingSlots[action.address.buildingIdx].Building;
+  const toBuilding =
+    toRegion.BuildingSlots[action.moveToAddress.buildingIdx].Building;
+
+  fromRegion.BuildingSlots[action.address.buildingIdx].Building = toBuilding;
+  toRegion.BuildingSlots[action.moveToAddress.buildingIdx].Building =
+    fromBuilding;
+  state.Regions.set(fromRegion.Id, fromRegion);
+  state.Regions.set(toRegion.Id, toRegion);
+  return state;
 }
 
 function stateChangeSetProperty(
   state: FactoryGameState,
   action: SetPropertyAction
 ): FactoryGameState {
-  if (!isInserterAddress(action.address)) throw new Error("NYI");
+  if (isInserterAddress(action.address))
+    return setInserterProperty(state, action as SetInserterPropertyAction);
+  if (isBuildingAddress(action.address))
+    return setBuildingProperty(state, action as SetBuildingPropertyAction);
+  throw new Error("Bad address: " + action.address);
+}
 
-  const { regionId, buildingIdx, location } = action.address;
+function setInserterProperty(
+  state: FactoryGameState,
+  {
+    property,
+    value,
+    address: { regionId, buildingIdx, location },
+  }: SetInserterPropertyAction
+): FactoryGameState {
   if (location != "BUILDING") throw new Error("NYI");
   const region = GetRegion(regionId);
 
@@ -188,7 +270,28 @@ function stateChangeSetProperty(
   if (buildingSlot) {
     buildingSlot.Inserter = {
       ...buildingSlot.Inserter,
-      [action.property]: action.value,
+      [property]: value,
+    };
+  }
+  state.Regions.set(regionId, region);
+  return state;
+}
+
+function setBuildingProperty(
+  state: FactoryGameState,
+  {
+    property,
+    value,
+    address: { regionId, buildingIdx },
+  }: SetBuildingPropertyAction
+): FactoryGameState {
+  const region = GetRegion(regionId);
+
+  const buildingSlot = region.BuildingSlots[buildingIdx];
+  if (buildingSlot) {
+    buildingSlot.Building = {
+      ...buildingSlot.Building,
+      [property]: value,
     };
   }
   state.Regions.set(regionId, region);
@@ -240,6 +343,11 @@ function stateChangePlaceBuilding(
     case "empty-lane":
       region.BuildingSlots[buildingIdx].Building = NewEmptyLane();
       break;
+    default:
+      region.BuildingSlots[buildingIdx].Building = NewBuilding(
+        entity,
+        entity === "rocket-silo" ? "rocket-part" : undefined
+      );
   }
   state.Regions.set(regionId, region);
 
@@ -297,6 +405,10 @@ function stateChangeAddItemCount(
   const { address, count, entity } = action;
   if (isMainBusAddress(address)) {
     //
+  } else if (isBuildingAddress(address)) {
+    addItemsToBuilding(address, state, entity, count);
+  } else if (isInventoryAddress(address)) {
+    state.Inventory = state.Inventory.AddItems(entity, count);
   } else if (isRegionAddress(address)) {
     const { regionId, buffer } = address;
     const region = state.Regions.get(regionId);
@@ -304,10 +416,6 @@ function stateChangeAddItemCount(
       region.Ore = region.Ore.AddItems(entity, count);
       state.Regions.set(regionId, region);
     }
-  } else if (isBuildingAddress(address)) {
-    addItemsToBuilding(address, state, entity, count);
-  } else if (isInventoryAddress(address)) {
-    state.Inventory = state.Inventory.AddItems(entity, count);
   } else {
     throw new Error("Unknown address: " + address);
   }
@@ -378,4 +486,12 @@ function stateChangeAddProgressTrackers(
 
 function isInserterAddress(address: StateAddress): address is InserterAddress {
   return (address as InserterAddress).location !== undefined;
+}
+
+function stateChangeAddRegion(
+  state: FactoryGameState,
+  action: AddRegionAction
+): FactoryGameState {
+  state.Regions.set(action.regionId, NewRegionFromInfo(action.regionInfo));
+  return state;
 }

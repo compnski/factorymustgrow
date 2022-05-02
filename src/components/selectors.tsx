@@ -106,7 +106,7 @@ export async function showPlaceBuildingSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
   inventory: ReadonlyItemBuffer,
   regionId: string,
-  buildingIdx?: number
+  buildingIdx: number
 ) {
   const item = await showIconSelector(showDialog, "Choose Building", [
     ...new Set(

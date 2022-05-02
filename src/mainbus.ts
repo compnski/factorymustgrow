@@ -39,6 +39,12 @@ export class ReadonlyMainBus {
   CanAddLane(): boolean {
     return this.lanes.size < 10;
   }
+
+  Lane(id: number): ReadonlyItemBuffer {
+    const lane = this.lanes.get(id);
+    if (!lane) throw new Error(`Lane ${id} not found`);
+    return lane;
+  }
 }
 
 export class MainBus {
@@ -69,5 +75,11 @@ export class MainBus {
 
   CanAddLane(): boolean {
     return this.lanes.size < 10;
+  }
+
+  Lane(id: number): ReadonlyItemBuffer {
+    const lane = this.lanes.get(id);
+    if (!lane) throw new Error(`Lane ${id} not found`);
+    return lane;
   }
 }

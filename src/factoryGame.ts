@@ -13,7 +13,11 @@ import {
   ProduceFromFactory,
 } from "./production";
 import { IsResearchComplete, Lab, ResearchInLab } from "./research";
-import { applyStateChangeActions, StateVMAction } from "./stateVm";
+import {
+  applyStateChangeActions,
+  DispatchFunc,
+  StateVMAction,
+} from "./stateVm";
 import { Chest, UpdateChest } from "./storage";
 import { UpdateBeltLine } from "./transport";
 import { Region } from "./types";
@@ -52,13 +56,14 @@ function UpdateGameStateForRegion(tick: number, region: Region) {
   ) {
     GameState.RocketLaunchingAt = 0;
   }
-  fixInserters(region);
 
   const vmActions: StateVMAction[] = [];
   const vmDispatch = (a: StateVMAction) => {
     console.log(a);
     vmActions.push(a);
   };
+
+  fixInserters(vmDispatch, region);
 
   region.BuildingSlots.forEach((slot, idx) => {
     const address = { regionId: region.Id, buildingIdx: idx };
@@ -106,25 +111,34 @@ function UpdateGameStateForRegion(tick: number, region: Region) {
   applyStateChangeActions(GameState, vmActions);
 }
 
-export function fixInserters(region: { BuildingSlots: BuildingSlot[] }) {
+export function fixInserters(
+  dispatch: DispatchFunc,
+  region: { Id: string; BuildingSlots: BuildingSlot[] }
+) {
   // TODO: Fix Inserters
   region.BuildingSlots.forEach((slot, idx) => {
     const i = slot.Inserter;
     if (
-      i.direction === "DOWN" &&
-      !CanPushTo(
-        region.BuildingSlots[idx].Building,
-        region.BuildingSlots[idx + 1].Building
-      )
+      (i.direction === "DOWN" &&
+        !CanPushTo(
+          region.BuildingSlots[idx].Building,
+          region.BuildingSlots[idx + 1].Building
+        )) ||
+      (i.direction === "UP" &&
+        !CanPushTo(
+          region.BuildingSlots[idx + 1].Building,
+          region.BuildingSlots[idx].Building
+        ))
     )
-      i.direction = "NONE";
-    if (
-      i.direction === "UP" &&
-      !CanPushTo(
-        region.BuildingSlots[idx + 1].Building,
-        region.BuildingSlots[idx].Building
-      )
-    )
-      i.direction = "NONE";
+      dispatch({
+        kind: "SetProperty",
+        address: {
+          regionId: region.Id,
+          buildingIdx: idx,
+          location: "BUILDING",
+        },
+        property: "direction",
+        value: "NONE",
+      });
   });
 }

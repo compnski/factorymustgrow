@@ -90,7 +90,7 @@ export type EmptyLane = {
   ProducerType: "Empty";
   inputBuffers: ItemBuffer;
   outputBuffers: ItemBuffer;
-  BuildingCount: 0;
+  BuildingCount: number;
 };
 
 export function NewEmptyLane(): EmptyLane {

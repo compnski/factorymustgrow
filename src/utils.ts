@@ -80,3 +80,7 @@ export function BuildingHasInput(
 export function showUserError(s: string) {
   console.log("User Error: " + s);
 }
+
+export function assertNever(shouldBeNever: never) {
+  throw new Error("Was not never: " + shouldBeNever);
+}

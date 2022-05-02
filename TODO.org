@@ -17,7 +17,6 @@
 *** Scroll position on page
 *** Last page visited?
 *** Links?
-
 ** Factory inventory upgrade -- Hold 2x required materials per factory
 ** Better UI for deleting belt lines
 ** Save progress during upgrades?
@@ -31,7 +30,7 @@
 *** Only connect directly adjacent regions
 *** Maybe some way to increase throughput?
 *** Some better visibility of contents
-*** Renaming?
+*** Renaming? (Display name?)
 ** UI
 *** Make Region Selector use GeneralDialog
 **** Make Region selector pretty and use hexes?
@@ -51,6 +50,10 @@
 **** Can track in-progress research and pass it to other labs (Spy on each other?)
 
 * Next Ideas
+** MainBus
+*** Drag and drop
+*** Any direction?
+*** End can drop into other lanes
 ** Regions UI
 *** Rename regions
 *** Re-order tab bar

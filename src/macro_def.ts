@@ -83,7 +83,12 @@ function addProducers(
       count: 1,
     });
 
-    GameDispatch({ type: "PlaceBuilding", regionId, entity: kind });
+    GameDispatch({
+      type: "PlaceBuilding",
+      regionId,
+      entity: kind,
+      buildingIdx,
+    });
 
     const nextBuildingIdx = NextEmptySlot(currentRegion.BuildingSlots) || 0;
 

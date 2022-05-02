@@ -59,7 +59,7 @@ type BuildingAction =
       type: "PlaceBuilding";
       entity: string;
       regionId: string;
-      buildingIdx?: number;
+      buildingIdx: number;
     }
   | {
       type: "PlaceBeltLine";
