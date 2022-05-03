@@ -61,14 +61,14 @@ export function VMPushToOtherBuilding(
         inputBuffers.AvailableSpace(entity)
       );
       if (transferAmount) {
-        console.log(
-          "VM PUSH",
-          entity,
-          outputBuffers.Count(entity),
-          inputBuffers.AvailableSpace(entity),
-          inputBuffers.Count(entity),
-          transferAmount
-        );
+        // console.log(
+        //   "VM PUSH",
+        //   entity,
+        //   outputBuffers.Count(entity),
+        //   inputBuffers.AvailableSpace(entity),
+        //   inputBuffers.Count(entity),
+        //   transferAmount
+        // );
 
         remainingMaxTransfer -= transferAmount;
         dispatch({

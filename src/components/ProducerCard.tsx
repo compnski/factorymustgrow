@@ -1,4 +1,4 @@
-import { GameDispatch } from "../GameDispatch";
+import { GameAction } from "../GameAction";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { Inventory } from "../inventory";
 import { IsItemBuffer, ItemBuffer, NewEntityStack } from "../types";
@@ -21,6 +21,7 @@ export type ProducerCardProps = {
   buildingIdx: number;
   regionalOre: ReadonlyItemBuffer;
   researchState: ReadonlyResearchState;
+  uxDispatch: (a: GameAction) => void;
 };
 
 function formatRecipeName(s: string | undefined): string {
@@ -37,6 +38,7 @@ export function ProducerCard({
   regionalOre,
   regionId,
   researchState,
+  uxDispatch,
 }: ProducerCardProps) {
   const generalDialog = useGeneralDialog();
 
@@ -62,6 +64,7 @@ export function ProducerCard({
               regionId,
               buildingIdx,
               generalDialog,
+              uxDispatch,
               researchState
             );
           }}
@@ -78,14 +81,14 @@ export function ProducerCard({
         <CounterWithPlusMinusButtons
           count={producer.BuildingCount}
           minusClickHandler={() =>
-            GameDispatch({
+            uxDispatch({
               type: "DecreaseBuildingCount",
               buildingIdx,
               regionId,
             })
           }
           plusClickHandler={() =>
-            GameDispatch({
+            uxDispatch({
               type: "IncreaseBuildingCount",
               buildingIdx,
               regionId,
@@ -100,6 +103,7 @@ export function ProducerCard({
           buildingIdx={buildingIdx}
           entityIconLookup={entityIconLookupByKind(producer.kind)}
           regionId={regionId}
+          uxDispatch={uxDispatch}
         />
         <div className="spacer" />
       </div>

@@ -20,6 +20,7 @@ function toType<T>(
 const replacer = (key: string, value: any): any => {
   switch (key) {
     case "Progress":
+    case "Regions":
       return toType("ImmutableMap", Object.entries(value));
   }
   return value instanceof Map

@@ -9,9 +9,9 @@ import { showClaimRegionSelector } from "./selectors";
 type RegionTabBarProps = {
   regionIds: string[];
   currentRegionId: string;
-  gameDispatch(a: GameAction): void;
   inventory: ReadonlyItemBuffer;
   setCurrentRegionId: (regionId: string) => void;
+  uxDispatch: (a: GameAction) => void;
 };
 
 const regionIdClaimNew = "claim-new";
@@ -21,6 +21,7 @@ export function RegionTabBar({
   currentRegionId,
   inventory,
   setCurrentRegionId,
+  uxDispatch,
 }: RegionTabBarProps) {
   const generalDialog = useGeneralDialog();
 
@@ -29,7 +30,12 @@ export function RegionTabBar({
       "data-region-id"
     )?.value;
     if (regionId === regionIdClaimNew) {
-      void showClaimRegionSelector(generalDialog, inventory, regionIds);
+      void showClaimRegionSelector(
+        generalDialog,
+        uxDispatch,
+        inventory,
+        regionIds
+      );
     } else if (regionId) {
       setCurrentRegionId(regionId);
     }

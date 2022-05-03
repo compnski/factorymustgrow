@@ -1,14 +1,11 @@
-import { GameDispatch } from "../GameDispatch";
+import { GameAction } from "../GameAction";
 import { GetRecipe } from "../gen/entities";
 import { GeneralDialogConfig } from "../GeneralDialogProvider";
+import { ImmutableMap } from "../immutable";
 import { IsBuilding } from "../production";
 import { availableRecipes } from "../research";
 import { Region } from "../types";
-import {
-  GameState,
-  ReadonlyItemBuffer,
-  ReadonlyResearchState,
-} from "../useGameState";
+import { ReadonlyItemBuffer, ReadonlyResearchState } from "../useGameState";
 import { HelpCard } from "./HelpCard";
 import { PlaceBeltLinePanel } from "./PlaceBeltLinePanel";
 import { RecipeSelector } from "./RecipeSelector";
@@ -41,6 +38,7 @@ async function showIconSelector(
 
 export async function showMoveItemToFromInventorySelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
+  uxDispatch: (a: GameAction) => void,
   direction: "TransferToInventory" | "TransferFromInventory",
   items: string[],
   regionId?: string,
@@ -50,7 +48,7 @@ export async function showMoveItemToFromInventorySelector(
   const recipe = await showIconSelector(showDialog, "Add Stack", items);
 
   if (recipe)
-    GameDispatch(
+    uxDispatch(
       buildingIdx === undefined || regionId === undefined
         ? {
             type: direction,
@@ -69,12 +67,13 @@ export async function showMoveItemToFromInventorySelector(
 
 export async function showAddLaneItemSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
+  uxDispatch: (a: GameAction) => void,
   regionId: string,
   items: string[]
 ): Promise<void> {
   const item = await showIconSelector(showDialog, "Add Bus Lane", items);
   if (item)
-    GameDispatch({
+    uxDispatch({
       type: "AddLane",
       entity: item,
       regionId,
@@ -86,6 +85,7 @@ export async function showChangeProducerRecipeSelector(
   regionId: string,
   buildingIdx: number,
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
+  uxDispatch: (a: GameAction) => void,
   researchState: ReadonlyResearchState
 ): Promise<void> {
   const recipeId = await showIconSelector(
@@ -99,14 +99,16 @@ export async function showChangeProducerRecipeSelector(
     })
   );
   if (recipeId)
-    GameDispatch({ type: "ChangeRecipe", buildingIdx, regionId, recipeId });
+    uxDispatch({ type: "ChangeRecipe", buildingIdx, regionId, recipeId });
 }
 
 export async function showPlaceBuildingSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
+  uxDispatch: (a: GameAction) => void,
   inventory: ReadonlyItemBuffer,
   regionId: string,
-  buildingIdx: number
+  buildingIdx: number,
+  regions: ImmutableMap<string, Region>
 ) {
   const item = await showIconSelector(showDialog, "Choose Building", [
     ...new Set(
@@ -120,13 +122,14 @@ export async function showPlaceBuildingSelector(
   if (item === "transport-belt") {
     await showPlaceBeltLineSelector(
       showDialog,
+      uxDispatch,
       inventory,
-      GameState.Regions,
+      regions,
       regionId,
       buildingIdx
     );
   } else if (item)
-    GameDispatch({
+    uxDispatch({
       type: "PlaceBuilding",
       entity: item,
       buildingIdx,
@@ -137,6 +140,7 @@ export async function showPlaceBuildingSelector(
 export async function showResearchSelector(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
+  uxDispatch: (a: GameAction) => void,
   researchState: ReadonlyResearchState
 ): Promise<void> {
   const result = await showDialog({
@@ -151,15 +155,16 @@ export async function showResearchSelector(
   if (result) {
     const [recipe] = result;
     console.log("research ", recipe);
-    if (recipe) GameDispatch({ type: "ChangeResearch", producerName: recipe });
+    if (recipe) uxDispatch({ type: "ChangeResearch", producerName: recipe });
   }
 }
 
 export async function showPlaceBeltLineSelector(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
+  uxDispatch: (a: GameAction) => void,
   inventory: ReadonlyItemBuffer,
-  regions: Map<string, Region>,
+  regions: ImmutableMap<string, Region>,
   regionId: string,
   buildingIdx?: number
 ) {
@@ -176,7 +181,7 @@ export async function showPlaceBeltLineSelector(
   });
   if (result) {
     const [targetRegion, beltType] = result;
-    GameDispatch({
+    uxDispatch({
       type: "PlaceBeltLine",
       targetRegion,
       entity: beltType,
@@ -190,6 +195,7 @@ export async function showPlaceBeltLineSelector(
 export async function showClaimRegionSelector(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
+  uxDispatch: (a: GameAction) => void,
   inventory: ReadonlyItemBuffer,
   regionIds: string[]
 ): Promise<void> {
@@ -206,7 +212,7 @@ export async function showClaimRegionSelector(
   if (result) {
     const [regionId] = result;
     console.log("claim region ", regionId);
-    if (regionId) GameDispatch({ type: "ClaimRegion", regionId });
+    if (regionId) uxDispatch({ type: "ClaimRegion", regionId });
   }
 }
 

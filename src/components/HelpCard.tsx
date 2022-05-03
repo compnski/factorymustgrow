@@ -1,7 +1,8 @@
 import { Map } from "immutable";
 import { SyntheticEvent } from "react";
-import { AddBuildingOverEmptyOrAtEnd } from "../GameDispatch";
+import { NewBuildingSlot } from "../building";
 import { ReactComponent as HelpOverlay } from "../helpTemplate.svg";
+import { ImmutableMap } from "../immutable";
 import { Inventory } from "../inventory";
 import { ReadonlyMainBus } from "../mainbus";
 import { NewExtractorForRecipe, NewFactoryForRecipe } from "../production";
@@ -22,16 +23,23 @@ function buildHelpRegion(): Region {
     helpRegion = NewRegionFromInfo(regionInfo),
     miner = NewExtractorForRecipe(
       { subkind: "burner-mining-drill" },
-      "iron-ore"
+      "iron-ore",
+      1
     ),
-    smelter = NewFactoryForRecipe({ subkind: "stone-furnace" }, "iron-plate"),
+    smelter = NewFactoryForRecipe(
+      { subkind: "stone-furnace" },
+      "iron-plate",
+      1
+    ),
     assembler = NewFactoryForRecipe(
       { subkind: "assembling-machine-1" },
-      "iron-gear-wheel"
+      "iron-gear-wheel",
+      1
     ),
     assembler2 = NewFactoryForRecipe(
       { subkind: "assembling-machine-1" },
-      "transport-belt"
+      "transport-belt",
+      1
     );
 
   miner.outputBuffers = miner.outputBuffers.AddItems("iron-ore", 10);
@@ -41,37 +49,44 @@ function buildHelpRegion(): Region {
     10
   );
 
-  const minerSlot = AddBuildingOverEmptyOrAtEnd(helpRegion, miner, 0),
-    smelterSlot = AddBuildingOverEmptyOrAtEnd(helpRegion, smelter, 1),
-    assemblerSlot = AddBuildingOverEmptyOrAtEnd(helpRegion, assembler, 2),
-    assemblerSlot2 = AddBuildingOverEmptyOrAtEnd(helpRegion, assembler2, 3);
+  helpRegion.BuildingSlots = [
+    NewBuildingSlot(miner),
+    NewBuildingSlot(smelter),
+    NewBuildingSlot(assembler),
+    NewBuildingSlot(assembler2),
+  ];
 
-  [minerSlot, smelterSlot, assemblerSlot].forEach((s) => {
-    s.Inserter.direction = "DOWN";
-    s.Inserter.BuildingCount = 1;
-  });
+  // TODO: Set up inserters
+  // TODO: Set up main bus
 
-  const plateLaneId = helpRegion.Bus.AddLane("iron-plate", 10);
-  let bc = smelterSlot.BeltConnections[0];
-  bc.direction = "TO_BUS";
-  bc.Inserter.direction = "TO_BUS";
-  bc.Inserter.BuildingCount = 1;
-  bc.laneId = plateLaneId;
-
-  const beltLaneId = helpRegion.Bus.AddLane("transport-belt", 10);
-
-  bc = assemblerSlot2.BeltConnections[0];
-  bc.direction = "FROM_BUS";
-  bc.Inserter.direction = "FROM_BUS";
-  bc.Inserter.BuildingCount = 1;
-  bc.laneId = plateLaneId;
-
-  bc = assemblerSlot2.BeltConnections[1];
-  bc.direction = "TO_BUS";
-  bc.Inserter.direction = "TO_BUS";
-  bc.Inserter.BuildingCount = 1;
-  bc.laneId = beltLaneId;
-
+  /*
+   *     [minerSlot, smelterSlot, assemblerSlot].forEach((s) => {
+   *            s.Inserter.direction = "DOWN";
+   *            s.Inserter.BuildingCount = 1;
+   *     });
+   *  */
+  /*
+   *   const plateLaneId = helpRegion.Bus.AddLane("iron-plate", 10);
+   *   let bc = smelterSlot.BeltConnections[0];
+   *   bc.direction = "TO_BUS";
+   *   bc.Inserter.direction = "TO_BUS";
+   *   bc.Inserter.BuildingCount = 1;
+   *   bc.laneId = plateLaneId;
+   *
+   *   const beltLaneId = helpRegion.Bus.AddLane("transport-belt", 10);
+   *
+   *   bc = assemblerSlot2.BeltConnections[0];
+   *   bc.direction = "FROM_BUS";
+   *   bc.Inserter.direction = "FROM_BUS";
+   *   bc.Inserter.BuildingCount = 1;
+   *   bc.laneId = plateLaneId;
+   *
+   *   bc = assemblerSlot2.BeltConnections[1];
+   *   bc.direction = "TO_BUS";
+   *   bc.Inserter.direction = "TO_BUS";
+   *   bc.Inserter.BuildingCount = 1;
+   *   bc.laneId = beltLaneId;
+   *  */
   return helpRegion;
 }
 
@@ -84,8 +99,10 @@ const region = buildHelpRegion();
 const helpRegion = {
   ...region,
   Ore: region.Ore,
-  Bus: new ReadonlyMainBus(region.Bus),
+  Bus: region.Bus,
 };
+
+const regions = ImmutableMap([[helpRegion.Id, helpRegion]]);
 
 export const HelpCard = function HelpCard({ onConfirm }: HelpCardProps) {
   return (
@@ -111,6 +128,8 @@ export const HelpCard = function HelpCard({ onConfirm }: HelpCardProps) {
             regionalOre={helpRegion.Ore}
             inventory={inventory}
             researchState={researchState}
+            uxDispatch={() => false}
+            regions={regions}
           />
           <HelpOverlay />
         </div>

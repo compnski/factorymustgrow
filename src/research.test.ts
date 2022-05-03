@@ -20,7 +20,7 @@ describe("Labs", () => {
     }
   ) {
     const vmDispatch = jest.fn();
-    vmDispatch.mockImplementation(console.log);
+    //    vmDispatch.mockImplementation(console.log);
 
     const labAddress: BuildingAddress = {
       regionId: "testRegion",

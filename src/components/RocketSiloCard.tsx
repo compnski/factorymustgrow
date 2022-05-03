@@ -1,4 +1,4 @@
-import { GameDispatch } from "../GameDispatch";
+import { GameAction } from "../GameAction";
 import { ReadonlyBuilding } from "../useGameState";
 import { entityIconLookupByKind } from "../utils";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
@@ -10,12 +10,14 @@ export type RocketSiloCardProps = {
   building: ReadonlyBuilding;
   regionId: string;
   buildingIdx: number;
+  uxDispatch: (a: GameAction) => void;
 };
 
 export function RocketSiloCard({
   regionId,
   building,
   buildingIdx,
+  uxDispatch,
 }: RocketSiloCardProps) {
   const readyToLaunch = building.outputBuffers.Count("rocket-part") >= 100;
   // TODO: 'Launch in Progress' text while launching
@@ -36,7 +38,7 @@ export function RocketSiloCard({
       <div className="bottom-area">
         <div
           onClick={async () => {
-            GameDispatch({ type: "LaunchRocket", buildingIdx, regionId });
+            uxDispatch({ type: "LaunchRocket", buildingIdx, regionId });
           }}
           className={`building-card-button clickable ${
             (!readyToLaunch && "disabled") || ""
@@ -52,6 +54,7 @@ export function RocketSiloCard({
           outputInteractable={false}
           entityIconLookup={entityIconLookupByKind(building.kind)}
           regionId={regionId}
+          uxDispatch={uxDispatch}
         />
         <div className="spacer" />
       </div>

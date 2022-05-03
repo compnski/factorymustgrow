@@ -1,4 +1,4 @@
-import { GameDispatch } from "../GameDispatch";
+import { GameAction } from "../GameAction";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { ReadonlyBuilding, ReadonlyItemBuffer } from "../useGameState";
 import { entityIconLookupByKind } from "../utils";
@@ -9,12 +9,10 @@ import { showMoveItemToFromInventorySelector } from "./selectors";
 
 export type StorageCardProps = {
   storage: ReadonlyBuilding;
-  /* dispatch: (a: GameAction) => void;
-   * uiDispatch: (a: UIAction) => void; */
   buildingIdx: number;
-  //  mainBus: MainBus;
   regionId: string;
   inventory: ReadonlyItemBuffer;
+  uxDispatch: (a: GameAction) => void;
 };
 
 function formatName(n: string) {
@@ -28,6 +26,7 @@ export function StorageCard({
   storage,
   buildingIdx,
   inventory,
+  uxDispatch,
 }: StorageCardProps) {
   const generalDialog = useGeneralDialog();
 
@@ -39,14 +38,14 @@ export function StorageCard({
         <CounterWithPlusMinusButtons
           count={storage.BuildingCount}
           minusClickHandler={() =>
-            GameDispatch({
+            uxDispatch({
               type: "DecreaseBuildingCount",
               regionId,
               buildingIdx,
             })
           }
           plusClickHandler={() =>
-            GameDispatch({
+            uxDispatch({
               type: "IncreaseBuildingCount",
               regionId,
               buildingIdx,
@@ -59,6 +58,7 @@ export function StorageCard({
           onClick={async () => {
             await showMoveItemToFromInventorySelector(
               generalDialog,
+              uxDispatch,
               "TransferFromInventory",
               inventory.Entities().map(([entity]) => entity),
               regionId,
@@ -75,6 +75,7 @@ export function StorageCard({
           buildingIdx={buildingIdx}
           entityIconLookup={entityIconLookupByKind(storage.kind)}
           regionId={regionId}
+          uxDispatch={uxDispatch}
         />
       </div>
     </div>

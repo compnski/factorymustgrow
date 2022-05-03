@@ -1,5 +1,5 @@
 import { InserterId } from "../building";
-import { GameDispatch } from "../GameDispatch";
+import { GameAction } from "../GameAction";
 import { Inserter } from "../inserter";
 import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
 import "./InserterCard.scss";
@@ -8,6 +8,7 @@ export type InserterCardProps = {
   inserterId: InserterId;
   inserter: Inserter;
   variant?: "wide" | "small";
+  uxDispatch: (a: GameAction) => void;
 };
 
 export function InserterCard(props: InserterCardProps) {
@@ -26,7 +27,7 @@ export function InserterCard(props: InserterCardProps) {
       <div
         onClick={() => {
           //
-          GameDispatch({
+          props.uxDispatch({
             type: "ToggleInserterDirection",
             ...props.inserterId,
           });
@@ -39,13 +40,13 @@ export function InserterCard(props: InserterCardProps) {
         <CounterWithPlusMinusButtons
           count={props.inserter.BuildingCount}
           minusClickHandler={() =>
-            GameDispatch({
+            props.uxDispatch({
               type: "DecreaseInserterCount",
               ...props.inserterId,
             })
           }
           plusClickHandler={() =>
-            GameDispatch({
+            props.uxDispatch({
               type: "IncreaseInserterCount",
               ...props.inserterId,
             })

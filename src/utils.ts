@@ -84,3 +84,16 @@ export function showUserError(s: string) {
 export function assertNever(shouldBeNever: never) {
   throw new Error("Was not never: " + shouldBeNever);
 }
+
+export function swap<T>(a: T[], lowerIdx: number, upperIdx: number): T[] {
+  const lowerSlot = a[lowerIdx];
+  const upperSlot = a[upperIdx];
+
+  return [
+    ...a.slice(0, lowerIdx),
+    upperSlot,
+    ...(upperIdx != lowerIdx + 1 ? a.slice(lowerIdx + 1, upperIdx) : []),
+    lowerSlot,
+    ...a.slice(upperIdx + 1),
+  ];
+}

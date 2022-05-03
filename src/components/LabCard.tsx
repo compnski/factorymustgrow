@@ -1,4 +1,4 @@
-import { GameDispatch } from "../GameDispatch";
+import { GameAction } from "../GameAction";
 import { GetResearch } from "../gen/research";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { ReadonlyFixedInventory } from "../inventory";
@@ -19,6 +19,7 @@ export type LabCardProps = {
   buildingIdx: number;
   regionId: string;
   researchState: ReadonlyResearchState;
+  uxDispatch: (a: GameAction) => void;
 };
 
 export function LabCard({
@@ -26,6 +27,7 @@ export function LabCard({
   buildingIdx,
   regionId,
   researchState,
+  uxDispatch,
 }: LabCardProps) {
   const generalDialog = useGeneralDialog();
   const title = building.RecipeId
@@ -50,7 +52,11 @@ export function LabCard({
         <div
           className="title"
           onClick={async () => {
-            await showResearchSelector(generalDialog, researchState);
+            await showResearchSelector(
+              generalDialog,
+              uxDispatch,
+              researchState
+            );
           }}
           title="Select Research"
         >
@@ -61,14 +67,14 @@ export function LabCard({
         <CounterWithPlusMinusButtons
           count={building.BuildingCount}
           minusClickHandler={() =>
-            GameDispatch({
+            uxDispatch({
               type: "DecreaseBuildingCount",
               buildingIdx,
               regionId,
             })
           }
           plusClickHandler={() =>
-            GameDispatch({
+            uxDispatch({
               type: "IncreaseBuildingCount",
               buildingIdx,
               regionId,
@@ -85,6 +91,7 @@ export function LabCard({
           outputInteractable={false}
           entityIconLookup={entityIconLookupByKind(building.kind)}
           regionId={regionId}
+          uxDispatch={uxDispatch}
         />
       </div>
     </div>

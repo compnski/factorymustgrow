@@ -1,7 +1,9 @@
 import { SyntheticEvent, useState } from "react";
 import { InserterIdForBuilding } from "../building";
-import { GameDispatch } from "../GameDispatch";
+import { GameAction } from "../GameAction";
+import { ImmutableMap } from "../immutable";
 import { ReadonlyMainBus } from "../mainbus";
+import { Region } from "../types";
 import {
   ReadonlyBuildingSlot,
   ReadonlyItemBuffer,
@@ -17,12 +19,16 @@ export const BuildingCardList = ({
   regionalOre,
   inventory,
   researchState,
+  uxDispatch,
+  regions,
 }: {
   region: { Id: string; BuildingSlots: ReadonlyBuildingSlot[] };
   mainBus: ReadonlyMainBus;
   regionalOre: ReadonlyItemBuffer;
   inventory: ReadonlyItemBuffer;
   researchState: ReadonlyResearchState;
+  uxDispatch: (a: GameAction) => void;
+  regions: ImmutableMap<string, Region>;
 }) => {
   const regionId = region.Id;
   const [dragIdx, setDragIdx] = useState(-1);
@@ -37,7 +43,7 @@ export const BuildingCardList = ({
   const handleDrop =
     (dropIdx: number, isDropOnLastBuilding: boolean) => (e: SyntheticEvent) => {
       console.log(dragIdx, dropIdx);
-      GameDispatch({
+      uxDispatch({
         type: "ReorderBuildings",
         regionId,
         buildingIdx: dragIdx,
@@ -51,7 +57,7 @@ export const BuildingCardList = ({
   const moveUp = (buildingIdx: number) => {
     for (let i = buildingIdx; i >= 0; i--) {
       if (region.BuildingSlots[i].Building.kind === "Empty") {
-        GameDispatch({
+        uxDispatch({
           type: "ReorderBuildings",
           regionId,
           buildingIdx: buildingIdx,
@@ -68,7 +74,7 @@ export const BuildingCardList = ({
   const moveDown = (buildingIdx: number) => {
     for (let i = buildingIdx; i < region.BuildingSlots.length; i++) {
       if (region.BuildingSlots[i].Building.kind === "Empty") {
-        GameDispatch({
+        uxDispatch({
           type: "ReorderBuildings",
           regionId,
           buildingIdx: buildingIdx,
@@ -101,7 +107,7 @@ export const BuildingCardList = ({
           buildingSlot={buildingSlot}
           building={buildingSlot.Building}
           mainBus={mainBus}
-          dispatch={GameDispatch}
+          uxDispatch={uxDispatch}
           regionalOre={regionalOre}
           inventory={inventory}
           handleDrag={handleDrag(idx)}
@@ -109,6 +115,7 @@ export const BuildingCardList = ({
           moveUp={() => moveUp(idx)}
           moveDown={() => moveDown(idx)}
           researchState={researchState}
+          regions={regions}
         />
         {!isLastBuilding && (
           <InserterCard
@@ -116,6 +123,7 @@ export const BuildingCardList = ({
             variant="wide"
             inserter={buildingSlot.Inserter}
             inserterId={InserterIdForBuilding(regionId, idx)}
+            uxDispatch={uxDispatch}
           />
         )}
       </div>

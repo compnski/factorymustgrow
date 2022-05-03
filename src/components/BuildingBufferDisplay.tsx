@@ -1,4 +1,4 @@
-import { GameDispatch } from "../GameDispatch";
+import { GameAction } from "../GameAction";
 import { ReadonlyItemBuffer } from "../useGameState";
 import { InventoryDisplay } from "./InventoryDisplay";
 
@@ -9,6 +9,7 @@ export function BuildingBufferDisplay({
   entityIconLookup = (entity: string): string => entity,
   outputInteractable = true,
   regionId,
+  uxDispatch,
 }: {
   inputBuffers?: ReadonlyItemBuffer;
   outputBuffers?: ReadonlyItemBuffer;
@@ -16,9 +17,10 @@ export function BuildingBufferDisplay({
   buildingIdx: number;
   outputInteractable?: boolean;
   regionId: string;
+  uxDispatch: (a: GameAction) => void;
 }) {
   const addClickHandler = function addClickHandler(entity: string) {
-      GameDispatch({
+      uxDispatch({
         type: "TransferFromInventory",
         entity,
         buildingIdx,
@@ -27,7 +29,7 @@ export function BuildingBufferDisplay({
       });
     },
     remClickHandler = function remClickHandler(entity: string) {
-      GameDispatch({
+      uxDispatch({
         type: "TransferToInventory",
         entity,
         buildingIdx,

@@ -1,5 +1,6 @@
 import { BuildingSlot } from "./building";
 import { showResearchSelector } from "./components/selectors";
+import { GameAction } from "./GameAction";
 import { GameDispatch } from "./GameDispatch";
 import { GetResearch } from "./gen/research";
 import { GeneralDialogConfig } from "./GeneralDialogProvider";
@@ -13,34 +14,44 @@ import {
   ProduceFromFactory,
 } from "./production";
 import { IsResearchComplete, Lab, ResearchInLab } from "./research";
-import {
-  applyStateChangeActions,
-  DispatchFunc,
-  StateVMAction,
-} from "./stateVm";
+import { DispatchFunc, StateVMAction } from "./stateVm";
 import { Chest, UpdateChest } from "./storage";
 import { UpdateBeltLine } from "./transport";
 import { Region } from "./types";
-import { GameState, GetResearchState } from "./useGameState";
+import { FactoryGameState } from "./useGameState";
 
 export async function UpdateGameState(
+  gameState: FactoryGameState,
+  dispatchGameStateActions: (a: StateVMAction[]) => void,
   tick: number,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   generalDialog: (arg0: GeneralDialogConfig) => Promise<any[] | false>
 ) {
+  const uxDispatch = (action: GameAction) => {
+    GameDispatch(dispatchGameStateActions, gameState, action);
+  };
+
   try {
-    for (const [, currentBeltLine] of GameState.BeltLines) {
-      UpdateBeltLine(tick, GameState.Regions, currentBeltLine);
+    for (const [, currentBeltLine] of gameState.BeltLines) {
+      UpdateBeltLine(tick, gameState.Regions, currentBeltLine);
     }
-    for (const [, region] of GameState.Regions) {
-      UpdateGameStateForRegion(tick, region);
+    for (const [, region] of gameState.Regions) {
+      UpdateGameStateForRegion(
+        gameState,
+        dispatchGameStateActions,
+        tick,
+        region
+      );
     }
     // Check Research Completion
-    if (IsResearchComplete(GetResearchState())) {
+    if (IsResearchComplete(gameState.Research)) {
       console.log("Research Complete!");
       //GameDispatch({ type: "CompleteResearch" });
-      GameState.Research.CurrentResearchId = "";
-      await showResearchSelector(generalDialog, GetResearchState());
+      //GameState.Research.CurrentResearchId = "";
+      dispatchGameStateActions([
+        { kind: "SetCurrentResearch", researchId: "" },
+      ]);
+      await showResearchSelector(generalDialog, uxDispatch, gameState.Research);
     }
   } catch (e) {
     //TODO Show error dialog
@@ -48,13 +59,18 @@ export async function UpdateGameState(
   }
 }
 
-function UpdateGameStateForRegion(tick: number, region: Region) {
+function UpdateGameStateForRegion(
+  gameState: FactoryGameState,
+  dispatchGameStateActions: (a: StateVMAction[]) => void,
+  tick: number,
+  region: Region
+) {
   // Reset rocket 10s after launch
   if (
-    GameState.RocketLaunchingAt > 0 &&
-    tick - GameState.RocketLaunchingAt > 10000
+    gameState.RocketLaunchingAt > 0 &&
+    tick - gameState.RocketLaunchingAt > 10000
   ) {
-    GameState.RocketLaunchingAt = 0;
+    gameState.RocketLaunchingAt = 0;
   }
 
   const vmActions: StateVMAction[] = [];
@@ -86,7 +102,7 @@ function UpdateGameStateForRegion(tick: number, region: Region) {
           tick,
           address,
           building as Lab,
-          GetResearchState(),
+          gameState.Research,
           vmDispatch,
           GetResearch
         );
@@ -107,8 +123,8 @@ function UpdateGameStateForRegion(tick: number, region: Region) {
 
     PushPullFromMainBus(vmDispatch, slot, region.Bus);
   });
-
-  applyStateChangeActions(GameState, vmActions);
+  dispatchGameStateActions(vmActions);
+  //applyStateChangeActions(GameState, vmActions);
 }
 
 export function fixInserters(

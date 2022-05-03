@@ -1,8 +1,9 @@
 import { SyntheticEvent, useState } from "react";
 import { InserterIdForBelt } from "../building";
 import { GameAction } from "../GameAction";
-import { GameDispatch } from "../GameDispatch";
+import { ImmutableMap } from "../immutable";
 import { ReadonlyMainBus } from "../mainbus";
+import { Region } from "../types";
 import {
   ReadonlyBuilding,
   ReadonlyBuildingSlot,
@@ -23,7 +24,7 @@ import { StorageCard } from "./StorageCard";
 export type BuildingCardProps = {
   building: ReadonlyBuilding;
   buildingSlot: ReadonlyBuildingSlot;
-  dispatch: (a: GameAction) => void;
+  uxDispatch: (a: GameAction) => void;
   buildingIdx: number;
   mainBus: ReadonlyMainBus;
   regionalOre: ReadonlyItemBuffer;
@@ -34,6 +35,7 @@ export type BuildingCardProps = {
   regionId: string;
   inventory: ReadonlyItemBuffer;
   researchState: ReadonlyResearchState;
+  regions: ImmutableMap<string, Region>;
 };
 
 export const BuildingCard = ({
@@ -49,11 +51,13 @@ export const BuildingCard = ({
   regionId,
   inventory,
   researchState,
+  uxDispatch,
+  regions,
 }: BuildingCardProps) => {
   // TOOD: Change to use Events
   const busLaneClicked = (laneId: number, entity: string) => {
     if (BuildingHasOutput(building, entity)) {
-      GameDispatch({
+      uxDispatch({
         type: "AddMainBusConnection",
         regionId,
         buildingIdx: buildingIdx,
@@ -61,7 +65,7 @@ export const BuildingCard = ({
         direction: "TO_BUS",
       });
     } else if (BuildingHasInput(building, entity)) {
-      GameDispatch({
+      uxDispatch({
         type: "AddMainBusConnection",
         regionId,
         buildingIdx: buildingIdx,
@@ -72,7 +76,7 @@ export const BuildingCard = ({
   };
 
   const beltConnectionClicked = (connectionIdx: number) => {
-    GameDispatch({
+    uxDispatch({
       type: "RemoveMainBusConnection",
       regionId,
       buildingIdx: buildingIdx,
@@ -88,7 +92,7 @@ export const BuildingCard = ({
   };
 
   const removeBuilding = () => {
-    GameDispatch({
+    uxDispatch({
       type: "RemoveBuilding",
       regionId,
       buildingIdx: buildingIdx,
@@ -101,6 +105,7 @@ export const BuildingCard = ({
         building={building}
         regionId={regionId}
         buildingIdx={buildingIdx}
+        uxDispatch={uxDispatch}
       />
     ) : building.kind === "Chest" ? (
       <StorageCard
@@ -108,12 +113,15 @@ export const BuildingCard = ({
         regionId={regionId}
         buildingIdx={buildingIdx}
         inventory={inventory}
+        uxDispatch={uxDispatch}
       />
     ) : building.kind === "Empty" ? (
       <EmptyLaneCard
         regionId={regionId}
         buildingIdx={buildingIdx}
         inventory={inventory}
+        regions={regions}
+        uxDispatch={uxDispatch}
       />
     ) : building.kind === "Lab" ? (
       <LabCard
@@ -121,12 +129,14 @@ export const BuildingCard = ({
         regionId={regionId}
         buildingIdx={buildingIdx}
         researchState={researchState}
+        uxDispatch={uxDispatch}
       />
     ) : building.subkind === "rocket-silo" ? (
       <RocketSiloCard
         building={building}
         regionId={regionId}
         buildingIdx={buildingIdx}
+        uxDispatch={uxDispatch}
       />
     ) : (
       <ProducerCard
@@ -135,6 +145,7 @@ export const BuildingCard = ({
         buildingIdx={buildingIdx}
         regionalOre={regionalOre}
         researchState={researchState}
+        uxDispatch={uxDispatch}
       />
     );
 
@@ -144,6 +155,7 @@ export const BuildingCard = ({
       variant="small"
       inserter={beltConn.Inserter}
       inserterId={InserterIdForBelt(regionId, buildingIdx, idx)}
+      uxDispatch={uxDispatch}
     />
   ));
   return (

@@ -1,4 +1,4 @@
-import { GetEntity, MaybeGetEntity } from "../gen/entities";
+import { MaybeGetEntity } from "../gen/entities";
 import { ReadonlyItemBuffer } from "../useGameState";
 import "./InventoryDisplay.scss";
 

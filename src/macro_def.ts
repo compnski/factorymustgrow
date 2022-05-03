@@ -2,38 +2,43 @@ import { AvailableResearchList } from "./availableResearch";
 import { NextEmptySlot } from "./building";
 import { GameDispatch } from "./GameDispatch";
 import { GameWindow } from "./globals";
-import { NewEntityStack } from "./types";
-import { GameState, GetRegion } from "./useGameState";
+import { GameStateReducer } from "./stateVm";
+import { Region } from "./types";
+import { FactoryGameState } from "./useGameState";
 
 export type MacroName = "redsci" | "allresearch";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function Macro(name: MacroName): any {
+export function Macro(
+  name: MacroName,
+  reducer: GameStateReducer,
+  gameState: FactoryGameState,
+  regionId: string
+): any {
   switch (name) {
     case "allresearch":
-      return doAllResearch();
+      return doAllResearch(reducer);
 
     case "redsci":
-      return buildRedSci();
+      return buildRedSci(reducer, gameState, regionId);
   }
 }
 
-function doAllResearch() {
+function doAllResearch(reducer: GameStateReducer) {
   AvailableResearchList.forEach((r) => {
-    if (r)
-      GameState.Research.Progress.set(
-        r.Id,
-        NewEntityStack(
-          r.Id,
-          r.ProductionRequiredForCompletion,
-          r.ProductionRequiredForCompletion
-        )
-      );
+    throw new Error("NYI");
+    //if (r)
   });
 }
 
-function buildRedSci() {
-  addProducers([
+function buildRedSci(
+  reducer: GameStateReducer,
+  gameState: FactoryGameState,
+  regionId: string
+) {
+  const currentRegion = gameState.Regions.get(regionId);
+  if (!currentRegion) throw new Error("No region");
+  addProducers(reducer, gameState, currentRegion, [
     { kind: "electric-mining-drill", recipe: "iron-ore", connect: { below } },
     { kind: "stone-furnace", recipe: "iron-plate", connect: { below } },
     {
@@ -54,6 +59,9 @@ export function setMacroRegionId(r: string) {
 }
 
 function addProducers(
+  reducer: GameStateReducer,
+  gameState: FactoryGameState,
+  currentRegion: Region,
   producerList: {
     kind: string;
     recipe: string;
@@ -64,26 +72,24 @@ function addProducers(
     };
   }[]
 ) {
-  const currentRegion = GetRegion(regionId);
-
   const upperToggles: number[] = [],
     lowerToggles: number[] = [];
   producerList.forEach(({ recipe, kind, connect = {} }) => {
     const buildingIdx = NextEmptySlot(currentRegion.BuildingSlots) || 0;
-    GameDispatch({
+    GameDispatch(reducer, gameState, {
       type: "TransferToInventory",
       entity: kind,
       otherStackKind: "Void",
       count: 1,
     });
-    GameDispatch({
+    GameDispatch(reducer, gameState, {
       type: "TransferToInventory",
       entity: "inserter",
       otherStackKind: "Void",
       count: 1,
     });
 
-    GameDispatch({
+    GameDispatch(reducer, gameState, {
       type: "PlaceBuilding",
       regionId,
       entity: kind,
@@ -96,14 +102,14 @@ function addProducers(
       throw new Error(`Failed to add producer ${kind} for ${recipe}`);
     }
     if (buildingIdx > 0)
-      GameDispatch({
+      GameDispatch(reducer, gameState, {
         type: "IncreaseInserterCount",
         buildingIdx: buildingIdx - 1,
         regionId,
         location: "BUILDING",
       });
 
-    GameDispatch({
+    GameDispatch(reducer, gameState, {
       type: "ChangeRecipe",
       regionId,
       buildingIdx: buildingIdx,
@@ -114,7 +120,7 @@ function addProducers(
   });
 
   lowerToggles.forEach((buildingIdx) => {
-    GameDispatch({
+    GameDispatch(reducer, gameState, {
       type: "ToggleInserterDirection",
       regionId,
       buildingIdx: buildingIdx,
@@ -123,7 +129,7 @@ function addProducers(
   });
 
   upperToggles.forEach((buildingIdx) => {
-    GameDispatch({
+    GameDispatch(reducer, gameState, {
       type: "ToggleInserterDirection",
       regionId,
       buildingIdx: buildingIdx - 1,

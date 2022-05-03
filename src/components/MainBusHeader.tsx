@@ -1,5 +1,5 @@
 import { SyntheticEvent } from "react";
-import { GameDispatch } from "../GameDispatch";
+import { GameAction } from "../GameAction";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { ReadonlyMainBus } from "../mainbus";
 import { availableItems } from "../research";
@@ -18,11 +18,12 @@ const entityIconDoubleClickHandler = (
   },
   regionId: string,
   laneId: number,
-  entity: string
+  entity: string,
+  uxDispatch: (a: GameAction) => void
 ): void => {
   const clickY = evt.nativeEvent.offsetY;
   if (clickY < 20) {
-    GameDispatch({
+    uxDispatch({
       type: "TransferFromInventory",
       entity: entity,
       regionId,
@@ -32,7 +33,7 @@ const entityIconDoubleClickHandler = (
   }
 
   if (clickY > 30) {
-    GameDispatch({
+    uxDispatch({
       type: "TransferToInventory",
       entity: entity,
       regionId,
@@ -46,10 +47,12 @@ export const MainBusHeader = ({
   mainBus,
   regionId,
   researchState,
+  uxDispatch,
 }: {
   mainBus: ReadonlyMainBus;
   regionId: string;
   researchState: ReadonlyResearchState;
+  uxDispatch: (a: GameAction) => void;
 }) => {
   const generalDialog = useGeneralDialog();
 
@@ -57,6 +60,7 @@ export const MainBusHeader = ({
     if (mainBus.CanAddLane()) {
       void showAddLaneItemSelector(
         generalDialog,
+        uxDispatch,
         regionId,
         availableItems(researchState)
       );
@@ -73,7 +77,13 @@ export const MainBusHeader = ({
     lanes.push(
       <div
         onDoubleClick={(evt) =>
-          entityIconDoubleClickHandler(evt, regionId, laneId, entity)
+          entityIconDoubleClickHandler(
+            evt,
+            regionId,
+            laneId,
+            entity,
+            uxDispatch
+          )
         }
         key={laneId}
         className="lane-header-item-stack"
@@ -95,7 +105,7 @@ export const MainBusHeader = ({
   );
 
   const busLaneClicked = (laneId: number) => {
-    GameDispatch({
+    uxDispatch({
       type: "RemoveLane",
       laneId: laneId,
       regionId,

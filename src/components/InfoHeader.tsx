@@ -1,3 +1,4 @@
+import { GameAction } from "../GameAction";
 import { GetEntity } from "../gen/entities";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { RemainingRegionBuildingCapacity } from "../region";
@@ -8,11 +9,13 @@ import { showResearchSelector } from "./selectors";
 export type InfoHeaderProps = {
   currentRegion: ReadonlyRegion;
   researchState: ReadonlyResearchState;
+  uxDispatch: (a: GameAction) => void;
 };
 
 export const InfoHeader = ({
   currentRegion,
   researchState,
+  uxDispatch,
 }: InfoHeaderProps) => {
   const oreInfo = currentRegion.Ore;
   const infoCards = oreInfo.Entities().map(([Entity, Count]) => (
@@ -39,7 +42,7 @@ export const InfoHeader = ({
       <div
         className="top-info science-info"
         onClick={async () =>
-          await showResearchSelector(generalDialog, researchState)
+          await showResearchSelector(generalDialog, uxDispatch, researchState)
         }
         title="Select Research"
       >

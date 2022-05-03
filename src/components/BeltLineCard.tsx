@@ -1,3 +1,4 @@
+import { GameAction } from "../GameAction";
 import { ReadonlyBuilding } from "../useGameState";
 import { entityIconLookupByKind } from "../utils";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
@@ -7,6 +8,7 @@ export type BeltLineCardProps = {
   building: ReadonlyBuilding;
   buildingIdx: number;
   regionId: string;
+  uxDispatch: (a: GameAction) => void;
 };
 
 function direction(d: "FROM_REGION" | "TO_REGION" | undefined): string {
@@ -21,7 +23,7 @@ function direction(d: "FROM_REGION" | "TO_REGION" | undefined): string {
 }
 
 export function BeltLineCard(props: BeltLineCardProps) {
-  const { building, buildingIdx, regionId } = props;
+  const { building, buildingIdx, regionId, uxDispatch } = props;
 
   const inputBuffersForDisplay = building.inputBuffers,
     outputBuffersForDisplay = building.outputBuffers;
@@ -46,6 +48,7 @@ export function BeltLineCard(props: BeltLineCardProps) {
           buildingIdx={buildingIdx}
           entityIconLookup={entityIconLookupByKind(building.kind)}
           regionId={regionId}
+          uxDispatch={uxDispatch}
         />
       </div>
     </div>

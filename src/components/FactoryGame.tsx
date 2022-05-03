@@ -1,20 +1,14 @@
 import { useState } from "react";
 import { TicksPerSecond } from "../constants";
 import { UpdateGameState } from "../factoryGame";
+import { GameAction } from "../GameAction";
 import { GameDispatch } from "../GameDispatch";
 import { useGeneralDialog } from "../GeneralDialogProvider";
-import { ReadonlyInventory } from "../inventory";
 import { saveStateToLocalStorage } from "../localstorage";
 import { setMacroRegionId } from "../macro_def";
 import { useInterval } from "../reactUtils";
 import { ReactComponent as RocketShip } from "../rocket-launch.svg";
-import {
-  GameState,
-  GetReadonlyRegion,
-  ReadonlyItemBuffer,
-  ReadonlyResearchState,
-  useGameState,
-} from "../useGameState";
+import { ReadonlyResearchState, useGameState } from "../useGameState";
 import { BuildingCardList } from "./BuildingCardList";
 import { DebugButtonPanel } from "./DebugButtonPanel";
 import "./FactoryGame.scss";
@@ -25,7 +19,7 @@ import { RegionTabBar } from "./RegionTabBar";
 import { showHelpCard } from "./selectors";
 
 export const FactoryGame = () => {
-  const [gameState, setGameState] = useGameState();
+  const [gameState, dispatchGameStateActions] = useGameState();
   const [currentRegionId, setCurrentRegionId] = useState<string>(
     gameState.Regions.keys().next().value || ""
   );
@@ -35,17 +29,22 @@ export const FactoryGame = () => {
   useInterval(async () => {
     // Your custom logic here
     const tick = new Date().getTime();
-    await UpdateGameState(tick, generalDialog);
-    saveStateToLocalStorage(GameState);
+    await UpdateGameState(
+      gameState,
+      dispatchGameStateActions,
+      tick,
+      generalDialog
+    );
+    saveStateToLocalStorage(gameState);
   }, 1000 / TicksPerSecond);
 
-  useInterval(() => {
-    setGameState({ ...GameState });
-  }, 32);
-
+  /* useInterval(() => {
+   *   setGameState({ ...GameState });
+   * }, 32);
+   */
   try {
     const regionIds = [...gameState.Regions.keys()];
-    const currentRegion = GetReadonlyRegion(currentRegionId);
+    const currentRegion = gameState.Regions.get(currentRegionId);
     const inventory = gameState.Inventory;
     const researchState = gameState.Research as ReadonlyResearchState;
     const showHelp = () => {
@@ -53,6 +52,10 @@ export const FactoryGame = () => {
     };
     const isRocketLaunching = gameState.RocketLaunchingAt > 0;
 
+    const uxDispatch = (action: GameAction) => {
+      GameDispatch(dispatchGameStateActions, gameState, action);
+    };
+    if (!currentRegion) throw new Error("Bad region " + currentRegionId);
     return (
       <div className="factory-game">
         <RocketShip
@@ -62,7 +65,7 @@ export const FactoryGame = () => {
           <RegionTabBar
             currentRegionId={currentRegionId}
             regionIds={regionIds}
-            gameDispatch={GameDispatch}
+            uxDispatch={uxDispatch}
             inventory={inventory}
             setCurrentRegionId={setCurrentRegionId}
           />
@@ -74,11 +77,13 @@ export const FactoryGame = () => {
           <InfoHeader
             currentRegion={currentRegion}
             researchState={researchState}
+            uxDispatch={uxDispatch}
           />
           <MainBusHeader
             mainBus={currentRegion.Bus}
             researchState={researchState}
             regionId={currentRegion.Id}
+            uxDispatch={uxDispatch}
           />
         </div>
         <div className="scroller">
@@ -88,12 +93,14 @@ export const FactoryGame = () => {
             regionalOre={currentRegion.Ore}
             inventory={inventory}
             researchState={researchState}
+            uxDispatch={uxDispatch}
+            regions={gameState.Regions}
           />
         </div>
         <InventoryDisplay inventory={inventory} />
         <DebugButtonPanel
           researchState={researchState}
-          gameDispatch={GameDispatch}
+          uxDispatch={uxDispatch}
         />
       </div>
     );

@@ -7,13 +7,13 @@ import { availableItems } from "../research";
 import { ReadonlyResearchState } from "../useGameState";
 
 export type DebugButtonPanelProps = {
-  gameDispatch(e: GameAction): void;
   researchState: ReadonlyResearchState;
+  uxDispatch: (a: GameAction) => void;
 };
 
 export function DebugButtonPanel({
-  gameDispatch,
   researchState,
+  uxDispatch,
 }: DebugButtonPanelProps) {
   const generalDialog = useGeneralDialog(),
     autoOpenDebug = window.location.hash.includes("debug"),
@@ -21,7 +21,7 @@ export function DebugButtonPanel({
     factoryButtons = [
       {
         clickHandler: () => {
-          gameDispatch({
+          uxDispatch({
             type: "CompleteResearch",
           });
         },
@@ -33,6 +33,7 @@ export function DebugButtonPanel({
         clickHandler: () =>
           showMoveItemToFromInventorySelector(
             generalDialog,
+            uxDispatch,
             "TransferToInventory",
             availableItems(researchState)
           ),
@@ -47,7 +48,7 @@ export function DebugButtonPanel({
       <div
         className="reset-button clickable"
         onDoubleClick={() =>
-          gameDispatch({
+          uxDispatch({
             type: "Reset",
           })
         }

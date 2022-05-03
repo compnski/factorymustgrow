@@ -1,19 +1,17 @@
-import { useState } from "react";
+import { useReducer } from "react";
 import { Building } from "./building";
-import { GetEntity } from "./gen/entities";
-import { GameWindow } from "./globals";
 import { ImmutableMap } from "./immutable";
 import { Inserter } from "./inserter";
-import { Inventory, ReadonlyInventory } from "./inventory";
+import { ReadonlyInventory } from "./inventory";
 import { loadStateFromLocalStorage } from "./localstorage";
 import { ReadonlyMainBus } from "./mainbus";
 import { GetRegionInfo } from "./region";
+import { applyStateChangeActions } from "./stateVm";
 import { BeltLine, BeltLineDepot } from "./transport";
 import {
   BeltConnection,
   CountRemover,
   EntityStack,
-  ItemBuffer,
   NewEntityStack,
   NewRegionFromInfo,
   Region,
@@ -86,9 +84,13 @@ export interface ReadonlyState {
   readonly BeltLines: ReadonlyMap<number, Readonly<BeltLine>>;
 }
 
-export const CurrentGameStateVersion = "0.1.6";
+export const CurrentGameStateVersion = "0.2.0";
 
-export const useGameState = () => useState<FactoryGameState>(GameState);
+export const useGameState = () =>
+  useReducer(
+    applyStateChangeActions,
+    loadStateFromLocalStorage(initialFactoryGameState())
+  );
 
 export type ResearchState = {
   CurrentResearchId: string;
@@ -99,7 +101,7 @@ export type FactoryGameState = {
   RocketLaunchingAt: number;
   Research: ResearchState;
   Inventory: ReadonlyInventory;
-  Regions: Map<string, Region>;
+  Regions: ImmutableMap<string, Region>;
   BeltLines: Map<number, BeltLine>;
 };
 const initialInventorySize = 16;
@@ -130,33 +132,35 @@ export const initialFactoryGameState = () => ({
       ["automation-science-pack", 100],
     ])
   ),
-  Regions: new Map([["region0", NewRegionFromInfo(GetRegionInfo("region0"))]]),
+  Regions: ImmutableMap([
+    ["region0", NewRegionFromInfo(GetRegionInfo("region0"))],
+  ]),
   BeltLines: new Map(),
 });
 
-export function ResetGameState() {
-  GameState = initialFactoryGameState();
-}
+// export function ResetGameState() {
+//   //GameState = initialFactoryGameState();
+// }
 
-export let GameState = loadStateFromLocalStorage(initialFactoryGameState());
+//export let GameState = loadStateFromLocalStorage(initialFactoryGameState());
 
-(window as unknown as GameWindow).GameState = () => GameState;
+//(window as unknown as GameWindow).GameState = () => GameState;
 
-export function GetRegion(regionId: string): Region {
-  const region = GameState.Regions.get(regionId);
-  if (!region) throw new Error("Cannot find current region " + regionId);
-  return region;
-}
+// export function GetRegion(regionId: string): Region {
+//   const region = GameState.Regions.get(regionId);
+//   if (!region) throw new Error("Cannot find current region " + regionId);
+//   return region;
+// }
 
-export function GetReadonlyRegion(regionId: string): ReadonlyRegion {
-  const region = GameState.Regions.get(regionId);
-  if (!region) throw new Error("Cannot find current region " + regionId);
-  return {
-    ...region,
-    Bus: new ReadonlyMainBus(region.Bus),
-  };
-}
+// export function GetReadonlyRegion(regionId: string): ReadonlyRegion {
+//   const region = GameState.Regions.get(regionId);
+//   if (!region) throw new Error("Cannot find current region " + regionId);
+//   return {
+//     ...region,
+//     Bus: new ReadonlyMainBus(region.Bus),
+//   };
+// }
 
-export function GetResearchState(): ReadonlyResearchState {
-  return GameState.Research;
-}
+// export function GetResearchState(): ReadonlyResearchState {
+//   return GameState.Research;
+// }

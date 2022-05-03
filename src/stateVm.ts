@@ -5,15 +5,13 @@ import { Inserter } from "./inserter";
 import { Inventory, ReadonlyInventory } from "./inventory";
 import { UpdateBuildingRecipe } from "./production";
 import { ResearchOutput } from "./research";
-import { NewEntityStack, NewRegionFromInfo, RegionInfo } from "./types";
+import { NewEntityStack, NewRegionFromInfo, Region, RegionInfo } from "./types";
 import {
   FactoryGameState,
-  GetRegion,
   initialFactoryGameState,
   ResearchState,
-  ResetGameState,
 } from "./useGameState";
-import { assertNever } from "./utils";
+import { assertNever, swap } from "./utils";
 
 export type DispatchFunc = (a: StateVMAction) => void;
 
@@ -61,8 +59,8 @@ function isInventoryAddress(s: StateAddress): s is InventoryAddress {
   return (s as InventoryAddress).inventory;
 }
 
+//| TransferItemAction
 export type StateVMAction =
-  | TransferItemAction
   | AddResearchCountAction
   | SetCurrentResearchAction
   | AddItemAction
@@ -136,13 +134,13 @@ type AddProgressTrackerAction = {
   currentTick: number;
 };
 
-type TransferItemAction = {
-  kind: "TransferItems";
-  from: StateAddress;
-  to: StateAddress;
-  entity: string;
-  count: number;
-};
+// type TransferItemAction = {
+//   kind: "TransferItems";
+//   from: StateAddress;
+//   to: StateAddress;
+//   entity: string;
+//   count: number;
+// };
 
 type AddResearchCountAction = {
   kind: "AddResearchCount";
@@ -175,6 +173,8 @@ type AddRegionAction = {
   regionId: string;
 };
 
+export type GameStateReducer = (a: StateVMAction[]) => void;
+
 export function applyStateChangeActions(
   gs: FactoryGameState,
   actions: StateVMAction[]
@@ -192,16 +192,19 @@ function applyStateChangeAction(
 ): FactoryGameState {
   switch (action.kind) {
     case "Reset":
-      ResetGameState();
       return initialFactoryGameState();
-    case "TransferItems":
-      return stateChangeTransferItems(state, action);
+    // case "TransferItems":
+    //   return stateChangeTransferItems(state, action);
     case "AddResearchCount":
-      state.Research = stateChangeAddResearchCount(state.Research, action);
-      return state;
+      return {
+        ...state,
+        Research: stateChangeAddResearchCount(state.Research, action),
+      };
     case "SetCurrentResearch":
-      state.Research = stateChangeSetCurrentResearch(state.Research, action);
-      return state;
+      return {
+        ...state,
+        Research: stateChangeSetCurrentResearch(state.Research, action),
+      };
     case "AddItemCount":
       return stateChangeAddItemCount(state, action);
     case "AddProgressTrackers":
@@ -230,72 +233,97 @@ function stateChangeSwapBuildings(
 ): FactoryGameState {
   const fromRegion = state.Regions.get(action.address.regionId);
   const toRegion = state.Regions.get(action.moveToAddress.regionId);
+  if (fromRegion != toRegion)
+    throw new Error("Cross-region swap not yet supported");
   if (!fromRegion || !toRegion) throw new Error("Regions required");
-  const fromBuilding =
-    fromRegion.BuildingSlots[action.address.buildingIdx].Building;
-  const toBuilding =
-    toRegion.BuildingSlots[action.moveToAddress.buildingIdx].Building;
+  const lowerIdx = Math.min(
+      action.address.buildingIdx,
+      action.moveToAddress.buildingIdx
+    ),
+    upperIdx = Math.max(
+      action.address.buildingIdx,
+      action.moveToAddress.buildingIdx
+    );
 
-  fromRegion.BuildingSlots[action.address.buildingIdx].Building = toBuilding;
-  toRegion.BuildingSlots[action.moveToAddress.buildingIdx].Building =
-    fromBuilding;
-  state.Regions.set(fromRegion.Id, fromRegion);
-  state.Regions.set(toRegion.Id, toRegion);
-  return state;
+  // fromRegion.BuildingSlots[action.address.buildingIdx].Building = toBuilding;
+  // toRegion.BuildingSlots[action.moveToAddress.buildingIdx].Building =
+  //   fromBuilding;
+  // state.Regions.set(fromRegion.Id, fromRegion);
+  // state.Regions.set(toRegion.Id, toRegion);
+  const newRegion: Region = {
+    ...fromRegion,
+    BuildingSlots: swap(fromRegion.BuildingSlots, lowerIdx, upperIdx),
+  };
+  return { ...state, Regions: state.Regions.set(fromRegion.Id, newRegion) };
 }
 
 function stateChangeSetProperty(
   state: FactoryGameState,
   action: SetPropertyAction
 ): FactoryGameState {
+  let region = state.Regions.get(action.address.regionId);
+  if (!region) throw new Error("Missing region " + action.address.regionId);
   if (isInserterAddress(action.address))
-    return setInserterProperty(state, action as SetInserterPropertyAction);
-  if (isBuildingAddress(action.address))
-    return setBuildingProperty(state, action as SetBuildingPropertyAction);
-  throw new Error("Bad address: " + action.address);
+    region = setInserterProperty(region, action as SetInserterPropertyAction);
+  else if (isBuildingAddress(action.address))
+    region = setBuildingProperty(region, action as SetBuildingPropertyAction);
+  else throw new Error("Bad address: " + action.address);
+  return {
+    ...state,
+    Regions: state.Regions.set(action.address.regionId, region),
+  };
 }
 
 function setInserterProperty(
-  state: FactoryGameState,
+  region: Region,
   {
     property,
     value,
-    address: { regionId, buildingIdx, location },
+    address: { buildingIdx, location },
   }: SetInserterPropertyAction
-): FactoryGameState {
+): Region {
   if (location != "BUILDING") throw new Error("NYI");
-  const region = GetRegion(regionId);
 
   const buildingSlot = region.BuildingSlots[buildingIdx];
-  if (buildingSlot) {
-    buildingSlot.Inserter = {
+  if (!buildingSlot) return region;
+  const slot = {
+    ...buildingSlot,
+    Inserter: {
       ...buildingSlot.Inserter,
       [property]: value,
-    };
-  }
-  state.Regions.set(regionId, region);
-  return state;
+    },
+  };
+  return {
+    ...region,
+    BuildingSlots: [
+      ...region.BuildingSlots.slice(0, buildingIdx),
+      slot,
+      ...region.BuildingSlots.slice(buildingIdx + 1),
+    ],
+  };
 }
 
 function setBuildingProperty(
-  state: FactoryGameState,
-  {
-    property,
-    value,
-    address: { regionId, buildingIdx },
-  }: SetBuildingPropertyAction
-): FactoryGameState {
-  const region = GetRegion(regionId);
-
+  region: Region,
+  { property, value, address: { buildingIdx } }: SetBuildingPropertyAction
+): Region {
   const buildingSlot = region.BuildingSlots[buildingIdx];
-  if (buildingSlot) {
-    buildingSlot.Building = {
+  if (!buildingSlot) return region;
+  const slot = {
+    ...buildingSlot,
+    Building: {
       ...buildingSlot.Building,
       [property]: value,
-    };
-  }
-  state.Regions.set(regionId, region);
-  return state;
+    },
+  };
+  return {
+    ...region,
+    BuildingSlots: [
+      ...region.BuildingSlots.slice(0, buildingIdx),
+      slot,
+      ...region.BuildingSlots.slice(buildingIdx + 1),
+    ],
+  };
 }
 
 function stateChangeAddResearchCount(
@@ -324,7 +352,6 @@ function stateChangeAddResearchCount(
       ),
     };
   }
-  return state;
 }
 
 function stateChangePlaceBuilding(
@@ -339,19 +366,30 @@ function stateChangePlaceBuilding(
   const region = state.Regions.get(regionId);
   if (!region) throw new Error("Region Required");
 
+  const slot = region.BuildingSlots[buildingIdx];
   switch (entity) {
     case "empty-lane":
-      region.BuildingSlots[buildingIdx].Building = NewEmptyLane();
+      slot.Building = NewEmptyLane();
       break;
     default:
-      region.BuildingSlots[buildingIdx].Building = NewBuilding(
+      slot.Building = NewBuilding(
         entity,
         entity === "rocket-silo" ? "rocket-part" : undefined
       );
   }
-  state.Regions.set(regionId, region);
 
-  return state;
+  const newRegion = {
+    ...region,
+    BuildingSlots: [
+      ...region.BuildingSlots.slice(0, buildingIdx),
+      slot,
+      ...region.BuildingSlots.slice(buildingIdx + 1),
+    ],
+  };
+  return {
+    ...state,
+    Regions: state.Regions.set(regionId, newRegion),
+  };
 }
 
 function stateChangeSetCurrentResearch(
@@ -362,13 +400,6 @@ function stateChangeSetCurrentResearch(
     ...state,
     CurrentResearchId: action.researchId,
   };
-}
-function stateChangeTransferItems(
-  gs: FactoryGameState,
-  action: StateVMAction
-): FactoryGameState {
-  console.log(action);
-  return gs;
 }
 
 function stateChangeSetRecipe(
