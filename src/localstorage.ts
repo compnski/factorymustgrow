@@ -21,6 +21,7 @@ const replacer = (key: string, value: any): any => {
   switch (key) {
     case "Progress":
     case "Regions":
+    case "BeltLines":
       return toType("ImmutableMap", Object.entries(value));
   }
   return value instanceof Map

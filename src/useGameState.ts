@@ -103,7 +103,7 @@ export type FactoryGameState = {
   readonly Research: ReadonlyResearchState;
   readonly Inventory: ReadonlyInventory;
   readonly Regions: ImmutableMap<string, ReadonlyRegion>;
-  readonly BeltLines: ReadonlyMap<number, Readonly<BeltLine>>;
+  readonly BeltLines: ImmutableMap<number, Readonly<BeltLine>>;
 };
 
 //   {
@@ -145,7 +145,7 @@ export const initialFactoryGameState = () => ({
   Regions: ImmutableMap([
     ["region0", NewRegionFromInfo(GetRegionInfo("region0"))],
   ]),
-  BeltLines: new Map(),
+  BeltLines: ImmutableMap<number, Readonly<BeltLine>>(),
 });
 
 // export function ResetGameState() {

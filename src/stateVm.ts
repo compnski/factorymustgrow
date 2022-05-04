@@ -3,8 +3,15 @@ import { Building, InserterId, NewEmptyLane } from "./building";
 import { NewBuilding } from "./GameDispatch";
 import { Inserter } from "./inserter";
 import { ReadonlyInventory } from "./inventory";
+import { StackCapacity } from "./movement";
 import { Extractor, Factory, UpdateBuildingRecipe } from "./production";
-import { NewEntityStack, NewRegionFromInfo, RegionInfo } from "./types";
+import { AdvanceBeltLine } from "./transport";
+import {
+  AddToEntityStack,
+  NewEntityStack,
+  NewRegionFromInfo,
+  RegionInfo,
+} from "./types";
 import {
   FactoryGameState,
   initialFactoryGameState,
@@ -19,7 +26,12 @@ export type StateAddress =
   | MainBusAddress
   | BuildingAddress
   | InventoryAddress
-  | RegionAddress;
+  | RegionAddress
+  | BeltLineAddress;
+
+type BeltLineAddress = {
+  beltLineId: number;
+};
 
 type MainBusAddress = {
   regionId: string;
@@ -43,6 +55,10 @@ type InventoryAddress = {
 
 function isMainBusAddress(s: StateAddress): s is MainBusAddress {
   return (s as MainBusAddress).laneId !== undefined;
+}
+
+function isBeltLineAddress(s: StateAddress): s is BeltLineAddress {
+  return (s as BeltLineAddress).beltLineId !== undefined;
 }
 
 function isBuildingAddress(s: StateAddress): s is BuildingAddress {
@@ -72,7 +88,8 @@ export type StateVMAction =
   | AddRegionAction
   | ResetAction
   | AddMainBusLaneAction
-  | RemoveMainBusLaneAction;
+  | RemoveMainBusLaneAction
+  | AdvanceBeltLineAction;
 
 type ResetAction = { kind: "Reset" };
 
@@ -148,6 +165,10 @@ type AddResearchCountAction = {
   count: number;
   maxCount: number;
 };
+type AdvanceBeltLineAction = {
+  kind: "AdvanceBeltLine";
+  address: BeltLineAddress;
+};
 
 type SetCurrentResearchAction = {
   kind: "SetCurrentResearch";
@@ -219,6 +240,8 @@ function applyStateChangeAction(
       return stateChangeSwapBuildings(state, action);
     case "AddRegion":
       return stateChangeAddRegion(state, action);
+    case "AdvanceBeltLine":
+      return stateChangeAdvanceBeltline(state, action);
     case "AddMainBusLane":
     case "RemoveMainBusLane":
       throw new Error("NYI");
@@ -441,6 +464,8 @@ function stateChangeAddItemCount(
   const { address, count, entity } = action;
   if (isMainBusAddress(address)) {
     //
+  } else if (isBeltLineAddress(address)) {
+    return addItemsToBeltLine(address, state, entity, count);
   } else if (isBuildingAddress(address)) {
     return addItemsToBuilding(address, state, entity, count);
   } else if (isInventoryAddress(address)) {
@@ -503,6 +528,54 @@ function addItemsToBuilding(
   };
 }
 
+function addItemsToBeltLine(
+  address: BeltLineAddress,
+  state: FactoryGameState,
+  entity: string,
+  count: number
+) {
+  if (!count) return state;
+  const { beltLineId } = address;
+  let beltLine = state.BeltLines.get(beltLineId);
+  if (!beltLine) throw new Error("Cannot find beltline " + beltLineId);
+
+  if (count > 0) {
+    const firstStack = beltLine.internalBeltBuffer[0];
+    if (!StackCapacity(firstStack)) return state;
+    if (firstStack.Entity && firstStack.Entity != entity)
+      throw new Error("Entity mismatch in beltline");
+
+    beltLine = {
+      ...beltLine,
+      internalBeltBuffer: replaceItem(
+        beltLine.internalBeltBuffer,
+        0,
+        AddToEntityStack(firstStack, count)
+      ),
+    };
+  } else if (count < 0) {
+    const lastStack =
+      beltLine.internalBeltBuffer[beltLine.internalBeltBuffer.length - 1];
+    if (!StackCapacity(lastStack)) return state;
+    if (lastStack.Entity && lastStack.Entity != entity)
+      throw new Error("Entity mismatch in beltline");
+
+    beltLine = {
+      ...beltLine,
+      internalBeltBuffer: replaceItem(
+        beltLine.internalBeltBuffer,
+        0,
+        AddToEntityStack(lastStack, count)
+      ),
+    };
+  }
+
+  return {
+    ...state,
+    BeltLines: state.BeltLines.set(beltLineId, beltLine),
+  };
+}
+
 function stateChangeAddProgressTrackers(
   state: FactoryGameState,
   action: AddProgressTrackerAction
@@ -552,5 +625,19 @@ function stateChangeAddRegion(
       action.regionId,
       NewRegionFromInfo(action.regionInfo)
     ),
+  };
+}
+
+function stateChangeAdvanceBeltline(
+  state: FactoryGameState,
+  action: AdvanceBeltLineAction
+): FactoryGameState {
+  const beltLine = state.BeltLines.get(action.address.beltLineId);
+  if (!beltLine)
+    throw new Error("Cannot find beltLine = " + action.address.beltLineId);
+  const newBeltLine = AdvanceBeltLine(beltLine);
+  return {
+    ...state,
+    BeltLines: state.BeltLines.set(action.address.beltLineId, newBeltLine),
   };
 }

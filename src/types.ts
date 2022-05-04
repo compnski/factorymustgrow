@@ -102,6 +102,20 @@ export type EntityStack = {
   MaxCount?: number;
 };
 
+export function AddToEntityStack(
+  stack: EntityStack,
+  count: number
+): EntityStack {
+  const newCount = stack.Count + count;
+  if (newCount > (stack.MaxCount || 0)) throw new Error("No space");
+  if (newCount + count < 0) throw new Error("No stuff");
+  return {
+    ...stack,
+    Entity: newCount ? stack.Entity : "",
+    Count: newCount,
+  };
+}
+
 export function NewEntityStack(
   e: string | Entity,
   initialCount = 0,
