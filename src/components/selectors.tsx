@@ -4,8 +4,11 @@ import { GeneralDialogConfig } from "../GeneralDialogProvider";
 import { ImmutableMap } from "../immutable";
 import { IsBuilding } from "../production";
 import { availableRecipes } from "../research";
-import { Region } from "../types";
-import { ReadonlyItemBuffer, ReadonlyResearchState } from "../useGameState";
+import {
+  ReadonlyItemBuffer,
+  ReadonlyRegion,
+  ReadonlyResearchState,
+} from "../useGameState";
 import { HelpCard } from "./HelpCard";
 import { PlaceBeltLinePanel } from "./PlaceBeltLinePanel";
 import { RecipeSelector } from "./RecipeSelector";
@@ -108,7 +111,7 @@ export async function showPlaceBuildingSelector(
   inventory: ReadonlyItemBuffer,
   regionId: string,
   buildingIdx: number,
-  regions: ImmutableMap<string, Region>
+  regions: ImmutableMap<string, ReadonlyRegion>
 ) {
   const item = await showIconSelector(showDialog, "Choose Building", [
     ...new Set(
@@ -164,7 +167,7 @@ export async function showPlaceBeltLineSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
   uxDispatch: (a: GameAction) => void,
   inventory: ReadonlyItemBuffer,
-  regions: ImmutableMap<string, Region>,
+  regions: ImmutableMap<string, ReadonlyRegion>,
   regionId: string,
   buildingIdx?: number
 ) {

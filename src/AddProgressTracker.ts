@@ -1,6 +1,5 @@
 // Factory
 
-import { Building } from "./building";
 import { moveToInventory } from "./movement";
 import { productionRunsForInput } from "./productionUtils";
 import { BuildingAddress, StateAddress, StateVMAction } from "./stateVm";
@@ -17,9 +16,9 @@ export function AddProgressTrackers(
   currentTick: number,
   count: number
 ): number {
-  const trackersToAdd = Math.min(
-    count,
-    producer.BuildingCount - producer.progressTrackers.length
+  const trackersToAdd = Math.max(
+    0,
+    Math.min(count, producer.BuildingCount - producer.progressTrackers.length)
   );
 
   if (trackersToAdd)

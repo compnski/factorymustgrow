@@ -7,6 +7,7 @@ import {
 } from "./localstorage";
 import { ImmutableMap } from "./immutable";
 import { isImmutable, isMap } from "immutable";
+import { NewChest } from "./storage";
 
 fit("Can serialize various objects", () => {
   const types = [
@@ -19,6 +20,15 @@ fit("Can serialize various objects", () => {
       expected:
         '{"Progress":{"dataType":"ImmutableMap","value":[["person",{"name":"jason"}]]}}',
     },
+    // {
+    //   original: NewChest(
+    //     { subkind: "iron-chest" },
+    //     4,
+    //     ImmutableMap([["iron-ore", 10]])
+    //   ),
+    //   expected:
+    //     '{"Progress":{"dataType":"ImmutableMap","value":[["person",{"name":"jason"}]]}}',
+    // },
   ];
 
   for (const { original, expected } of types) {
@@ -44,4 +54,15 @@ it("Saves a mainBus to local storage", () => {
   expect(loadStateFromLocalStorage({} as FactoryGameState)).toStrictEqual(
     state
   );
+});
+
+it("Saves and loads a chest", () => {
+  const chest = NewChest(
+    { subkind: "iron-chest" },
+    4,
+    ImmutableMap([["iron-ore", 10]])
+  );
+  const serializedChest = serialize(chest);
+  const deserializedChest = parse(serializedChest);
+  expect(deserializedChest).toEqual(chest);
 });

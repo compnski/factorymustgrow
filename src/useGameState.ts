@@ -14,7 +14,6 @@ import {
   EntityStack,
   NewEntityStack,
   NewRegionFromInfo,
-  Region,
 } from "./types";
 
 export type ReadonlyItemBuffer = {
@@ -56,7 +55,8 @@ export type ReadonlyBuilding = {
   Pick<Building, "kind" | "subkind" | "ProducerType" | "BuildingCount">
 > &
   Partial<{ RecipeId: string }> &
-  Partial<Pick<BeltLineDepot, "name" | "direction" | "otherRegionId">>;
+  Partial<Pick<BeltLineDepot, "name" | "direction" | "otherRegionId">> &
+  Partial<{ readonly progressTrackers: Readonly<number[]> }>;
 
 export interface ReadonlyBuildingSlot {
   Building: ReadonlyBuilding;
@@ -99,11 +99,21 @@ export type ResearchState = {
 
 export type FactoryGameState = {
   RocketLaunchingAt: number;
-  Research: ResearchState;
-  Inventory: ReadonlyInventory;
-  Regions: ImmutableMap<string, Region>;
-  BeltLines: Map<number, BeltLine>;
+  //  readonly HackyPropertyBag: Readonly<IHackyPropertyBag>;
+  readonly Research: ReadonlyResearchState;
+  readonly Inventory: ReadonlyInventory;
+  readonly Regions: ImmutableMap<string, ReadonlyRegion>;
+  readonly BeltLines: ReadonlyMap<number, Readonly<BeltLine>>;
 };
+
+//   {
+//   RocketLaunchingAt: number;
+//   Research: ResearchState;
+//   Inventory: ReadonlyInventory;
+//   Regions: ImmutableMap<string, Region>;
+//   BeltLines: Map<number, BeltLine>;
+// };
+
 const initialInventorySize = 16;
 
 const startingResearch = ["start", "automation"];

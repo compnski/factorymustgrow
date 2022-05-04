@@ -1,5 +1,5 @@
 import { HasProgressTrackers } from "./AddProgressTracker";
-import { Building, BuildingSlot, InserterId, NewEmptyLane } from "./building";
+import { Building, InserterId, NewEmptyLane } from "./building";
 import { fixInserters } from "./factoryGame";
 import { GameAction, InventoryTransferAction } from "./GameAction";
 import { GetEntity, MaybeGetRecipe } from "./gen/entities";
@@ -11,12 +11,20 @@ import { NewExtractor, NewFactory, ProducerTypeFromEntity } from "./production";
 import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
 import { NewLab } from "./research";
 import { DispatchFunc, StateAddress, StateVMAction } from "./stateVm";
-import { Chest, NewChest, UpdateChestSize } from "./storage";
-import { Producer, Region } from "./types";
-import { FactoryGameState, ReadonlyBuilding } from "./useGameState";
+import { NewChest } from "./storage";
+import { Producer } from "./types";
+import {
+  FactoryGameState,
+  ReadonlyBuilding,
+  ReadonlyBuildingSlot,
+  ReadonlyRegion,
+} from "./useGameState";
 import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
 
-function GetRegion(gameState: FactoryGameState, regionId: string): Region {
+function GetRegion(
+  gameState: FactoryGameState,
+  regionId: string
+): ReadonlyRegion {
   const r = gameState.Regions.get(regionId);
   if (!r) throw new Error(`No region found for ${regionId}`);
   return r;
@@ -138,7 +146,7 @@ export const GameDispatch = (
       break;
 
     case "ClaimRegion":
-      if (!gameState.Regions.has(action.regionId)) {
+      if (gameState.Regions.has(action.regionId)) {
         console.log("Region already unlocked", action.regionId);
         return;
       }
@@ -293,7 +301,7 @@ function toggleInserterDirection(
         buildingIdx: number;
         connectionIdx: number;
       },
-  region: Region
+  region: ReadonlyRegion
 ) {
   if (action.location === "BELT") {
     // const i = inserter(action),
@@ -467,7 +475,6 @@ function decreaseBuildingCount(
   });
   moveToInventory(dispatch, b.subkind, b.BuildingCount - newCount);
 
-  if (b?.kind === "Chest") UpdateChestSize(b as Chest);
   if (HasProgressTrackers(b) && b.progressTrackers.length > newCount)
     // Reduce ProgressTracker and refund materials
     // NOTE: Only if progressTracker == BuildingCount
@@ -505,8 +512,6 @@ function increaseBuildingCount(
     value: newCount,
   });
   moveToInventory(dispatch, b.subkind, b.BuildingCount - newCount);
-
-  if (b?.kind === "Chest") UpdateChestSize(b as Chest);
 }
 
 function completeResearch(dispatch: DispatchFunc, gameState: FactoryGameState) {
@@ -523,7 +528,7 @@ function completeResearch(dispatch: DispatchFunc, gameState: FactoryGameState) {
 
 function removeLane(
   dispatch: DispatchFunc,
-  currentRegion: Region,
+  currentRegion: ReadonlyRegion,
   action: { type: "RemoveLane"; laneId: number },
   gameState: FactoryGameState
 ) {
@@ -534,7 +539,7 @@ function removeLane(
   for (const [entity, count] of currentRegion.Bus.Lane(
     action.laneId
   ).Entities()) {
-    moveToInventory(dispatch, entity, count);
+    if (count > 0) moveToInventory(dispatch, entity, count);
   }
 
   // Remove attached inserters
@@ -591,7 +596,7 @@ function PlaceBeltLine(
     targetRegion: string;
     buildingIdx?: number;
   },
-  currentRegion: Region
+  currentRegion: ReadonlyRegion
 ) {
   throw new Error("NYI");
   // // TODO: Check for any orphan beltlines that could connect here.
@@ -655,7 +660,7 @@ function ReorderBuildings(
     dropBuildingIdx: number;
     isDropOnLastBuilding: boolean;
   },
-  region: { Id: string; BuildingSlots: BuildingSlot[] }
+  region: { Id: string; BuildingSlots: ReadonlyBuildingSlot[] }
 ) {
   dispatch({
     kind: "SwapBuildings",
@@ -716,7 +721,12 @@ function RemoveBuilding(
       const recipe = MaybeGetRecipe(b.RecipeId);
       if (recipe) {
         recipe.Input.forEach(({ Count, Entity }) => {
-          moveToInventory(dispatch, Entity, Count);
+          if (b.progressTrackers.length)
+            moveToInventory(
+              dispatch,
+              Entity,
+              Count * b.progressTrackers.length
+            );
         });
       }
       b.progressTrackers.length;
@@ -726,12 +736,18 @@ function RemoveBuilding(
     if (BuildingHasInput(b.kind))
       b.inputBuffers
         .Entities()
-        .forEach(([entity, count]) => moveToInventory(dispatch, entity, count));
+        .forEach(
+          ([entity, count]) =>
+            count > 0 && moveToInventory(dispatch, entity, count)
+        );
 
     if (BuildingHasOutput(b.kind) && !BuildingHasUnifiedInputOutput(b.kind))
       b.outputBuffers
         .Entities()
-        .forEach(([entity, count]) => moveToInventory(dispatch, entity, count));
+        .forEach(
+          ([entity, count]) =>
+            count > 0 && moveToInventory(dispatch, entity, count)
+        );
   }
   dispatch({
     kind: "PlaceBuilding",
@@ -810,16 +826,22 @@ export function NewBuilding(entity: string, recipeId?: string): Building {
     case "Assembler":
     case "Smelter":
     case "ChemPlant":
-    case "RocketSilo":
     case "Refinery":
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return NewFactory({ subkind: entity } as any, 1, recipeId);
+    case "RocketSilo":
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return NewFactory({ subkind: entity } as any, 1, "rocket-part");
 
     case "Miner":
-    case "Pumpjack":
-    case "WaterPump":
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return NewExtractor({ subkind: entity } as any, 1, recipeId);
+    case "Pumpjack":
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return NewExtractor({ subkind: entity } as any, 1, "crude-oil");
+    case "WaterPump":
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return NewExtractor({ subkind: entity } as any, 1, "water");
 
     case "Lab":
       return NewLab(1);
@@ -845,7 +867,7 @@ function building(
     buildingIdx?: number;
     regionId: string;
   }
-): Building | undefined {
+): ReadonlyBuilding | undefined {
   const currentRegion = GetRegion(gameState, action.regionId);
 
   return action.buildingIdx !== undefined

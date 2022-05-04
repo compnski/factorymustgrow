@@ -2,21 +2,22 @@ import { Inventory } from "./inventory";
 import { stackTransfer } from "./movement";
 import { randomName } from "./namegen";
 import { EntityStack, ItemBuffer, NewEntityStack, Region } from "./types";
+import { ReadonlyRegion } from "./useGameState";
 
 // Thoughts
 // Beltline has two BeltLineDepots
 
 export function FindDepotForBeltLineInRegion(
-  r: Region,
+  r: ReadonlyRegion,
   beltLineId: number,
   direction: string
 ): BeltLineDepot | undefined {
   for (const slot of r.BuildingSlots) {
     if (slot.Building.kind === "BeltLineDepot") {
       const depot = slot.Building;
-      if (depot.beltLineId === beltLineId && depot.direction === direction) {
-        return depot;
-      }
+      // if (depot.beltLineId === beltLineId && depot.direction === direction) {
+      //   return depot;
+      // }
     }
   }
   return undefined;
@@ -24,7 +25,7 @@ export function FindDepotForBeltLineInRegion(
 
 export function UpdateBeltLine(
   tick: number,
-  regions: { get(s: string): Region | undefined },
+  regions: { get(s: string): ReadonlyRegion | undefined },
   currentBeltLine: BeltLine
 ) {
   const toRegion = regions.get(currentBeltLine.toRegionId),

@@ -1,11 +1,6 @@
 import { BuildingSlot, NewBuildingSlot, NewEmptyLane } from "./building";
 import { Inserter } from "./inserter";
-import {
-  FixedInventory,
-  Inventory,
-  ReadonlyFixedInventory,
-  ReadonlyInventory,
-} from "./inventory";
+import { ReadonlyFixedInventory, ReadonlyInventory } from "./inventory";
 import { MainBus } from "./mainbus";
 import { ReadonlyItemBuffer } from "./useGameState";
 

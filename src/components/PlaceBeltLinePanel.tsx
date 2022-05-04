@@ -1,12 +1,11 @@
 import { SyntheticEvent, useState } from "react";
 import { ImmutableMap } from "../immutable";
-import { Region } from "../types";
-import { ReadonlyItemBuffer } from "../useGameState";
+import { ReadonlyItemBuffer, ReadonlyRegion } from "../useGameState";
 import "./PlaceBeltLinePanel.scss";
 
 export type PlaceBeltLineProps = {
   inventory: ReadonlyItemBuffer;
-  regions: ImmutableMap<string, Region>;
+  regions: ImmutableMap<string, ReadonlyRegion>;
   title: string;
   onConfirm: (
     evt: SyntheticEvent,

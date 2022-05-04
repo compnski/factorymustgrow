@@ -3,8 +3,7 @@ import { NextEmptySlot } from "./building";
 import { GameDispatch } from "./GameDispatch";
 import { GameWindow } from "./globals";
 import { GameStateReducer } from "./stateVm";
-import { Region } from "./types";
-import { FactoryGameState } from "./useGameState";
+import { FactoryGameState, ReadonlyRegion } from "./useGameState";
 
 export type MacroName = "redsci" | "allresearch";
 
@@ -61,7 +60,7 @@ export function setMacroRegionId(r: string) {
 function addProducers(
   reducer: GameStateReducer,
   gameState: FactoryGameState,
-  currentRegion: Region,
+  currentRegion: ReadonlyRegion,
   producerList: {
     kind: string;
     recipe: string;

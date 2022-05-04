@@ -1,10 +1,11 @@
 import { Inserter, NewInserter } from "./inserter";
-import { Inventory } from "./inventory";
+import { ReadonlyInventory } from "./inventory";
 import { Extractor, Factory } from "./production";
 import { Lab } from "./research";
 import { Chest } from "./storage";
 import { BeltLineDepot } from "./transport";
 import { BeltConnection, ItemBuffer } from "./types";
+import { ReadonlyBuildingSlot } from "./useGameState";
 
 export type BuildingSlot = {
   Building: Building;
@@ -50,7 +51,7 @@ export function InserterIdForBelt(
 }
 
 export function NextEmptySlot(
-  BuildingSlots: BuildingSlot[]
+  BuildingSlots: ReadonlyBuildingSlot[]
 ): number | undefined {
   const nextEmpty = BuildingSlots.findIndex((b) => b.Building.kind === "Empty");
   return nextEmpty >= 0 ? nextEmpty : undefined;
@@ -98,8 +99,8 @@ export function NewEmptyLane(): EmptyLane {
     kind: "Empty",
     subkind: "empty-lane",
     ProducerType: "Empty",
-    inputBuffers: new Inventory(0),
-    outputBuffers: new Inventory(0),
+    inputBuffers: new ReadonlyInventory(0),
+    outputBuffers: new ReadonlyInventory(0),
     BuildingCount: 0,
   };
 }

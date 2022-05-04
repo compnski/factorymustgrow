@@ -1,7 +1,7 @@
 import { GameAction } from "../GameAction";
 import { useGeneralDialog } from "../GeneralDialogProvider";
-import { Inventory } from "../inventory";
-import { IsItemBuffer, ItemBuffer, NewEntityStack } from "../types";
+import { ReadonlyInventory } from "../inventory";
+import { IsItemBuffer, ItemBuffer } from "../types";
 import {
   ReadonlyBuilding,
   ReadonlyItemBuffer,
@@ -45,12 +45,13 @@ export function ProducerCard({
   let recipeInput: ItemBuffer | ReadonlyItemBuffer = producer.inputBuffers;
 
   if (producer.kind === "Extractor" && producer.inputBuffers) {
-    recipeInput = new Inventory(Infinity);
+    recipeInput = new ReadonlyInventory(Infinity, undefined);
     // TODO: Clean this up to use some immutable inventory
+    // TODO: Fix stack size
     for (const [entity] of producer.inputBuffers.Entities()) {
       const ore = regionalOre.Count(entity);
       if (ore && IsItemBuffer(recipeInput))
-        recipeInput.Add(NewEntityStack(entity, ore));
+        recipeInput = recipeInput.AddItems(entity, ore);
     }
   }
 
@@ -104,6 +105,7 @@ export function ProducerCard({
           entityIconLookup={entityIconLookupByKind(producer.kind)}
           regionId={regionId}
           uxDispatch={uxDispatch}
+          infiniteStackSize={producer.kind === "Extractor"}
         />
         <div className="spacer" />
       </div>

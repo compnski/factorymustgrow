@@ -97,3 +97,7 @@ export function swap<T>(a: T[], lowerIdx: number, upperIdx: number): T[] {
     ...a.slice(upperIdx + 1),
   ];
 }
+
+export function replaceItem<T>(a: T[], idx: number, t: T): T[] {
+  return [...a.slice(0, idx), t, ...a.slice(idx + 1)];
+}

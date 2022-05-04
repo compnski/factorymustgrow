@@ -14,7 +14,7 @@ export function GetEntity(name: string): Entity {
   return e;
 }
 
-export function MaybeGetRecipe(name: string): Recipe | undefined {
+export function MaybeGetRecipe(name = ""): Recipe | undefined {
   const r = Recipes.get(name);
   return r;
 }

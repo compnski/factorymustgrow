@@ -10,6 +10,8 @@ export function BuildingBufferDisplay({
   outputInteractable = true,
   regionId,
   uxDispatch,
+  debugPrint = false,
+  infiniteStackSize = false,
 }: {
   inputBuffers?: ReadonlyItemBuffer;
   outputBuffers?: ReadonlyItemBuffer;
@@ -18,6 +20,8 @@ export function BuildingBufferDisplay({
   outputInteractable?: boolean;
   regionId: string;
   uxDispatch: (a: GameAction) => void;
+  debugPrint?: boolean;
+  infiniteStackSize?: boolean;
 }) {
   const addClickHandler = function addClickHandler(entity: string) {
       uxDispatch({
@@ -47,6 +51,8 @@ export function BuildingBufferDisplay({
           addClickHandler={addClickHandler}
           remClickHandler={remClickHandler}
           entityIconLookup={entityIconLookup}
+          debugPrint={debugPrint}
+          infiniteStackSize={infiniteStackSize}
         />
       )}
       {inputBuffers && outputBuffers && (
@@ -59,6 +65,8 @@ export function BuildingBufferDisplay({
           remClickHandler={(outputInteractable && remClickHandler) || undefined}
           showProgressBar={true}
           entityIconLookup={entityIconLookup}
+          debugPrint={debugPrint}
+          infiniteStackSize={infiniteStackSize}
         />
       )}
     </div>

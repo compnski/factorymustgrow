@@ -1,4 +1,5 @@
 import { Building, NewBuildingSlot } from "./building";
+import { ImmutableMap } from "./immutable";
 import { NewInserter } from "./inserter";
 import { MainBus } from "./mainbus";
 import { PushPullFromMainBus } from "./MainBusMovement";
@@ -67,9 +68,11 @@ describe("VMPushToOtherBuilding", () => {
   }
 
   it("Moves between Chest to Lab", () => {
-    const fromChest = NewChest({ subkind: "iron-chest" }, 4, [
-        NewEntityStack("automation-science-pack", 10),
-      ]),
+    const fromChest = NewChest(
+        { subkind: "iron-chest" },
+        4,
+        ImmutableMap([["automation-science-pack", 10]])
+      ),
       toLab = NewLab(1);
 
     TestMovement(fromChest, toLab, 3, {
@@ -79,9 +82,11 @@ describe("VMPushToOtherBuilding", () => {
   });
 
   it("Won't move more than exists from Chest to Lab", () => {
-    const fromChest = NewChest({ subkind: "iron-chest" }, 4, [
-        NewEntityStack("automation-science-pack", 1),
-      ]),
+    const fromChest = NewChest(
+        { subkind: "iron-chest" },
+        4,
+        ImmutableMap([["automation-science-pack", 10]])
+      ),
       toLab = NewLab(1);
 
     TestMovement(fromChest, toLab, 3, {
@@ -91,9 +96,11 @@ describe("VMPushToOtherBuilding", () => {
   });
 
   it("Won't move more than fits from Chest to Lab", () => {
-    const fromChest = NewChest({ subkind: "iron-chest" }, 1, [
-        NewEntityStack("automation-science-pack", 10),
-      ]),
+    const fromChest = NewChest(
+        { subkind: "iron-chest" },
+        1,
+        ImmutableMap([["automation-science-pack", 10]])
+      ),
       toLab = NewLab(1);
     toLab.inputBuffers = AddItemsToReadonlyFixedBuffer(toLab.inputBuffers, 199);
 

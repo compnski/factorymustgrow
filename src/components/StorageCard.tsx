@@ -29,7 +29,6 @@ export function StorageCard({
   uxDispatch,
 }: StorageCardProps) {
   const generalDialog = useGeneralDialog();
-
   return (
     <div className="main-area">
       <div className="top-area">
@@ -70,6 +69,7 @@ export function StorageCard({
           Fill From Inventory
         </div>
         <BuildingBufferDisplay
+          debugPrint={true}
           inputBuffers={storage.outputBuffers}
           outputBuffers={undefined}
           buildingIdx={buildingIdx}

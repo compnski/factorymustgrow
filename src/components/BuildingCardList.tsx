@@ -3,10 +3,10 @@ import { InserterIdForBuilding } from "../building";
 import { GameAction } from "../GameAction";
 import { ImmutableMap } from "../immutable";
 import { ReadonlyMainBus } from "../mainbus";
-import { Region } from "../types";
 import {
   ReadonlyBuildingSlot,
   ReadonlyItemBuffer,
+  ReadonlyRegion,
   ReadonlyResearchState,
 } from "../useGameState";
 import { showUserError } from "../utils";
@@ -28,7 +28,7 @@ export const BuildingCardList = ({
   inventory: ReadonlyItemBuffer;
   researchState: ReadonlyResearchState;
   uxDispatch: (a: GameAction) => void;
-  regions: ImmutableMap<string, Region>;
+  regions: ImmutableMap<string, ReadonlyRegion>;
 }) => {
   const regionId = region.Id;
   const [dragIdx, setDragIdx] = useState(-1);

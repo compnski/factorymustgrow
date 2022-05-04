@@ -94,7 +94,7 @@ const reviver = (key: string, value: any): any => {
     : value.dataType === "ResearchOutput"
     ? new ResearchOutput(value.researchId, value.progress, value.maxProgress)
     : value.kind === "Chest"
-    ? NewChest(value, value.BuildingCount, value.inputBuffers.slots)
+    ? NewChest(value, value.BuildingCount, value.outputBuffers.Data)
     : value;
 };
 

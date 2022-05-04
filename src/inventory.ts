@@ -87,7 +87,6 @@ export class ReadonlyInventory implements ReadonlyItemBuffer {
   RemoveItems(entity: string, count: number): ReadonlyInventory {
     if (count < 0) {
       throw new Error("Cannot remove negative quantity.");
-      //return this.Add(entity, -count);
     }
     const newCount = (this.Count(entity) || 0) - count;
     if (newCount < 0) {

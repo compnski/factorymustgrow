@@ -2,16 +2,16 @@ import { HasProgressTrackers } from "./AddProgressTracker";
 import { Building, InserterId, NewEmptyLane } from "./building";
 import { NewBuilding } from "./GameDispatch";
 import { Inserter } from "./inserter";
-import { Inventory, ReadonlyInventory } from "./inventory";
-import { UpdateBuildingRecipe } from "./production";
-import { ResearchOutput } from "./research";
-import { NewEntityStack, NewRegionFromInfo, Region, RegionInfo } from "./types";
+import { ReadonlyInventory } from "./inventory";
+import { Extractor, Factory, UpdateBuildingRecipe } from "./production";
+import { NewEntityStack, NewRegionFromInfo, RegionInfo } from "./types";
 import {
   FactoryGameState,
   initialFactoryGameState,
+  ReadonlyRegion,
   ResearchState,
 } from "./useGameState";
-import { assertNever, swap } from "./utils";
+import { assertNever, replaceItem, swap } from "./utils";
 
 export type DispatchFunc = (a: StateVMAction) => void;
 
@@ -245,12 +245,7 @@ function stateChangeSwapBuildings(
       action.moveToAddress.buildingIdx
     );
 
-  // fromRegion.BuildingSlots[action.address.buildingIdx].Building = toBuilding;
-  // toRegion.BuildingSlots[action.moveToAddress.buildingIdx].Building =
-  //   fromBuilding;
-  // state.Regions.set(fromRegion.Id, fromRegion);
-  // state.Regions.set(toRegion.Id, toRegion);
-  const newRegion: Region = {
+  const newRegion: ReadonlyRegion = {
     ...fromRegion,
     BuildingSlots: swap(fromRegion.BuildingSlots, lowerIdx, upperIdx),
   };
@@ -275,13 +270,13 @@ function stateChangeSetProperty(
 }
 
 function setInserterProperty(
-  region: Region,
+  region: ReadonlyRegion,
   {
     property,
     value,
     address: { buildingIdx, location },
   }: SetInserterPropertyAction
-): Region {
+): ReadonlyRegion {
   if (location != "BUILDING") throw new Error("NYI");
 
   const buildingSlot = region.BuildingSlots[buildingIdx];
@@ -295,34 +290,40 @@ function setInserterProperty(
   };
   return {
     ...region,
-    BuildingSlots: [
-      ...region.BuildingSlots.slice(0, buildingIdx),
-      slot,
-      ...region.BuildingSlots.slice(buildingIdx + 1),
-    ],
+    BuildingSlots: replaceItem(region.BuildingSlots, buildingIdx, slot),
   };
 }
 
 function setBuildingProperty(
-  region: Region,
+  region: ReadonlyRegion,
   { property, value, address: { buildingIdx } }: SetBuildingPropertyAction
-): Region {
+): ReadonlyRegion {
   const buildingSlot = region.BuildingSlots[buildingIdx];
   if (!buildingSlot) return region;
+  let b = {
+    ...buildingSlot.Building,
+    [property]: value,
+  };
+  // TODO: Cleanup??
+  if (b.kind === "Chest" && property == "BuildingCount") {
+    console.log("resize chest", value);
+    b = {
+      ...b,
+      outputBuffers: new ReadonlyInventory(
+        value,
+        (b.outputBuffers as ReadonlyInventory).Data,
+        true
+      ),
+    };
+  }
   const slot = {
     ...buildingSlot,
-    Building: {
-      ...buildingSlot.Building,
-      [property]: value,
-    },
+    Building: b,
   };
+
   return {
     ...region,
-    BuildingSlots: [
-      ...region.BuildingSlots.slice(0, buildingIdx),
-      slot,
-      ...region.BuildingSlots.slice(buildingIdx + 1),
-    ],
+    BuildingSlots: replaceItem(region.BuildingSlots, buildingIdx, slot),
   };
 }
 
@@ -372,19 +373,12 @@ function stateChangePlaceBuilding(
       slot.Building = NewEmptyLane();
       break;
     default:
-      slot.Building = NewBuilding(
-        entity,
-        entity === "rocket-silo" ? "rocket-part" : undefined
-      );
+      slot.Building = NewBuilding(entity);
   }
 
   const newRegion = {
     ...region,
-    BuildingSlots: [
-      ...region.BuildingSlots.slice(0, buildingIdx),
-      slot,
-      ...region.BuildingSlots.slice(buildingIdx + 1),
-    ],
+    BuildingSlots: replaceItem(region.BuildingSlots, buildingIdx, slot),
   };
   return {
     ...state,
@@ -417,14 +411,25 @@ function stateChangeSetRecipe(
     currentBuilding.kind == "Factory" ||
     currentBuilding.kind == "Extractor"
   ) {
-    const { inventory, building } = UpdateBuildingRecipe(
+    const { Inventory, Building } = UpdateBuildingRecipe(
       state.Inventory,
-      currentBuilding,
+      currentBuilding as Factory | Extractor,
       recipeId
     );
-    state.Inventory = inventory;
-    region.BuildingSlots[buildingIdx].Building = building;
-    state.Regions.set(regionId, region);
+    const slot = region.BuildingSlots[buildingIdx];
+    const newRegion: ReadonlyRegion = {
+      ...region,
+      BuildingSlots: replaceItem(region.BuildingSlots, buildingIdx, {
+        ...slot,
+        Building,
+      }),
+    };
+
+    return {
+      ...state,
+      Inventory,
+      Regions: state.Regions.set(regionId, newRegion),
+    };
   }
   return state;
 }
@@ -437,15 +442,21 @@ function stateChangeAddItemCount(
   if (isMainBusAddress(address)) {
     //
   } else if (isBuildingAddress(address)) {
-    addItemsToBuilding(address, state, entity, count);
+    return addItemsToBuilding(address, state, entity, count);
   } else if (isInventoryAddress(address)) {
-    state.Inventory = state.Inventory.AddItems(entity, count);
+    return { ...state, Inventory: state.Inventory.AddItems(entity, count) };
   } else if (isRegionAddress(address)) {
     const { regionId, buffer } = address;
     const region = state.Regions.get(regionId);
     if (region && buffer === "ore") {
-      region.Ore = region.Ore.AddItems(entity, count);
-      state.Regions.set(regionId, region);
+      const newRegion = {
+        ...region,
+        Ore: region.Ore.AddItems(entity, count),
+      };
+      return {
+        ...state,
+        Regions: state.Regions.set(regionId, newRegion),
+      };
     }
   } else {
     throw new Error("Unknown address: " + address);
@@ -462,34 +473,34 @@ function addItemsToBuilding(
 ) {
   const { regionId, buildingIdx, buffer } = address;
   const region = state.Regions.get(regionId);
-  const building = region?.BuildingSlots[buildingIdx].Building;
-  if (building) {
-    if (buffer == "input")
-      if (building.inputBuffers instanceof Inventory) {
-        building.inputBuffers.Add(NewEntityStack(entity, count), Infinity);
-      } else if (building.inputBuffers instanceof ReadonlyInventory) {
-        building.inputBuffers = building.inputBuffers.AddItems(entity, count);
-      }
-    if (buffer == "output")
-      if (building.outputBuffers instanceof Inventory) {
-        if (count > 0)
-          building.outputBuffers.Add(NewEntityStack(entity, count), Infinity);
-        else
-          building.outputBuffers.Remove(
-            NewEntityStack(entity, 0, Infinity),
-            -count,
-            false
-          );
-      } else if (
-        building.outputBuffers instanceof ReadonlyInventory ||
-        building.outputBuffers instanceof ResearchOutput
-      ) {
-        building.outputBuffers = building.outputBuffers.AddItems(entity, count);
-      }
+  if (!region) throw new Error("Missing region");
+  const slot = region.BuildingSlots[buildingIdx];
+  if (!slot) throw new Error("Missing slot");
 
-    region.BuildingSlots[buildingIdx].Building = building;
-    state.Regions.set(regionId, region);
-  }
+  const newBuilding =
+    buffer == "input"
+      ? {
+          ...slot.Building,
+          inputBuffers: slot.Building.inputBuffers.AddItems(entity, count),
+        }
+      : buffer == "output"
+      ? {
+          ...slot.Building,
+          outputBuffers: slot.Building.outputBuffers.AddItems(entity, count),
+        }
+      : slot.Building;
+  const newRegion: ReadonlyRegion = {
+    ...region,
+    BuildingSlots: replaceItem(region.BuildingSlots, buildingIdx, {
+      ...slot,
+      Building: newBuilding,
+    }),
+  };
+
+  return {
+    ...state,
+    Regions: state.Regions.set(regionId, newRegion),
+  };
 }
 
 function stateChangeAddProgressTrackers(
@@ -499,20 +510,32 @@ function stateChangeAddProgressTrackers(
   const { address, count, currentTick } = action;
   const { regionId, buildingIdx } = address;
   const region = state.Regions.get(regionId);
-  const building = region?.BuildingSlots[buildingIdx].Building;
-  if (!building)
+  if (!region) throw new Error("Missing region " + action.address.regionId);
+
+  const slot = region.BuildingSlots[buildingIdx];
+  if (!slot)
     throw new Error("Cannot find building at " + JSON.stringify(address));
 
-  if (HasProgressTrackers(building)) {
-    if (count > 0) {
-      building.progressTrackers = building.progressTrackers.concat(
-        new Array(count).fill(currentTick)
-      );
-    } else if (count < 0) {
-      building.progressTrackers = building.progressTrackers.slice(-count);
-    }
-  }
-  return state;
+  if (!HasProgressTrackers(slot.Building)) return state;
+  const newTrackers =
+    count > 0
+      ? slot.Building.progressTrackers.concat(
+          new Array(count).fill(currentTick)
+        )
+      : slot.Building.progressTrackers.slice(-count);
+
+  const newRegion = {
+    ...region,
+    BuildingSlots: replaceItem(region.BuildingSlots, buildingIdx, {
+      ...slot,
+      Building: {
+        ...slot.Building,
+        progressTrackers: newTrackers,
+      },
+    }),
+  };
+
+  return { ...state, Regions: state.Regions.set(regionId, newRegion) };
 }
 
 function isInserterAddress(address: StateAddress): address is InserterAddress {
@@ -523,6 +546,11 @@ function stateChangeAddRegion(
   state: FactoryGameState,
   action: AddRegionAction
 ): FactoryGameState {
-  state.Regions.set(action.regionId, NewRegionFromInfo(action.regionInfo));
-  return state;
+  return {
+    ...state,
+    Regions: state.Regions.set(
+      action.regionId,
+      NewRegionFromInfo(action.regionInfo)
+    ),
+  };
 }

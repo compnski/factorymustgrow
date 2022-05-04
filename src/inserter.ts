@@ -1,6 +1,7 @@
 import { Building } from "./building";
 import { PushToOtherProducer, VMPushToOtherBuilding } from "./movement";
 import { StateVMAction } from "./stateVm";
+import { ReadonlyBuilding } from "./useGameState";
 
 export type Inserter = {
   kind: "Inserter";
@@ -31,8 +32,8 @@ export function MoveViaInserter(
   regionId: string,
   i: Inserter,
   currentBuildingSlot: number,
-  currentBuilding: Building,
-  nextBuilding: Building
+  currentBuilding: ReadonlyBuilding,
+  nextBuilding: ReadonlyBuilding
 ) {
   if (InserterTransferRate(i) > 0) {
     if (i.direction === "DOWN") {

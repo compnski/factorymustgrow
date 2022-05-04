@@ -1,8 +1,7 @@
 import { GameAction } from "../GameAction";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { ImmutableMap } from "../immutable";
-import { Region } from "../types";
-import { ReadonlyItemBuffer } from "../useGameState";
+import { ReadonlyItemBuffer, ReadonlyRegion } from "../useGameState";
 import { showPlaceBuildingSelector } from "./selectors";
 
 export function EmptyLaneCard(props: {
@@ -10,7 +9,7 @@ export function EmptyLaneCard(props: {
   buildingIdx: number;
   inventory: ReadonlyItemBuffer;
   uxDispatch: (a: GameAction) => void;
-  regions: ImmutableMap<string, Region>;
+  regions: ImmutableMap<string, ReadonlyRegion>;
 }) {
   const generalDialog = useGeneralDialog();
 

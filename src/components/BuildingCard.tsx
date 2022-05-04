@@ -3,11 +3,11 @@ import { InserterIdForBelt } from "../building";
 import { GameAction } from "../GameAction";
 import { ImmutableMap } from "../immutable";
 import { ReadonlyMainBus } from "../mainbus";
-import { Region } from "../types";
 import {
   ReadonlyBuilding,
   ReadonlyBuildingSlot,
   ReadonlyItemBuffer,
+  ReadonlyRegion,
   ReadonlyResearchState,
 } from "../useGameState";
 import { BuildingHasInput, BuildingHasOutput } from "../utils";
@@ -35,7 +35,7 @@ export type BuildingCardProps = {
   regionId: string;
   inventory: ReadonlyItemBuffer;
   researchState: ReadonlyResearchState;
-  regions: ImmutableMap<string, Region>;
+  regions: ImmutableMap<string, ReadonlyRegion>;
 };
 
 export const BuildingCard = ({

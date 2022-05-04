@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { MaybeGetEntity } from "../gen/entities";
 import { ReadonlyItemBuffer } from "../useGameState";
 import "./InventoryDisplay.scss";
@@ -9,6 +10,7 @@ export type InventoryDisplayProps = {
   addClickHandler?: (entity: string) => void;
   remClickHandler?: (entity: string) => void;
   debugPrint?: boolean;
+  infiniteStackSize?: boolean;
 };
 
 function InventorySlot({
@@ -19,7 +21,6 @@ function InventorySlot({
   remClickHandler,
   progress,
   entityIconLookup = (entity: string): string => entity,
-  debugPrint,
 }: {
   entity: string;
   count: number;
@@ -44,7 +45,7 @@ function InventorySlot({
         className={`icon ${entityIconLookup(entity)}`}
       />
       <div className="item-stack-count-text">
-        <span>{Math.floor(count)}</span>
+        <span>{formatCountForDisplay(count)}</span>
       </div>
       <div
         onClick={() => {
@@ -92,19 +93,24 @@ export function InventoryDisplay({
   showProgressBar,
   entityIconLookup = (entity: string): string => entity,
   debugPrint,
+  infiniteStackSize,
 }: InventoryDisplayProps) {
   const slots: JSX.Element[] = [];
   const allowHover = addClickHandler || remClickHandler;
 
-  const invSlots = asSlots(inventory.Entities());
-  if (debugPrint) {
-    console.log("S", invSlots.toString().toString());
-    console.log("E", inventory.Entities().toString());
-  }
+  const invSlots = infiniteStackSize
+    ? inventory.Entities()
+    : asSlots(inventory.Entities());
   const numSlots =
     inventory.Capacity === Infinity
       ? invSlots.length
       : Math.max(inventory.Capacity, invSlots.length);
+
+  if (debugPrint) {
+    console.log("C", numSlots, invSlots.length, inventory.Capacity, inventory);
+    console.log("S", invSlots.toString().toString());
+    console.log("E", inventory.Entities().toString());
+  }
 
   for (let i = 0; i < numSlots; i++) {
     const slotData = invSlots[i];
@@ -134,4 +140,11 @@ export function InventoryDisplay({
       {slots}
     </div>
   );
+}
+
+function formatCountForDisplay(count: number): ReactNode {
+  return new Intl.NumberFormat(undefined, {
+    notation: "compact",
+    compactDisplay: "short",
+  }).format(count);
 }

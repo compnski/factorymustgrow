@@ -10,7 +10,7 @@ import {
   Recipe,
   Region,
 } from "./types";
-import { ReadonlyItemBuffer } from "./useGameState";
+import { ReadonlyItemBuffer, ReadonlyRegion } from "./useGameState";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
 
 // Extractor
@@ -31,10 +31,10 @@ export type Extractor = {
 };
 
 export function UpdateBuildingRecipe(
-  inventory: ReadonlyInventory,
+  Inventory: ReadonlyInventory,
   b: Factory | Extractor,
   RecipeId: string
-): { building: Factory | Extractor; inventory: ReadonlyInventory } {
+): { Building: Factory | Extractor; Inventory: ReadonlyInventory } {
   const recipe = MaybeGetRecipe(RecipeId),
     priorRecipe = MaybeGetRecipe(b.RecipeId);
 
@@ -45,7 +45,7 @@ export function UpdateBuildingRecipe(
         count > 0 &&
         (!recipe || recipe.Input.findIndex((e) => e.Entity === entity) < 0)
       ) {
-        inventory = inventory.AddItems(entity, count);
+        Inventory = Inventory.AddItems(entity, count);
       }
     });
   }
@@ -57,7 +57,7 @@ export function UpdateBuildingRecipe(
         count > 0 &&
         (!recipe || recipe.Output.findIndex((e) => e.Entity === entity) < 0)
       ) {
-        inventory = inventory.AddItems(entity, count);
+        Inventory = Inventory.AddItems(entity, count);
       }
     });
   }
@@ -67,8 +67,8 @@ export function UpdateBuildingRecipe(
   switch (b.kind) {
     case "Extractor":
       return {
-        inventory,
-        building: {
+        Inventory,
+        Building: {
           ...b,
           RecipeId,
           inputBuffers: inputItemBufferForExtractor(recipe, b.inputBuffers),
@@ -80,13 +80,13 @@ export function UpdateBuildingRecipe(
     case "Factory":
       if (priorRecipe)
         for (const input of priorRecipe.Input)
-          inventory = inventory.AddItems(
+          Inventory = Inventory.AddItems(
             input.Entity,
             input.Count * b.progressTrackers.length
           );
       return {
-        inventory,
-        building: {
+        Inventory,
+        Building: {
           ...b,
           RecipeId,
           inputBuffers: inputItemBufferForFactory(recipe, b.inputBuffers),
@@ -158,7 +158,7 @@ function outputItemBufferForExtractor(
 
 export function ProduceFromExtractor(
   e: Extractor,
-  region: Region,
+  region: ReadonlyRegion,
   dispatch: (a: StateVMAction) => void,
   address: BuildingAddress,
   currentTick: number

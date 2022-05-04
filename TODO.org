@@ -36,6 +36,8 @@
 **** Make Region selector pretty and use hexes?
 *** Change Bus item by clicking
 *** Recipe Display for Producers
+
+
 ** Inserters
 *** Make sure they are properly taken from inventory when building
 *** Maybe auto-build when creating main bus connection
@@ -176,3 +178,5 @@ Belt has many lanes, each configured for a given resource
 ** Keep bug/turret state in separate timer thread
 Currently state is in the main react thread. This is causing stuttering.
 Instead have a separate thread doing game logic, and have 'Tick' just copy that state into react on some timer.
+
+* React router

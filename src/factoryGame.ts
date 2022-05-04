@@ -18,7 +18,11 @@ import { DispatchFunc, StateVMAction } from "./stateVm";
 import { Chest, UpdateChest } from "./storage";
 import { UpdateBeltLine } from "./transport";
 import { Region } from "./types";
-import { FactoryGameState } from "./useGameState";
+import {
+  FactoryGameState,
+  ReadonlyBuildingSlot,
+  ReadonlyRegion,
+} from "./useGameState";
 
 export async function UpdateGameState(
   gameState: FactoryGameState,
@@ -63,7 +67,7 @@ function UpdateGameStateForRegion(
   gameState: FactoryGameState,
   dispatchGameStateActions: (a: StateVMAction[]) => void,
   tick: number,
-  region: Region
+  region: ReadonlyRegion
 ) {
   // Reset rocket 10s after launch
   if (
@@ -121,7 +125,7 @@ function UpdateGameStateForRegion(
         region.BuildingSlots[idx + 1].Building
       );
 
-    PushPullFromMainBus(vmDispatch, slot, region.Bus);
+    //    PushPullFromMainBus(vmDispatch, slot, region.Bus);
   });
   dispatchGameStateActions(vmActions);
   //applyStateChangeActions(GameState, vmActions);
@@ -129,7 +133,7 @@ function UpdateGameStateForRegion(
 
 export function fixInserters(
   dispatch: DispatchFunc,
-  region: { Id: string; BuildingSlots: BuildingSlot[] }
+  region: { readonly Id: string; BuildingSlots: ReadonlyBuildingSlot[] }
 ) {
   // TODO: Fix Inserters
   region.BuildingSlots.forEach((slot, idx) => {

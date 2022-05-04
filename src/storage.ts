@@ -1,22 +1,23 @@
-import { Inventory } from "./inventory";
-import { EntityStack, ItemBuffer, NewEntityStack } from "./types";
+import { ImmutableMap } from "./immutable";
+import { ReadonlyInventory } from "./inventory";
+import { ReadonlyItemBuffer } from "./useGameState";
 
 export type Chest = {
   kind: "Chest";
   subkind: "iron-chest" | "steel-chest" | "incinerator";
   ProducerType: string;
-  inputBuffers: ItemBuffer;
-  outputBuffers: ItemBuffer;
+  inputBuffers: ReadonlyItemBuffer;
+  outputBuffers: ReadonlyItemBuffer;
   BuildingCount: number;
 };
 
 export function NewChest(
   { subkind }: Pick<Chest, "subkind">,
   size = 4,
-  initialContents: EntityStack[] = []
+  initialContents = ImmutableMap<string, number>()
 ): Chest {
-  const sharedStorage = new Inventory(size);
-  initialContents.forEach((es) => sharedStorage.Add(es));
+  const sharedStorage = new ReadonlyInventory(size, initialContents, true);
+
   return {
     kind: "Chest",
     subkind: subkind,
@@ -29,14 +30,8 @@ export function NewChest(
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function UpdateChest(chest: Chest, tick: number) {
-  if (chest.subkind === "incinerator")
-    chest.inputBuffers.Entities().forEach(([entity]) => {
-      chest.inputBuffers.Remove(NewEntityStack(entity, 0, Infinity), 1);
-    });
-}
-
-export function UpdateChestSize(chest: Chest) {
-  if (chest.BuildingCount !== chest.inputBuffers.Capacity) {
-    chest.inputBuffers.Capacity = chest.BuildingCount;
-  }
+  // if (chest.subkind === "incinerator")
+  //   chest.inputBuffers.Entities().forEach(([entity]) => {
+  //     chest.inputBuffers.Remove(NewEntityStack(entity, 0, Infinity), 1);
+  //   });
 }

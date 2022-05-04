@@ -3,11 +3,11 @@ import { SyntheticEvent } from "react";
 import { NewBuildingSlot } from "../building";
 import { ReactComponent as HelpOverlay } from "../helpTemplate.svg";
 import { ImmutableMap } from "../immutable";
-import { Inventory } from "../inventory";
+import { ReadonlyInventory } from "../inventory";
 import { ReadonlyMainBus } from "../mainbus";
 import { NewExtractorForRecipe, NewFactoryForRecipe } from "../production";
 import { GetRegionInfo } from "../region";
-import { EntityStack, NewRegionFromInfo, Region } from "../types";
+import { EntityStack, NewRegionFromInfo } from "../types";
 import { ReadonlyResearchState } from "../useGameState";
 import { BuildingCardList } from "./BuildingCardList";
 import "./HelpCard.scss";
@@ -16,7 +16,7 @@ export type HelpCardProps = {
   onConfirm: (evt: SyntheticEvent, recipe: string) => void;
 };
 
-function buildHelpRegion(): Region {
+function buildHelpRegion() {
   // TODO: Fix help region, all readonly?
 
   const regionInfo = GetRegionInfo("HelpRegion"),
@@ -87,10 +87,11 @@ function buildHelpRegion(): Region {
    *   bc.Inserter.BuildingCount = 1;
    *   bc.laneId = beltLaneId;
    *  */
+
   return helpRegion;
 }
 
-const inventory = new Inventory();
+const inventory = new ReadonlyInventory(8);
 const researchState: ReadonlyResearchState = {
   Progress: Map<string, Readonly<EntityStack>>(),
   CurrentResearchId: "logistic-science-pack",

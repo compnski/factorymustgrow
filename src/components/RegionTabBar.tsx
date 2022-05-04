@@ -24,7 +24,7 @@ export function RegionTabBar({
   uxDispatch,
 }: RegionTabBarProps) {
   const generalDialog = useGeneralDialog();
-
+  console.log(regionIds);
   function clickHandler(evt: SyntheticEvent) {
     const regionId = (evt.target as HTMLElement).attributes.getNamedItem(
       "data-region-id"
