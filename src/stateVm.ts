@@ -28,7 +28,8 @@ export type StateAddress =
   | BuildingAddress
   | InventoryAddress
   | RegionAddress
-  | BeltLineAddress;
+  | BeltLineAddress
+  | GlobalAddress;
 
 type BeltLineAddress = {
   beltLineId: string;
@@ -54,6 +55,8 @@ type InventoryAddress = {
   inventory: true;
 };
 
+type GlobalAddress = "global";
+
 function isMainBusAddress(s: StateAddress): s is MainBusAddress {
   return (s as MainBusAddress).laneId !== undefined;
 }
@@ -74,6 +77,10 @@ function isRegionAddress(s: StateAddress): s is RegionAddress {
 
 function isInventoryAddress(s: StateAddress): s is InventoryAddress {
   return (s as InventoryAddress).inventory;
+}
+
+function isGlobalAddress(s: StateAddress): s is GlobalAddress {
+  return (s as string) === "global";
 }
 
 //| TransferItemAction
@@ -100,13 +107,20 @@ type InserterAddress = InserterId;
 //   keyof Omit<Inserter, "kind">
 // >;
 
-type SetPropertyAction = SetInserterPropertyAction | SetBuildingPropertyAction;
+type SetPropertyAction =
+  | SetInserterPropertyAction
+  | SetBuildingPropertyAction
+  | SetGlobalPropertyAction;
 
 type SetInserterPropertyAction =
   | TSetInserterPropertyAction<"direction">
   | TSetInserterPropertyAction<"BuildingCount">;
 
 type SetBuildingPropertyAction = TSetBuildingPropertyAction<"BuildingCount">;
+
+type SetGlobalPropertyAction = TSetGlobalPropertyAction<
+  "RocketLaunchingAt" | "Inventory" | "Research"
+>;
 
 type TSetInserterPropertyAction<P extends keyof Omit<Inserter, "kind">> = {
   kind: "SetProperty";
@@ -120,6 +134,13 @@ type TSetBuildingPropertyAction<P extends keyof Omit<Building, "kind">> = {
   address: BuildingAddress;
   property: P;
   value: Building[P];
+};
+
+type TSetGlobalPropertyAction<P extends keyof FactoryGameState> = {
+  kind: "SetProperty";
+  address: "global";
+  property: P;
+  value: FactoryGameState[P];
 };
 
 type SetRecipeAction = {
@@ -307,6 +328,8 @@ function stateChangeSetProperty(
   state: FactoryGameState,
   action: SetPropertyAction
 ): FactoryGameState {
+  if (isGlobalAddress(action.address))
+    return setGlobalProperty(state, action as SetGlobalPropertyAction);
   let region = state.Regions.get(action.address.regionId);
   if (!region) throw new Error("Missing region " + action.address.regionId);
   if (isInserterAddress(action.address))
@@ -317,6 +340,16 @@ function stateChangeSetProperty(
   return {
     ...state,
     Regions: state.Regions.set(action.address.regionId, region),
+  };
+}
+
+function setGlobalProperty(
+  state: FactoryGameState,
+  { property, value }: SetGlobalPropertyAction
+): FactoryGameState {
+  return {
+    ...state,
+    [property]: value,
   };
 }
 

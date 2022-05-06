@@ -20,17 +20,27 @@ export class DebugInventory extends ReadonlyInventory {
   }
 
   Count(entity: string): number {
-    return 50;
+    return Infinity;
   }
 
   AvailableSpace(entity: string): number {
-    return 50;
+    return Infinity;
   }
 
   Entities(): [string, number][] {
     return [...Entities.entries()].map(([, v]) => [v.Id, v.StackSize]);
   }
 }
+
+export const DebugResearch = {
+  Progress: ImmutableMap(
+    AvailableResearchList.map(({ Id: research }) => [
+      research,
+      NewEntityStack(research, 0, 0),
+    ])
+  ),
+  CurrentResearchId: "",
+};
 
 export function debugFactoryGameState() {
   return {

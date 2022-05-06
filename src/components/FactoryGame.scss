@@ -211,16 +211,21 @@ body {
   padding: 4px;
   border-radius: 4px;
   border: 1px solid #ccc;
+  .button-box {
+    display: flex;
+    flex-direction: row;
+  }
   summary {
     font-weight: bold;
     font-size: 16px;
     user-select: none;
   }
+
   &[open] {
   }
+
   .clickable {
-    width: 250px;
-    display: inline-block;
+    width: 200px;
   }
 }
 

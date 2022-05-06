@@ -1,4 +1,5 @@
 import { Building, InserterId } from "./building";
+import { StateVMAction } from "./stateVm";
 
 export type GameAction =
   | BasicAction
@@ -11,7 +12,13 @@ export type GameAction =
   | DragBuildingAction
   | ChangeRecipeAction
   | InserterAction
-  | LaunchRocketAction;
+  | LaunchRocketAction
+  | UpdateStateAction;
+
+type UpdateStateAction = {
+  type: "UpdateState";
+  action: StateVMAction;
+};
 
 type AddBuildingAction = {
   type: "AddBuilding";

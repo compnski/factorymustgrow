@@ -42,6 +42,10 @@ export const GameDispatch = (
   };
 
   switch (action.type) {
+    case "UpdateState":
+      dispatch(action.action);
+      break;
+
     case "Reset":
       //ResetGameState();
       dispatch({ kind: "Reset" });
@@ -186,15 +190,20 @@ function launchRocket(
     if (b.outputBuffers.Count("rocket-part") === 100) {
       // TODO: Better launch update
       // TODO: Use actual tick for launching?
-      //GameState.RocketLaunchingAt = new Date().getTime();
       showUserError("Congratulations!");
-      throw new Error("NYI");
-      // dispatch({
-      //   kind: "AddItemCount",
-      //   address: { regionId, buildingIdx, buffer: "output" },
-      //   count: -100,
-      //   entity: "rocket-part",
-      // });
+
+      dispatch({
+        kind: "SetProperty",
+        address: "global",
+        property: "RocketLaunchingAt",
+        value: Date.now(),
+      });
+      dispatch({
+        kind: "AddItemCount",
+        address: { regionId, buildingIdx, buffer: "output" },
+        count: -100,
+        entity: "rocket-part",
+      });
     }
   }
 }
@@ -604,7 +613,6 @@ function PlaceBeltLine(
   currentRegion: ReadonlyRegion,
   gameState: FactoryGameState
 ) {
-  //  throw new Error("NYI");
   // TODO: Check for any orphan beltlines that could connect here.
   const targetRegion = gameState.Regions.get(action.targetRegion);
   if (!targetRegion)
@@ -626,16 +634,6 @@ function PlaceBeltLine(
   );
   if (toRegionBuildingIdx < 0)
     throw new Error("No empty lane in region " + action.targetRegion);
-
-  // Add to list of belt lines
-  // Add building to each region's list of buildings
-  // const beltLine = NewBeltLine(
-  //   dispatch,
-  //   fromRegion,
-  //   toRegion,
-  //   action.entity,
-  //   100
-  // );
 
   const beltLineId = (new Date().getTime() % 100000).toString();
 
@@ -668,31 +666,7 @@ function PlaceBeltLine(
     direction: "FROM_BELT",
     beltLineAddress: { beltLineId },
   });
-
-  // If buildingIdx is set, and points to an Empty Lane, replace it.
-  // AddBuildingOverEmptyOrAtEnd(fromRegion, fromDepot, action.buildingIdx);
-  // AddBuildingOverEmptyOrAtEnd(toRegion, toDepot, (action.buildingIdx || 0) + 1);
-
-  //  GameState.BeltLines.set(beltLine.beltLineId, beltLine);
-  //GameState.Inventory.Remove(); //NewEntityStack(action.entity, 0, 100), 100);
 }
-
-// export function AddBuildingOverEmptyOrAtEnd(
-//   region: { BuildingSlots: BuildingSlot[] },
-//   b: Building,
-//   buildingIdx?: number
-// ): BuildingSlot {
-//   const buildingSlot = NewBuildingSlot(b);
-//   if (
-//     buildingIdx !== undefined &&
-//     region.BuildingSlots[buildingIdx]?.Building.kind === "Empty"
-//   ) {
-//     region.BuildingSlots[buildingIdx] = buildingSlot;
-//   } else {
-//     region.BuildingSlots.push(buildingSlot);
-//   }
-//   return buildingSlot;
-// }
 
 function ReorderBuildings(
   dispatch: DispatchFunc,
@@ -731,38 +705,9 @@ function RemoveBuilding(
   //currentRegion.BuildingSlots[action.buildingIdx].Building = NewEmptyLane();
 
   if (b.kind === "BeltLineDepot") {
-    // const depot = b as BeltLineDepot,
-    //   otherRegion = GetRegion(depot.otherRegionId);
-
-    // const otherDepot = FindDepotForBeltLineInRegion(
-    //   otherRegion,
-    //   depot.beltLineId,
-    //   depot.direction === "FROM_BELT" ? "TO_BELT" : "FROM_BELT"
-    // );
-    // // Have to remove both depots to remove beltline
-    // if (!otherDepot) {
-    //   // Remove BeltLine
-    //   const beltLine = GameState.BeltLines.get(depot.beltLineId);
-    //   if (!beltLine) {
-    //     console.error(
-    //       "No beltline to delete when deleting depot for ",
-    //       depot.beltLineId
-    //     );
-    //     return;
-    //   }
-    //   // GameState.Inventory
-    //   //   .Add
-    //   //   // NewEntityStack(b.subkind, b.BuildingCount * beltLine.length),
-    //   //   //          b.BuildingCount * beltLine.length
-    //   //   ();
-    //   beltLine.sharedBeltBuffer.forEach((es) => {
-    //     if (es && es.Entity) GameState.Inventory.Add(); //es, Infinity, true);
-    //   });
-    //   GameState.BeltLines.delete(beltLine.beltLineId);
-    //}
-    throw new Error("NYI");
+    // TODO: Figure out when/how to remove beltlines
+    // No refunds for now
   } else {
-    // TODO: Progress Trackers
     if (HasProgressTrackers(b)) {
       const recipe = MaybeGetRecipe(b.RecipeId);
       if (recipe) {

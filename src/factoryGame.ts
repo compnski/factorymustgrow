@@ -73,19 +73,24 @@ function UpdateGameStateForRegion(
   tick: number,
   region: ReadonlyRegion
 ) {
-  // Reset rocket 10s after launch
-  if (
-    gameState.RocketLaunchingAt > 0 &&
-    tick - gameState.RocketLaunchingAt > 10000
-  ) {
-    gameState.RocketLaunchingAt = 0;
-  }
-
   const vmActions: StateVMAction[] = [];
   const vmDispatch = (a: StateVMAction) => {
     console.log(a);
     vmActions.push(a);
   };
+
+  // Reset rocket 10s after launch
+  if (
+    gameState.RocketLaunchingAt > 0 &&
+    tick - gameState.RocketLaunchingAt > 10000
+  ) {
+    vmDispatch({
+      kind: "SetProperty",
+      address: "global",
+      property: "RocketLaunchingAt",
+      value: 0,
+    });
+  }
 
   fixInserters(vmDispatch, region);
 
