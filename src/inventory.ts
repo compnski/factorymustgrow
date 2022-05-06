@@ -125,7 +125,9 @@ export class ReadonlyInventory implements ReadonlyItemBuffer {
       count = this.Count(entity);
 
     if (this.HasSlotFor(entity))
-      return availableSlots * stackSize + (stackSize - count);
+      return (
+        availableSlots * stackSize + (stackSize - (count % (stackSize + 1)))
+      );
     return availableSlots * stackSize;
   }
 

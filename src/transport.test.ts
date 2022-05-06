@@ -1,43 +1,23 @@
-import { NewBuildingSlot } from "./building";
-import { NewBeltLinePair } from "./transport";
-import { EntityStack, NewEntityStack, NewRegion, Region } from "./types";
+import { NewBeltLine } from "./transport";
 
-var nextTestRegionId = 1;
-var testRegions = new Map<string, Region>();
-function NewTestRegion(ore: EntityStack[] = []): Region {
-  const r = NewRegion(`test-${nextTestRegionId++}`, 0, 0, 0, ore, []);
-  testRegions.set(r.Id, r);
-  return r;
-}
-beforeEach(function () {
-  nextTestRegionId = 1;
-  testRegions.clear();
-});
+// var nextTestRegionId = 1;
+// var testRegions = new Map<string, Region>();
+// function NewTestRegion(ore: EntityStack[] = []): Region {
+//   const r = NewRegion(`test-${nextTestRegionId++}`, 0, 0, 0, ore, []);
+//   testRegions.set(r.Id, r);
+//   return r;
+// }
+// beforeEach(function () {
+//   nextTestRegionId = 1;
+//   testRegions.clear();
+// });
 
 describe("BeltLine", () => {
   it("Initializes properly", function () {
-    const fromRegion = NewTestRegion(),
-      toRegion = NewTestRegion();
+    const beltLine = NewBeltLine("123", "transport-belt", 3);
 
-    const [beltLine, fromDepot, toDepot] = NewBeltLinePair(
-      fromRegion,
-      toRegion,
-      "transport-belt",
-      3
-    );
-
-    expect(toDepot.otherRegionId).toBe("test-1");
-    expect(fromDepot.otherRegionId).toBe("test-2");
-    expect(toDepot.subkind).toBe("transport-belt");
-    expect(fromDepot.subkind).toBe("transport-belt");
-    expect(toDepot.length).toBe(3);
-    expect(fromDepot.length).toBe(3);
-
-    expect(beltLine.toRegionId).toBe("test-2");
-    expect(beltLine.fromRegionId).toBe("test-1");
-    expect(beltLine.beltLineId).toBe(toDepot.beltLineId);
-    expect(beltLine.beltLineId).toBe(fromDepot.beltLineId);
     expect(beltLine.length).toBe(3);
+    expect(beltLine.beltLineId).toBe("123");
   });
 
   // it("Transports items of one type across regions", function () {

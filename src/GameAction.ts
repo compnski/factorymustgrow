@@ -70,7 +70,7 @@ type BuildingAction =
       beltLength: number;
       targetRegion: string;
       regionId: string;
-      buildingIdx?: number;
+      buildingIdx: number;
     }
   | {
       type: "AddMainBusConnection";

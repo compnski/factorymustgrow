@@ -16,7 +16,7 @@ export function NewChest(
   size = 4,
   initialContents = ImmutableMap<string, number>()
 ): Chest {
-  const sharedStorage = new ReadonlyInventory(size, initialContents, true);
+  const sharedStorage = new ReadonlyInventory(size, initialContents, false);
 
   return {
     kind: "Chest",

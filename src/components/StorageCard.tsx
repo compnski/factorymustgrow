@@ -69,7 +69,6 @@ export function StorageCard({
           Fill From Inventory
         </div>
         <BuildingBufferDisplay
-          debugPrint={true}
           inputBuffers={storage.outputBuffers}
           outputBuffers={undefined}
           buildingIdx={buildingIdx}

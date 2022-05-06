@@ -119,6 +119,7 @@ export function stackTransfer(
   if (toStack.Entity !== "" && toStack.Entity !== fromStack.Entity) {
     return 0;
   }
+  if (!toStack.Entity) toStack.Entity = fromStack.Entity;
   const availableItems = fromStack.Count,
     availableSpace = StackCapacity(toStack);
   let amountToTransfer = Math.min(

@@ -12,6 +12,7 @@ import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
 import { NewLab } from "./research";
 import { DispatchFunc, StateAddress, StateVMAction } from "./stateVm";
 import { NewChest } from "./storage";
+import { NewBeltLine } from "./transport";
 import { Producer } from "./types";
 import {
   FactoryGameState,
@@ -98,7 +99,12 @@ export const GameDispatch = (
       break;
 
     case "PlaceBeltLine":
-      PlaceBeltLine(dispatch, action, GetRegion(gameState, action.regionId));
+      PlaceBeltLine(
+        dispatch,
+        action,
+        GetRegion(gameState, action.regionId),
+        gameState
+      );
       break;
 
     case "PlaceBuilding":
@@ -591,44 +597,86 @@ function PlaceBuilding(
 function PlaceBeltLine(
   dispatch: DispatchFunc,
   action: {
+    regionId: string;
     entity: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
     beltLength: number;
     targetRegion: string;
-    buildingIdx?: number;
+    buildingIdx: number;
   },
-  currentRegion: ReadonlyRegion
+  currentRegion: ReadonlyRegion,
+  gameState: FactoryGameState
 ) {
-  throw new Error("NYI");
-  // // TODO: Check for any orphan beltlines that could connect here.
-  // const targetRegion = GetRegion(action.targetRegion);
+  //  throw new Error("NYI");
+  // TODO: Check for any orphan beltlines that could connect here.
+  const targetRegion = gameState.Regions.get(action.targetRegion);
+  if (!targetRegion)
+    throw new Error("Cannot find target region " + action.targetRegion);
+  if (
+    gameState.Inventory.Count(action.entity) < action.beltLength ||
+    RemainingRegionBuildingCapacity(currentRegion) <= 0 ||
+    RemainingRegionBuildingCapacity(targetRegion) <= 0
+  ) {
+    console.log("Not enough belts");
+    return;
+  }
+  const toRegion = targetRegion;
 
-  // if (
-  //   GameState.Inventory.Count(action.entity) < action.beltLength ||
-  //   RemainingRegionBuildingCapacity(currentRegion) <= 0 ||
-  //   RemainingRegionBuildingCapacity(targetRegion) <= 0
-  // ) {
-  //   console.log("Not enough belts");
-  //   return;
-  // }
-  // const fromRegion = currentRegion,
-  //   toRegion = targetRegion;
-  // // Add to list of belt lines
-  // // Add building to each region's list of buildings
-  // const [beltLine, fromDepot, toDepot] = NewBeltLinePair(
+  // find first empty slot in other region
+  const toRegionBuildingIdx = findFirstEmptyLane(
+    toRegion.BuildingSlots,
+    toRegion.Id == action.regionId ? action.buildingIdx : undefined
+  );
+  if (toRegionBuildingIdx < 0)
+    throw new Error("No empty lane in region " + action.targetRegion);
+
+  // Add to list of belt lines
+  // Add building to each region's list of buildings
+  // const beltLine = NewBeltLine(
+  //   dispatch,
   //   fromRegion,
   //   toRegion,
   //   action.entity,
   //   100
   // );
-  // if (GameState.BeltLines.has(beltLine.beltLineId)) {
-  //   throw new Error("Duplicate BeltLine ID");
-  // }
-  // // If buildingIdx is set, and points to an Empty Lane, replace it.
+
+  const beltLineId = (new Date().getTime() % 100000).toString();
+
+  if (gameState.BeltLines.has(beltLineId)) {
+    throw new Error("Duplicate BeltLine ID");
+  }
+  dispatch({
+    kind: "PlaceBeltLine",
+    entity: action.entity,
+    address: { beltLineId },
+    BuildingCount: 1,
+    length: action.beltLength,
+  });
+
+  moveToInventory(dispatch, action.entity, -action.beltLength);
+  dispatch({
+    kind: "PlaceBuilding",
+    entity: action.entity,
+    address: { regionId: currentRegion.Id, buildingIdx: action.buildingIdx },
+    BuildingCount: 1,
+    direction: "TO_BELT",
+    beltLineAddress: { beltLineId },
+  });
+
+  dispatch({
+    kind: "PlaceBuilding",
+    entity: action.entity,
+    address: { regionId: toRegion.Id, buildingIdx: toRegionBuildingIdx },
+    BuildingCount: 1,
+    direction: "FROM_BELT",
+    beltLineAddress: { beltLineId },
+  });
+
+  // If buildingIdx is set, and points to an Empty Lane, replace it.
   // AddBuildingOverEmptyOrAtEnd(fromRegion, fromDepot, action.buildingIdx);
   // AddBuildingOverEmptyOrAtEnd(toRegion, toDepot, (action.buildingIdx || 0) + 1);
 
-  // GameState.BeltLines.set(beltLine.beltLineId, beltLine);
-  // GameState.Inventory.Remove(); //NewEntityStack(action.entity, 0, 100), 100);
+  //  GameState.BeltLines.set(beltLine.beltLineId, beltLine);
+  //GameState.Inventory.Remove(); //NewEntityStack(action.entity, 0, 100), 100);
 }
 
 // export function AddBuildingOverEmptyOrAtEnd(
@@ -691,7 +739,7 @@ function RemoveBuilding(
     // const otherDepot = FindDepotForBeltLineInRegion(
     //   otherRegion,
     //   depot.beltLineId,
-    //   depot.direction === "TO_REGION" ? "FROM_REGION" : "TO_REGION"
+    //   depot.direction === "FROM_BELT" ? "TO_BELT" : "FROM_BELT"
     // );
     // // Have to remove both depots to remove beltline
     // if (!otherDepot) {
@@ -906,4 +954,15 @@ function inserter(
 
 function BuildingHasUnifiedInputOutput(kind: string) {
   return kind === "Chest";
+}
+
+function findFirstEmptyLane(
+  BuildingSlots: ReadonlyBuildingSlot[],
+  exceptThisIdx?: number
+) {
+  return BuildingSlots.findIndex(
+    (bs, idx) =>
+      bs.Building.kind === "Empty" &&
+      (exceptThisIdx == undefined || idx != exceptThisIdx)
+  );
 }

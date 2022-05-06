@@ -4,6 +4,7 @@ import { GameAction } from "../GameAction";
 import { ImmutableMap } from "../immutable";
 import { ReadonlyMainBus } from "../mainbus";
 import {
+  FactoryGameState,
   ReadonlyBuilding,
   ReadonlyBuildingSlot,
   ReadonlyItemBuffer,
@@ -22,39 +23,30 @@ import { RocketSiloCard } from "./RocketSiloCard";
 import { StorageCard } from "./StorageCard";
 
 export type BuildingCardProps = {
-  building: ReadonlyBuilding;
   buildingSlot: ReadonlyBuildingSlot;
-  uxDispatch: (a: GameAction) => void;
   buildingIdx: number;
-  mainBus: ReadonlyMainBus;
-  regionalOre: ReadonlyItemBuffer;
+  uxDispatch: (a: GameAction) => void;
   handleDrag: (evt: SyntheticEvent) => void;
   handleDrop: undefined | ((evt: SyntheticEvent) => void);
   moveUp: (evt: SyntheticEvent) => void;
   moveDown: (evt: SyntheticEvent) => void;
-  regionId: string;
-  inventory: ReadonlyItemBuffer;
-  researchState: ReadonlyResearchState;
-  regions: ImmutableMap<string, ReadonlyRegion>;
+  region: ReadonlyRegion;
+  gameState: FactoryGameState;
 };
 
 export const BuildingCard = ({
-  building,
   buildingSlot,
   buildingIdx,
-  mainBus,
-  regionalOre,
   handleDrag,
   handleDrop,
   moveUp,
   moveDown,
-  regionId,
-  inventory,
-  researchState,
+  region: { Id: regionId, Ore: regionalOre, Bus: regionalBus },
   uxDispatch,
-  regions,
+  gameState,
 }: BuildingCardProps) => {
   // TOOD: Change to use Events
+  const building = buildingSlot.Building;
   const busLaneClicked = (laneId: number, entity: string) => {
     if (BuildingHasOutput(building, entity)) {
       uxDispatch({
@@ -106,21 +98,22 @@ export const BuildingCard = ({
         regionId={regionId}
         buildingIdx={buildingIdx}
         uxDispatch={uxDispatch}
+        beltLines={gameState.BeltLines}
       />
     ) : building.kind === "Chest" ? (
       <StorageCard
         storage={building}
         regionId={regionId}
         buildingIdx={buildingIdx}
-        inventory={inventory}
+        inventory={gameState.Inventory}
         uxDispatch={uxDispatch}
       />
     ) : building.kind === "Empty" ? (
       <EmptyLaneCard
         regionId={regionId}
         buildingIdx={buildingIdx}
-        inventory={inventory}
-        regions={regions}
+        inventory={gameState.Inventory}
+        regions={gameState.Regions}
         uxDispatch={uxDispatch}
       />
     ) : building.kind === "Lab" ? (
@@ -128,7 +121,7 @@ export const BuildingCard = ({
         building={building}
         regionId={regionId}
         buildingIdx={buildingIdx}
-        researchState={researchState}
+        researchState={gameState.Research}
         uxDispatch={uxDispatch}
       />
     ) : building.subkind === "rocket-silo" ? (
@@ -144,7 +137,7 @@ export const BuildingCard = ({
         regionId={regionId}
         buildingIdx={buildingIdx}
         regionalOre={regionalOre}
-        researchState={researchState}
+        researchState={gameState.Research}
         uxDispatch={uxDispatch}
       />
     );
@@ -192,7 +185,7 @@ export const BuildingCard = ({
         <div className="output-area">{beltInserters}</div>
       </div>
       <MainBusSegment
-        mainBus={mainBus}
+        mainBus={regionalBus}
         busLaneClicked={busLaneClicked}
         beltConnectionClicked={beltConnectionClicked}
         segmentHeight={136}

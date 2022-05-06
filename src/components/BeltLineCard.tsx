@@ -1,4 +1,6 @@
 import { GameAction } from "../GameAction";
+import { ImmutableMap } from "../immutable";
+import { BeltLine } from "../transport";
 import { ReadonlyBuilding } from "../useGameState";
 import { entityIconLookupByKind } from "../utils";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
@@ -9,35 +11,34 @@ export type BeltLineCardProps = {
   buildingIdx: number;
   regionId: string;
   uxDispatch: (a: GameAction) => void;
+  beltLines: ImmutableMap<string, BeltLine>;
 };
 
-function direction(d: "FROM_REGION" | "TO_REGION" | undefined): string {
+function direction(d: "TO_BELT" | "FROM_BELT" | undefined): string {
   switch (d) {
-    case "FROM_REGION":
-      return "from";
-    case "TO_REGION":
-      return "to";
+    case "TO_BELT":
+      return " to ";
+    case "FROM_BELT":
+      return " from ";
     case undefined:
       return "UNKNOWN";
   }
 }
 
 export function BeltLineCard(props: BeltLineCardProps) {
-  const { building, buildingIdx, regionId, uxDispatch } = props;
+  const { building, buildingIdx, regionId, uxDispatch, beltLines } = props;
 
   const inputBuffersForDisplay = building.inputBuffers,
     outputBuffersForDisplay = building.outputBuffers;
+  if (!building.beltLineId) throw new Error("BeltLineDepot missing beltLineId");
+  const beltLine = beltLines.get(building.beltLineId);
+  const name = beltLine ? beltLine.name : "Invalid";
 
   return (
     <div className="main-area">
       <div className="top-area">
         <div className="title">
-          {`Belt line ` +
-            building.name +
-            ` ` +
-            direction(building.direction) +
-            ` ` +
-            building.otherRegionId}
+          {`Depot ` + direction(building.direction) + name}
         </div>
         <span className={`icon ${building.subkind}`} />
       </div>

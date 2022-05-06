@@ -169,7 +169,7 @@ export async function showPlaceBeltLineSelector(
   inventory: ReadonlyItemBuffer,
   regions: ImmutableMap<string, ReadonlyRegion>,
   regionId: string,
-  buildingIdx?: number
+  buildingIdx: number
 ) {
   const result = await showDialog({
     title: "Place Belt Line",
@@ -188,7 +188,7 @@ export async function showPlaceBeltLineSelector(
       type: "PlaceBeltLine",
       targetRegion,
       entity: beltType,
-      beltLength: 100,
+      beltLength: 10,
       regionId,
       buildingIdx,
     });

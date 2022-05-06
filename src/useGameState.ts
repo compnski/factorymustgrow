@@ -55,7 +55,7 @@ export type ReadonlyBuilding = {
   Pick<Building, "kind" | "subkind" | "ProducerType" | "BuildingCount">
 > &
   Partial<{ RecipeId: string }> &
-  Partial<Pick<BeltLineDepot, "name" | "direction" | "otherRegionId">> &
+  Partial<Pick<BeltLineDepot, "direction" | "beltLineId">> &
   Partial<{ readonly progressTrackers: Readonly<number[]> }>;
 
 export interface ReadonlyBuildingSlot {
@@ -66,7 +66,7 @@ export interface ReadonlyBuildingSlot {
 
 export interface ReadonlyRegion {
   readonly Id: string;
-  readonly Ore: ReadonlyItemBuffer;
+  readonly Ore: ReadonlyInventory;
   readonly LaneCount: number;
   readonly Bus: ReadonlyMainBus;
   readonly BuildingSlots: ReadonlyBuildingSlot[];
@@ -79,12 +79,12 @@ interface IHackyPropertyBag {
 export interface ReadonlyState {
   readonly HackyPropertyBag: Readonly<IHackyPropertyBag>;
   readonly Research: ReadonlyResearchState;
-  readonly Inventory: ReadonlyItemBuffer;
+  readonly Inventory: ReadonlyInventory;
   readonly Regions: ReadonlyMap<string, ReadonlyRegion>;
-  readonly BeltLines: ReadonlyMap<number, Readonly<BeltLine>>;
+  readonly BeltLines: ReadonlyMap<string, Readonly<BeltLine>>;
 }
 
-export const CurrentGameStateVersion = "0.2.0";
+export const CurrentGameStateVersion = "0.2.1";
 
 export const useGameState = () =>
   useReducer(
@@ -103,7 +103,7 @@ export type FactoryGameState = {
   readonly Research: ReadonlyResearchState;
   readonly Inventory: ReadonlyInventory;
   readonly Regions: ImmutableMap<string, ReadonlyRegion>;
-  readonly BeltLines: ImmutableMap<number, Readonly<BeltLine>>;
+  readonly BeltLines: ImmutableMap<string, Readonly<BeltLine>>;
 };
 
 //   {
@@ -145,7 +145,7 @@ export const initialFactoryGameState = () => ({
   Regions: ImmutableMap([
     ["region0", NewRegionFromInfo(GetRegionInfo("region0"))],
   ]),
-  BeltLines: ImmutableMap<number, Readonly<BeltLine>>(),
+  BeltLines: ImmutableMap<string, Readonly<BeltLine>>(),
 });
 
 // export function ResetGameState() {

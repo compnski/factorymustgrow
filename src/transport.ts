@@ -14,7 +14,7 @@ import {
 
 export function FindDepotForBeltLineInRegion(
   r: ReadonlyRegion,
-  beltLineId: number,
+  beltLineId: string,
   direction: string
 ): BeltLineDepot | undefined {
   for (const slot of r.BuildingSlots) {
@@ -48,7 +48,7 @@ export function AdvanceBeltLine(beltLine: BeltLine): BeltLine {
   return { ...beltLine, internalBeltBuffer: belt };
 }
 
-export function UpdateBeltLineDept(
+export function UpdateBeltLineDepot(
   building: BeltLineDepot,
   vmDispatch: DispatchFunc,
   address: BuildingAddress,
@@ -59,11 +59,12 @@ export function UpdateBeltLineDept(
   const beltLine = state.BeltLines.get(building.beltLineId);
   if (!beltLine)
     throw new Error("Cannot find beltLine for " + building.beltLineId);
+  //console.log(beltLine.beltLineId, building.direction);
   //If FROM, has input buffer
   // If space, Move from input buffer to beltline
   // ELSE is TO
   // move from end of beltline to output buffer (if space)
-  if (building.direction === "FROM_REGION") {
+  if (building.direction === "TO_BELT") {
     const entityStack = building.inputBuffers.Entities()[0];
     const firstStack = beltLine.internalBeltBuffer[0];
 
@@ -87,13 +88,13 @@ export function UpdateBeltLineDept(
         address: { ...address, buffer: "input" },
       });
     }
-  } else if (building.direction === "TO_REGION") {
-    const entityStack = building.outputBuffers.Entities()[0];
+  } else if (building.direction === "FROM_BELT") {
     const lastStack =
       beltLine.internalBeltBuffer[beltLine.internalBeltBuffer.length - 1];
 
-    if (entityStack) {
+    if (lastStack) {
       const { Entity: entity, Count: availableCount } = lastStack;
+      if (!availableCount) return;
       const count = Math.min(
         availableCount,
         building.outputBuffers.AvailableSpace(entity)
@@ -117,102 +118,63 @@ export function UpdateBeltLineDept(
   }
 }
 
-// export function UpdateBeltLine(
-//   tick: number,
-//   regions: { get(s: string): ReadonlyRegion | undefined },
-//   currentBeltLine: BeltLine
-// ) {
-//   const toRegion = regions.get(currentBeltLine.toRegionId),
-//     fromRegion = regions.get(currentBeltLine.fromRegionId);
-//   if (!toRegion || !fromRegion) throw new Error("Missing regions");
-//   const toDepot = FindDepotForBeltLineInRegion(
-//       toRegion,
-//       currentBeltLine.beltLineId,
-//       "TO_REGION"
-//     ),
-//     fromDepot = FindDepotForBeltLineInRegion(
-//       fromRegion,
-//       currentBeltLine.beltLineId,
-//       "FROM_REGION"
-//     ),
-//     lastBufferIdx = currentBeltLine.internalBeltBuffer.length - 1;
-//   // Move from end of buffer into toDepot
-//   if (toDepot) {
-//     const lastBelt = currentBeltLine.internalBeltBuffer[lastBufferIdx];
-//     if (lastBelt.Count > 0)
-//       toDepot.outputBuffers.Add(lastBelt, Infinity, false, true);
-//     if (lastBelt.Count === 0) lastBelt.Entity = "";
-//   }
-//   // Move all items, coalescing toward the end
-//   for (let idx = lastBufferIdx; idx > 0; idx--) {
-//     const fromBelt = currentBeltLine.internalBeltBuffer[idx - 1],
-//       toBelt = currentBeltLine.internalBeltBuffer[idx];
-//     if (toBelt.Entity === "" || toBelt.Entity === fromBelt.Entity) {
-//       if (
-//         fromBelt.Count > 0 &&
-//         stackTransfer(fromBelt, toBelt, Infinity, false) > 0
-//       ) {
-//         toBelt.Entity = fromBelt.Entity;
-//       }
-//     }
-//     if (fromBelt.Count === 0) {
-//       fromBelt.Entity = "";
-//     }
-//   }
-//   // Move from input buffer of fromDepot into start of beltline
-//   if (fromDepot) {
-//     const ents = fromDepot.inputBuffers.Entities()[0],
-//       [fromEntity] = ents ? ents : [""],
-//       firstBelt = currentBeltLine.internalBeltBuffer[0];
-
-//     if (fromEntity) {
-//       if (firstBelt.Entity === "" || firstBelt.Entity === fromEntity) {
-//         firstBelt.Entity = fromEntity;
-//         fromDepot.inputBuffers.Remove(firstBelt, Infinity, true);
-//       }
-//     }
-//   }
-//   // console.log(currentBeltLine.sharedBeltBuffer.map((es) => es.Count).join(" "));
-// }
-
 export type BeltLineDepot = {
   kind: "BeltLineDepot";
   subkind: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
   ProducerType: "Depot";
   inputBuffers: ReadonlyItemBuffer;
   outputBuffers: ReadonlyItemBuffer;
-  otherRegionId: string;
-  length: number;
-  direction: "TO_REGION" | "FROM_REGION";
-  beltLineId: number;
   BuildingCount: number;
-  name: string;
+  direction: "FROM_BELT" | "TO_BELT";
+  beltLineId: string;
 };
 
 export type BeltLine = {
-  beltLineId: number;
+  beltLineId: string;
   BuildingCount: number;
-  toRegionId: string;
-  fromRegionId: string;
+  //toRegionId: string;
+  //  fromRegionId: string;
   length: number;
   internalBeltBuffer: Array<EntityStack>;
   name: string;
 };
 
-export function NewBeltLinePair(
-  fromRegion: Region,
-  toRegion: Region,
+export function NewBeltLineDepot({
+  subkind,
+  direction,
+  beltLineId,
+  initialLaneCount = 1,
+}: {
+  subkind: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
+  direction: "FROM_BELT" | "TO_BELT";
+  beltLineId: string;
+  initialLaneCount?: number;
+}): BeltLineDepot {
+  const [inputCount, outputCount] = direction == "FROM_BELT" ? [0, 1] : [1, 0];
+
+  return {
+    kind: "BeltLineDepot",
+    ProducerType: "Depot",
+    subkind: subkind,
+    BuildingCount: initialLaneCount,
+    inputBuffers: new ReadonlyInventory(inputCount),
+    outputBuffers: new ReadonlyInventory(outputCount),
+    direction,
+    beltLineId,
+  };
+}
+
+export function NewBeltLine(
+  beltLineId: string,
   subkind: "transport-belt" | "fast-transport-belt" | "express-transport-belt",
   length: number,
   initialLaneCount = 1
-): [BeltLine, BeltLineDepot, BeltLineDepot] {
+): BeltLine {
   const sharedBeltBuffer = Array<EntityStack>(length);
   for (let idx = 0; idx < sharedBeltBuffer.length; idx++)
     // TODO Size based on speed?
     sharedBeltBuffer[idx] = NewEntityStack("", 0, 16);
 
-  // TODO: Static increasing id, stored someplace in state
-  const beltLineId = new Date().getTime() % 100000;
   let beltLineName = "";
   for (; beltLineName === "" || beltLineName.length > 14; ) {
     beltLineName = randomName();
@@ -231,45 +193,17 @@ export function NewBeltLinePair(
   // need beltLineId to link beltlines and depots
   // current link probably won't surivve storage
 
-  const toBeltLine: BeltLineDepot = {
-    kind: "BeltLineDepot",
-    ProducerType: "Depot",
-    subkind: subkind,
-    BuildingCount: initialLaneCount,
-    inputBuffers: new ReadonlyInventory(0),
-    outputBuffers: new ReadonlyInventory(1),
-    otherRegionId: fromRegion.Id,
-    direction: "TO_REGION",
-    length: length,
-    beltLineId: beltLineId,
-    name: beltLineName,
-  };
-
-  const fromBeltLine: BeltLineDepot = {
-    kind: "BeltLineDepot",
-    ProducerType: "Depot",
-    subkind: subkind,
-    BuildingCount: initialLaneCount,
-    inputBuffers: new ReadonlyInventory(1),
-    outputBuffers: new ReadonlyInventory(0),
-    otherRegionId: toRegion.Id,
-    direction: "FROM_REGION",
-    length: length,
-    beltLineId: beltLineId,
-    name: beltLineName,
-  };
-
   const beltLine = {
     beltLineId: beltLineId,
     BuildingCount: initialLaneCount,
-    toRegionId: toRegion.Id,
-    fromRegionId: fromRegion.Id,
+    //    toRegionId: toRegion.Id,
+    //    fromRegionId: fromRegion.Id,
     length: length,
     internalBeltBuffer: sharedBeltBuffer,
     name: beltLineName,
   };
 
-  return [beltLine, fromBeltLine, toBeltLine];
+  return beltLine;
 }
 
 // export type TrainStation = {

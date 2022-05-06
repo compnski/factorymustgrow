@@ -55,6 +55,7 @@ export const FactoryGame = () => {
     const uxDispatch = (action: GameAction) => {
       GameDispatch(dispatchGameStateActions, gameState, action);
     };
+    //console.log(currentRegion);
     if (!currentRegion) throw new Error("Bad region " + currentRegionId);
     return (
       <div className="factory-game">
@@ -88,13 +89,9 @@ export const FactoryGame = () => {
         </div>
         <div className="scroller">
           <BuildingCardList
-            mainBus={currentRegion.Bus}
             region={currentRegion}
-            regionalOre={currentRegion.Ore}
-            inventory={inventory}
-            researchState={researchState}
             uxDispatch={uxDispatch}
-            regions={gameState.Regions}
+            gameState={gameState}
           />
         </div>
         <InventoryDisplay inventory={inventory} />

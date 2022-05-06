@@ -16,7 +16,7 @@ import {
 import { IsResearchComplete, Lab, ResearchInLab } from "./research";
 import { DispatchFunc, StateVMAction } from "./stateVm";
 import { Chest, UpdateChest } from "./storage";
-import { BeltLineDepot, UpdateBeltLineDept } from "./transport";
+import { BeltLineDepot, UpdateBeltLineDepot } from "./transport";
 import { Region } from "./types";
 import {
   FactoryGameState,
@@ -43,6 +43,7 @@ export async function UpdateGameState(
           address: { beltLineId: currentBeltLine.beltLineId },
         },
       ]);
+      //console.log(currentBeltLine);
       //UpdateBeltLine(tick, gameState.Regions, currentBeltLine);
     }
     for (const [, region] of gameState.Regions) {
@@ -121,7 +122,7 @@ function UpdateGameStateForRegion(
         UpdateChest(building as Chest, tick);
         break;
       case "BeltLineDepot":
-        UpdateBeltLineDept(
+        UpdateBeltLineDepot(
           building as BeltLineDepot,
           vmDispatch,
           address,

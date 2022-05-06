@@ -5,7 +5,7 @@ import { Inserter } from "./inserter";
 import { ReadonlyInventory } from "./inventory";
 import { StackCapacity } from "./movement";
 import { Extractor, Factory, UpdateBuildingRecipe } from "./production";
-import { AdvanceBeltLine } from "./transport";
+import { AdvanceBeltLine, NewBeltLine, NewBeltLineDepot } from "./transport";
 import {
   AddToEntityStack,
   NewEntityStack,
@@ -30,7 +30,7 @@ export type StateAddress =
   | BeltLineAddress;
 
 type BeltLineAddress = {
-  beltLineId: number;
+  beltLineId: string;
 };
 
 type MainBusAddress = {
@@ -89,7 +89,8 @@ export type StateVMAction =
   | ResetAction
   | AddMainBusLaneAction
   | RemoveMainBusLaneAction
-  | AdvanceBeltLineAction;
+  | AdvanceBeltLineAction
+  | PlaceBeltLineAction;
 
 type ResetAction = { kind: "Reset" };
 
@@ -175,11 +176,30 @@ type SetCurrentResearchAction = {
   researchId: string;
 };
 
-type PlaceBuildingAction = {
+type PlaceBuildingAction =
+  | {
+      kind: "PlaceBuilding";
+      entity: string;
+      address: BuildingAddress;
+      BuildingCount: number;
+    }
+  | PlaceBeltLineDepotAction;
+
+type PlaceBeltLineDepotAction = {
   kind: "PlaceBuilding";
-  entity: string;
   address: BuildingAddress;
   BuildingCount: number;
+  entity: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
+  direction: "TO_BELT" | "FROM_BELT";
+  beltLineAddress: BeltLineAddress;
+};
+
+type PlaceBeltLineAction = {
+  kind: "PlaceBeltLine";
+  entity: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
+  address: BeltLineAddress;
+  BuildingCount: number;
+  length: number;
 };
 
 type SwapBuildingsAction = {
@@ -241,10 +261,13 @@ function applyStateChangeAction(
     case "AddRegion":
       return stateChangeAddRegion(state, action);
     case "AdvanceBeltLine":
-      return stateChangeAdvanceBeltline(state, action);
+      return stateChangeAdvanceBeltLine(state, action);
+    case "PlaceBeltLine":
+      return stateChangePlaceBeltLine(state, action);
     case "AddMainBusLane":
     case "RemoveMainBusLane":
       throw new Error("NYI");
+
     default:
       throw assertNever(action);
   }
@@ -378,6 +401,12 @@ function stateChangeAddResearchCount(
   }
 }
 
+function isPlaceBeltLineDepotAction(
+  a: PlaceBuildingAction
+): a is PlaceBeltLineDepotAction {
+  return (a as PlaceBeltLineDepotAction).direction != undefined;
+}
+
 function stateChangePlaceBuilding(
   state: FactoryGameState,
   action: PlaceBuildingAction
@@ -394,6 +423,16 @@ function stateChangePlaceBuilding(
   switch (entity) {
     case "empty-lane":
       slot.Building = NewEmptyLane();
+      break;
+    case "express-transport-belt":
+    case "fast-transport-belt":
+    case "transport-belt":
+      if (isPlaceBeltLineDepotAction(action))
+        slot.Building = NewBeltLineDepot({
+          subkind: entity,
+          direction: action.direction,
+          beltLineId: action.beltLineAddress.beltLineId,
+        });
       break;
     default:
       slot.Building = NewBuilding(entity);
@@ -502,8 +541,18 @@ function addItemsToBuilding(
   const slot = region.BuildingSlots[buildingIdx];
   if (!slot) throw new Error("Missing slot");
 
+  // TODO: Handle chests
+  // maybe update both input output for them?
+  // maybe set both to one?
+
   const newBuilding =
-    buffer == "input"
+    slot.Building.kind === "Chest"
+      ? {
+          ...slot.Building,
+          inputBuffers: slot.Building.inputBuffers.AddItems(entity, count),
+          outputBuffers: slot.Building.inputBuffers.AddItems(entity, count),
+        }
+      : buffer == "input"
       ? {
           ...slot.Building,
           inputBuffers: slot.Building.inputBuffers.AddItems(entity, count),
@@ -542,7 +591,8 @@ function addItemsToBeltLine(
   if (count > 0) {
     const firstStack = beltLine.internalBeltBuffer[0];
     if (!StackCapacity(firstStack)) return state;
-    if (firstStack.Entity && firstStack.Entity != entity)
+    if (!firstStack.Entity) firstStack.Entity = entity;
+    if (firstStack.Entity != entity)
       throw new Error("Entity mismatch in beltline");
 
     beltLine = {
@@ -556,7 +606,7 @@ function addItemsToBeltLine(
   } else if (count < 0) {
     const lastStack =
       beltLine.internalBeltBuffer[beltLine.internalBeltBuffer.length - 1];
-    if (!StackCapacity(lastStack)) return state;
+    if (!lastStack.Count) return state;
     if (lastStack.Entity && lastStack.Entity != entity)
       throw new Error("Entity mismatch in beltline");
 
@@ -564,7 +614,7 @@ function addItemsToBeltLine(
       ...beltLine,
       internalBeltBuffer: replaceItem(
         beltLine.internalBeltBuffer,
-        0,
+        beltLine.internalBeltBuffer.length - 1,
         AddToEntityStack(lastStack, count)
       ),
     };
@@ -628,7 +678,7 @@ function stateChangeAddRegion(
   };
 }
 
-function stateChangeAdvanceBeltline(
+function stateChangeAdvanceBeltLine(
   state: FactoryGameState,
   action: AdvanceBeltLineAction
 ): FactoryGameState {
@@ -636,6 +686,22 @@ function stateChangeAdvanceBeltline(
   if (!beltLine)
     throw new Error("Cannot find beltLine = " + action.address.beltLineId);
   const newBeltLine = AdvanceBeltLine(beltLine);
+  return {
+    ...state,
+    BeltLines: state.BeltLines.set(action.address.beltLineId, newBeltLine),
+  };
+}
+
+function stateChangePlaceBeltLine(
+  state: FactoryGameState,
+  action: PlaceBeltLineAction
+): FactoryGameState {
+  const newBeltLine = NewBeltLine(
+    action.address.beltLineId,
+    action.entity,
+    action.length,
+    action.BuildingCount
+  );
   return {
     ...state,
     BeltLines: state.BeltLines.set(action.address.beltLineId, newBeltLine),

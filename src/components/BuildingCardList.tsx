@@ -4,6 +4,7 @@ import { GameAction } from "../GameAction";
 import { ImmutableMap } from "../immutable";
 import { ReadonlyMainBus } from "../mainbus";
 import {
+  FactoryGameState,
   ReadonlyBuildingSlot,
   ReadonlyItemBuffer,
   ReadonlyRegion,
@@ -15,20 +16,12 @@ import { InserterCard } from "./InserterCard";
 
 export const BuildingCardList = ({
   region,
-  mainBus,
-  regionalOre,
-  inventory,
-  researchState,
   uxDispatch,
-  regions,
+  gameState,
 }: {
-  region: { Id: string; BuildingSlots: ReadonlyBuildingSlot[] };
-  mainBus: ReadonlyMainBus;
-  regionalOre: ReadonlyItemBuffer;
-  inventory: ReadonlyItemBuffer;
-  researchState: ReadonlyResearchState;
+  region: ReadonlyRegion;
   uxDispatch: (a: GameAction) => void;
-  regions: ImmutableMap<string, ReadonlyRegion>;
+  gameState: FactoryGameState;
 }) => {
   const regionId = region.Id;
   const [dragIdx, setDragIdx] = useState(-1);
@@ -102,20 +95,15 @@ export const BuildingCardList = ({
         )}
         <BuildingCard
           key={`b-${idx}`}
-          regionId={regionId}
+          region={region}
           buildingIdx={idx}
           buildingSlot={buildingSlot}
-          building={buildingSlot.Building}
-          mainBus={mainBus}
           uxDispatch={uxDispatch}
-          regionalOre={regionalOre}
-          inventory={inventory}
           handleDrag={handleDrag(idx)}
           handleDrop={allowsDrop ? handleDrop(idx, isLastBuilding) : undefined}
           moveUp={() => moveUp(idx)}
           moveDown={() => moveDown(idx)}
-          researchState={researchState}
-          regions={regions}
+          gameState={gameState}
         />
         {!isLastBuilding && (
           <InserterCard

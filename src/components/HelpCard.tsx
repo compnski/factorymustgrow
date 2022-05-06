@@ -8,7 +8,7 @@ import { ReadonlyMainBus } from "../mainbus";
 import { NewExtractorForRecipe, NewFactoryForRecipe } from "../production";
 import { GetRegionInfo } from "../region";
 import { EntityStack, NewRegionFromInfo } from "../types";
-import { ReadonlyResearchState } from "../useGameState";
+import { FactoryGameState, ReadonlyResearchState } from "../useGameState";
 import { BuildingCardList } from "./BuildingCardList";
 import "./HelpCard.scss";
 
@@ -91,7 +91,6 @@ function buildHelpRegion() {
   return helpRegion;
 }
 
-const inventory = new ReadonlyInventory(8);
 const researchState: ReadonlyResearchState = {
   Progress: Map<string, Readonly<EntityStack>>(),
   CurrentResearchId: "logistic-science-pack",
@@ -103,7 +102,13 @@ const helpRegion = {
   Bus: region.Bus,
 };
 
-const regions = ImmutableMap([[helpRegion.Id, helpRegion]]);
+const helpGameState: FactoryGameState = {
+  Research: researchState,
+  Regions: ImmutableMap([[helpRegion.Id, helpRegion]]),
+  Inventory: new ReadonlyInventory(8),
+  BeltLines: ImmutableMap(),
+  RocketLaunchingAt: 0,
+};
 
 export const HelpCard = function HelpCard({ onConfirm }: HelpCardProps) {
   return (
@@ -124,13 +129,9 @@ export const HelpCard = function HelpCard({ onConfirm }: HelpCardProps) {
         </div>
         <div className="inner-content">
           <BuildingCardList
-            mainBus={new ReadonlyMainBus(helpRegion.Bus)}
-            region={helpRegion}
-            regionalOre={helpRegion.Ore}
-            inventory={inventory}
-            researchState={researchState}
             uxDispatch={() => false}
-            regions={regions}
+            region={helpRegion}
+            gameState={helpGameState}
           />
           <HelpOverlay />
         </div>
