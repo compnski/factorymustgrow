@@ -181,14 +181,6 @@ export function ResearchInLab(
     maxCount: research.ProductionRequiredForCompletion,
   });
 
-  // dispatch({
-  //   // TODO: Use SetItem once it exists?
-  //   kind: "AddItemCount",
-  //   address: { ...labAddress, buffer: "output" },
-  //   entity: currentResearchId,
-  //   count: currentResearchProgress + actualProduction,
-  // });
-
   return actualProduction;
 }
 

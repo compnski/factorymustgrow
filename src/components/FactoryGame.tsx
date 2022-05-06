@@ -5,9 +5,10 @@ import { GameAction } from "../GameAction";
 import { GameDispatch } from "../GameDispatch";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { saveStateToLocalStorage } from "../localstorage";
-import { setMacroRegionId } from "../macro_def";
+import { Macro, setMacroRegionId } from "../macro_def";
 import { useInterval } from "../reactUtils";
 import { ReactComponent as RocketShip } from "../rocket-launch.svg";
+import { StateVMAction } from "../stateVm";
 import { ReadonlyResearchState, useGameState } from "../useGameState";
 import { BuildingCardList } from "./BuildingCardList";
 import { DebugButtonPanel } from "./DebugButtonPanel";
@@ -27,7 +28,7 @@ export const FactoryGame = () => {
   const generalDialog = useGeneralDialog();
 
   useInterval(async () => {
-    // Your custom logic here
+    saveStateToLocalStorage(gameState);
     const tick = new Date().getTime();
     await UpdateGameState(
       gameState,
@@ -35,13 +36,8 @@ export const FactoryGame = () => {
       tick,
       generalDialog
     );
-    saveStateToLocalStorage(gameState);
   }, 1000 / TicksPerSecond);
 
-  /* useInterval(() => {
-   *   setGameState({ ...GameState });
-   * }, 32);
-   */
   try {
     const regionIds = [...gameState.Regions.keys()];
     const currentRegion = gameState.Regions.get(currentRegionId);
@@ -55,6 +51,11 @@ export const FactoryGame = () => {
     const uxDispatch = (action: GameAction) => {
       GameDispatch(dispatchGameStateActions, gameState, action);
     };
+    window.uxDispatch = uxDispatch;
+    window.Macro = Macro(dispatchGameStateActions, gameState, currentRegionId);
+    window.GameState = () => gameState;
+    window.vmDispatch = (...a: StateVMAction[]) => dispatchGameStateActions(a);
+
     //console.log(currentRegion);
     if (!currentRegion) throw new Error("Bad region " + currentRegionId);
     return (

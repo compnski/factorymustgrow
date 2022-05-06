@@ -4,52 +4,13 @@ import { ReadonlyFixedInventory, ReadonlyInventory } from "./inventory";
 import { MainBus } from "./mainbus";
 import { ReadonlyItemBuffer } from "./useGameState";
 
-export function IsItemBuffer(
-  i: ItemBuffer | EntityStack | ReadonlyItemBuffer
-): i is ItemBuffer {
-  return (i as ItemBuffer).AvailableSpace !== undefined;
-}
-
-export interface CountRemover {
-  Remove(toStack: EntityStack, count?: number, integersOnly?: boolean): number;
-  Count(entity: string): number;
-}
-
-export interface ItemBuffer {
-  Accepts(entity: string): boolean;
-  // How many of this item can fit
-  AvailableSpace(entity: string): number;
-  SlotsUsed(): number;
-  Count(entity: string): number;
-  Add(
-    fromStack: EntityStack,
-    count?: number,
-    exceedCapacity?: boolean,
-    integersOnly?: boolean
-  ): number;
-  AddFromItemBuffer(
-    from: CountRemover,
-    entity: string,
-    itemCount?: number,
-    exceedCapacity?: boolean,
-    integersOnly?: boolean
-  ): number;
-
-  Remove(toStack: EntityStack, count?: number, integersOnly?: boolean): number;
-  Entities(): [entity: string, count: number][];
-  Capacity: number;
-
-  AddItems(entity: string, count: number): ReadonlyItemBuffer;
-  RemoveItems(entity: string, count: number): ReadonlyItemBuffer;
-}
-
 export interface Producer {
   kind: string;
   subkind: string;
   RecipeId: string;
   ProducerType: string;
-  inputBuffers: ItemBuffer;
-  outputBuffers: ItemBuffer;
+  inputBuffers: ReadonlyItemBuffer;
+  outputBuffers: ReadonlyItemBuffer;
   BuildingCount: number;
 }
 

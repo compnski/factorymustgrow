@@ -1,5 +1,4 @@
-import { Building } from "./building";
-import { PushToOtherProducer, VMPushToOtherBuilding } from "./movement";
+import { VMPushToOtherBuilding } from "./movement";
 import { StateVMAction } from "./stateVm";
 import { ReadonlyBuilding } from "./useGameState";
 

@@ -1,15 +1,21 @@
-import { CurrentGameStateVersion, FactoryGameState } from "./useGameState";
-import { Inventory, ReadonlyInventory } from "./inventory";
+import { assert } from "console";
+import { isImmutable, isMap } from "immutable";
+import { DebugInventory } from "./debug";
+import { ImmutableMap } from "./immutable";
+import { ReadonlyInventory } from "./inventory";
 import { MainBus } from "./mainbus";
 import { ResearchOutput } from "./research";
 import { NewChest } from "./storage";
-import { ImmutableMap } from "./immutable";
-import { isImmutable, isMap } from "immutable";
+import { Region } from "./types";
+import { CurrentGameStateVersion, FactoryGameState } from "./useGameState";
 
 function toType<T>(
   dataType: string,
   value: T[]
 ): { dataType: string; value: T[] } {
+  if (value.length && (value[0] as unknown as unknown[])[0] == "region0") {
+    //console.log((value as unknown as [[string, Region]])[0][1]);
+  }
   return {
     dataType,
     value,
@@ -24,10 +30,16 @@ const replacer = (key: string, value: any): any => {
     case "BeltLines":
       return toType("ImmutableMap", Object.entries(value));
   }
-  return value instanceof Map
+  return value instanceof DebugInventory
     ? {
-        dataType: "Map",
-        value: [...value],
+        dataType: "DebugInventory",
+      }
+    : value instanceof ReadonlyInventory
+    ? {
+        dataType: "ReadonlyInventory",
+        maxCapacity: value.Capacity,
+        Data: [...value.Data.entries()],
+        immutableSlots: value.immutableSlots,
       }
     : isImmutable(value) && isMap(value)
     ? {
@@ -45,26 +57,17 @@ const replacer = (key: string, value: any): any => {
         nextId: value.nextLaneId,
         lanes: value.lanes,
       }
-    : value instanceof Inventory
-    ? {
-        dataType: "Inventory",
-        maxCapacity: value.Capacity,
-        slots: value.slots,
-        immutableSlots: value.immutableSlots,
-      }
-    : value instanceof ReadonlyInventory
-    ? {
-        dataType: "ReadonlyInventory",
-        maxCapacity: value.Capacity,
-        Data: [...value.Data.entries()],
-        immutableSlots: value.immutableSlots,
-      }
     : value instanceof ResearchOutput
     ? {
         dataType: "ResearchOutput",
         researchId: value.researchId,
         progress: value.progress,
         maxProgress: value.maxProgress,
+      }
+    : value instanceof Map
+    ? {
+        dataType: "Map",
+        value: [...value],
       }
     : value === Infinity
     ? "Infinity"
@@ -84,8 +87,8 @@ const reviver = (key: string, value: any): any => {
     ? new Set(value.value)
     : value.dataType === "MainBus"
     ? new MainBus(value.nextId, value.lanes)
-    : value.dataType === "Inventory"
-    ? new Inventory(value.maxCapacity, value.slots, value.immutableSlots)
+    : value.dataType === "DebugInventory"
+    ? new DebugInventory()
     : value.dataType === "ReadonlyInventory"
     ? new ReadonlyInventory(
         value.maxCapacity,

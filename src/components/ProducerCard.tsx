@@ -1,7 +1,6 @@
 import { GameAction } from "../GameAction";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { ReadonlyInventory } from "../inventory";
-import { IsItemBuffer, ItemBuffer } from "../types";
 import {
   ReadonlyBuilding,
   ReadonlyItemBuffer,
@@ -42,7 +41,7 @@ export function ProducerCard({
 }: ProducerCardProps) {
   const generalDialog = useGeneralDialog();
 
-  let recipeInput: ItemBuffer | ReadonlyItemBuffer = producer.inputBuffers;
+  let recipeInput: ReadonlyItemBuffer = producer.inputBuffers;
 
   if (producer.kind === "Extractor" && producer.inputBuffers) {
     recipeInput = new ReadonlyInventory(Infinity, undefined);
@@ -50,8 +49,7 @@ export function ProducerCard({
     // TODO: Fix stack size
     for (const [entity] of producer.inputBuffers.Entities()) {
       const ore = regionalOre.Count(entity);
-      if (ore && IsItemBuffer(recipeInput))
-        recipeInput = recipeInput.AddItems(entity, ore);
+      if (ore) recipeInput = recipeInput.AddItems(entity, ore);
     }
   }
 

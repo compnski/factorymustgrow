@@ -1,7 +1,6 @@
 import { AvailableResearchList } from "./availableResearch";
 import { NextEmptySlot } from "./building";
 import { GameDispatch } from "./GameDispatch";
-import { GameWindow } from "./globals";
 import { GameStateReducer } from "./stateVm";
 import { FactoryGameState, ReadonlyRegion } from "./useGameState";
 
@@ -9,20 +8,20 @@ export type MacroName = "redsci" | "allresearch";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function Macro(
-  name: MacroName,
   reducer: GameStateReducer,
   gameState: FactoryGameState,
   regionId: string
-): any {
-  switch (name) {
-    case "allresearch":
-      return doAllResearch(reducer);
+): (name: MacroName) => void {
+  return (name: MacroName) => {
+    switch (name) {
+      case "allresearch":
+        return doAllResearch(reducer);
 
-    case "redsci":
-      return buildRedSci(reducer, gameState, regionId);
-  }
+      case "redsci":
+        return buildRedSci(reducer, gameState, regionId);
+    }
+  };
 }
-
 function doAllResearch(reducer: GameStateReducer) {
   AvailableResearchList.forEach((r) => {
     throw new Error("NYI");
@@ -138,5 +137,3 @@ function addProducers(
 }
 const above = true,
   below = true;
-
-(window as unknown as GameWindow).Macro = Macro;

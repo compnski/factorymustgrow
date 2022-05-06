@@ -4,7 +4,6 @@ import { fixInserters } from "./factoryGame";
 import { GameAction, InventoryTransferAction } from "./GameAction";
 import { GetEntity, MaybeGetRecipe } from "./gen/entities";
 import { GetResearch } from "./gen/research";
-import { GameWindow } from "./globals";
 import { Inserter } from "./inserter";
 import { CanPushTo, moveToInventory } from "./movement";
 import { NewExtractor, NewFactory, ProducerTypeFromEntity } from "./production";
@@ -12,7 +11,6 @@ import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
 import { NewLab } from "./research";
 import { DispatchFunc, StateAddress, StateVMAction } from "./stateVm";
 import { NewChest } from "./storage";
-import { NewBeltLine } from "./transport";
 import { Producer } from "./types";
 import {
   FactoryGameState,
@@ -935,22 +933,6 @@ function inserter(
         action.connectionIdx
       ].Inserter;
 }
-
-// function buildingSlot(
-//   gameState: FactoryGameState,
-//   action: {
-//     regionId: string;
-//     buildingIdx?: number;
-//   }
-// ): BuildingSlot | undefined {
-//   const currentRegion = GetRegion(gameState, action.regionId);
-
-//   return action.buildingIdx !== undefined
-//     ? currentRegion.BuildingSlots[action.buildingIdx]
-//     : undefined;
-// }
-
-(window as unknown as GameWindow).GameDispatch = GameDispatch;
 
 function BuildingHasUnifiedInputOutput(kind: string) {
   return kind === "Chest";

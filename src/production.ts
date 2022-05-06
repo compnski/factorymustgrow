@@ -2,14 +2,7 @@ import { ProduceWithTracker } from "./AddProgressTracker";
 import { GetEntity, GetRecipe, MaybeGetRecipe } from "./gen/entities";
 import { ReadonlyFixedInventory, ReadonlyInventory } from "./inventory";
 import { BuildingAddress, StateVMAction } from "./stateVm";
-import {
-  BuildingType,
-  EntityStack,
-  ItemBuffer,
-  NewEntityStack,
-  Recipe,
-  Region,
-} from "./types";
+import { BuildingType, EntityStack, NewEntityStack, Recipe } from "./types";
 import { ReadonlyItemBuffer, ReadonlyRegion } from "./useGameState";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
 
@@ -50,9 +43,7 @@ export function UpdateBuildingRecipe(
     });
   }
   if (BuildingHasOutput(b.kind)) {
-    console.log(b.kind);
     b.outputBuffers.Entities().forEach(([entity, count]) => {
-      console.log(entity, count);
       if (
         count > 0 &&
         (!recipe || recipe.Output.findIndex((e) => e.Entity === entity) < 0)
@@ -139,7 +130,7 @@ export function NewExtractor(
 function inputItemBufferForExtractor(
   r: Recipe | undefined,
   existingItems?: ReadonlyItemBuffer
-): ItemBuffer {
+): ReadonlyItemBuffer {
   if (!r) return ReadonlyFixedInventory([]);
   const entity = r.Output[0].Entity;
   const count = existingItems ? existingItems.Count(entity) : 0;
@@ -149,7 +140,7 @@ function inputItemBufferForExtractor(
 function outputItemBufferForExtractor(
   r: Recipe | undefined,
   existingItems?: ReadonlyItemBuffer
-): ItemBuffer {
+): ReadonlyItemBuffer {
   if (!r) return ReadonlyFixedInventory([]);
   const entity = r.Output[0].Entity;
   const count = existingItems ? existingItems.Count(entity) : 0;
@@ -363,6 +354,6 @@ export type TrainStation = {
   kind: "TrainStation";
   subkind: "";
   ProducerType: string;
-  outputBuffers: ItemBuffer;
-  inputBuffers: ItemBuffer;
+  outputBuffers: ReadonlyItemBuffer;
+  inputBuffers: ReadonlyItemBuffer;
 };

@@ -1,5 +1,5 @@
 import { DispatchFunc, StateAddress } from "./stateVm";
-import { EntityStack, ItemBuffer } from "./types";
+import { EntityStack } from "./types";
 import { ReadonlyItemBuffer } from "./useGameState";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
 
@@ -47,9 +47,9 @@ export function VMPushToOtherBuilding(
   dispatch: DispatchFunc,
   regionId: string,
   outputIdx: number,
-  { outputBuffers }: { outputBuffers: ReadonlyItemBuffer | ItemBuffer },
+  { outputBuffers }: { outputBuffers: ReadonlyItemBuffer },
   inputIdx: number,
-  { inputBuffers }: { inputBuffers: ReadonlyItemBuffer | ItemBuffer },
+  { inputBuffers }: { inputBuffers: ReadonlyItemBuffer },
   maxTransferred: number
 ) {
   let remainingMaxTransfer = maxTransferred;
@@ -61,15 +61,6 @@ export function VMPushToOtherBuilding(
         inputBuffers.AvailableSpace(entity)
       );
       if (transferAmount) {
-        // console.log(
-        //   "VM PUSH",
-        //   entity,
-        //   outputBuffers.Count(entity),
-        //   inputBuffers.AvailableSpace(entity),
-        //   inputBuffers.Count(entity),
-        //   transferAmount
-        // );
-
         remainingMaxTransfer -= transferAmount;
         dispatch({
           kind: "AddItemCount",
@@ -84,18 +75,6 @@ export function VMPushToOtherBuilding(
           count: -transferAmount,
         });
       }
-    }
-  });
-}
-
-export function PushToOtherProducer(
-  { outputBuffers }: { outputBuffers: ItemBuffer },
-  { inputBuffers }: { inputBuffers: ItemBuffer },
-  maxTransferred: number
-) {
-  outputBuffers.Entities().forEach(([entity]) => {
-    if (inputBuffers.Accepts(entity)) {
-      inputBuffers.AddFromItemBuffer(outputBuffers, entity, maxTransferred);
     }
   });
 }

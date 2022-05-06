@@ -1,8 +1,8 @@
-import { Inventory, ReadonlyInventory } from "./inventory";
+import { ReadonlyInventory } from "./inventory";
 import { StackCapacity, stackTransfer } from "./movement";
 import { randomName } from "./namegen";
 import { BuildingAddress, DispatchFunc } from "./stateVm";
-import { EntityStack, ItemBuffer, NewEntityStack, Region } from "./types";
+import { EntityStack, NewEntityStack } from "./types";
 import {
   FactoryGameState,
   ReadonlyItemBuffer,

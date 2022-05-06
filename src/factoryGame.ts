@@ -1,11 +1,9 @@
-import { BuildingSlot } from "./building";
 import { showResearchSelector } from "./components/selectors";
 import { GameAction } from "./GameAction";
 import { GameDispatch } from "./GameDispatch";
 import { GetResearch } from "./gen/research";
 import { GeneralDialogConfig } from "./GeneralDialogProvider";
 import { MoveViaInserter } from "./inserter";
-import { PushPullFromMainBus } from "./MainBusMovement";
 import { CanPushTo } from "./movement";
 import {
   Extractor,
@@ -17,7 +15,6 @@ import { IsResearchComplete, Lab, ResearchInLab } from "./research";
 import { DispatchFunc, StateVMAction } from "./stateVm";
 import { Chest, UpdateChest } from "./storage";
 import { BeltLineDepot, UpdateBeltLineDepot } from "./transport";
-import { Region } from "./types";
 import {
   FactoryGameState,
   ReadonlyBuildingSlot,

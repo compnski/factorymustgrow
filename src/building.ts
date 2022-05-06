@@ -4,8 +4,8 @@ import { Extractor, Factory } from "./production";
 import { Lab } from "./research";
 import { Chest } from "./storage";
 import { BeltLineDepot } from "./transport";
-import { BeltConnection, ItemBuffer } from "./types";
-import { ReadonlyBuildingSlot } from "./useGameState";
+import { BeltConnection } from "./types";
+import { ReadonlyBuildingSlot, ReadonlyItemBuffer } from "./useGameState";
 
 export type BuildingSlot = {
   Building: Building;
@@ -89,8 +89,8 @@ export type EmptyLane = {
   kind: "Empty";
   subkind: "empty-lane";
   ProducerType: "Empty";
-  inputBuffers: ItemBuffer;
-  outputBuffers: ItemBuffer;
+  inputBuffers: ReadonlyItemBuffer;
+  outputBuffers: ReadonlyItemBuffer;
   BuildingCount: number;
 };
 

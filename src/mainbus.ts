@@ -1,31 +1,25 @@
-import { FixedInventory } from "./inventory";
-import { ItemBuffer } from "./types";
+import { ImmutableMap } from "./immutable";
+import { ReadonlyInventory } from "./inventory";
 import { ReadonlyItemBuffer } from "./useGameState";
 
 export const NewBusLane = (
   Id: number,
   Entity: string,
   initialCount = 0
-): ItemBuffer => {
-  const inv = FixedInventory([
-    {
-      Entity,
-      Count: initialCount,
-      MaxCount: 50,
-    },
-  ]);
+): ReadonlyItemBuffer => {
+  const inv = new ReadonlyInventory(1, ImmutableMap([[Entity, initialCount]]));
   return inv;
 };
 
 export class ReadonlyMainBus {
-  readonly lanes: ReadonlyMap<number, ItemBuffer>;
+  readonly lanes: ReadonlyMap<number, ReadonlyItemBuffer>;
   readonly nextLaneId: number;
 
   constructor({
     lanes,
     nextLaneId,
   }: {
-    lanes: ReadonlyMap<number, ItemBuffer>;
+    lanes: ReadonlyMap<number, ReadonlyItemBuffer>;
     nextLaneId: number;
   }) {
     this.lanes = lanes;
@@ -48,11 +42,14 @@ export class ReadonlyMainBus {
 }
 
 export class MainBus {
-  lanes: Map<number, ItemBuffer>;
+  lanes: Map<number, ReadonlyItemBuffer>;
   nextLaneId = 1;
   kind = "MainBus";
 
-  constructor(firstLaneId = 1, lanes: Map<number, ItemBuffer> = new Map()) {
+  constructor(
+    firstLaneId = 1,
+    lanes: Map<number, ReadonlyItemBuffer> = new Map()
+  ) {
     this.lanes = lanes;
     this.nextLaneId = firstLaneId;
   }
@@ -63,7 +60,7 @@ export class MainBus {
     return laneId;
   }
 
-  RemoveLane(id: number): ItemBuffer | null {
+  RemoveLane(id: number): ReadonlyItemBuffer | null {
     const contents = this.lanes.get(id);
     this.lanes.delete(id);
     return contents || null;

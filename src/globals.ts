@@ -1,22 +1,13 @@
 import { GameAction } from "./GameAction";
+import { MacroName } from "./macro_def";
+import { StateVMAction } from "./stateVm";
 import { FactoryGameState } from "./useGameState";
 
-import { UIAction } from "./uiState";
-import { MacroName } from "./macro_def";
-import { GameStateReducer } from "./stateVm";
-
-export type GameWindow = {
-  GameState: () => FactoryGameState;
-  GameDispatch: (
-    reducer: GameStateReducer,
-    gameState: FactoryGameState,
-    a: GameAction
-  ) => void;
-  Macro: (
-    name: MacroName,
-    reducer: GameStateReducer,
-    gameState: FactoryGameState,
-    regionId: string
-  ) => void;
-  uiDispatch: (a: UIAction) => void;
-};
+declare global {
+  interface Window {
+    GameState: () => FactoryGameState;
+    uxDispatch: (a: GameAction) => void;
+    Macro: (name: MacroName) => void;
+    vmDispatch: (...a: StateVMAction[]) => void;
+  }
+}

@@ -1,5 +1,6 @@
 import { HasProgressTrackers } from "./AddProgressTracker";
 import { Building, InserterId, NewEmptyLane } from "./building";
+import { debugFactoryGameState } from "./debug";
 import { NewBuilding } from "./GameDispatch";
 import { Inserter } from "./inserter";
 import { ReadonlyInventory } from "./inventory";
@@ -92,7 +93,7 @@ export type StateVMAction =
   | AdvanceBeltLineAction
   | PlaceBeltLineAction;
 
-type ResetAction = { kind: "Reset" };
+type ResetAction = { kind: "Reset" } | { kind: "ResetToDebugState" };
 
 type InserterAddress = InserterId;
 // type SetPropertyAction = SetInserterPropertyAction<
@@ -221,8 +222,12 @@ export function applyStateChangeActions(
   actions: StateVMAction[]
 ): FactoryGameState {
   let state = gs;
-  for (const action of actions) {
-    state = applyStateChangeAction(state, action);
+  try {
+    for (const action of actions) {
+      state = applyStateChangeAction(state, action);
+    }
+  } catch (e) {
+    console.error("Error during VM execution. Rolling back all actions", e);
   }
   return state;
 }
@@ -234,8 +239,8 @@ function applyStateChangeAction(
   switch (action.kind) {
     case "Reset":
       return initialFactoryGameState();
-    // case "TransferItems":
-    //   return stateChangeTransferItems(state, action);
+    case "ResetToDebugState":
+      return debugFactoryGameState();
     case "AddResearchCount":
       return {
         ...state,
@@ -352,14 +357,16 @@ function setBuildingProperty(
   };
   // TODO: Cleanup??
   if (b.kind === "Chest" && property == "BuildingCount") {
+    const sharedBuffers = new ReadonlyInventory(
+      value,
+      (b.inputBuffers as ReadonlyInventory).Data,
+      true
+    );
     console.log("resize chest", value);
     b = {
       ...b,
-      outputBuffers: new ReadonlyInventory(
-        value,
-        (b.outputBuffers as ReadonlyInventory).Data,
-        true
-      ),
+      outputBuffers: sharedBuffers,
+      inputBuffers: sharedBuffers,
     };
   }
   const slot = {

@@ -6,7 +6,7 @@ viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
 d="m-1.5879-1.0614v599.47h600v-600h-600v0.52651z" fill="#248"
 stroke-width="0" />
 <g id="g3081" fill="#742" stroke-width=".23393">
-	<circle id="region_start" cx="300" cy="300" r="50">
+	<circle id="region_region0" cx="300" cy="300" r="50">
 	<text id="text3073" stroke="#fff" stroke-width="1">Start</text>
 	</circle>
 	<circle id="region_region1" cx="175" cy="175" r="50">

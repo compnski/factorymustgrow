@@ -10,7 +10,6 @@ import { applyStateChangeActions } from "./stateVm";
 import { BeltLine, BeltLineDepot } from "./transport";
 import {
   BeltConnection,
-  CountRemover,
   EntityStack,
   NewEntityStack,
   NewRegionFromInfo,
@@ -19,13 +18,13 @@ import {
 export type ReadonlyItemBuffer = {
   readonly Capacity: number;
   AddItems(entity: string, count: number): ReadonlyItemBuffer;
-  RemoveItems(entity: string, count: number): ReadonlyItemBuffer;
+  //RemoveItems(entity: string, count: number): ReadonlyItemBuffer;
 
   AvailableSpace(entity: string): number;
   Entities(): Readonly<[entity: string, count: number][]>;
   Count(entity: string): number;
   Accepts(entity: string): boolean;
-  SlotsUsed(): number;
+  //SlotsUsed(): number;
 
   Remove(toStack: EntityStack, count?: number, integersOnly?: boolean): number;
   Add(
@@ -35,7 +34,7 @@ export type ReadonlyItemBuffer = {
     integersOnly?: boolean
   ): number;
   AddFromItemBuffer(
-    from: CountRemover,
+    from: ReadonlyItemBuffer,
     entity: string,
     itemCount?: number,
     exceedCapacity?: boolean,
@@ -147,30 +146,3 @@ export const initialFactoryGameState = () => ({
   ]),
   BeltLines: ImmutableMap<string, Readonly<BeltLine>>(),
 });
-
-// export function ResetGameState() {
-//   //GameState = initialFactoryGameState();
-// }
-
-//export let GameState = loadStateFromLocalStorage(initialFactoryGameState());
-
-//(window as unknown as GameWindow).GameState = () => GameState;
-
-// export function GetRegion(regionId: string): Region {
-//   const region = GameState.Regions.get(regionId);
-//   if (!region) throw new Error("Cannot find current region " + regionId);
-//   return region;
-// }
-
-// export function GetReadonlyRegion(regionId: string): ReadonlyRegion {
-//   const region = GameState.Regions.get(regionId);
-//   if (!region) throw new Error("Cannot find current region " + regionId);
-//   return {
-//     ...region,
-//     Bus: new ReadonlyMainBus(region.Bus),
-//   };
-// }
-
-// export function GetResearchState(): ReadonlyResearchState {
-//   return GameState.Research;
-// }

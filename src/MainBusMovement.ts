@@ -1,21 +1,12 @@
 import { InserterTransferRate } from "./inserter";
 import { MainBus } from "./mainbus";
 import { StateVMAction } from "./stateVm";
-import { BeltConnection, CountRemover, EntityStack, ItemBuffer } from "./types";
-
-interface Adder extends CountRemover {
-  AddFromItemBuffer(
-    from: ItemBuffer,
-    entity: string,
-    itemCount?: number,
-    exceedCapacity?: boolean,
-    integersOnly?: boolean
-  ): number;
-}
+import { BeltConnection, EntityStack } from "./types";
+import { ReadonlyItemBuffer } from "./useGameState";
 
 interface MainBusConnector {
-  inputBuffers: Adder;
-  outputBuffers: Adder;
+  inputBuffers: ReadonlyItemBuffer;
+  outputBuffers: ReadonlyItemBuffer;
   BuildingCount?: number;
 }
 
@@ -68,8 +59,8 @@ export function PushPullFromMainBus(
 }
 function PushPullLaneFromMainBus(
   entity: string,
-  busLane: ItemBuffer,
-  producerBuffer: Adder,
+  busLane: ReadonlyItemBuffer,
+  producerBuffer: ReadonlyItemBuffer,
   direction: "TO_BUS" | "FROM_BUS",
   maxTransfered: number
 ): number {
