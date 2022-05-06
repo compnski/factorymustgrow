@@ -14,7 +14,8 @@ function toType<T>(
   value: T[]
 ): { dataType: string; value: T[] } {
   if (value.length && (value[0] as unknown as unknown[])[0] == "region0") {
-    //console.log((value as unknown as [[string, Region]])[0][1]);
+    const ore = (value as unknown as [[string, Region]])[0][1].Ore;
+    if (!(ore instanceof ReadonlyInventory)) console.log(ore);
   }
   return {
     dataType,
@@ -24,18 +25,23 @@ function toType<T>(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const replacer = (key: string, value: any): any => {
+  const logger = (logCondition: boolean, msg: string): true => {
+    if (logCondition) console.log("replacer", msg, key, value);
+    return true;
+  };
+
   switch (key) {
     case "Progress":
     case "Regions":
     case "BeltLines":
       return toType("ImmutableMap", Object.entries(value));
   }
-  return value instanceof DebugInventory
+  return value instanceof Object && value.constructor.name == "DebugInventory"
     ? {
         dataType: "DebugInventory",
       }
-    : value instanceof ReadonlyInventory
-    ? {
+    : value instanceof Object && value.constructor.name == "ReadonlyInventory"
+    ? logger(key == "Inventory", "Not DebugInventory") && {
         dataType: "ReadonlyInventory",
         maxCapacity: value.Capacity,
         Data: [...value.Data.entries()],
@@ -51,13 +57,13 @@ const replacer = (key: string, value: any): any => {
         dataType: "Set",
         value: [...value],
       }
-    : value instanceof MainBus
+    : value instanceof Object && value.constructor.name == "MainBus"
     ? {
         dataType: "MainBus",
         nextId: value.nextLaneId,
         lanes: value.lanes,
       }
-    : value instanceof ResearchOutput
+    : value instanceof Object && value.constructor.name == "ResearchOutput"
     ? {
         dataType: "ResearchOutput",
         researchId: value.researchId,
@@ -71,7 +77,10 @@ const replacer = (key: string, value: any): any => {
       }
     : value === Infinity
     ? "Infinity"
-    : value;
+    : logger(
+        false && value instanceof Object && value.Capacity !== undefined,
+        "Skipped an inventory"
+      ) && value;
 };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const reviver = (key: string, value: any): any => {
