@@ -1,8 +1,9 @@
 import { AvailableResearchList } from "./availableResearch";
-import { Entities } from "./gen/entities";
+import { Entities, GetEntity } from "./gen/entities";
 import { ImmutableMap } from "./immutable";
 import { ReadonlyInventory } from "./inventory";
 import { GetRegionInfo } from "./region";
+import { availableItems } from "./research";
 import { BeltLine } from "./transport";
 import { NewEntityStack, NewRegionFromInfo } from "./types";
 
@@ -28,7 +29,10 @@ export class DebugInventory extends ReadonlyInventory {
   }
 
   Entities(): [string, number][] {
-    return [...Entities.entries()].map(([, v]) => [v.Id, v.StackSize]);
+    return availableItems(DebugResearch).map((entity) => [
+      entity,
+      GetEntity(entity).StackSize,
+    ]);
   }
 }
 
