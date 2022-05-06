@@ -1,5 +1,5 @@
 import { AvailableResearchList } from "./availableResearch";
-import { Entities, GetEntity } from "./gen/entities";
+import { GetEntity } from "./gen/entities";
 import { ImmutableMap } from "./immutable";
 import { ReadonlyInventory } from "./inventory";
 import { GetRegionInfo } from "./region";
@@ -12,19 +12,19 @@ export class DebugInventory extends ReadonlyInventory {
     super(0);
   }
 
-  AddItems(entity: string, count: number): DebugInventory {
+  AddItems(): DebugInventory {
     return this;
   }
 
-  HasSlotFor(entity: string): boolean {
+  HasSlotFor(): boolean {
     return true;
   }
 
-  Count(entity: string): number {
+  Count(): number {
     return Infinity;
   }
 
-  AvailableSpace(entity: string): number {
+  AvailableSpace(): number {
     return Infinity;
   }
 

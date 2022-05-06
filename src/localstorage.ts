@@ -1,4 +1,3 @@
-import { assert } from "console";
 import { isImmutable, isMap } from "immutable";
 import { DebugInventory } from "./debug";
 import { ImmutableMap } from "./immutable";

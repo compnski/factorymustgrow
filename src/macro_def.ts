@@ -1,10 +1,10 @@
-import { AvailableResearchList } from "./availableResearch";
 import { NextEmptySlot } from "./building";
+import { DebugInventory, DebugResearch } from "./debug";
 import { GameDispatch } from "./GameDispatch";
 import { GameStateReducer } from "./stateVm";
 import { FactoryGameState, ReadonlyRegion } from "./useGameState";
 
-export type MacroName = "redsci" | "allresearch";
+export type MacroName = "redsci" | "allresearch" | "allitems";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function Macro(
@@ -16,17 +16,33 @@ export function Macro(
     switch (name) {
       case "allresearch":
         return doAllResearch(reducer);
-
+      case "allitems":
+        return giveAllItems(reducer);
       case "redsci":
         return buildRedSci(reducer, gameState, regionId);
     }
   };
 }
+
 function doAllResearch(reducer: GameStateReducer) {
-  AvailableResearchList.forEach((r) => {
-    throw new Error("NYI");
-    //if (r)
-  });
+  reducer([
+    {
+      kind: "SetProperty",
+      address: "global",
+      property: "Research",
+      value: DebugResearch,
+    },
+  ]);
+}
+function giveAllItems(reducer: GameStateReducer) {
+  reducer([
+    {
+      kind: "SetProperty",
+      address: "global",
+      property: "Inventory",
+      value: new DebugInventory(),
+    },
+  ]);
 }
 
 function buildRedSci(
