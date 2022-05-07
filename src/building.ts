@@ -66,7 +66,6 @@ export function NewBuildingSlot(
       return {
         Inserter: NewInserter(),
         laneId: undefined,
-        direction: undefined,
       };
     }
   );

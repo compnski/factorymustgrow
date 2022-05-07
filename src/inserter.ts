@@ -38,10 +38,9 @@ export function MoveViaInserter(
     if (i.direction === "DOWN") {
       VMPushToOtherBuilding(
         dispatch,
-        regionId,
-        currentBuildingSlot,
+        { regionId, buildingIdx: currentBuildingSlot, buffer: "input" },
         currentBuilding,
-        currentBuildingSlot + 1,
+        { regionId, buildingIdx: currentBuildingSlot + 1, buffer: "output" },
         nextBuilding,
         InserterTransferRate(i)
       );
@@ -55,10 +54,9 @@ export function MoveViaInserter(
       //      if (currentBuilding.kind == "Lab" || nextBuilding.kind == "Lab")
       VMPushToOtherBuilding(
         dispatch,
-        regionId,
-        currentBuildingSlot + 1,
+        { regionId, buildingIdx: currentBuildingSlot + 1, buffer: "input" },
         nextBuilding,
-        currentBuildingSlot,
+        { regionId, buildingIdx: currentBuildingSlot, buffer: "output" },
         currentBuilding,
         InserterTransferRate(i)
       );

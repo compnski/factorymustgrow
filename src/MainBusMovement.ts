@@ -1,6 +1,7 @@
 import { InserterTransferRate } from "./inserter";
-import { MainBus } from "./mainbus";
-import { StateVMAction } from "./stateVm";
+import { ReadonlyMainBus } from "./mainbus";
+import { VMPushToOtherBuilding } from "./movement";
+import { BuildingAddress, DispatchFunc, StateVMAction } from "./stateVm";
 import { BeltConnection, EntityStack } from "./types";
 import { ReadonlyItemBuffer } from "./useGameState";
 
@@ -20,12 +21,14 @@ export type MainBusConnection = {
 export function PushPullFromMainBus(
   dispatch: (a: StateVMAction) => void,
   slot: { Building: MainBusConnector; BeltConnections: BeltConnection[] },
-  mb: MainBus
+  mb: ReadonlyMainBus,
+  address: BuildingAddress
 ) {
   const building = slot.Building;
   for (const laneConnection of slot.BeltConnections) {
     if (laneConnection?.laneId === undefined) continue;
-    if (InserterTransferRate(laneConnection.Inserter) <= 0) continue;
+    const maxTransferred = InserterTransferRate(laneConnection.Inserter);
+    if (maxTransferred <= 0) continue;
     const busLane = mb.lanes.get(laneConnection.laneId);
     if (!busLane) {
       throw new Error(
@@ -34,41 +37,32 @@ export function PushPullFromMainBus(
         } from main bus ${JSON.stringify(mb)}`
       );
     }
+    if (
+      laneConnection.Inserter.direction != "TO_BUS" &&
+      laneConnection.Inserter.direction != "FROM_BUS"
+    )
+      throw new Error("bad inserter");
 
-    // TODO Use InserterTransferRate, not buildngCount
-    const busLaneEntity = busLane.Entities()[0][0];
-    const producerBuffer =
-        laneConnection.direction === "TO_BUS"
-          ? building.outputBuffers
-          : building?.inputBuffers,
-      maxTransferToFromBelt = InserterTransferRate(laneConnection.Inserter); // building.BuildingCount || 1;
-    if (!producerBuffer)
-      throw new Error(
-        `Failed to find producer buffer for ${JSON.stringify(
-          building
-        )} for connection ${JSON.stringify(laneConnection)}`
-      );
-    PushPullLaneFromMainBus(
-      busLaneEntity,
-      busLane,
-      producerBuffer,
-      laneConnection.direction,
-      maxTransferToFromBelt
-    );
-  }
-}
-function PushPullLaneFromMainBus(
-  entity: string,
-  busLane: ReadonlyItemBuffer,
-  producerBuffer: ReadonlyItemBuffer,
-  direction: "TO_BUS" | "FROM_BUS",
-  maxTransfered: number
-): number {
-  switch (direction) {
-    case "TO_BUS":
-      return busLane.AddFromItemBuffer(producerBuffer, entity, maxTransfered);
+    switch (laneConnection.Inserter.direction) {
+      case "TO_BUS":
+        return VMPushToOtherBuilding(
+          dispatch,
+          { ...address, buffer: "output" },
+          building,
+          { regionId: address.regionId, laneId: laneConnection.laneId },
+          { inputBuffers: mb.Lane(laneConnection.laneId) },
+          maxTransferred
+        );
 
-    case "FROM_BUS":
-      return producerBuffer.AddFromItemBuffer(busLane, entity, maxTransfered);
+      case "FROM_BUS":
+        return VMPushToOtherBuilding(
+          dispatch,
+          { regionId: address.regionId, laneId: laneConnection.laneId },
+          { outputBuffers: mb.Lane(laneConnection.laneId) },
+          { ...address, buffer: "input" },
+          building,
+          maxTransferred
+        );
+    }
   }
 }

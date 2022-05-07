@@ -3,7 +3,6 @@ import { ReadonlyInventory } from "./inventory";
 import { ReadonlyItemBuffer } from "./useGameState";
 
 export const NewBusLane = (
-  Id: number,
   Entity: string,
   initialCount = 0
 ): ReadonlyItemBuffer => {
@@ -12,16 +11,14 @@ export const NewBusLane = (
 };
 
 export class ReadonlyMainBus {
-  readonly lanes: ReadonlyMap<number, ReadonlyItemBuffer>;
+  readonly lanes: ImmutableMap<number, ReadonlyItemBuffer>;
   readonly nextLaneId: number;
+  kind = "MainBus";
 
-  constructor({
-    lanes,
-    nextLaneId,
-  }: {
-    lanes: ReadonlyMap<number, ReadonlyItemBuffer>;
-    nextLaneId: number;
-  }) {
+  constructor(
+    nextLaneId = 1,
+    lanes = ImmutableMap<number, ReadonlyItemBuffer>()
+  ) {
     this.lanes = lanes;
     this.nextLaneId = nextLaneId;
   }
@@ -39,44 +36,23 @@ export class ReadonlyMainBus {
     if (!lane) throw new Error(`Lane ${id} not found`);
     return lane;
   }
-}
 
-export class MainBus {
-  lanes: Map<number, ReadonlyItemBuffer>;
-  nextLaneId = 1;
-  kind = "MainBus";
-
-  constructor(
-    firstLaneId = 1,
-    lanes: Map<number, ReadonlyItemBuffer> = new Map()
-  ) {
-    this.lanes = lanes;
-    this.nextLaneId = firstLaneId;
+  AddLane(Entity: string, initialCount = 0): ReadonlyMainBus {
+    return new ReadonlyMainBus(
+      this.nextLaneId + 1,
+      this.lanes.set(this.nextLaneId, NewBusLane(Entity, initialCount))
+    );
   }
 
-  AddLane(Entity: string, initialCount = 0): number {
-    const laneId = this.nextLaneId++;
-    this.lanes.set(laneId, NewBusLane(laneId, Entity, initialCount));
-    return laneId;
+  RemoveLane(id: number): ReadonlyMainBus {
+    return new ReadonlyMainBus(this.nextLaneId, this.lanes.delete(id));
   }
 
-  RemoveLane(id: number): ReadonlyItemBuffer | null {
-    const contents = this.lanes.get(id);
-    this.lanes.delete(id);
-    return contents || null;
-  }
-
-  HasLane(id: number): boolean {
-    return this.lanes.has(id);
-  }
-
-  CanAddLane(): boolean {
-    return this.lanes.size < 10;
-  }
-
-  Lane(id: number): ReadonlyItemBuffer {
-    const lane = this.lanes.get(id);
-    if (!lane) throw new Error(`Lane ${id} not found`);
-    return lane;
+  AddItemToLane(laneId: number, entity: string, count: number) {
+    const lane = this.Lane(laneId);
+    return new ReadonlyMainBus(
+      this.nextLaneId,
+      this.lanes.set(laneId, lane.AddItems(entity, count))
+    );
   }
 }

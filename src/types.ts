@@ -1,7 +1,7 @@
 import { BuildingSlot, NewBuildingSlot, NewEmptyLane } from "./building";
 import { Inserter } from "./inserter";
 import { ReadonlyFixedInventory, ReadonlyInventory } from "./inventory";
-import { MainBus } from "./mainbus";
+import { ReadonlyMainBus } from "./mainbus";
 import { ReadonlyItemBuffer } from "./useGameState";
 
 export interface Producer {
@@ -117,13 +117,11 @@ export type Entity = {
 export type BeltConnection =
   | {
       laneId: number;
-      direction: "TO_BUS" | "FROM_BUS";
       Inserter: Inserter;
     }
   | {
       Inserter: Inserter;
       laneId: undefined;
-      direction: undefined;
     };
 
 export type RegionInfo = {
@@ -144,7 +142,7 @@ export type Region = {
   MainBusCount: number;
   BuildingSlots: BuildingSlot[];
   //Inserters: Inserter[];
-  Bus: MainBus;
+  Bus: ReadonlyMainBus;
 };
 
 export const NewRegion = (
@@ -171,7 +169,7 @@ export const NewRegion = (
     MainBusCount,
     Ore: ReadonlyFixedInventory(ore),
     BuildingSlots,
-    Bus: new MainBus(),
+    Bus: new ReadonlyMainBus(),
   };
 };
 

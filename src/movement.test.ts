@@ -1,7 +1,7 @@
 import { Building, NewBuildingSlot } from "./building";
 import { ImmutableMap } from "./immutable";
 import { NewInserter } from "./inserter";
-import { MainBus } from "./mainbus";
+import { NewBusLane, ReadonlyMainBus } from "./mainbus";
 import { PushPullFromMainBus } from "./MainBusMovement";
 import { VMPushToOtherBuilding } from "./movement";
 import {
@@ -44,7 +44,14 @@ describe("VMPushToOtherBuilding", () => {
     }
   ) {
     const vmDispatch = jest.fn();
-    VMPushToOtherBuilding(vmDispatch, "testRegion", 0, from, 1, to, maxMoved);
+    VMPushToOtherBuilding(
+      vmDispatch,
+      { regionId: "testRegion", buildingIdx: 0, buffer: "input" },
+      from,
+      { regionId: "testRegion", buildingIdx: 1, buffer: "output" },
+      to,
+      maxMoved
+    );
 
     // Check InputBuffers
     for (const expectedInput of expected.inputBuffers) {
@@ -205,7 +212,7 @@ describe("VMPushToOtherBuilding", () => {
 describe("PushPullFromMainBus", () => {
   function TestMovement(
     slot: { Building: Building; BeltConnections: BeltConnection[] },
-    bus: MainBus,
+    bus: ReadonlyMainBus,
     expected: {
       inputBuffers: EntityStack[];
       outputBuffers: EntityStack[];
@@ -214,7 +221,10 @@ describe("PushPullFromMainBus", () => {
   ) {
     const dispatch = jest.fn();
     const building = slot.Building;
-    PushPullFromMainBus(dispatch, slot, bus);
+    PushPullFromMainBus(dispatch, slot, bus, {
+      regionId: "testRegion",
+      buildingIdx: 1,
+    });
 
     for (const expectedOutput of expected.outputBuffers) {
       expect(building.outputBuffers.Count(expectedOutput.Entity)).toBe(
@@ -238,10 +248,15 @@ describe("PushPullFromMainBus", () => {
   it.todo("Only pushes up to #producer count");
 
   xit("Moves between Factory and MainBus", () => {
-    const mb = new MainBus();
-    const testItemLane = mb.AddLane("test-item", 0);
-    mb.AddLane("test-ore", 5);
-    mb.AddLane("test-slow-ore", 10);
+    const mb = new ReadonlyMainBus(
+      4,
+      ImmutableMap([
+        [1, NewBusLane("test-item", 0)],
+        [2, NewBusLane("test-ore", 5)],
+        [3, NewBusLane("test-slow-ore", 10)],
+      ])
+    );
+
     const factory = NewTestFactory("test-item", 0);
     const slot = NewBuildingSlot(factory, 3);
 
@@ -252,17 +267,14 @@ describe("PushPullFromMainBus", () => {
 
     slot.BeltConnections = [
       {
-        direction: "TO_BUS",
-        laneId: testItemLane,
+        laneId: 1,
         Inserter: NewInserter(1, "TO_BUS"),
       },
       {
-        direction: "FROM_BUS",
         laneId: 2,
         Inserter: NewInserter(1, "FROM_BUS"),
       },
       {
-        direction: "FROM_BUS",
         laneId: 3,
         Inserter: NewInserter(1, "FROM_BUS"),
       },
@@ -274,7 +286,7 @@ describe("PushPullFromMainBus", () => {
         NewEntityStack("test-slow-ore", 1),
       ],
       busCounts: new Map([
-        [testItemLane, 1],
+        [1, 1],
         [2, 4],
         [3, 9],
       ]),
@@ -283,8 +295,10 @@ describe("PushPullFromMainBus", () => {
   });
 
   it.skip("Moves between Lab and MainBus", () => {
-    const mb = new MainBus();
-    const testItemLane = mb.AddLane("automation-science-pack", 10);
+    const mb = new ReadonlyMainBus(
+      2,
+      ImmutableMap([[1, NewBusLane("automation-science-pack", 10)]])
+    );
     const lab = NewLab(1);
     lab.inputBuffers = AddItemsToReadonlyFixedBuffer(lab.inputBuffers, 10);
 
@@ -292,17 +306,14 @@ describe("PushPullFromMainBus", () => {
 
     slot.BeltConnections = [
       {
-        direction: "TO_BUS",
-        laneId: testItemLane,
+        laneId: 1,
         Inserter: NewInserter(1, "TO_BUS"),
       },
       {
-        direction: "FROM_BUS",
         laneId: 2,
         Inserter: NewInserter(1, "FROM_BUS"),
       },
       {
-        direction: "FROM_BUS",
         laneId: 3,
         Inserter: NewInserter(1, "FROM_BUS"),
       },
@@ -310,7 +321,7 @@ describe("PushPullFromMainBus", () => {
 
     TestMovement(slot, mb, {
       inputBuffers: [NewEntityStack("automation-science-pack", 1)],
-      busCounts: new Map([[testItemLane, 9]]),
+      busCounts: new Map([[1, 9]]),
       outputBuffers: [],
     });
   });

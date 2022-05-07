@@ -45,10 +45,9 @@ export function CanPushTo(
 
 export function VMPushToOtherBuilding(
   dispatch: DispatchFunc,
-  regionId: string,
-  outputIdx: number,
+  outputAddress: StateAddress,
   { outputBuffers }: { outputBuffers: ReadonlyItemBuffer },
-  inputIdx: number,
+  inputAddress: StateAddress,
   { inputBuffers }: { inputBuffers: ReadonlyItemBuffer },
   maxTransferred: number
 ) {
@@ -64,13 +63,13 @@ export function VMPushToOtherBuilding(
         remainingMaxTransfer -= transferAmount;
         dispatch({
           kind: "AddItemCount",
-          address: { regionId, buildingIdx: inputIdx, buffer: "input" },
+          address: inputAddress, // { regionId, buildingIdx: inputIdx, buffer: "input" },
           entity,
           count: transferAmount,
         });
         dispatch({
           kind: "AddItemCount",
-          address: { regionId, buildingIdx: outputIdx, buffer: "output" },
+          address: outputAddress, //{ regionId, buildingIdx: outputIdx, buffer: "output" },
           entity,
           count: -transferAmount,
         });

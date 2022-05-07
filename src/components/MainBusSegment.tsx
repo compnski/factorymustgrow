@@ -124,6 +124,7 @@ export function MainBusSegment({
   const connections: JSX.Element[] = [];
   beltConnections.forEach((beltConn, connIdx) => {
     if (beltConn.laneId === undefined) return;
+    console.log(beltConn, connIdx);
     const y =
       connectionOffset + connIdx * (connectionHeight + interConnectionHeight);
 
@@ -154,7 +155,12 @@ export function MainBusSegment({
           onDoubleClick={() =>
             beltConn.laneId !== undefined && beltConnectionClicked(connIdx)
           }
-          d={getPath(y, laneIdx, laneX - 20, beltConn.direction === "FROM_BUS")}
+          d={getPath(
+            y,
+            laneIdx,
+            laneX - 20,
+            beltConn.Inserter.direction === "FROM_BUS"
+          )}
           fill="none"
           stroke="#374048"
           strokeWidth={connectionHeight}
@@ -169,7 +175,7 @@ export function MainBusSegment({
             y,
             laneIdx,
             laneX - 20,
-            beltConn.direction === "FROM_BUS"
+            beltConn.Inserter.direction === "FROM_BUS"
           )}
           fill="none"
           stroke="#374048"

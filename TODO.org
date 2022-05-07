@@ -1,18 +1,19 @@
 #+TITLE: Todo
 * In progress
 ** Bugs
-*** When adding a beltline, it shows up in the wrong place (Index from starting region, not target region)
-*** When adding a beltline, it adds extra empty slots to the end if it tries to land in a filled slot.
-*** Performance sucks
+*** Two inserters into one chest will blow up
+Core issue is that state doesn't update during the run.
+It's ~mostly~ okay, since most buffers have at most one partner in each tick.
+This is not true for belt lines and inserters (top+bottom)
+Maybe need to process them all together, keep a running tab, or ideally just get the state back
+*** Losing UI inputs for some reason
+*** MainBus makes fan spin up (SVG animation?) Can disable gpu?
 *** Names sometime still too long "courageous ram"
 *** Plastic production seems hard to scale up, maybe oil issues?
-*** Belt connections don't move with buildings
 *** Pop-up recipe selector after placing building
 *** Research dialog overwrites any existing dialog
-*** Auto-select recipe for oil, water pumps
 *** Better re-arranging? (Maybe with research)
 *** Can't build rocket silo, factory doesn't fit enough resources
-** Read-Only State
 ** Save UI state
 *** Scroll position on page
 *** Last page visited?

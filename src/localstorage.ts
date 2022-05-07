@@ -2,7 +2,7 @@ import { isImmutable, isMap } from "immutable";
 import { DebugInventory } from "./debug";
 import { ImmutableMap } from "./immutable";
 import { ReadonlyInventory } from "./inventory";
-import { MainBus } from "./mainbus";
+import { ReadonlyMainBus } from "./mainbus";
 import { ResearchOutput } from "./research";
 import { NewChest } from "./storage";
 import { Region } from "./types";
@@ -46,21 +46,16 @@ const replacer = (key: string, value: any): any => {
         Data: [...value.Data.entries()],
         immutableSlots: value.immutableSlots,
       }
-    : isImmutable(value) && isMap(value)
-    ? {
-        dataType: "ImmutableMap",
-        value: [...value.entries()],
-      }
     : value instanceof Set
     ? {
         dataType: "Set",
         value: [...value],
       }
-    : value instanceof Object && value.constructor.name == "MainBus"
+    : value instanceof Object && value.constructor.name == "ReadonlyMainBus"
     ? {
-        dataType: "MainBus",
+        dataType: "ReadonlyMainBus",
         nextId: value.nextLaneId,
-        lanes: value.lanes,
+        lanes: [...value.lanes.entries()],
       }
     : value instanceof Object && value.constructor.name == "ResearchOutput"
     ? {
@@ -68,6 +63,11 @@ const replacer = (key: string, value: any): any => {
         researchId: value.researchId,
         progress: value.progress,
         maxProgress: value.maxProgress,
+      }
+    : isImmutable(value) && isMap(value)
+    ? {
+        dataType: "ImmutableMap",
+        value: [...value.entries()],
       }
     : value instanceof Map
     ? {
@@ -93,8 +93,8 @@ const reviver = (key: string, value: any): any => {
     ? ImmutableMap(value.value)
     : value.dataType === "Set"
     ? new Set(value.value)
-    : value.dataType === "MainBus"
-    ? new MainBus(value.nextId, value.lanes)
+    : value.dataType === "ReadonlyMainBus"
+    ? new ReadonlyMainBus(value.nextId, ImmutableMap(value.lanes))
     : value.dataType === "DebugInventory"
     ? new DebugInventory()
     : value.dataType === "ReadonlyInventory"

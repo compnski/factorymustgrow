@@ -71,19 +71,7 @@ export interface ReadonlyRegion {
   readonly BuildingSlots: ReadonlyBuildingSlot[];
 }
 
-interface IHackyPropertyBag {
-  RocketLaunchingAt?: number;
-}
-
-export interface ReadonlyState {
-  readonly HackyPropertyBag: Readonly<IHackyPropertyBag>;
-  readonly Research: ReadonlyResearchState;
-  readonly Inventory: ReadonlyInventory;
-  readonly Regions: ReadonlyMap<string, ReadonlyRegion>;
-  readonly BeltLines: ReadonlyMap<string, Readonly<BeltLine>>;
-}
-
-export const CurrentGameStateVersion = "0.2.1";
+export const CurrentGameStateVersion = "0.2.2";
 
 export const useGameState = () =>
   useReducer(
@@ -104,14 +92,6 @@ export type FactoryGameState = {
   readonly Regions: ImmutableMap<string, ReadonlyRegion>;
   readonly BeltLines: ImmutableMap<string, Readonly<BeltLine>>;
 };
-
-//   {
-//   RocketLaunchingAt: number;
-//   Research: ResearchState;
-//   Inventory: ReadonlyInventory;
-//   Regions: ImmutableMap<string, Region>;
-//   BeltLines: Map<number, BeltLine>;
-// };
 
 const initialInventorySize = 16;
 

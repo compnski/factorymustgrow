@@ -9,6 +9,7 @@ import { Extractor, Factory, UpdateBuildingRecipe } from "./production";
 import { AdvanceBeltLine, NewBeltLine, NewBeltLineDepot } from "./transport";
 import {
   AddToEntityStack,
+  BeltConnection,
   NewEntityStack,
   NewRegionFromInfo,
   RegionInfo,
@@ -16,6 +17,7 @@ import {
 import {
   FactoryGameState,
   initialFactoryGameState,
+  ReadonlyBuildingSlot,
   ReadonlyRegion,
   ResearchState,
 } from "./useGameState";
@@ -29,7 +31,8 @@ export type StateAddress =
   | InventoryAddress
   | RegionAddress
   | BeltLineAddress
-  | GlobalAddress;
+  | GlobalAddress
+  | BeltConnectionAddress;
 
 type BeltLineAddress = {
   beltLineId: string;
@@ -63,6 +66,10 @@ function isMainBusAddress(s: StateAddress): s is MainBusAddress {
 
 function isBeltLineAddress(s: StateAddress): s is BeltLineAddress {
   return (s as BeltLineAddress).beltLineId !== undefined;
+}
+
+function isBeltConnectionAddress(s: StateAddress): s is BeltConnectionAddress {
+  return (s as BeltConnectionAddress).connectionIdx !== undefined;
 }
 
 function isBuildingAddress(s: StateAddress): s is BuildingAddress {
@@ -107,10 +114,13 @@ type InserterAddress = InserterId;
 //   keyof Omit<Inserter, "kind">
 // >;
 
+type BeltConnectionAddress = BuildingAddress & { connectionIdx: number };
+
 type SetPropertyAction =
   | SetInserterPropertyAction
   | SetBuildingPropertyAction
-  | SetGlobalPropertyAction;
+  | SetGlobalPropertyAction
+  | SetBeltConnectionPropertyAction;
 
 type SetInserterPropertyAction =
   | TSetInserterPropertyAction<"direction">
@@ -118,9 +128,19 @@ type SetInserterPropertyAction =
 
 type SetBuildingPropertyAction = TSetBuildingPropertyAction<"BuildingCount">;
 
+type SetBeltConnectionPropertyAction =
+  TSetBeltConnectionPropertyAction<"laneId">;
+
 type SetGlobalPropertyAction = TSetGlobalPropertyAction<
   "RocketLaunchingAt" | "Inventory" | "Research"
 >;
+
+type TSetBeltConnectionPropertyAction<P extends keyof BeltConnection> = {
+  kind: "SetProperty";
+  address: BeltConnectionAddress;
+  property: P;
+  value: BeltConnection[P];
+};
 
 type TSetInserterPropertyAction<P extends keyof Omit<Inserter, "kind">> = {
   kind: "SetProperty";
@@ -173,14 +193,6 @@ type AddProgressTrackerAction = {
   count: number;
   currentTick: number;
 };
-
-// type TransferItemAction = {
-//   kind: "TransferItems";
-//   from: StateAddress;
-//   to: StateAddress;
-//   entity: string;
-//   count: number;
-// };
 
 type AddResearchCountAction = {
   kind: "AddResearchCount";
@@ -236,19 +248,21 @@ type AddRegionAction = {
   regionId: string;
 };
 
-export type GameStateReducer = (a: StateVMAction[]) => void;
+export type GameStateReducer = (a: StateVMActionWithError[]) => void;
 
 export function applyStateChangeActions(
   gs: FactoryGameState,
-  actions: StateVMAction[]
+  actions: StateVMActionWithError[]
 ): FactoryGameState {
   let state = gs;
-  try {
-    for (const action of actions) {
+  for (const action of actions) {
+    try {
       state = applyStateChangeAction(state, action);
+    } catch (e) {
+      console.error("Error during VM execution. Rolling back all actions", e);
+      throw action.error || e;
+      //return gs;
     }
-  } catch (e) {
-    console.error("Error during VM execution. Rolling back all actions", e);
   }
   return state;
 }
@@ -291,8 +305,9 @@ function applyStateChangeAction(
     case "PlaceBeltLine":
       return stateChangePlaceBeltLine(state, action);
     case "AddMainBusLane":
+      return stateChangeAddMainBusLane(state, action);
     case "RemoveMainBusLane":
-      throw new Error("NYI");
+      return stateChangeRemoveMainBusLane(state, action);
 
     default:
       throw assertNever(action);
@@ -332,6 +347,11 @@ function stateChangeSetProperty(
     return setGlobalProperty(state, action as SetGlobalPropertyAction);
   let region = state.Regions.get(action.address.regionId);
   if (!region) throw new Error("Missing region " + action.address.regionId);
+  if (isBeltConnectionAddress(action.address))
+    region = setBeltConnectionProperty(
+      region,
+      action as SetBeltConnectionPropertyAction
+    );
   if (isInserterAddress(action.address))
     region = setInserterProperty(region, action as SetInserterPropertyAction);
   else if (isBuildingAddress(action.address))
@@ -355,27 +375,47 @@ function setGlobalProperty(
 
 function setInserterProperty(
   region: ReadonlyRegion,
-  {
-    property,
-    value,
-    address: { buildingIdx, location },
-  }: SetInserterPropertyAction
+  { property, value, address }: SetInserterPropertyAction
 ): ReadonlyRegion {
-  if (location != "BUILDING") throw new Error("NYI");
-
+  const { buildingIdx, location } = address;
   const buildingSlot = region.BuildingSlots[buildingIdx];
   if (!buildingSlot) return region;
-  const slot = {
-    ...buildingSlot,
-    Inserter: {
-      ...buildingSlot.Inserter,
-      [property]: value,
-    },
-  };
-  return {
-    ...region,
-    BuildingSlots: replaceItem(region.BuildingSlots, buildingIdx, slot),
-  };
+  if (location == "BELT") {
+    const { connectionIdx } = address;
+    const newConnection: BeltConnection = {
+      ...buildingSlot.BeltConnections[connectionIdx],
+      Inserter: {
+        ...buildingSlot.BeltConnections[connectionIdx].Inserter,
+        [property]: value,
+      },
+    };
+    const slot: ReadonlyBuildingSlot = {
+      ...buildingSlot,
+      BeltConnections: replaceItem(
+        buildingSlot.BeltConnections,
+        connectionIdx,
+        newConnection
+      ),
+    };
+
+    return {
+      ...region,
+      BuildingSlots: replaceItem(region.BuildingSlots, buildingIdx, slot),
+    };
+  } else if (location == "BUILDING") {
+    const slot = {
+      ...buildingSlot,
+      Inserter: {
+        ...buildingSlot.Inserter,
+        [property]: value,
+      },
+    };
+    return {
+      ...region,
+      BuildingSlots: replaceItem(region.BuildingSlots, buildingIdx, slot),
+    };
+  }
+  throw new Error("Bad inserter");
 }
 
 function setBuildingProperty(
@@ -405,6 +445,36 @@ function setBuildingProperty(
   const slot = {
     ...buildingSlot,
     Building: b,
+  };
+
+  return {
+    ...region,
+    BuildingSlots: replaceItem(region.BuildingSlots, buildingIdx, slot),
+  };
+}
+
+function setBeltConnectionProperty(
+  region: ReadonlyRegion,
+  {
+    property,
+    value,
+    address: { buildingIdx, connectionIdx },
+  }: SetBeltConnectionPropertyAction
+): ReadonlyRegion {
+  const buildingSlot = region.BuildingSlots[buildingIdx];
+  if (!buildingSlot) return region;
+  const newConnection = {
+    ...buildingSlot.BeltConnections[connectionIdx],
+    [property]: value,
+  };
+  // TODO: Cleanup??
+  const slot: ReadonlyBuildingSlot = {
+    ...buildingSlot,
+    BeltConnections: replaceItem(
+      buildingSlot.BeltConnections,
+      connectionIdx,
+      newConnection
+    ),
   };
 
   return {
@@ -542,7 +612,7 @@ function stateChangeAddItemCount(
 ): FactoryGameState {
   const { address, count, entity } = action;
   if (isMainBusAddress(address)) {
-    //
+    return addItemsToMainBus(address, state, entity, count);
   } else if (isBeltLineAddress(address)) {
     return addItemsToBeltLine(address, state, entity, count);
   } else if (isBuildingAddress(address)) {
@@ -745,5 +815,90 @@ function stateChangePlaceBeltLine(
   return {
     ...state,
     BeltLines: state.BeltLines.set(action.address.beltLineId, newBeltLine),
+  };
+}
+
+function stateChangeAddMainBusLane(
+  state: FactoryGameState,
+  action: AddMainBusLaneAction
+): FactoryGameState {
+  const region = state.Regions.get(action.address.regionId);
+  if (!region) throw new Error("Missing region " + action.address.regionId);
+  const newRegion: ReadonlyRegion = {
+    ...region,
+    Bus: region.Bus.AddLane(action.entity),
+  };
+
+  return {
+    ...state,
+    Regions: state.Regions.set(region.Id, newRegion),
+  };
+}
+
+function stateChangeRemoveMainBusLane(
+  state: FactoryGameState,
+  action: RemoveMainBusLaneAction
+): FactoryGameState {
+  const region = state.Regions.get(action.address.regionId);
+  if (!region) throw new Error("Missing region " + action.address.regionId);
+  const newRegion: ReadonlyRegion = {
+    ...region,
+    Bus: region.Bus.RemoveLane(action.address.laneId),
+  };
+
+  return {
+    ...state,
+    Regions: state.Regions.set(region.Id, newRegion),
+  };
+}
+
+export type StateVMActionWithError = StateVMAction & { error?: StateVMError };
+
+export class StateVMError extends Error {
+  action: StateVMAction;
+  constructor(a: StateVMAction) {
+    super("Error during action: " + JSON.stringify(a));
+    this.action = a;
+    Object.setPrototypeOf(this, StateVMError.prototype);
+  }
+}
+
+export function getDispatchFunc(
+  dispatchGameStateActions: (a: StateVMActionWithError[]) => void
+) {
+  const vmActions: StateVMActionWithError[] = [];
+  const dispatch = (a: StateVMAction) => {
+    console.log(a);
+    vmActions.push({ ...a, error: new StateVMError(a) });
+  };
+
+  return {
+    executeActions: () => {
+      try {
+        return dispatchGameStateActions(vmActions);
+      } finally {
+        vmActions.splice(0);
+      }
+    },
+    dispatch,
+  };
+}
+
+function addItemsToMainBus(
+  address: MainBusAddress,
+  state: FactoryGameState,
+  entity: string,
+  count: number
+): FactoryGameState {
+  const region = state.Regions.get(address.regionId);
+  if (!region) throw new Error("Missing region");
+  const newRegion = {
+    ...region,
+    Bus: region.Bus.AddItemToLane(address.laneId, entity, count),
+  };
+
+  return {
+    ...state,
+    Regions: state.Regions.set(address.regionId, newRegion),
   };
 }

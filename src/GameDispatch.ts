@@ -9,7 +9,13 @@ import { CanPushTo, moveToInventory } from "./movement";
 import { NewExtractor, NewFactory, ProducerTypeFromEntity } from "./production";
 import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
 import { NewLab } from "./research";
-import { DispatchFunc, StateAddress, StateVMAction } from "./stateVm";
+import {
+  DispatchFunc,
+  getDispatchFunc,
+  StateAddress,
+  StateVMAction,
+  StateVMActionWithError,
+} from "./stateVm";
 import { NewChest } from "./storage";
 import { Producer } from "./types";
 import {
@@ -30,16 +36,13 @@ function GetRegion(
 }
 
 export const GameDispatch = (
-  dispatchGameStateActions: (a: StateVMAction[]) => void,
+  dispatchGameStateActions: (a: StateVMActionWithError[]) => void,
   gameState: FactoryGameState,
   action: GameAction
 ) => {
-  // TODO: Dispatch func!
-  const vmActions: StateVMAction[] = [];
-  const dispatch = (a: StateVMAction) => {
-    console.log(a);
-    vmActions.push(a);
-  };
+  const { dispatch, executeActions } = getDispatchFunc(
+    dispatchGameStateActions
+  );
 
   switch (action.type) {
     case "UpdateState":
@@ -133,7 +136,8 @@ export const GameDispatch = (
       toggleInserterDirection(
         dispatch,
         action,
-        GetRegion(gameState, action.regionId)
+        GetRegion(gameState, action.regionId),
+        gameState
       );
       break;
 
@@ -168,8 +172,7 @@ export const GameDispatch = (
     case "LaunchRocket":
       launchRocket(dispatch, action, gameState);
   }
-
-  dispatchGameStateActions(vmActions);
+  executeActions();
 };
 
 function launchRocket(
@@ -258,30 +261,45 @@ function addMainBusConnection(
   },
   gameState: FactoryGameState
 ) {
-  throw new Error("NYI");
-  // const { laneId, direction } = action;
-  // const slot = buildingSlot(gameState, action),
-  //   firstEmptyBeltConn = slot?.BeltConnections.find(
-  //     (beltConn) => beltConn.direction === undefined
-  //   );
-  // console.log("Add slot", action, firstEmptyBeltConn, slot?.BeltConnections);
+  const { laneId, direction, regionId, buildingIdx } = action;
+  const slot = buildingSlot(gameState, action);
+  if (!slot) throw new Error("Can't find building slot");
+  const connectionIdx = slot.BeltConnections.findIndex(
+    (beltConn) => beltConn.Inserter.direction === "NONE"
+  );
 
-  // if (firstEmptyBeltConn) {
-  //   firstEmptyBeltConn.direction = direction;
-  //   firstEmptyBeltConn.laneId = laneId;
-  //   firstEmptyBeltConn.Inserter.direction = direction;
-  //   // TODO: If inserter count is 0, try to build one from inventory
-  //   // If the current count is 0, try to build one
-  //   if (
-  //     firstEmptyBeltConn.Inserter.BuildingCount === 0 &&
-  //     gameState.Inventory
-  //       .Remove
-  //       //        NewEntityStack(firstEmptyBeltConn.Inserter.subkind, 0, 1),
-  //       //        1
-  //       ()
-  //   )
-  //     firstEmptyBeltConn.Inserter.BuildingCount = 1;
-  // }
+  console.log("Add slot", action, connectionIdx, slot?.BeltConnections);
+
+  if (connectionIdx < 0) {
+    showUserError("No slots");
+    return;
+  }
+  dispatch({
+    kind: "SetProperty",
+    address: { regionId, buildingIdx, connectionIdx },
+    property: "laneId",
+    value: laneId,
+  });
+
+  dispatch({
+    kind: "SetProperty",
+    address: { regionId, buildingIdx, location: "BELT", connectionIdx },
+    property: "direction",
+    value: direction,
+  });
+  const inserter = slot.BeltConnections[connectionIdx].Inserter;
+  if (
+    inserter.BuildingCount === 0 &&
+    gameState.Inventory.Count(inserter.subkind) > 1
+  ) {
+    dispatch({
+      kind: "SetProperty",
+      address: { regionId, buildingIdx, location: "BELT", connectionIdx },
+      property: "BuildingCount",
+      value: 1,
+    });
+    moveToInventory(dispatch, inserter.subkind, -1);
+  }
 }
 
 function removeMainBusConnection(
@@ -293,15 +311,103 @@ function removeMainBusConnection(
   },
   gameState: FactoryGameState
 ) {
-  throw new Error("NYI");
-  // const conn = buildingSlot(gameState, action)?.BeltConnections[
-  //   action.connectionIdx
-  // ];
-  // if (conn) {
-  //   conn.laneId = undefined;
-  //   conn.direction = undefined;
-  //   conn.Inserter.direction = "NONE";
-  // }
+  const conn = buildingSlot(gameState, action)?.BeltConnections[
+    action.connectionIdx
+  ];
+
+  if (!conn) throw new Error("Cannot find belt connection");
+
+  const { regionId, buildingIdx, connectionIdx } = action;
+
+  dispatch({
+    kind: "SetProperty",
+    address: { regionId, buildingIdx, connectionIdx },
+    property: "laneId",
+    value: undefined,
+  });
+
+  dispatch({
+    kind: "SetProperty",
+    address: { regionId, buildingIdx, location: "BELT", connectionIdx },
+    property: "direction",
+    value: "NONE",
+  });
+
+  const inserter = conn.Inserter;
+  dispatch({
+    kind: "SetProperty",
+    address: { regionId, buildingIdx, location: "BELT", connectionIdx },
+    property: "BuildingCount",
+    value: 0,
+  });
+  moveToInventory(dispatch, inserter.subkind, inserter.BuildingCount);
+}
+
+function toggleBeltInserterDirection(
+  dispatch: DispatchFunc,
+  action: {
+    location: "BELT";
+    regionId: string;
+    buildingIdx: number;
+    connectionIdx: number;
+  },
+  gameState: FactoryGameState
+) {
+  const i = inserter(gameState, action),
+    b = building(gameState, action);
+  const region = GetRegion(gameState, action.regionId);
+
+  const beltConn =
+      region.BuildingSlots[action.buildingIdx].BeltConnections[
+        action.connectionIdx
+      ],
+    mainBusLaneId = beltConn.laneId;
+  if (mainBusLaneId !== undefined && region.Bus.HasLane(mainBusLaneId)) {
+    const busLane = region.Bus.lanes.get(mainBusLaneId);
+    // Check if the inserter can be toggled
+    // IF so, flip it
+    if (i && b && busLane) {
+      const canGoLeft = BuildingHasInput(b, busLane.Entities()[0][0]),
+        canGoRight = BuildingHasOutput(b, busLane.Entities()[0][0]);
+
+      const newDirection =
+        canGoLeft && canGoRight
+          ? i.direction === "TO_BUS"
+            ? "FROM_BUS"
+            : i.direction === "FROM_BUS"
+            ? "NONE"
+            : "TO_BUS"
+          : canGoLeft
+          ? i.direction === "NONE"
+            ? "FROM_BUS"
+            : "NONE"
+          : canGoRight
+          ? i.direction === "NONE"
+            ? "TO_BUS"
+            : "NONE"
+          : "NONE";
+
+      dispatch({
+        kind: "SetProperty",
+        address: { ...action, location: "BELT" },
+        property: "direction",
+        value: newDirection,
+      });
+
+      // if (canGoLeft && canGoRight) {
+      //   i.direction =
+      //     i.direction === "TO_BUS"
+      //       ? "FROM_BUS"
+      //       : i.direction === "FROM_BUS"
+      //       ? "NONE"
+      //       : "TO_BUS";
+      // } else if (canGoLeft) {
+      //   i.direction = i.direction === "NONE" ? "FROM_BUS" : "NONE";
+      // } else if (canGoRight) {
+      //   i.direction = i.direction === "NONE" ? "TO_BUS" : "NONE";
+      // }
+    }
+  }
 }
 
 function toggleInserterDirection(
@@ -314,44 +420,11 @@ function toggleInserterDirection(
         buildingIdx: number;
         connectionIdx: number;
       },
-  region: ReadonlyRegion
+  region: ReadonlyRegion,
+  gameState: FactoryGameState
 ) {
   if (action.location === "BELT") {
-    // const i = inserter(action),
-    //   b = building(action);
-
-    // const beltConn =
-    //     region.BuildingSlots[action.buildingIdx].BeltConnections[
-    //       action.connectionIdx
-    //     ],
-    //   mainBusLaneId = beltConn.laneId;
-    // if (mainBusLaneId !== undefined && region.Bus.HasLane(mainBusLaneId)) {
-    //   const busLane = region.Bus.lanes.get(mainBusLaneId);
-    //   // Check if the inserter can be toggled
-    //   // IF so, flip it
-    //   if (i && b && busLane) {
-    //     const canGoLeft = BuildingHasInput(b, busLane.Entities()[0][0]),
-    //       canGoRight = BuildingHasOutput(b, busLane.Entities()[0][0]);
-
-    //     if (canGoLeft && canGoRight) {
-    //       i.direction =
-    //         i.direction === "TO_BUS"
-    //           ? "FROM_BUS"
-    //           : i.direction === "FROM_BUS"
-    //           ? "NONE"
-    //           : "TO_BUS";
-    //     } else if (canGoLeft) {
-    //       i.direction = i.direction === "NONE" ? "FROM_BUS" : "NONE";
-    //     } else if (canGoRight) {
-    //       i.direction = i.direction === "NONE" ? "TO_BUS" : "NONE";
-    //     }
-    //     if (i.direction === "FROM_BUS" || i.direction === "TO_BUS") {
-    //       (beltConn as Pick<BeltConnection, "direction">).direction =
-    //         i.direction;
-    //     }
-    //   }
-    // }
-    return;
+    return toggleBeltInserterDirection(dispatch, action, gameState);
   }
   // location === "BUILDING"
   const { regionId, buildingIdx, location } = action;
@@ -863,6 +936,20 @@ function building(
 
   return action.buildingIdx !== undefined
     ? currentRegion.BuildingSlots[action.buildingIdx].Building
+    : undefined;
+}
+
+function buildingSlot(
+  gameState: FactoryGameState,
+  action: {
+    buildingIdx?: number;
+    regionId: string;
+  }
+): ReadonlyBuildingSlot | undefined {
+  const currentRegion = GetRegion(gameState, action.regionId);
+
+  return action.buildingIdx !== undefined
+    ? currentRegion.BuildingSlots[action.buildingIdx]
     : undefined;
 }
 

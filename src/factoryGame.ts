@@ -4,6 +4,7 @@ import { GameDispatch } from "./GameDispatch";
 import { GetResearch } from "./gen/research";
 import { GeneralDialogConfig } from "./GeneralDialogProvider";
 import { MoveViaInserter } from "./inserter";
+import { PushPullFromMainBus } from "./MainBusMovement";
 import { CanPushTo } from "./movement";
 import {
   Extractor,
@@ -12,7 +13,11 @@ import {
   ProduceFromFactory,
 } from "./production";
 import { IsResearchComplete, Lab, ResearchInLab } from "./research";
-import { DispatchFunc, StateVMAction } from "./stateVm";
+import {
+  DispatchFunc,
+  getDispatchFunc,
+  StateVMActionWithError,
+} from "./stateVm";
 import { Chest, UpdateChest } from "./storage";
 import { BeltLineDepot, UpdateBeltLineDepot } from "./transport";
 import {
@@ -23,7 +28,7 @@ import {
 
 export async function UpdateGameState(
   gameState: FactoryGameState,
-  dispatchGameStateActions: (a: StateVMAction[]) => void,
+  dispatchGameStateActions: (a: StateVMActionWithError[]) => void,
   tick: number,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   generalDialog: (arg0: GeneralDialogConfig) => Promise<any[] | false>
@@ -40,8 +45,6 @@ export async function UpdateGameState(
           address: { beltLineId: currentBeltLine.beltLineId },
         },
       ]);
-      //console.log(currentBeltLine);
-      //UpdateBeltLine(tick, gameState.Regions, currentBeltLine);
     }
     for (const [, region] of gameState.Regions) {
       UpdateGameStateForRegion(
@@ -69,15 +72,13 @@ export async function UpdateGameState(
 
 function UpdateGameStateForRegion(
   gameState: FactoryGameState,
-  dispatchGameStateActions: (a: StateVMAction[]) => void,
+  dispatchGameStateActions: (a: StateVMActionWithError[]) => void,
   tick: number,
   region: ReadonlyRegion
 ) {
-  const vmActions: StateVMAction[] = [];
-  const vmDispatch = (a: StateVMAction) => {
-    console.log(a);
-    vmActions.push(a);
-  };
+  const { dispatch: vmDispatch, executeActions } = getDispatchFunc(
+    dispatchGameStateActions
+  );
 
   // Reset rocket 10s after launch
   if (
@@ -142,11 +143,9 @@ function UpdateGameStateForRegion(
         region.BuildingSlots[idx].Building,
         region.BuildingSlots[idx + 1].Building
       );
-
-    //    PushPullFromMainBus(vmDispatch, slot, region.Bus);
+    PushPullFromMainBus(vmDispatch, slot, region.Bus, address);
   });
-  dispatchGameStateActions(vmActions);
-  //applyStateChangeActions(GameState, vmActions);
+  executeActions();
 }
 
 export function fixInserters(
