@@ -1,10 +1,10 @@
 import { ImmutableMap } from "./immutable";
 import { Lab, NewLab, ResearchInLab, ResearchOutput } from "./research";
-import { BuildingAddress } from "./stateVm";
+import { BuildingAddress } from "./state/address";
 import { TestResearchBook } from "./test_research_defs";
 import { AddItemsToReadonlyFixedBuffer as AddItemsToFixedBuffer } from "./test_utils";
 import { EntityStack, NewEntityStack } from "./types";
-import { ReadonlyResearchState } from "./useGameState";
+import { ReadonlyResearchState } from "./factoryGameState";
 // TODO: Need tests that work with progress trackers
 // maybe call state update
 // maybe split tests

@@ -1,6 +1,6 @@
 import { showResearchSelector } from "./components/selectors";
 import { GameAction } from "./GameAction";
-import { GameDispatch } from "./GameDispatch";
+import { GameDispatch, GetRegion } from "./GameDispatch";
 import { GetResearch } from "./gen/research";
 import { GeneralDialogConfig } from "./GeneralDialogProvider";
 import { MoveViaInserter } from "./inserter";
@@ -13,45 +13,43 @@ import {
   ProduceFromFactory,
 } from "./production";
 import { IsResearchComplete, Lab, ResearchInLab } from "./research";
-import {
-  DispatchFunc,
-  getDispatchFunc,
-  StateVMActionWithError,
-} from "./stateVm";
+import { DispatchFunc } from "./stateVm";
 import { Chest, UpdateChest } from "./storage";
 import { BeltLineDepot, UpdateBeltLineDepot } from "./transport";
-import {
-  FactoryGameState,
-  ReadonlyBuildingSlot,
-  ReadonlyRegion,
-} from "./useGameState";
+import { FactoryGameState, ReadonlyBuildingSlot } from "./factoryGameState";
 
 export async function UpdateGameState(
   gameState: FactoryGameState,
-  dispatchGameStateActions: (a: StateVMActionWithError[]) => void,
+  //dispatchGameStateActions: (a: StateVMActionWithError[]) => void,
+  {
+    dispatch,
+    executeActions,
+  }: {
+    dispatch: DispatchFunc;
+    executeActions: (gameState: FactoryGameState) => FactoryGameState;
+  },
   tick: number,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   generalDialog: (arg0: GeneralDialogConfig) => Promise<any[] | false>
 ) {
   const uxDispatch = (action: GameAction) => {
-    GameDispatch(dispatchGameStateActions, gameState, action);
+    GameDispatch(dispatch, gameState, action);
   };
 
   try {
     for (const [, currentBeltLine] of gameState.BeltLines) {
-      dispatchGameStateActions([
-        {
-          kind: "AdvanceBeltLine",
-          address: { beltLineId: currentBeltLine.beltLineId },
-        },
-      ]);
+      dispatch({
+        kind: "AdvanceBeltLine",
+        address: { beltLineId: currentBeltLine.beltLineId },
+      });
     }
-    for (const [, region] of gameState.Regions) {
+    for (const [regionId] of gameState.Regions) {
       UpdateGameStateForRegion(
-        gameState,
-        dispatchGameStateActions,
         tick,
-        region
+        dispatch,
+        executeActions,
+        gameState,
+        regionId
       );
     }
     // Check Research Completion
@@ -59,9 +57,7 @@ export async function UpdateGameState(
       console.log("Research Complete!");
       //GameDispatch({ type: "CompleteResearch" });
       //GameState.Research.CurrentResearchId = "";
-      dispatchGameStateActions([
-        { kind: "SetCurrentResearch", researchId: "" },
-      ]);
+      dispatch({ kind: "SetCurrentResearch", researchId: "" });
       await showResearchSelector(generalDialog, uxDispatch, gameState.Research);
     }
   } catch (e) {
@@ -71,21 +67,21 @@ export async function UpdateGameState(
 }
 
 function UpdateGameStateForRegion(
-  gameState: FactoryGameState,
-  dispatchGameStateActions: (a: StateVMActionWithError[]) => void,
   tick: number,
-  region: ReadonlyRegion
+  dispatch: DispatchFunc,
+  executeActions: (gameState: FactoryGameState) => FactoryGameState,
+  gs: FactoryGameState,
+  regionId: string
 ) {
-  const { dispatch: vmDispatch, executeActions } = getDispatchFunc(
-    dispatchGameStateActions
-  );
-
+  let gameState = gs;
+  let region = GetRegion(gs, regionId);
+  if (!region) throw new Error("Missing region: " + regionId);
   // Reset rocket 10s after launch
   if (
     gameState.RocketLaunchingAt > 0 &&
     tick - gameState.RocketLaunchingAt > 10000
   ) {
-    vmDispatch({
+    dispatch({
       kind: "SetProperty",
       address: "global",
       property: "RocketLaunchingAt",
@@ -93,20 +89,20 @@ function UpdateGameStateForRegion(
     });
   }
 
-  fixInserters(vmDispatch, region);
+  fixInserters(dispatch, region);
 
   region.BuildingSlots.forEach((slot, idx) => {
     const address = { regionId: region.Id, buildingIdx: idx };
     const building = slot.Building;
     switch (building.kind) {
       case "Factory":
-        ProduceFromFactory(building as Factory, vmDispatch, address, tick);
+        ProduceFromFactory(building as Factory, dispatch, address, tick);
         break;
       case "Extractor":
         ProduceFromExtractor(
           building as Extractor,
           region,
-          vmDispatch,
+          dispatch,
           address,
           tick
         );
@@ -117,7 +113,7 @@ function UpdateGameStateForRegion(
           address,
           building as Lab,
           gameState.Research,
-          vmDispatch,
+          dispatch,
           GetResearch
         );
         break;
@@ -127,7 +123,7 @@ function UpdateGameStateForRegion(
       case "BeltLineDepot":
         UpdateBeltLineDepot(
           building as BeltLineDepot,
-          vmDispatch,
+          dispatch,
           address,
           gameState,
           tick
@@ -136,16 +132,19 @@ function UpdateGameStateForRegion(
 
     if (idx < region.BuildingSlots.length - 1)
       MoveViaInserter(
-        vmDispatch,
+        dispatch,
         region.Id,
         slot.Inserter,
         idx,
         region.BuildingSlots[idx].Building,
         region.BuildingSlots[idx + 1].Building
       );
-    PushPullFromMainBus(vmDispatch, slot, region.Bus, address);
+    gameState = executeActions(gameState);
+    region = GetRegion(gameState, regionId);
+    if (!region) throw new Error("Missing region");
+    PushPullFromMainBus(dispatch, slot, region.Bus, address);
+    gameState = executeActions(gameState);
   });
-  executeActions();
 }
 
 export function fixInserters(

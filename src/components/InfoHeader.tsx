@@ -2,7 +2,7 @@ import { GameAction } from "../GameAction";
 import { GetEntity } from "../gen/entities";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { RemainingRegionBuildingCapacity } from "../region";
-import { ReadonlyRegion, ReadonlyResearchState } from "../useGameState";
+import { ReadonlyRegion, ReadonlyResearchState } from "../factoryGameState";
 import { entityIconLookupByKind } from "../utils";
 import { showResearchSelector } from "./selectors";
 

@@ -1,5 +1,5 @@
 import { GameAction } from "../GameAction";
-import { ReadonlyItemBuffer } from "../useGameState";
+import { ReadonlyItemBuffer } from "../factoryGameState";
 import { InventoryDisplay } from "./InventoryDisplay";
 
 export function BuildingBufferDisplay({

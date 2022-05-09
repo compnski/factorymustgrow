@@ -1,6 +1,7 @@
-import { DispatchFunc, StateAddress } from "./stateVm";
+import { DispatchFunc } from "./stateVm";
+import { StateAddress } from "./state/address";
 import { EntityStack } from "./types";
-import { ReadonlyItemBuffer } from "./useGameState";
+import { ReadonlyItemBuffer } from "./factoryGameState";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
 
 export function moveToInventory(
@@ -59,17 +60,26 @@ export function VMPushToOtherBuilding(
         outputBuffers.Count(entity),
         inputBuffers.AvailableSpace(entity)
       );
+
+      console.log(
+        entity,
+        "avail",
+        inputBuffers.AvailableSpace(entity),
+        inputAddress,
+        "from",
+        outputAddress
+      );
       if (transferAmount) {
         remainingMaxTransfer -= transferAmount;
         dispatch({
           kind: "AddItemCount",
-          address: inputAddress, // { regionId, buildingIdx: inputIdx, buffer: "input" },
+          address: inputAddress,
           entity,
           count: transferAmount,
         });
         dispatch({
           kind: "AddItemCount",
-          address: outputAddress, //{ regionId, buildingIdx: outputIdx, buffer: "output" },
+          address: outputAddress,
           entity,
           count: -transferAmount,
         });

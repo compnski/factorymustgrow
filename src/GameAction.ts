@@ -1,5 +1,5 @@
 import { Building, InserterId } from "./building";
-import { StateVMAction } from "./stateVm";
+import { StateVMAction } from "./state/action";
 
 export type GameAction =
   | BasicAction

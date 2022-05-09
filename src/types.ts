@@ -2,7 +2,7 @@ import { BuildingSlot, NewBuildingSlot, NewEmptyLane } from "./building";
 import { Inserter } from "./inserter";
 import { ReadonlyFixedInventory, ReadonlyInventory } from "./inventory";
 import { ReadonlyMainBus } from "./mainbus";
-import { ReadonlyItemBuffer } from "./useGameState";
+import { ReadonlyItemBuffer } from "./factoryGameState";
 
 export interface Producer {
   kind: string;

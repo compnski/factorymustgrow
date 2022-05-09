@@ -8,8 +8,8 @@ import { saveStateToLocalStorage } from "../localstorage";
 import { Macro, setMacroRegionId } from "../macro_def";
 import { useInterval } from "../reactUtils";
 import { ReactComponent as RocketShip } from "../rocket-launch.svg";
-import { StateVMAction } from "../stateVm";
-import { ReadonlyResearchState, useGameState } from "../useGameState";
+import { getDispatchFunc } from "../stateVm";
+import { ReadonlyResearchState } from "../factoryGameState";
 import { BuildingCardList } from "./BuildingCardList";
 import { DebugButtonPanel } from "./DebugButtonPanel";
 import "./FactoryGame.scss";
@@ -20,7 +20,7 @@ import { RegionTabBar } from "./RegionTabBar";
 import { showHelpCard } from "./selectors";
 
 export const FactoryGame = () => {
-  const [gameState, dispatchGameStateActions] = useGameState();
+  const { gameState, dispatch, executeActions } = getDispatchFunc();
   const [currentRegionId, setCurrentRegionId] = useState<string>(
     gameState.Regions.keys().next().value || ""
   );
@@ -32,7 +32,7 @@ export const FactoryGame = () => {
     const tick = new Date().getTime();
     await UpdateGameState(
       gameState,
-      dispatchGameStateActions,
+      { dispatch, executeActions },
       tick,
       generalDialog
     );
@@ -49,12 +49,14 @@ export const FactoryGame = () => {
     const isRocketLaunching = gameState.RocketLaunchingAt > 0;
 
     const uxDispatch = (action: GameAction) => {
-      GameDispatch(dispatchGameStateActions, gameState, action);
+      GameDispatch(dispatch, gameState, action);
+      executeActions(gameState);
     };
+
     window.uxDispatch = uxDispatch;
-    window.Macro = Macro(dispatchGameStateActions, gameState, currentRegionId);
+    window.Macro = Macro(dispatch, gameState, currentRegionId);
     window.GameState = () => gameState;
-    window.vmDispatch = (...a: StateVMAction[]) => dispatchGameStateActions(a);
+    window.vmDispatch = dispatch;
 
     //console.log(currentRegion);
     if (!currentRegion) throw new Error("Bad region " + currentRegionId);

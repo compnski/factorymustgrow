@@ -4,9 +4,10 @@ import { GetEntity, GetRecipe } from "./gen/entities";
 import { GetResearch } from "./gen/research";
 import { ReadonlyFixedInventory } from "./inventory";
 import { StackCapacity } from "./movement";
-import { BuildingAddress, StateVMAction } from "./stateVm";
+import { StateVMAction } from "./state/action";
+import { BuildingAddress } from "./state/address";
 import { NewEntityStack, Recipe, Research } from "./types";
-import { ReadonlyItemBuffer, ReadonlyResearchState } from "./useGameState";
+import { ReadonlyItemBuffer, ReadonlyResearchState } from "./factoryGameState";
 
 export type Lab = {
   kind: "Lab";

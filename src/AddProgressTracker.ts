@@ -2,9 +2,10 @@
 
 import { moveToInventory } from "./movement";
 import { productionRunsForInput } from "./productionUtils";
-import { BuildingAddress, StateAddress, StateVMAction } from "./stateVm";
+import { StateVMAction } from "./state/action";
+import { BuildingAddress, StateAddress } from "./state/address";
 import { EntityStack } from "./types";
-import { ReadonlyItemBuffer } from "./useGameState";
+import { ReadonlyItemBuffer } from "./factoryGameState";
 
 export function AddProgressTrackers(
   dispatch: (a: StateVMAction) => void,

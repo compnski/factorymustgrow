@@ -3,7 +3,7 @@ import { GetResearch } from "../gen/research";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { ReadonlyFixedInventory } from "../inventory";
 import { NewEntityStack } from "../types";
-import { ReadonlyBuilding, ReadonlyResearchState } from "../useGameState";
+import { ReadonlyBuilding, ReadonlyResearchState } from "../factoryGameState";
 import { entityIconLookupByKind } from "../utils";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import "./BuildingCard.scss";

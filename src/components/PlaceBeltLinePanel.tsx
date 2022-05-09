@@ -1,6 +1,6 @@
 import { SyntheticEvent, useState } from "react";
 import { ImmutableMap } from "../immutable";
-import { ReadonlyItemBuffer, ReadonlyRegion } from "../useGameState";
+import { ReadonlyItemBuffer, ReadonlyRegion } from "../factoryGameState";
 import "./PlaceBeltLinePanel.scss";
 
 export type PlaceBeltLineProps = {

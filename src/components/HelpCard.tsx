@@ -8,7 +8,7 @@ import { ReadonlyMainBus } from "../mainbus";
 import { NewExtractorForRecipe, NewFactoryForRecipe } from "../production";
 import { GetRegionInfo } from "../region";
 import { EntityStack, NewRegionFromInfo } from "../types";
-import { FactoryGameState, ReadonlyResearchState } from "../useGameState";
+import { FactoryGameState, ReadonlyResearchState } from "../factoryGameState";
 import { BuildingCardList } from "./BuildingCardList";
 import "./HelpCard.scss";
 

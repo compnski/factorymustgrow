@@ -1,16 +1,11 @@
 import { SyntheticEvent, useState } from "react";
 import { InserterIdForBelt } from "../building";
-import { GameAction } from "../GameAction";
-import { ImmutableMap } from "../immutable";
-import { ReadonlyMainBus } from "../mainbus";
 import {
   FactoryGameState,
-  ReadonlyBuilding,
   ReadonlyBuildingSlot,
-  ReadonlyItemBuffer,
   ReadonlyRegion,
-  ReadonlyResearchState,
-} from "../useGameState";
+} from "../factoryGameState";
+import { GameAction } from "../GameAction";
 import { BuildingHasInput, BuildingHasOutput } from "../utils";
 import { BeltLineCard } from "./BeltLineCard";
 import "./BuildingCard.scss";

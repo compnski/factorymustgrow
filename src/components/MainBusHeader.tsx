@@ -3,7 +3,7 @@ import { GameAction } from "../GameAction";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { ReadonlyMainBus } from "../mainbus";
 import { availableItems } from "../research";
-import { ReadonlyResearchState } from "../useGameState";
+import { ReadonlyResearchState } from "../factoryGameState";
 import { showUserError } from "../utils";
 import { showAddLaneItemSelector } from "./selectors";
 import { MainBusConst } from "./uiConstants";

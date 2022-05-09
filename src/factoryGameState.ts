@@ -1,12 +1,9 @@
-import { useReducer } from "react";
 import { Building } from "./building";
 import { ImmutableMap } from "./immutable";
 import { Inserter } from "./inserter";
 import { ReadonlyInventory } from "./inventory";
-import { loadStateFromLocalStorage } from "./localstorage";
 import { ReadonlyMainBus } from "./mainbus";
 import { GetRegionInfo } from "./region";
-import { applyStateChangeActions } from "./stateVm";
 import { BeltLine, BeltLineDepot } from "./transport";
 import {
   BeltConnection,
@@ -72,12 +69,6 @@ export interface ReadonlyRegion {
 }
 
 export const CurrentGameStateVersion = "0.2.2";
-
-export const useGameState = () =>
-  useReducer(
-    applyStateChangeActions,
-    loadStateFromLocalStorage(initialFactoryGameState())
-  );
 
 export type ResearchState = {
   CurrentResearchId: string;

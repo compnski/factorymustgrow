@@ -5,7 +5,7 @@ import {
   ReadonlyBuilding,
   ReadonlyItemBuffer,
   ReadonlyResearchState,
-} from "../useGameState";
+} from "../factoryGameState";
 import { entityIconLookupByKind } from "../utils";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import "./BuildingCard.scss";

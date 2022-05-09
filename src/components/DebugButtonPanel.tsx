@@ -4,7 +4,7 @@ import { showMoveItemToFromInventorySelector } from "./selectors";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { useState } from "react";
 import { availableItems } from "../research";
-import { ReadonlyResearchState } from "../useGameState";
+import { ReadonlyResearchState } from "../factoryGameState";
 import { DebugInventory, DebugResearch } from "../debug";
 
 export type DebugButtonPanelProps = {

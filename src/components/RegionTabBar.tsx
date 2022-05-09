@@ -1,7 +1,7 @@
 import { SyntheticEvent } from "react";
 import { GameAction } from "../GameAction";
 import { useGeneralDialog } from "../GeneralDialogProvider";
-import { ReadonlyItemBuffer } from "../useGameState";
+import { ReadonlyItemBuffer } from "../factoryGameState";
 import { showClaimRegionSelector } from "./selectors";
 
 // TODO Dispatch event to region change

@@ -8,7 +8,7 @@ import {
   ReadonlyItemBuffer,
   ReadonlyRegion,
   ReadonlyResearchState,
-} from "../useGameState";
+} from "../factoryGameState";
 import { HelpCard } from "./HelpCard";
 import { PlaceBeltLinePanel } from "./PlaceBeltLinePanel";
 import { RecipeSelector } from "./RecipeSelector";

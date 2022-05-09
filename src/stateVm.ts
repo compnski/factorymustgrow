@@ -1,18 +1,50 @@
 import { HasProgressTrackers } from "./AddProgressTracker";
-import { Building, InserterId, NewEmptyLane } from "./building";
+import { NewEmptyLane } from "./building";
 import { debugFactoryGameState } from "./debug";
 import { NewBuilding } from "./GameDispatch";
-import { Inserter } from "./inserter";
 import { ReadonlyInventory } from "./inventory";
 import { StackCapacity } from "./movement";
 import { Extractor, Factory, UpdateBuildingRecipe } from "./production";
+import {
+  BuildingAddress,
+  MainBusAddress,
+  BeltLineAddress,
+  isGlobalAddress,
+  isBeltConnectionAddress,
+  isInserterAddress,
+  isBuildingAddress,
+  isMainBusAddress,
+  isBeltLineAddress,
+  isInventoryAddress,
+  isRegionAddress,
+} from "./state/address";
+import {
+  StateVMAction,
+  SwapBuildingsAction,
+  SetPropertyAction,
+  SetGlobalPropertyAction,
+  SetBeltConnectionPropertyAction,
+  SetInserterPropertyAction,
+  SetBuildingPropertyAction,
+  AddResearchCountAction,
+  PlaceBuildingAction,
+  isPlaceBeltLineDepotAction,
+  SetCurrentResearchAction,
+  SetRecipeAction,
+  AddItemAction,
+  AddProgressTrackerAction,
+  AddRegionAction,
+  AdvanceBeltLineAction,
+  PlaceBeltLineAction,
+  AddMainBusLaneAction,
+  RemoveMainBusLaneAction,
+} from "./state/action";
 import { AdvanceBeltLine, NewBeltLine, NewBeltLineDepot } from "./transport";
 import {
   AddToEntityStack,
   BeltConnection,
   NewEntityStack,
   NewRegionFromInfo,
-  RegionInfo,
 } from "./types";
 import {
   FactoryGameState,
@@ -20,235 +52,55 @@ import {
   ReadonlyBuildingSlot,
   ReadonlyRegion,
   ResearchState,
-} from "./useGameState";
+} from "./factoryGameState";
 import { assertNever, replaceItem, swap } from "./utils";
+import { useReducer } from "react";
+import { loadStateFromLocalStorage } from "./localstorage";
 
 export type DispatchFunc = (a: StateVMAction) => void;
 
-export type StateAddress =
-  | MainBusAddress
-  | BuildingAddress
-  | InventoryAddress
-  | RegionAddress
-  | BeltLineAddress
-  | GlobalAddress
-  | BeltConnectionAddress;
-
-type BeltLineAddress = {
-  beltLineId: string;
-};
-
-type MainBusAddress = {
-  regionId: string;
-  laneId: number;
-};
-
-export type BuildingAddress = {
-  regionId: string;
-  buildingIdx: number;
-  buffer?: "input" | "output";
-};
-
-export type RegionAddress = {
-  regionId: string;
-  buffer?: "ore";
-};
-
-type InventoryAddress = {
-  inventory: true;
-};
-
-type GlobalAddress = "global";
-
-function isMainBusAddress(s: StateAddress): s is MainBusAddress {
-  return (s as MainBusAddress).laneId !== undefined;
-}
-
-function isBeltLineAddress(s: StateAddress): s is BeltLineAddress {
-  return (s as BeltLineAddress).beltLineId !== undefined;
-}
-
-function isBeltConnectionAddress(s: StateAddress): s is BeltConnectionAddress {
-  return (s as BeltConnectionAddress).connectionIdx !== undefined;
-}
-
-function isBuildingAddress(s: StateAddress): s is BuildingAddress {
-  const sb = s as BuildingAddress;
-  return sb.buildingIdx !== undefined;
-}
-
-function isRegionAddress(s: StateAddress): s is RegionAddress {
-  const sr = s as RegionAddress;
-  return sr.regionId != undefined;
-}
-
-function isInventoryAddress(s: StateAddress): s is InventoryAddress {
-  return (s as InventoryAddress).inventory;
-}
-
-function isGlobalAddress(s: StateAddress): s is GlobalAddress {
-  return (s as string) === "global";
-}
-
-//| TransferItemAction
-export type StateVMAction =
-  | AddResearchCountAction
-  | SetCurrentResearchAction
-  | AddItemAction
-  | AddProgressTrackerAction
-  | SetRecipeAction
-  | SetPropertyAction
-  | PlaceBuildingAction
-  | SwapBuildingsAction
-  | AddRegionAction
-  | ResetAction
-  | AddMainBusLaneAction
-  | RemoveMainBusLaneAction
-  | AdvanceBeltLineAction
-  | PlaceBeltLineAction;
-
-type ResetAction = { kind: "Reset" } | { kind: "ResetToDebugState" };
-
-type InserterAddress = InserterId;
-// type SetPropertyAction = SetInserterPropertyAction<
-//   keyof Omit<Inserter, "kind">
-// >;
-
-type BeltConnectionAddress = BuildingAddress & { connectionIdx: number };
-
-type SetPropertyAction =
-  | SetInserterPropertyAction
-  | SetBuildingPropertyAction
-  | SetGlobalPropertyAction
-  | SetBeltConnectionPropertyAction;
-
-type SetInserterPropertyAction =
-  | TSetInserterPropertyAction<"direction">
-  | TSetInserterPropertyAction<"BuildingCount">;
-
-type SetBuildingPropertyAction = TSetBuildingPropertyAction<"BuildingCount">;
-
-type SetBeltConnectionPropertyAction =
-  TSetBeltConnectionPropertyAction<"laneId">;
-
-type SetGlobalPropertyAction = TSetGlobalPropertyAction<
-  "RocketLaunchingAt" | "Inventory" | "Research"
->;
-
-type TSetBeltConnectionPropertyAction<P extends keyof BeltConnection> = {
-  kind: "SetProperty";
-  address: BeltConnectionAddress;
-  property: P;
-  value: BeltConnection[P];
-};
-
-type TSetInserterPropertyAction<P extends keyof Omit<Inserter, "kind">> = {
-  kind: "SetProperty";
-  address: InserterAddress;
-  property: P;
-  value: Inserter[P];
-};
-
-type TSetBuildingPropertyAction<P extends keyof Omit<Building, "kind">> = {
-  kind: "SetProperty";
-  address: BuildingAddress;
-  property: P;
-  value: Building[P];
-};
-
-type TSetGlobalPropertyAction<P extends keyof FactoryGameState> = {
-  kind: "SetProperty";
-  address: "global";
-  property: P;
-  value: FactoryGameState[P];
-};
-
-type SetRecipeAction = {
-  kind: "SetRecipe";
-  address: BuildingAddress;
-  recipeId: string;
-};
-
-type AddMainBusLaneAction = {
-  kind: "AddMainBusLane";
-  address: RegionAddress;
-  entity: string;
-};
-
-type RemoveMainBusLaneAction = {
-  kind: "RemoveMainBusLane";
-  address: MainBusAddress;
-};
-
-type AddItemAction = {
-  kind: "AddItemCount";
-  address: StateAddress;
-  entity: string;
-  count: number;
-};
-
-type AddProgressTrackerAction = {
-  kind: "AddProgressTrackers";
-  address: BuildingAddress;
-  count: number;
-  currentTick: number;
-};
-
-type AddResearchCountAction = {
-  kind: "AddResearchCount";
-  researchId: string;
-  count: number;
-  maxCount: number;
-};
-type AdvanceBeltLineAction = {
-  kind: "AdvanceBeltLine";
-  address: BeltLineAddress;
-};
-
-type SetCurrentResearchAction = {
-  kind: "SetCurrentResearch";
-  researchId: string;
-};
-
-type PlaceBuildingAction =
-  | {
-      kind: "PlaceBuilding";
-      entity: string;
-      address: BuildingAddress;
-      BuildingCount: number;
-    }
-  | PlaceBeltLineDepotAction;
-
-type PlaceBeltLineDepotAction = {
-  kind: "PlaceBuilding";
-  address: BuildingAddress;
-  BuildingCount: number;
-  entity: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
-  direction: "TO_BELT" | "FROM_BELT";
-  beltLineAddress: BeltLineAddress;
-};
-
-type PlaceBeltLineAction = {
-  kind: "PlaceBeltLine";
-  entity: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
-  address: BeltLineAddress;
-  BuildingCount: number;
-  length: number;
-};
-
-type SwapBuildingsAction = {
-  kind: "SwapBuildings";
-  address: BuildingAddress;
-  moveToAddress: BuildingAddress;
-};
-
-type AddRegionAction = {
-  kind: "AddRegion";
-  regionInfo: RegionInfo;
-  regionId: string;
-};
-
 export type GameStateReducer = (a: StateVMActionWithError[]) => void;
+
+export type StateVMActionWithError = StateVMAction & { error?: StateVMError };
+
+export class StateVMError extends Error {
+  action: StateVMAction;
+  constructor(a: StateVMAction) {
+    super("Error during action: " + JSON.stringify(a));
+    this.action = a;
+    Object.setPrototypeOf(this, StateVMError.prototype);
+  }
+}
+
+export const useGameState = () =>
+  useReducer(
+    applyStateChangeActions,
+    loadStateFromLocalStorage(initialFactoryGameState())
+  );
+
+export function getDispatchFunc() {
+  const vmActions: StateVMActionWithError[] = [];
+  const [gameState, dispatchGameStateActions] = useGameState();
+
+  const dispatch = (a: StateVMAction) => {
+    console.log(a);
+    vmActions.push({ ...a, error: new StateVMError(a) });
+  };
+
+  return {
+    gameState,
+    executeActions: (gameState: FactoryGameState) => {
+      try {
+        dispatchGameStateActions(vmActions);
+        const s = applyStateChangeActions(gameState, vmActions);
+        return s;
+      } finally {
+        vmActions.splice(0);
+      }
+    },
+    dispatch,
+  };
+}
 
 export function applyStateChangeActions(
   gs: FactoryGameState,
@@ -511,12 +363,6 @@ function stateChangeAddResearchCount(
   }
 }
 
-function isPlaceBeltLineDepotAction(
-  a: PlaceBuildingAction
-): a is PlaceBeltLineDepotAction {
-  return (a as PlaceBeltLineDepotAction).direction != undefined;
-}
-
 function stateChangePlaceBuilding(
   state: FactoryGameState,
   action: PlaceBuildingAction
@@ -771,10 +617,6 @@ function stateChangeAddProgressTrackers(
   return { ...state, Regions: state.Regions.set(regionId, newRegion) };
 }
 
-function isInserterAddress(address: StateAddress): address is InserterAddress {
-  return (address as InserterAddress).location !== undefined;
-}
-
 function stateChangeAddRegion(
   state: FactoryGameState,
   action: AddRegionAction
@@ -849,38 +691,6 @@ function stateChangeRemoveMainBusLane(
   return {
     ...state,
     Regions: state.Regions.set(region.Id, newRegion),
-  };
-}
-
-export type StateVMActionWithError = StateVMAction & { error?: StateVMError };
-
-export class StateVMError extends Error {
-  action: StateVMAction;
-  constructor(a: StateVMAction) {
-    super("Error during action: " + JSON.stringify(a));
-    this.action = a;
-    Object.setPrototypeOf(this, StateVMError.prototype);
-  }
-}
-
-export function getDispatchFunc(
-  dispatchGameStateActions: (a: StateVMActionWithError[]) => void
-) {
-  const vmActions: StateVMActionWithError[] = [];
-  const dispatch = (a: StateVMAction) => {
-    console.log(a);
-    vmActions.push({ ...a, error: new StateVMError(a) });
-  };
-
-  return {
-    executeActions: () => {
-      try {
-        return dispatchGameStateActions(vmActions);
-      } finally {
-        vmActions.splice(0);
-      }
-    },
-    dispatch,
   };
 }
 

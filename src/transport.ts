@@ -1,13 +1,14 @@
 import { ReadonlyInventory } from "./inventory";
 import { StackCapacity, stackTransfer } from "./movement";
 import { randomName } from "./namegen";
-import { BuildingAddress, DispatchFunc } from "./stateVm";
+import { DispatchFunc } from "./stateVm";
+import { BuildingAddress } from "./state/address";
 import { EntityStack, NewEntityStack } from "./types";
 import {
   FactoryGameState,
   ReadonlyItemBuffer,
   ReadonlyRegion,
-} from "./useGameState";
+} from "./factoryGameState";
 
 // Thoughts
 // Beltline has two BeltLineDepots

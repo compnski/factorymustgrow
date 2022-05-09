@@ -1,5 +1,5 @@
 import { NewEntityStack, RegionInfo } from "./types";
-import { ReadonlyRegion } from "./useGameState";
+import { ReadonlyRegion } from "./factoryGameState";
 
 export function RemainingRegionBuildingCapacity(
   region: ReadonlyRegion

@@ -1,9 +1,10 @@
 import { ProduceWithTracker } from "./AddProgressTracker";
 import { GetEntity, GetRecipe, MaybeGetRecipe } from "./gen/entities";
 import { ReadonlyFixedInventory, ReadonlyInventory } from "./inventory";
-import { BuildingAddress, StateVMAction } from "./stateVm";
+import { StateVMAction } from "./state/action";
+import { BuildingAddress } from "./state/address";
 import { BuildingType, EntityStack, NewEntityStack, Recipe } from "./types";
-import { ReadonlyItemBuffer, ReadonlyRegion } from "./useGameState";
+import { ReadonlyItemBuffer, ReadonlyRegion } from "./factoryGameState";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
 
 // Extractor

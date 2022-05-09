@@ -6,7 +6,7 @@ import { Icon } from "../gen/svgIcons";
 import { StackCapacity } from "../movement";
 import { unlockedResearch } from "../research";
 import { Research } from "../types";
-import { ReadonlyResearchState } from "../useGameState";
+import { ReadonlyResearchState } from "../factoryGameState";
 import { entityIconLookupByKind, showUserError } from "../utils";
 import "./SelectResearchPanel.scss";
 

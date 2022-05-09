@@ -1,15 +1,7 @@
 import { SyntheticEvent, useState } from "react";
 import { InserterIdForBuilding } from "../building";
+import { FactoryGameState, ReadonlyRegion } from "../factoryGameState";
 import { GameAction } from "../GameAction";
-import { ImmutableMap } from "../immutable";
-import { ReadonlyMainBus } from "../mainbus";
-import {
-  FactoryGameState,
-  ReadonlyBuildingSlot,
-  ReadonlyItemBuffer,
-  ReadonlyRegion,
-  ReadonlyResearchState,
-} from "../useGameState";
 import { showUserError } from "../utils";
 import { BuildingCard } from "./BuildingCard";
 import { InserterCard } from "./InserterCard";

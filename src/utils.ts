@@ -1,5 +1,5 @@
 import { GetResearch } from "./gen/research";
-import { ReadonlyBuilding } from "./useGameState";
+import { ReadonlyBuilding } from "./factoryGameState";
 
 const seenSet = new Set<string>();
 

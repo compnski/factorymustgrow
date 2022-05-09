@@ -1,4 +1,4 @@
-import { ReadonlyItemBuffer } from "./useGameState";
+import { ReadonlyItemBuffer } from "./factoryGameState";
 
 export function AddItemsToReadonlyFixedBuffer(
   buffer: ReadonlyItemBuffer,

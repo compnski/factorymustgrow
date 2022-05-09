@@ -1,6 +1,6 @@
 import { VMPushToOtherBuilding } from "./movement";
-import { StateVMAction } from "./stateVm";
-import { ReadonlyBuilding } from "./useGameState";
+import { StateVMAction } from "./state/action";
+import { ReadonlyBuilding } from "./factoryGameState";
 
 export type Inserter = {
   kind: "Inserter";
@@ -38,34 +38,21 @@ export function MoveViaInserter(
     if (i.direction === "DOWN") {
       VMPushToOtherBuilding(
         dispatch,
-        { regionId, buildingIdx: currentBuildingSlot, buffer: "input" },
-        currentBuilding,
-        { regionId, buildingIdx: currentBuildingSlot + 1, buffer: "output" },
-        nextBuilding,
-        InserterTransferRate(i)
-      );
-      // else
-      //   PushToOtherProducer(
-      //     currentBuilding,
-      //     nextBuilding,
-      //     InserterTransferRate(i)
-      //        );
-    } else if (i.direction === "UP") {
-      //      if (currentBuilding.kind == "Lab" || nextBuilding.kind == "Lab")
-      VMPushToOtherBuilding(
-        dispatch,
-        { regionId, buildingIdx: currentBuildingSlot + 1, buffer: "input" },
-        nextBuilding,
         { regionId, buildingIdx: currentBuildingSlot, buffer: "output" },
         currentBuilding,
+        { regionId, buildingIdx: currentBuildingSlot + 1, buffer: "input" },
+        nextBuilding,
         InserterTransferRate(i)
       );
-      // else
-      //   PushToOtherProducer(
-      //     nextBuilding,
-      //     currentBuilding,
-      //     InserterTransferRate(i)
-      //        );
+    } else if (i.direction === "UP") {
+      VMPushToOtherBuilding(
+        dispatch,
+        { regionId, buildingIdx: currentBuildingSlot + 1, buffer: "output" },
+        nextBuilding,
+        { regionId, buildingIdx: currentBuildingSlot, buffer: "input" },
+        currentBuilding,
+        InserterTransferRate(i)
+      );
     }
   }
 }

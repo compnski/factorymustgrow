@@ -6,7 +6,7 @@ import { ReadonlyMainBus } from "./mainbus";
 import { ResearchOutput } from "./research";
 import { NewChest } from "./storage";
 import { Region } from "./types";
-import { CurrentGameStateVersion, FactoryGameState } from "./useGameState";
+import { CurrentGameStateVersion, FactoryGameState } from "./factoryGameState";
 
 function toType<T>(
   dataType: string,
@@ -40,7 +40,7 @@ const replacer = (key: string, value: any): any => {
         dataType: "DebugInventory",
       }
     : value instanceof Object && value.constructor.name == "ReadonlyInventory"
-    ? logger(key == "Inventory", "Not DebugInventory") && {
+    ? logger(false && key == "Inventory", "Not DebugInventory") && {
         dataType: "ReadonlyInventory",
         maxCapacity: value.Capacity,
         Data: [...value.Data.entries()],

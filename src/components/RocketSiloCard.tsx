@@ -1,5 +1,5 @@
 import { GameAction } from "../GameAction";
-import { ReadonlyBuilding } from "../useGameState";
+import { ReadonlyBuilding } from "../factoryGameState";
 import { entityIconLookupByKind } from "../utils";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import "./BuildingCard.scss";

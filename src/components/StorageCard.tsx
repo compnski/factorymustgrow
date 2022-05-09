@@ -1,6 +1,6 @@
 import { GameAction } from "../GameAction";
 import { useGeneralDialog } from "../GeneralDialogProvider";
-import { ReadonlyBuilding, ReadonlyItemBuffer } from "../useGameState";
+import { ReadonlyBuilding, ReadonlyItemBuffer } from "../factoryGameState";
 import { entityIconLookupByKind } from "../utils";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import "./BuildingCard.scss";

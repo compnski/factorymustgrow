@@ -1,7 +1,7 @@
 import { SyntheticEvent } from "react";
 import { ReactComponent as RegionMapSVG } from "../gen/regionmap.svg";
 import { useProperties } from "../svg";
-import { ReadonlyItemBuffer } from "../useGameState";
+import { ReadonlyItemBuffer } from "../factoryGameState";
 import "./RegionSelector.scss";
 
 export type RegionSelectorProps = {

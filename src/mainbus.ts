@@ -1,6 +1,6 @@
 import { ImmutableMap } from "./immutable";
 import { ReadonlyInventory } from "./inventory";
-import { ReadonlyItemBuffer } from "./useGameState";
+import { ReadonlyItemBuffer } from "./factoryGameState";
 
 export const NewBusLane = (
   Entity: string,

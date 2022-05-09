@@ -1,5 +1,10 @@
 import { HasProgressTrackers } from "./AddProgressTracker";
-import { Building, InserterId, NewEmptyLane } from "./building";
+import {
+  Building,
+  findFirstEmptyLane,
+  InserterId,
+  NewEmptyLane,
+} from "./building";
 import { fixInserters } from "./factoryGame";
 import { GameAction, InventoryTransferAction } from "./GameAction";
 import { GetEntity, MaybeGetRecipe } from "./gen/entities";
@@ -9,13 +14,8 @@ import { CanPushTo, moveToInventory } from "./movement";
 import { NewExtractor, NewFactory, ProducerTypeFromEntity } from "./production";
 import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
 import { NewLab } from "./research";
-import {
-  DispatchFunc,
-  getDispatchFunc,
-  StateAddress,
-  StateVMAction,
-  StateVMActionWithError,
-} from "./stateVm";
+import { DispatchFunc } from "./stateVm";
+import { StateAddress } from "./state/address";
 import { NewChest } from "./storage";
 import { Producer } from "./types";
 import {
@@ -23,10 +23,10 @@ import {
   ReadonlyBuilding,
   ReadonlyBuildingSlot,
   ReadonlyRegion,
-} from "./useGameState";
+} from "./factoryGameState";
 import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
 
-function GetRegion(
+export function GetRegion(
   gameState: FactoryGameState,
   regionId: string
 ): ReadonlyRegion {
@@ -36,13 +36,13 @@ function GetRegion(
 }
 
 export const GameDispatch = (
-  dispatchGameStateActions: (a: StateVMActionWithError[]) => void,
+  dispatch: DispatchFunc,
   gameState: FactoryGameState,
   action: GameAction
 ) => {
-  const { dispatch, executeActions } = getDispatchFunc(
-    dispatchGameStateActions
-  );
+  // const { dispatch, executeActions } = getDispatchFunc(
+  //   dispatchGameStateActions
+  // );
 
   switch (action.type) {
     case "UpdateState":
@@ -70,7 +70,6 @@ export const GameDispatch = (
         address: { regionId: action.regionId },
         entity: action.entity,
       });
-      //GetRegion(action.regionId).Bus.AddLane(dispatch, action.entity);
       break;
 
     case "ChangeResearch":
@@ -172,7 +171,6 @@ export const GameDispatch = (
     case "LaunchRocket":
       launchRocket(dispatch, action, gameState);
   }
-  executeActions();
 };
 
 function launchRocket(
@@ -778,8 +776,15 @@ function RemoveBuilding(
   //currentRegion.BuildingSlots[action.buildingIdx].Building = NewEmptyLane();
 
   if (b.kind === "BeltLineDepot") {
-    // TODO: Figure out when/how to remove beltlines
-    // No refunds for now
+    // Remove beltline, refund
+    // search all regions, find other depot, remove
+
+    dispatch({
+      kind: "PlaceBuilding",
+      entity: "empty-lane",
+      address,
+      BuildingCount: 0,
+    });
   } else {
     if (HasProgressTrackers(b)) {
       const recipe = MaybeGetRecipe(b.RecipeId);
@@ -900,9 +905,11 @@ export function NewBuilding(entity: string, recipeId?: string): Building {
     case "Miner":
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return NewExtractor({ subkind: entity } as any, 1, recipeId);
+
     case "Pumpjack":
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return NewExtractor({ subkind: entity } as any, 1, "crude-oil");
+
     case "WaterPump":
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return NewExtractor({ subkind: entity } as any, 1, "water");
@@ -968,15 +975,4 @@ function inserter(
 
 function BuildingHasUnifiedInputOutput(kind: string) {
   return kind === "Chest";
-}
-
-function findFirstEmptyLane(
-  BuildingSlots: ReadonlyBuildingSlot[],
-  exceptThisIdx?: number
-) {
-  return BuildingSlots.findIndex(
-    (bs, idx) =>
-      bs.Building.kind === "Empty" &&
-      (exceptThisIdx == undefined || idx != exceptThisIdx)
-  );
 }

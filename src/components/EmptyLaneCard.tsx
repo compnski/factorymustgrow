@@ -1,7 +1,7 @@
 import { GameAction } from "../GameAction";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { ImmutableMap } from "../immutable";
-import { ReadonlyItemBuffer, ReadonlyRegion } from "../useGameState";
+import { ReadonlyItemBuffer, ReadonlyRegion } from "../factoryGameState";
 import { showPlaceBuildingSelector } from "./selectors";
 
 export function EmptyLaneCard(props: {

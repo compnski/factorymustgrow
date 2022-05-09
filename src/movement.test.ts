@@ -44,16 +44,17 @@ describe("VMPushToOtherBuilding", () => {
     }
   ) {
     const vmDispatch = jest.fn();
+    //vmDispatch.mockImplementation((d) => console.log(d));
     VMPushToOtherBuilding(
       vmDispatch,
-      { regionId: "testRegion", buildingIdx: 0, buffer: "input" },
+      { regionId: "testRegion", buildingIdx: 0, buffer: "output" },
       from,
-      { regionId: "testRegion", buildingIdx: 1, buffer: "output" },
+      { regionId: "testRegion", buildingIdx: 1, buffer: "input" },
       to,
       maxMoved
     );
 
-    // Check InputBuffers
+    // Expect AddItem to inputBuffers
     for (const expectedInput of expected.inputBuffers) {
       expect(vmDispatch).toHaveBeenCalledWith({
         address: { regionId: "testRegion", buildingIdx: 1, buffer: "input" },
@@ -63,7 +64,7 @@ describe("VMPushToOtherBuilding", () => {
       });
     }
 
-    // Check OutputBuffers
+    // Expect AddItem to outputBuffers
     for (const expectedOutput of expected.outputBuffers) {
       expect(vmDispatch).toHaveBeenCalledWith({
         address: { regionId: "testRegion", buildingIdx: 0, buffer: "output" },

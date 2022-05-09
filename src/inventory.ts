@@ -1,7 +1,7 @@
 import { GetEntity } from "./gen/entities";
 import { ImmutableMap } from "./immutable";
 import { EntityStack } from "./types";
-import { ReadonlyItemBuffer } from "./useGameState";
+import { ReadonlyItemBuffer } from "./factoryGameState";
 
 export function ReadonlyFixedInventory(
   slotTemplate: EntityStack[]

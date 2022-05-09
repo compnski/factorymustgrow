@@ -1,7 +1,7 @@
 import { GameAction } from "./GameAction";
 import { MacroName } from "./macro_def";
-import { StateVMAction } from "./stateVm";
-import { FactoryGameState } from "./useGameState";
+import { StateVMAction } from "./state/action";
+import { FactoryGameState } from "./factoryGameState";
 
 declare global {
   interface Window {

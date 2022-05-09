@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { MaybeGetEntity } from "../gen/entities";
-import { ReadonlyItemBuffer } from "../useGameState";
+import { ReadonlyItemBuffer } from "../factoryGameState";
 import "./InventoryDisplay.scss";
 
 export type InventoryDisplayProps = {

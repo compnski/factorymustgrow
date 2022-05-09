@@ -1,14 +1,14 @@
-import { NextEmptySlot } from "./building";
+import { findFirstEmptyLane } from "./building";
 import { DebugInventory, DebugResearch } from "./debug";
 import { GameDispatch } from "./GameDispatch";
-import { GameStateReducer } from "./stateVm";
-import { FactoryGameState, ReadonlyRegion } from "./useGameState";
+import { DispatchFunc } from "./stateVm";
+import { FactoryGameState, ReadonlyRegion } from "./factoryGameState";
 
 export type MacroName = "redsci" | "allresearch" | "allitems";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function Macro(
-  reducer: GameStateReducer,
+  reducer: DispatchFunc,
   gameState: FactoryGameState,
   regionId: string
 ): (name: MacroName) => void {
@@ -24,29 +24,25 @@ export function Macro(
   };
 }
 
-function doAllResearch(reducer: GameStateReducer) {
-  reducer([
-    {
-      kind: "SetProperty",
-      address: "global",
-      property: "Research",
-      value: DebugResearch,
-    },
-  ]);
+function doAllResearch(reducer: DispatchFunc) {
+  reducer({
+    kind: "SetProperty",
+    address: "global",
+    property: "Research",
+    value: DebugResearch,
+  });
 }
-function giveAllItems(reducer: GameStateReducer) {
-  reducer([
-    {
-      kind: "SetProperty",
-      address: "global",
-      property: "Inventory",
-      value: new DebugInventory(),
-    },
-  ]);
+function giveAllItems(reducer: DispatchFunc) {
+  reducer({
+    kind: "SetProperty",
+    address: "global",
+    property: "Inventory",
+    value: new DebugInventory(),
+  });
 }
 
 function buildRedSci(
-  reducer: GameStateReducer,
+  reducer: DispatchFunc,
   gameState: FactoryGameState,
   regionId: string
 ) {
@@ -73,7 +69,7 @@ export function setMacroRegionId(r: string) {
 }
 
 function addProducers(
-  reducer: GameStateReducer,
+  dispatch: DispatchFunc,
   gameState: FactoryGameState,
   currentRegion: ReadonlyRegion,
   producerList: {
@@ -88,42 +84,44 @@ function addProducers(
 ) {
   const upperToggles: number[] = [],
     lowerToggles: number[] = [];
+  let buildingIdx = findFirstEmptyLane(currentRegion.BuildingSlots);
   producerList.forEach(({ recipe, kind, connect = {} }) => {
-    const buildingIdx = NextEmptySlot(currentRegion.BuildingSlots) || 0;
-    GameDispatch(reducer, gameState, {
+    GameDispatch(dispatch, gameState, {
       type: "TransferToInventory",
       entity: kind,
       otherStackKind: "Void",
       count: 1,
     });
-    GameDispatch(reducer, gameState, {
+    GameDispatch(dispatch, gameState, {
       type: "TransferToInventory",
       entity: "inserter",
       otherStackKind: "Void",
       count: 1,
     });
 
-    GameDispatch(reducer, gameState, {
+    GameDispatch(dispatch, gameState, {
       type: "PlaceBuilding",
       regionId,
       entity: kind,
       buildingIdx,
     });
 
-    const nextBuildingIdx = NextEmptySlot(currentRegion.BuildingSlots) || 0;
+    // let nextBuildingIdx =
+    //   findFirstEmptyLane(currentRegion.BuildingSlots, nextBuildingIdx) || 0;
 
-    if (buildingIdx === nextBuildingIdx) {
-      throw new Error(`Failed to add producer ${kind} for ${recipe}`);
-    }
+    // if (buildingIdx === nextBuildingIdx) {
+    //   throw new Error(`Failed to add producer ${kind} for ${recipe}`);
+    // }
+
     if (buildingIdx > 0)
-      GameDispatch(reducer, gameState, {
+      GameDispatch(dispatch, gameState, {
         type: "IncreaseInserterCount",
         buildingIdx: buildingIdx - 1,
         regionId,
         location: "BUILDING",
       });
 
-    GameDispatch(reducer, gameState, {
+    GameDispatch(dispatch, gameState, {
       type: "ChangeRecipe",
       regionId,
       buildingIdx: buildingIdx,
@@ -131,10 +129,11 @@ function addProducers(
     });
     if (connect.above) upperToggles.push(buildingIdx);
     if (connect.below) lowerToggles.push(buildingIdx);
+    buildingIdx++;
   });
 
   lowerToggles.forEach((buildingIdx) => {
-    GameDispatch(reducer, gameState, {
+    GameDispatch(dispatch, gameState, {
       type: "ToggleInserterDirection",
       regionId,
       buildingIdx: buildingIdx,
@@ -143,7 +142,7 @@ function addProducers(
   });
 
   upperToggles.forEach((buildingIdx) => {
-    GameDispatch(reducer, gameState, {
+    GameDispatch(dispatch, gameState, {
       type: "ToggleInserterDirection",
       regionId,
       buildingIdx: buildingIdx - 1,

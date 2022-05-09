@@ -3,7 +3,7 @@ import {
   RemoveProgressTracker,
   TickProgressTracker,
 } from "./AddProgressTracker";
-import { BuildingAddress } from "./stateVm";
+import { BuildingAddress } from "./state/address";
 
 describe("Progress Trackers", () => {
   function tracker(

@@ -1,9 +1,10 @@
 import { InserterTransferRate } from "./inserter";
 import { ReadonlyMainBus } from "./mainbus";
 import { VMPushToOtherBuilding } from "./movement";
-import { BuildingAddress, DispatchFunc, StateVMAction } from "./stateVm";
+import { StateVMAction } from "./state/action";
+import { BuildingAddress } from "./state/address";
 import { BeltConnection, EntityStack } from "./types";
-import { ReadonlyItemBuffer } from "./useGameState";
+import { ReadonlyItemBuffer } from "./factoryGameState";
 
 interface MainBusConnector {
   inputBuffers: ReadonlyItemBuffer;

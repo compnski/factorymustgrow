@@ -1,6 +1,6 @@
 import { TicksPerSecond } from "./constants";
 import { EntityStack } from "./types";
-import { ReadonlyItemBuffer } from "./useGameState";
+import { ReadonlyItemBuffer } from "./factoryGameState";
 
 // Requires at least Input items to produce anything
 export function productionRunsForInput(
