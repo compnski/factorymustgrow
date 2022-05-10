@@ -54,8 +54,9 @@ import {
   ResearchState,
 } from "./factoryGameState";
 import { assertNever, replaceItem, swap } from "./utils";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { loadStateFromLocalStorage } from "./localstorage";
+import { randomName } from "./namegen";
 
 export type DispatchFunc = (a: StateVMAction) => void;
 
@@ -72,15 +73,18 @@ export class StateVMError extends Error {
   }
 }
 
-export const useGameState = () =>
-  useReducer(
-    applyStateChangeActions,
-    loadStateFromLocalStorage(initialFactoryGameState())
-  );
+const useGameState = () =>
+  useState(loadStateFromLocalStorage(initialFactoryGameState()));
+// useReducer(
+//   applyStateChangeActions,
+//   loadStateFromLocalStorage(initialFactoryGameState())
+// );
 
+const vmActions: StateVMActionWithError[] = [];
 export function getDispatchFunc() {
-  const vmActions: StateVMActionWithError[] = [];
-  const [gameState, dispatchGameStateActions] = useGameState();
+  //console.warn("getDispatchFunc");
+  //  const [gameState, dispatchGameStateActions] = useGameState();
+  const [gameState, setGameState] = useGameState();
 
   const dispatch = (a: StateVMAction) => {
     console.log(a);
@@ -90,10 +94,14 @@ export function getDispatchFunc() {
   return {
     gameState,
     executeActions: (gameState: FactoryGameState) => {
+      //  const runId = randomName();
       try {
-        dispatchGameStateActions(vmActions);
-        const s = applyStateChangeActions(gameState, vmActions);
-        return s;
+        //console.warn("---START: ", runId);
+        //dispatchGameStateActions(vmActions);
+        //console.warn("---END: ", runId);
+        gameState = applyStateChangeActions(gameState, vmActions);
+        setGameState(gameState);
+        return gameState;
       } finally {
         vmActions.splice(0);
       }
@@ -103,10 +111,9 @@ export function getDispatchFunc() {
 }
 
 export function applyStateChangeActions(
-  gs: FactoryGameState,
+  state: FactoryGameState,
   actions: StateVMActionWithError[]
 ): FactoryGameState {
-  let state = gs;
   for (const action of actions) {
     try {
       state = applyStateChangeAction(state, action);

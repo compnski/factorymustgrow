@@ -3,9 +3,11 @@ import { FactoryGame } from "./components/FactoryGame";
 import { GeneralDialogProvider } from "./GeneralDialogProvider";
 import "./icons.scss";
 import "./macro_def";
+import { getDispatchFunc } from "./stateVm";
 import "./technology.css";
 
 function App() {
+  const { gameState, dispatch, executeActions } = getDispatchFunc();
   return (
     <GeneralDialogProvider>
       <div
@@ -14,7 +16,11 @@ function App() {
           if ((evt.target as Element).classList.contains("clickable")) return;
         }}
       >
-        <FactoryGame />
+        <FactoryGame
+          gameState={gameState}
+          dispatch={dispatch}
+          executeActions={executeActions}
+        />
       </div>
     </GeneralDialogProvider>
   );

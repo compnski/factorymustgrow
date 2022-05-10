@@ -19,8 +19,8 @@ import { MainBusHeader } from "./MainBusHeader";
 import { RegionTabBar } from "./RegionTabBar";
 import { showHelpCard } from "./selectors";
 
-export const FactoryGame = () => {
-  const { gameState, dispatch, executeActions } = getDispatchFunc();
+export const FactoryGame = (props: ReturnType<typeof getDispatchFunc>) => {
+  const { gameState, dispatch, executeActions } = props;
   const [currentRegionId, setCurrentRegionId] = useState<string>(
     gameState.Regions.keys().next().value || ""
   );
