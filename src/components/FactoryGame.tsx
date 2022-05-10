@@ -62,9 +62,7 @@ export const FactoryGame = (props: ReturnType<typeof getDispatchFunc>) => {
     if (!currentRegion) throw new Error("Bad region " + currentRegionId);
     return (
       <div className="factory-game">
-        <RocketShip
-          className={`rocket-ship ${(isRocketLaunching && "animate") || ""}`}
-        />
+        {isRocketLaunching && <RocketShip className={`rocket-ship animate`} />}
         <div className="top-bar">
           <RegionTabBar
             currentRegionId={currentRegionId}
