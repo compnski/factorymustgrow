@@ -24,6 +24,7 @@ import {
   isPlaceBeltLineDepotAction,
   PlaceBeltLineAction,
   PlaceBuildingAction,
+  RemoveBeltLineAction,
   RemoveMainBusLaneAction,
   SetBeltConnectionPropertyAction,
   SetBuildingPropertyAction,
@@ -93,10 +94,10 @@ export function getDispatchFunc() {
 
   return {
     gameState,
-    executeActions: (gameState: FactoryGameState) => {
+    executeActions: (gameState: FactoryGameState, dontExposeState = false) => {
       try {
         gameState = applyStateChangeActions(gameState, vmActions);
-        setGameState(gameState);
+        if (!dontExposeState) setGameState(gameState);
         return gameState;
       } finally {
         vmActions.splice(0);
@@ -159,6 +160,8 @@ function applyStateChangeAction(
       return stateChangeAdvanceBeltLine(state, action);
     case "PlaceBeltLine":
       return stateChangePlaceBeltLine(state, action);
+    case "RemoveBeltLine":
+      return stateChangeRemoveBeltLine(state, action);
     case "AddMainBusLane":
       return stateChangeAddMainBusLane(state, action);
     case "RemoveMainBusLane":
@@ -659,6 +662,16 @@ function stateChangePlaceBeltLine(
   return {
     ...state,
     BeltLines: state.BeltLines.set(action.address.beltLineId, newBeltLine),
+  };
+}
+
+function stateChangeRemoveBeltLine(
+  state: FactoryGameState,
+  action: RemoveBeltLineAction
+): FactoryGameState {
+  return {
+    ...state,
+    BeltLines: state.BeltLines.delete(action.address.beltLineId),
   };
 }
 

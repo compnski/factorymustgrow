@@ -26,8 +26,11 @@ export type StateVMAction =
   | AddMainBusLaneAction
   | RemoveMainBusLaneAction
   | AdvanceBeltLineAction
-  | PlaceBeltLineAction;
+  | PlaceBeltLineAction
+  | RemoveBeltLineAction;
+
 type ResetAction = { kind: "Reset" } | { kind: "ResetToDebugState" };
+
 export type SetPropertyAction =
   | SetInserterPropertyAction
   | SetBuildingPropertyAction
@@ -43,70 +46,83 @@ export type SetBeltConnectionPropertyAction =
 export type SetGlobalPropertyAction = TSetGlobalPropertyAction<
   "RocketLaunchingAt" | "Inventory" | "Research"
 >;
+
 type TSetBeltConnectionPropertyAction<P extends keyof BeltConnection> = {
   kind: "SetProperty";
   address: BeltConnectionAddress;
   property: P;
   value: BeltConnection[P];
 };
+
 type TSetInserterPropertyAction<P extends keyof Omit<Inserter, "kind">> = {
   kind: "SetProperty";
   address: InserterAddress;
   property: P;
   value: Inserter[P];
 };
+
 type TSetBuildingPropertyAction<P extends keyof Omit<Building, "kind">> = {
   kind: "SetProperty";
   address: BuildingAddress;
   property: P;
   value: Building[P];
 };
+
 type TSetGlobalPropertyAction<P extends keyof FactoryGameState> = {
   kind: "SetProperty";
   address: "global";
   property: P;
   value: FactoryGameState[P];
 };
+
 export type SetRecipeAction = {
   kind: "SetRecipe";
   address: BuildingAddress;
   recipeId: string;
 };
+
 export type AddMainBusLaneAction = {
   kind: "AddMainBusLane";
   address: RegionAddress;
   entity: string;
 };
+
 export type RemoveMainBusLaneAction = {
   kind: "RemoveMainBusLane";
   address: MainBusAddress;
 };
+
 export type AddItemAction = {
   kind: "AddItemCount";
   address: StateAddress;
   entity: string;
   count: number;
 };
+
 export type AddProgressTrackerAction = {
   kind: "AddProgressTrackers";
   address: BuildingAddress;
   count: number;
   currentTick: number;
 };
+
 export type AddResearchCountAction = {
   kind: "AddResearchCount";
   researchId: string;
   count: number;
   maxCount: number;
 };
+
 export type AdvanceBeltLineAction = {
   kind: "AdvanceBeltLine";
   address: BeltLineAddress;
 };
+
 export type SetCurrentResearchAction = {
   kind: "SetCurrentResearch";
   researchId: string;
 };
+
 export type PlaceBuildingAction =
   | {
       kind: "PlaceBuilding";
@@ -115,6 +131,7 @@ export type PlaceBuildingAction =
       BuildingCount: number;
     }
   | PlaceBeltLineDepotAction;
+
 type PlaceBeltLineDepotAction = {
   kind: "PlaceBuilding";
   address: BuildingAddress;
@@ -123,6 +140,7 @@ type PlaceBeltLineDepotAction = {
   direction: "TO_BELT" | "FROM_BELT";
   beltLineAddress: BeltLineAddress;
 };
+
 export type PlaceBeltLineAction = {
   kind: "PlaceBeltLine";
   entity: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
@@ -130,16 +148,24 @@ export type PlaceBeltLineAction = {
   BuildingCount: number;
   length: number;
 };
+
+export type RemoveBeltLineAction = {
+  kind: "RemoveBeltLine";
+  address: BeltLineAddress;
+};
+
 export type SwapBuildingsAction = {
   kind: "SwapBuildings";
   address: BuildingAddress;
   moveToAddress: BuildingAddress;
 };
+
 export type AddRegionAction = {
   kind: "AddRegion";
   regionInfo: RegionInfo;
   regionId: string;
 };
+
 export function isPlaceBeltLineDepotAction(
   a: PlaceBuildingAction
 ): a is PlaceBeltLineDepotAction {

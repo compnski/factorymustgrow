@@ -183,15 +183,16 @@ export async function showPlaceBeltLineSelector(
     ),
   });
   if (result) {
-    const [targetRegion, beltType] = result;
-    uxDispatch({
-      type: "PlaceBeltLine",
-      targetRegion,
-      entity: beltType,
-      beltLength: 10,
-      regionId,
-      buildingIdx,
-    });
+    const [targetRegion, beltType, beltLength] = result;
+    if (targetRegion && beltType)
+      uxDispatch({
+        type: "PlaceBeltLine",
+        targetRegion,
+        entity: beltType,
+        beltLength,
+        regionId,
+        buildingIdx,
+      });
   }
 }
 

@@ -40,10 +40,6 @@ export const GameDispatch = (
   gameState: FactoryGameState,
   action: GameAction
 ) => {
-  // const { dispatch, executeActions } = getDispatchFunc(
-  //   dispatchGameStateActions
-  // );
-
   switch (action.type) {
     case "UpdateState":
       dispatch(action.action);
@@ -74,7 +70,6 @@ export const GameDispatch = (
 
     case "ChangeResearch":
       if (action.producerName) {
-        console.log("Set research to ", action.producerName);
         dispatch({
           kind: "SetCurrentResearch",
           researchId: action.producerName,
@@ -158,7 +153,7 @@ export const GameDispatch = (
 
     case "ClaimRegion":
       if (gameState.Regions.has(action.regionId)) {
-        console.log("Region already unlocked", action.regionId);
+        showUserError(`Region ${action.regionId} already unlocked.`);
         return;
       }
       dispatch({
@@ -391,19 +386,6 @@ function toggleBeltInserterDirection(
         property: "direction",
         value: newDirection,
       });
-
-      // if (canGoLeft && canGoRight) {
-      //   i.direction =
-      //     i.direction === "TO_BUS"
-      //       ? "FROM_BUS"
-      //       : i.direction === "FROM_BUS"
-      //       ? "NONE"
-      //       : "TO_BUS";
-      // } else if (canGoLeft) {
-      //   i.direction = i.direction === "NONE" ? "FROM_BUS" : "NONE";
-      // } else if (canGoRight) {
-      //   i.direction = i.direction === "NONE" ? "TO_BUS" : "NONE";
-      // }
     }
   }
 }
@@ -421,18 +403,23 @@ function toggleInserterDirection(
   region: ReadonlyRegion,
   gameState: FactoryGameState
 ) {
-  if (action.location === "BELT") {
+  if (action.location === "BELT")
     return toggleBeltInserterDirection(dispatch, action, gameState);
-  }
-  // location === "BUILDING"
+  else return toggleBuildingInserterDirection(dispatch, action, gameState);
+}
+
+function toggleBuildingInserterDirection(
+  dispatch: DispatchFunc,
+  action: { location: "BUILDING"; regionId: string; buildingIdx: number },
+  gameState: FactoryGameState
+) {
   const { regionId, buildingIdx, location } = action;
-  const topB = region.BuildingSlots[action.buildingIdx].Building,
-    bottomB = region.BuildingSlots[action.buildingIdx + 1].Building,
-    i = region.BuildingSlots[action.buildingIdx].Inserter;
+  const region = GetRegion(gameState, action.regionId);
+  const topB = building(gameState, action);
+  const bottomB = region.BuildingSlots[action.buildingIdx + 1].Building;
+  const i = inserter(gameState, action);
 
-  if (!topB || !bottomB || action.buildingIdx === undefined) return;
-
-  console.log(CanPushTo(bottomB, topB), CanPushTo(topB, bottomB));
+  if (!topB || !bottomB || !i || action.buildingIdx === undefined) return;
 
   const canGoUp =
       BuildingHasOutput(bottomB.kind) &&
@@ -466,6 +453,20 @@ function toggleInserterDirection(
     property: "direction",
     value: newDirection,
   });
+  if (
+    i.BuildingCount == 0 &&
+    newDirection != "NONE" &&
+    newDirection != i.direction &&
+    gameState.Inventory.Count(i.subkind) > 0
+  ) {
+    dispatch({
+      kind: "SetProperty",
+      address: { regionId, buildingIdx, location },
+      property: "BuildingCount",
+      value: 1,
+    });
+    moveToInventory(dispatch, i.subkind, -1);
+  }
 }
 
 function decreaseInserterCount(
@@ -761,6 +762,62 @@ function ReorderBuildings(
   fixInserters(dispatch, region);
 }
 
+function removeBeltLine(
+  dispatch: DispatchFunc,
+  action: { regionId: string; buildingIdx: number },
+  gameState: FactoryGameState
+) {
+  const b = building(gameState, action);
+  if (!b || b.kind != "BeltLineDepot" || !b.beltLineId)
+    throw new Error("Only removes belt line depots");
+  const beltLineId = b.beltLineId;
+  const beltLine = gameState.BeltLines.get(beltLineId);
+
+  let removedCount = 0;
+  // Find other depots for this belt line
+  gameState.Regions.forEach((region, regionId) => {
+    region.BuildingSlots.forEach(({ Building }, buildingIdx) => {
+      if (
+        Building.kind === "BeltLineDepot" &&
+        Building.beltLineId === beltLineId
+      ) {
+        dispatch({
+          kind: "PlaceBuilding",
+          entity: "empty-lane",
+          address: { regionId, buildingIdx },
+          BuildingCount: 0,
+        });
+        RefundBuildingMaterial(dispatch, Building);
+        removedCount++;
+      }
+    });
+  });
+  if (removedCount != 2)
+    console.warn(
+      `Removed ${removedCount} buildings when trying to remove beltLine ${beltLineId}`
+    );
+  if (removedCount > 0 && beltLine) {
+    // Refund entities on beltline
+    const refundMap = new Map<string, number>();
+    beltLine.internalBeltBuffer.forEach((stack) => {
+      if (stack.Entity && stack.Count)
+        refundMap.set(
+          stack.Entity,
+          (refundMap.get(stack.Entity) || 0) + stack.Count
+        );
+    });
+    refundMap.forEach((count, entity) =>
+      moveToInventory(dispatch, entity, count)
+    );
+    // Refund belt itself
+    moveToInventory(dispatch, b.subkind, beltLine.length);
+    dispatch({
+      kind: "RemoveBeltLine",
+      address: { beltLineId },
+    });
+  }
+}
+
 function RemoveBuilding(
   dispatch: DispatchFunc,
   action: {
@@ -773,60 +830,51 @@ function RemoveBuilding(
   const address = { regionId, buildingIdx };
   const b = building(gameState, action); // as Producer;
   if (!b) return;
-  //currentRegion.BuildingSlots[action.buildingIdx].Building = NewEmptyLane();
-
   if (b.kind === "BeltLineDepot") {
     // Remove beltline, refund
     // search all regions, find other depot, remove
-
+    removeBeltLine(dispatch, action, gameState);
+  } else {
     dispatch({
       kind: "PlaceBuilding",
       entity: "empty-lane",
       address,
       BuildingCount: 0,
     });
-  } else {
-    if (HasProgressTrackers(b)) {
-      const recipe = MaybeGetRecipe(b.RecipeId);
-      if (recipe) {
-        recipe.Input.forEach(({ Count, Entity }) => {
-          if (b.progressTrackers.length)
-            moveToInventory(
-              dispatch,
-              Entity,
-              Count * b.progressTrackers.length
-            );
-        });
-      }
-      b.progressTrackers.length;
-    }
-    if (b.BuildingCount > 0)
-      moveToInventory(dispatch, b.subkind, b.BuildingCount);
-    if (BuildingHasInput(b.kind))
-      b.inputBuffers
-        .Entities()
-        .forEach(
-          ([entity, count]) =>
-            count > 0 && moveToInventory(dispatch, entity, count)
-        );
-
-    if (BuildingHasOutput(b.kind) && !BuildingHasUnifiedInputOutput(b.kind))
-      b.outputBuffers
-        .Entities()
-        .forEach(
-          ([entity, count]) =>
-            count > 0 && moveToInventory(dispatch, entity, count)
-        );
+    RefundBuildingMaterial(dispatch, b);
   }
-  dispatch({
-    kind: "PlaceBuilding",
-    entity: "empty-lane",
-    address,
-    BuildingCount: 0,
-  });
 }
 
-// TODO: PAss direction (to/from) so we can grab availabe space vs count accordingly
+function RefundBuildingMaterial(dispatch: DispatchFunc, b: ReadonlyBuilding) {
+  if (HasProgressTrackers(b)) {
+    const recipe = MaybeGetRecipe(b.RecipeId);
+    if (recipe) {
+      recipe.Input.forEach(({ Count, Entity }) => {
+        if (b.progressTrackers.length)
+          moveToInventory(dispatch, Entity, Count * b.progressTrackers.length);
+      });
+    }
+    b.progressTrackers.length;
+  }
+  if (b.BuildingCount > 0)
+    moveToInventory(dispatch, b.subkind, b.BuildingCount);
+  if (BuildingHasInput(b.kind))
+    b.inputBuffers
+      .Entities()
+      .forEach(
+        ([entity, count]) =>
+          count > 0 && moveToInventory(dispatch, entity, count)
+      );
+
+  if (BuildingHasOutput(b.kind) && !BuildingHasUnifiedInputOutput(b.kind))
+    b.outputBuffers
+      .Entities()
+      .forEach(
+        ([entity, count]) =>
+          count > 0 && moveToInventory(dispatch, entity, count)
+      );
+}
+
 function addressAndCountForTransfer(
   gameState: FactoryGameState,
   action: InventoryTransferAction,

@@ -10,8 +10,24 @@ import {
   ReadonlyRegion,
 } from "./factoryGameState";
 
-// Thoughts
-// Beltline has two BeltLineDepots
+export type BeltLineDepot = {
+  kind: "BeltLineDepot";
+  subkind: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
+  ProducerType: "Depot";
+  inputBuffers: ReadonlyItemBuffer;
+  outputBuffers: ReadonlyItemBuffer;
+  BuildingCount: number;
+  direction: "FROM_BELT" | "TO_BELT";
+  beltLineId: string;
+};
+
+export type BeltLine = {
+  beltLineId: string;
+  BuildingCount: number;
+  length: number;
+  internalBeltBuffer: Array<EntityStack>;
+  name: string;
+};
 
 export function FindDepotForBeltLineInRegion(
   r: ReadonlyRegion,
@@ -118,27 +134,6 @@ export function UpdateBeltLineDepot(
     }
   }
 }
-
-export type BeltLineDepot = {
-  kind: "BeltLineDepot";
-  subkind: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
-  ProducerType: "Depot";
-  inputBuffers: ReadonlyItemBuffer;
-  outputBuffers: ReadonlyItemBuffer;
-  BuildingCount: number;
-  direction: "FROM_BELT" | "TO_BELT";
-  beltLineId: string;
-};
-
-export type BeltLine = {
-  beltLineId: string;
-  BuildingCount: number;
-  //toRegionId: string;
-  //  fromRegionId: string;
-  length: number;
-  internalBeltBuffer: Array<EntityStack>;
-  name: string;
-};
 
 export function NewBeltLineDepot({
   subkind,

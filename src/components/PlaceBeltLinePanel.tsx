@@ -10,7 +10,8 @@ export type PlaceBeltLineProps = {
   onConfirm: (
     evt: SyntheticEvent,
     targetRegion: string,
-    beltType: string
+    beltType: string,
+    count: number
   ) => void;
 };
 
@@ -20,17 +21,15 @@ export function PlaceBeltLinePanel(props: PlaceBeltLineProps) {
     regions.keys().next().value
   );
 
-  const cost = 100,
+  const cost = 50,
     entity = "transport-belt";
 
-  console.log(inventory.Count(entity), cost);
   const enoughBeltsInInventory = inventory.Count(entity) >= cost;
-  console.log(inventory.Count(entity), cost, enoughBeltsInInventory);
   return (
     <div className="place-belt-line modal">
       <span
         className="material-icons close-icon clickable"
-        onClick={(evt) => onConfirm(evt, "", "")}
+        onClick={(evt) => onConfirm(evt, "", "", 0)}
       >
         close
       </span>
@@ -56,7 +55,7 @@ export function PlaceBeltLinePanel(props: PlaceBeltLineProps) {
         <div
           onClick={(evt) =>
             enoughBeltsInInventory &&
-            onConfirm(evt, selectValue, "transport-belt")
+            onConfirm(evt, selectValue, "transport-belt", cost)
           }
           className={`clickable place-belt-line-build-button ${
             !enoughBeltsInInventory ? "disabled" : ""

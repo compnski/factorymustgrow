@@ -20,13 +20,15 @@ import { FactoryGameState, ReadonlyBuildingSlot } from "./factoryGameState";
 
 export async function UpdateGameState(
   gameState: FactoryGameState,
-  //dispatchGameStateActions: (a: StateVMActionWithError[]) => void,
   {
     dispatch,
     executeActions,
   }: {
     dispatch: DispatchFunc;
-    executeActions: (gameState: FactoryGameState) => FactoryGameState;
+    executeActions: (
+      gameState: FactoryGameState,
+      dontExposeState?: boolean
+    ) => FactoryGameState;
   },
   tick: number,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,10 +46,10 @@ export async function UpdateGameState(
       });
     }
     for (const [regionId] of gameState.Regions) {
-      UpdateGameStateForRegion(
+      gameState = UpdateGameStateForRegion(
         tick,
         dispatch,
-        executeActions,
+        (gs: FactoryGameState) => executeActions(gs, true),
         gameState,
         regionId
       );
@@ -55,8 +57,6 @@ export async function UpdateGameState(
     // Check Research Completion
     if (IsResearchComplete(gameState.Research)) {
       console.log("Research Complete!");
-      //GameDispatch({ type: "CompleteResearch" });
-      //GameState.Research.CurrentResearchId = "";
       dispatch({ kind: "SetCurrentResearch", researchId: "" });
       await showResearchSelector(generalDialog, uxDispatch, gameState.Research);
     }
@@ -64,6 +64,8 @@ export async function UpdateGameState(
     //TODO Show error dialog
     console.error("Failed to update game state:", e);
   }
+
+  executeActions(gameState);
 }
 
 function UpdateGameStateForRegion(
@@ -72,7 +74,7 @@ function UpdateGameStateForRegion(
   executeActions: (gameState: FactoryGameState) => FactoryGameState,
   gs: FactoryGameState,
   regionId: string
-) {
+): FactoryGameState {
   let gameState = gs;
   let region = GetRegion(gs, regionId);
   if (!region) throw new Error("Missing region: " + regionId);
@@ -91,7 +93,8 @@ function UpdateGameStateForRegion(
 
   fixInserters(dispatch, region);
 
-  region.BuildingSlots.forEach((slot, idx) => {
+  for (const idx of region.BuildingSlots.keys()) {
+    const slot = region.BuildingSlots[idx];
     const address = { regionId: region.Id, buildingIdx: idx };
     const building = slot.Building;
     switch (building.kind) {
@@ -140,11 +143,16 @@ function UpdateGameStateForRegion(
         region.BuildingSlots[idx + 1].Building
       );
     gameState = executeActions(gameState);
-    region = GetRegion(gameState, regionId);
+  }
+
+  region = GetRegion(gameState, regionId);
+  region.BuildingSlots.forEach((slot, idx) => {
+    const address = { regionId: region.Id, buildingIdx: idx };
     if (!region) throw new Error("Missing region");
     PushPullFromMainBus(dispatch, slot, region.Bus, address);
     gameState = executeActions(gameState);
   });
+  return gameState;
 }
 
 export function fixInserters(
