@@ -1,14 +1,13 @@
 import { Map } from "immutable";
 import { SyntheticEvent } from "react";
 import { NewBuildingSlot } from "../building";
+import { FactoryGameState, ReadonlyResearchState } from "../factoryGameState";
 import { ReactComponent as HelpOverlay } from "../helpTemplate.svg";
 import { ImmutableMap } from "../immutable";
 import { ReadonlyInventory } from "../inventory";
-import { ReadonlyMainBus } from "../mainbus";
 import { NewExtractorForRecipe, NewFactoryForRecipe } from "../production";
 import { GetRegionInfo } from "../region";
 import { EntityStack, NewRegionFromInfo } from "../types";
-import { FactoryGameState, ReadonlyResearchState } from "../factoryGameState";
 import { BuildingCardList } from "./BuildingCardList";
 import "./HelpCard.scss";
 

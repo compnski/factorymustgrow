@@ -1,12 +1,6 @@
 #+TITLE: Todo
 * In progress
 ** Bugs
-*** Two inserters into one chest will blow up
-Core issue is that state doesn't update during the run.
-It's ~mostly~ okay, since most buffers have at most one partner in each tick.
-This is not true for belt lines and inserters (top+bottom)
-Maybe need to process them all together, keep a running tab, or ideally just get the state back
-*** Losing UI inputs for some reason
 *** MainBus makes fan spin up (SVG animation?) Can disable gpu?
 *** Names sometime still too long "courageous ram"
 *** Plastic production seems hard to scale up, maybe oil issues?
@@ -14,6 +8,8 @@ Maybe need to process them all together, keep a running tab, or ideally just get
 *** Research dialog overwrites any existing dialog
 *** Better re-arranging? (Maybe with research)
 *** Can't build rocket silo, factory doesn't fit enough resources
+** Maybe Fixed Bugs
+*** Losing UI inputs for some reason
 ** Save UI state
 *** Scroll position on page
 *** Last page visited?
@@ -24,11 +20,10 @@ Maybe need to process them all together, keep a running tab, or ideally just get
 *** Offer to save progress during upgrades if possible
 ** Fix factories producing partial goods
 *** TODO figure out progress bar
-*** Update extractors to also use ProgressTracker
-*** Update labs to use ProgressTracker
+*** Update belt lines to use Progress Trackers
 ** BeltLine
-*** Re-Connect when rebuilding
-*** Only connect directly adjacent regions
+*** Delete from both regions and refund all when deleting
+*** Only connect directly adjacent regions?
 *** Maybe some way to increase throughput?
 *** Some better visibility of contents
 *** Renaming? (Display name?)
@@ -37,7 +32,6 @@ Maybe need to process them all together, keep a running tab, or ideally just get
 **** Make Region selector pretty and use hexes?
 *** Change Bus item by clicking
 *** Recipe Display for Producers
-
 
 ** Inserters
 *** Make sure they are properly taken from inventory when building
@@ -64,9 +58,6 @@ Maybe need to process them all together, keep a running tab, or ideally just get
 
 ** Blueprints
 *** Somehow store lists of entities that can be rebuilt
-** EntityId
-*** Store 'nextId' in GameState
-*** Add Id to many/most/all? entities
 ** Fuel
 *** Gotta pay for smelters, power plants, etc
 *** "fuel slot" holds any fuel
@@ -91,11 +82,6 @@ Each step of recipe takes some amount of fuel/power
 *** Max Building Count?
 *** Power is a natural limit
 ** Transport
-*** DONE Belt transport
-Array of stacks
-Pointer to each end
-Pointers move, like ring buffer
-**** Direct connects two regions
 *** Pipe transport
 Fluids are instantaneous?
 **** Direct connects two adjacent regions
@@ -130,7 +116,8 @@ In case you delete yours
 ** Show blocked resource in recipe when unable to craft
 * Logic
 ** Realtime clock
-Discrete event simulation? Or just keep track of last tick, and loop a buch on first load to catch up
+Need option to 'catch up' when first re-opening the game.
+Maybe store last real time in state, then some progress bar that just ticks as fast as possible
 * Features
 ** Storage Upgrades
 ** Crafting Time
@@ -175,9 +162,4 @@ Belt has many lanes, each configured for a given resource
 *** Ore Handling
 **** Comes from miners, works like other factories, but no import
 ****
-* Performance Ideas
-** Keep bug/turret state in separate timer thread
-Currently state is in the main react thread. This is causing stuttering.
-Instead have a separate thread doing game logic, and have 'Tick' just copy that state into react on some timer.
-
 * React router

@@ -21,16 +21,6 @@ export class ReadonlyInventory implements ReadonlyItemBuffer {
   readonly Capacity: number;
   readonly Data: ImmutableMap<string, number>;
 
-  Remove(): number {
-    throw new Error("NYI");
-  }
-  Add(): number {
-    throw new Error("NYI");
-  }
-  AddFromItemBuffer(): number {
-    throw new Error("NYI");
-  }
-
   constructor(
     maxCapacity: number,
     Data?: ImmutableMap<string, number>,

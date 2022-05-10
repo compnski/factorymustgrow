@@ -15,28 +15,11 @@ import {
 export type ReadonlyItemBuffer = {
   readonly Capacity: number;
   AddItems(entity: string, count: number): ReadonlyItemBuffer;
-  //RemoveItems(entity: string, count: number): ReadonlyItemBuffer;
 
   AvailableSpace(entity: string): number;
   Entities(): Readonly<[entity: string, count: number][]>;
   Count(entity: string): number;
   Accepts(entity: string): boolean;
-  //SlotsUsed(): number;
-
-  Remove(toStack: EntityStack, count?: number, integersOnly?: boolean): number;
-  Add(
-    fromStack: EntityStack,
-    count?: number,
-    exceedCapacity?: boolean,
-    integersOnly?: boolean
-  ): number;
-  AddFromItemBuffer(
-    from: ReadonlyItemBuffer,
-    entity: string,
-    itemCount?: number,
-    exceedCapacity?: boolean,
-    integersOnly?: boolean
-  ): number;
 };
 
 export interface ReadonlyResearchState {

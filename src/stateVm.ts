@@ -1,51 +1,7 @@
+import { useState } from "react";
 import { HasProgressTrackers } from "./AddProgressTracker";
 import { NewEmptyLane } from "./building";
 import { debugFactoryGameState } from "./debug";
-import { NewBuilding } from "./GameDispatch";
-import { ReadonlyInventory } from "./inventory";
-import { StackCapacity } from "./movement";
-import { Extractor, Factory, UpdateBuildingRecipe } from "./production";
-import {
-  BuildingAddress,
-  MainBusAddress,
-  BeltLineAddress,
-  isGlobalAddress,
-  isBeltConnectionAddress,
-  isInserterAddress,
-  isBuildingAddress,
-  isMainBusAddress,
-  isBeltLineAddress,
-  isInventoryAddress,
-  isRegionAddress,
-} from "./state/address";
-import {
-  StateVMAction,
-  SwapBuildingsAction,
-  SetPropertyAction,
-  SetGlobalPropertyAction,
-  SetBeltConnectionPropertyAction,
-  SetInserterPropertyAction,
-  SetBuildingPropertyAction,
-  AddResearchCountAction,
-  PlaceBuildingAction,
-  isPlaceBeltLineDepotAction,
-  SetCurrentResearchAction,
-  SetRecipeAction,
-  AddItemAction,
-  AddProgressTrackerAction,
-  AddRegionAction,
-  AdvanceBeltLineAction,
-  PlaceBeltLineAction,
-  AddMainBusLaneAction,
-  RemoveMainBusLaneAction,
-} from "./state/action";
-import { AdvanceBeltLine, NewBeltLine, NewBeltLineDepot } from "./transport";
-import {
-  AddToEntityStack,
-  BeltConnection,
-  NewEntityStack,
-  NewRegionFromInfo,
-} from "./types";
 import {
   FactoryGameState,
   initialFactoryGameState,
@@ -53,10 +9,53 @@ import {
   ReadonlyRegion,
   ResearchState,
 } from "./factoryGameState";
-import { assertNever, replaceItem, swap } from "./utils";
-import { useReducer, useState } from "react";
+import { NewBuilding } from "./GameDispatch";
+import { ReadonlyInventory } from "./inventory";
 import { loadStateFromLocalStorage } from "./localstorage";
-import { randomName } from "./namegen";
+import { StackCapacity } from "./movement";
+import { Extractor, Factory, UpdateBuildingRecipe } from "./production";
+import {
+  AddItemAction,
+  AddMainBusLaneAction,
+  AddProgressTrackerAction,
+  AddRegionAction,
+  AddResearchCountAction,
+  AdvanceBeltLineAction,
+  isPlaceBeltLineDepotAction,
+  PlaceBeltLineAction,
+  PlaceBuildingAction,
+  RemoveMainBusLaneAction,
+  SetBeltConnectionPropertyAction,
+  SetBuildingPropertyAction,
+  SetCurrentResearchAction,
+  SetGlobalPropertyAction,
+  SetInserterPropertyAction,
+  SetPropertyAction,
+  SetRecipeAction,
+  StateVMAction,
+  SwapBuildingsAction,
+} from "./state/action";
+import {
+  BeltLineAddress,
+  BuildingAddress,
+  isBeltConnectionAddress,
+  isBeltLineAddress,
+  isBuildingAddress,
+  isGlobalAddress,
+  isInserterAddress,
+  isInventoryAddress,
+  isMainBusAddress,
+  isRegionAddress,
+  MainBusAddress,
+} from "./state/address";
+import { AdvanceBeltLine, NewBeltLine, NewBeltLineDepot } from "./transport";
+import {
+  AddToEntityStack,
+  BeltConnection,
+  NewEntityStack,
+  NewRegionFromInfo,
+} from "./types";
+import { assertNever, replaceItem, swap } from "./utils";
 
 export type DispatchFunc = (a: StateVMAction) => void;
 
@@ -80,6 +79,7 @@ const useGameState = () =>
 //   loadStateFromLocalStorage(initialFactoryGameState())
 // );
 
+const debugStateActions = window.location.hash.includes("state");
 const vmActions: StateVMActionWithError[] = [];
 export function getDispatchFunc() {
   //console.warn("getDispatchFunc");
@@ -87,18 +87,14 @@ export function getDispatchFunc() {
   const [gameState, setGameState] = useGameState();
 
   const dispatch = (a: StateVMAction) => {
-    console.log(a);
+    debugStateActions && console.log(a);
     vmActions.push({ ...a, error: new StateVMError(a) });
   };
 
   return {
     gameState,
     executeActions: (gameState: FactoryGameState) => {
-      //  const runId = randomName();
       try {
-        //console.warn("---START: ", runId);
-        //dispatchGameStateActions(vmActions);
-        //console.warn("---END: ", runId);
         gameState = applyStateChangeActions(gameState, vmActions);
         setGameState(gameState);
         return gameState;
@@ -374,7 +370,6 @@ function stateChangePlaceBuilding(
   state: FactoryGameState,
   action: PlaceBuildingAction
 ): FactoryGameState {
-  if (!isBuildingAddress(action.address)) throw new Error("NYI");
   const {
     address: { regionId, buildingIdx },
     entity,

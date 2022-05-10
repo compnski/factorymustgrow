@@ -73,21 +73,6 @@ export class ResearchOutput implements ReadonlyItemBuffer {
     return this.SetResearch(researchId, count, maxProgress);
   }
 
-  Remove(): number {
-    throw new Error("NYI");
-  }
-  Add(): number {
-    throw new Error("NYI");
-  }
-
-  AddFromItemBuffer(): number {
-    throw new Error("NYI");
-  }
-
-  RemoveItems(): ReadonlyItemBuffer {
-    throw new Error("NYI");
-  }
-
   Entities(): [entity: string, count: number][] {
     return [[this.researchId, this.progress]];
   }
