@@ -51,7 +51,7 @@ const getPathEnd = (
   return p;
 };
 
-const beltAnimationDuration = "4s";
+const beltAnimationDuration = "0s";
 
 export function MainBusSegment({
   mainBus,
@@ -124,7 +124,6 @@ export function MainBusSegment({
   const connections: JSX.Element[] = [];
   beltConnections.forEach((beltConn, connIdx) => {
     if (beltConn.laneId === undefined) return;
-    console.log(beltConn, connIdx);
     const y =
       connectionOffset + connIdx * (connectionHeight + interConnectionHeight);
 
