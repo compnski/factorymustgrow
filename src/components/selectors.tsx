@@ -138,6 +138,7 @@ export async function showPlaceBuildingSelector(
       buildingIdx,
       regionId,
     });
+  return item;
 }
 
 export async function showResearchSelector(
