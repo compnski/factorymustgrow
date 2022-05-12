@@ -1,5 +1,6 @@
 import { ProduceWithTracker } from "./AddProgressTracker";
 import { AvailableResearchList } from "./availableResearch";
+import { ReadonlyItemBuffer, ReadonlyResearchState } from "./factoryGameState";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { GetResearch } from "./gen/research";
 import { ReadonlyFixedInventory } from "./inventory";
@@ -7,7 +8,6 @@ import { StackCapacity } from "./movement";
 import { StateVMAction } from "./state/action";
 import { BuildingAddress } from "./state/address";
 import { NewEntityStack, Recipe, Research } from "./types";
-import { ReadonlyItemBuffer, ReadonlyResearchState } from "./factoryGameState";
 
 export type Lab = {
   kind: "Lab";
@@ -15,7 +15,7 @@ export type Lab = {
   RecipeId: string;
   ProducerType: string;
   inputBuffers: ReadonlyItemBuffer;
-  outputBuffers: ReadonlyItemBuffer; //ResearchOutput;
+  outputBuffers: ResearchOutput;
   BuildingCount: number;
   progressTrackers: Readonly<number[]>;
 };
@@ -110,6 +110,23 @@ export function IsResearchComplete(
   return false;
 }
 
+export function setLabResearch(
+  lab: Lab,
+  researchId: string,
+  progress: number
+): Lab {
+  const maxProgress = GetResearch(researchId).ProductionRequiredForCompletion;
+  return {
+    ...lab,
+    RecipeId: researchId,
+    outputBuffers: (lab.outputBuffers as ResearchOutput).SetResearch(
+      researchId,
+      progress,
+      maxProgress
+    ),
+  };
+}
+
 export function ResearchInLab(
   currentTick: number,
   labAddress: BuildingAddress,
@@ -118,10 +135,11 @@ export function ResearchInLab(
   dispatch: (a: StateVMAction) => void,
   GetResearch: (s: string) => Research
 ): number {
-  const currentResearchId = (l.RecipeId = researchState.CurrentResearchId);
+  // TODO: Fix. Need to properly set state?
+
+  const currentResearchId = researchState.CurrentResearchId;
   if (!l.RecipeId) {
-    if (!l.outputBuffers.Accepts("")) {
-      console.log(l.progressTrackers);
+    if (l.outputBuffers.researchId != "") {
       // TODO: We should clear all progress trackers and refund resources (from previous recipe if possible, but i dont think we know it anymore here)
       dispatch({
         kind: "AddItemCount",
@@ -158,7 +176,9 @@ export function ResearchInLab(
     building: l,
     maxTriggersAdded: remainingResearchProgress,
   });
-  if (!actualProduction) return 0;
+
+  if (!actualProduction && (l.outputBuffers as ResearchOutput).researchId)
+    return 0;
 
   dispatch({
     kind: "AddResearchCount",

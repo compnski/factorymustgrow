@@ -46,7 +46,6 @@ export const GameDispatch = (
       break;
 
     case "Reset":
-      //ResetGameState();
       dispatch({ kind: "Reset" });
       window.scrollTo(0, 0);
       break;

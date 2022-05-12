@@ -5,6 +5,7 @@ import { debugFactoryGameState } from "./debug";
 import {
   FactoryGameState,
   initialFactoryGameState,
+  ReadonlyBuilding,
   ReadonlyBuildingSlot,
   ReadonlyRegion,
   ResearchState,
@@ -14,6 +15,7 @@ import { ReadonlyInventory } from "./inventory";
 import { loadStateFromLocalStorage } from "./localstorage";
 import { StackCapacity } from "./movement";
 import { Extractor, Factory, UpdateBuildingRecipe } from "./production";
+import { Lab, ResearchOutput, setLabResearch } from "./research";
 import {
   AddItemAction,
   AddMainBusLaneAction,
@@ -117,7 +119,6 @@ export function applyStateChangeActions(
     } catch (e) {
       console.error("Error during VM execution. Rolling back all actions", e);
       throw action.error || e;
-      //return gs;
     }
   }
   return state;
@@ -138,10 +139,7 @@ function applyStateChangeAction(
         Research: stateChangeAddResearchCount(state.Research, action),
       };
     case "SetCurrentResearch":
-      return {
-        ...state,
-        Research: stateChangeSetCurrentResearch(state.Research, action),
-      };
+      return stateChangeSetCurrentResearch(state, action);
     case "AddItemCount":
       return stateChangeAddItemCount(state, action);
     case "AddProgressTrackers":
@@ -409,13 +407,34 @@ function stateChangePlaceBuilding(
   };
 }
 
+function isLab(b: ReadonlyBuilding): b is Lab {
+  return b.kind == "Lab";
+}
+
 function stateChangeSetCurrentResearch(
-  state: ResearchState,
+  state: FactoryGameState,
   action: SetCurrentResearchAction
-): ResearchState {
+): FactoryGameState {
+  const Regions = state.Regions.map((region) => ({
+    ...region,
+    BuildingSlots: region.BuildingSlots.map((slot) => {
+      const b = slot.Building;
+      return {
+        ...slot,
+        Building: isLab(b)
+          ? setLabResearch(
+              b,
+              action.researchId,
+              state.Research.Progress.get(action.researchId, { Count: 0 }).Count
+            )
+          : slot.Building,
+      };
+    }),
+  }));
   return {
     ...state,
-    CurrentResearchId: action.researchId,
+    Regions,
+    Research: { ...state.Research, CurrentResearchId: action.researchId },
   };
 }
 
