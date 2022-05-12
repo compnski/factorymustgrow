@@ -565,7 +565,7 @@ function decreaseBuildingCount(
     dispatch({
       kind: "AddProgressTrackers",
       address: action,
-      count: -b.BuildingCount - newCount,
+      count: newCount - b.BuildingCount,
       currentTick: 0,
     });
 }
