@@ -3,6 +3,8 @@ import { ReadonlyBuilding } from "../factoryGameState";
 import { entityIconLookupByKind } from "../utils";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import "./BuildingCard.scss";
+import { MaybeGetRecipe } from "../gen/entities";
+import { ProgressBar } from "./ProgressBar";
 
 const ProducerIcon = (p: { subkind: string }): string => p.subkind;
 
@@ -20,6 +22,8 @@ export function RocketSiloCard({
   uxDispatch,
 }: RocketSiloCardProps) {
   const readyToLaunch = building.outputBuffers.Count("rocket-part") >= 100;
+  const recipe = MaybeGetRecipe(building.RecipeId || "");
+
   // TODO: 'Launch in Progress' text while launching
   const buildingTitle = readyToLaunch
     ? "Rocket ready to Launch"
@@ -34,6 +38,10 @@ export function RocketSiloCard({
         </div>
 
         <span className={`icon ${ProducerIcon(building)}`} />
+        <ProgressBar
+          progressTrackers={building.progressTrackers || []}
+          durationSeconds={recipe?.DurationSeconds}
+        />
       </div>
       <div className="bottom-area">
         <div

@@ -11,6 +11,8 @@ import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import "./BuildingCard.scss";
 import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
 import { showChangeProducerRecipeSelector } from "./selectors";
+import { GetRecipe, MaybeGetRecipe } from "../gen/entities";
+import { ProgressBar } from "./ProgressBar";
 
 const ProducerIcon = (p: { subkind: string }): string => p.subkind;
 
@@ -42,6 +44,7 @@ export function ProducerCard({
   const generalDialog = useGeneralDialog();
 
   let recipeInput: ReadonlyItemBuffer = producer.inputBuffers;
+  const recipe = MaybeGetRecipe(producer.RecipeId || "");
 
   if (producer.kind === "Extractor" && producer.inputBuffers) {
     recipeInput = new ReadonlyInventory(Infinity, undefined);
@@ -93,6 +96,10 @@ export function ProducerCard({
               regionId,
             })
           }
+        />
+        <ProgressBar
+          progressTrackers={producer.progressTrackers || []}
+          durationSeconds={recipe?.DurationSeconds}
         />
       </div>
       <div className="bottom-area">

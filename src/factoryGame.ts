@@ -58,7 +58,7 @@ export async function UpdateGameState(
     if (IsResearchComplete(gameState.Research)) {
       console.log("Research Complete!");
       dispatch({ kind: "SetCurrentResearch", researchId: "" });
-      await showResearchSelector(generalDialog, uxDispatch, gameState.Research);
+      void showResearchSelector(generalDialog, uxDispatch, gameState.Research);
     }
   } catch (e) {
     //TODO Show error dialog

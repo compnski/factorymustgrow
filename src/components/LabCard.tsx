@@ -9,6 +9,7 @@ import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import "./BuildingCard.scss";
 import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
 import { showResearchSelector } from "./selectors";
+import { ProgressBar } from "./ProgressBar";
 
 const ProducerIcon = (p: { subkind: string }): string => p.subkind;
 
@@ -36,8 +37,11 @@ export function LabCard({
   const currentResearchId = researchState.CurrentResearchId,
     currentResearchProgress =
       researchState.Progress.get(currentResearchId)?.Count || 0,
-    maxProgress = currentResearchId
-      ? GetResearch(currentResearchId).ProductionRequiredForCompletion
+    currentResearch = currentResearchId
+      ? GetResearch(currentResearchId)
+      : undefined,
+    maxProgress = currentResearch
+      ? currentResearch.ProductionRequiredForCompletion
       : 1;
 
   const outputBuffers = ReadonlyFixedInventory([
@@ -81,8 +85,11 @@ export function LabCard({
             })
           }
         />
+        <ProgressBar
+          progressTrackers={building.progressTrackers || []}
+          durationSeconds={currentResearch?.DurationSeconds}
+        />
       </div>
-
       <div className="bottom-area">
         <BuildingBufferDisplay
           inputBuffers={building.inputBuffers}

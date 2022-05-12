@@ -115,7 +115,9 @@ export function setLabResearch(
   researchId: string,
   progress: number
 ): Lab {
-  const maxProgress = GetResearch(researchId).ProductionRequiredForCompletion;
+  const maxProgress = researchId
+    ? GetResearch(researchId).ProductionRequiredForCompletion
+    : 0;
   return {
     ...lab,
     RecipeId: researchId,
