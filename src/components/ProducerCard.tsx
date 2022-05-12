@@ -1,18 +1,18 @@
-import { GameAction } from "../GameAction";
-import { useGeneralDialog } from "../GeneralDialogProvider";
-import { ReadonlyInventory } from "../inventory";
 import {
   ReadonlyBuilding,
   ReadonlyItemBuffer,
   ReadonlyResearchState,
 } from "../factoryGameState";
+import { GameAction } from "../GameAction";
+import { MaybeGetRecipe } from "../gen/entities";
+import { useGeneralDialog } from "../GeneralDialogProvider";
+import { ReadonlyInventory } from "../inventory";
 import { entityIconLookupByKind } from "../utils";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import "./BuildingCard.scss";
 import { CounterWithPlusMinusButtons } from "./CounterWithPlusMinusButtons";
-import { showChangeProducerRecipeSelector } from "./selectors";
-import { GetRecipe, MaybeGetRecipe } from "../gen/entities";
 import { ProgressBar } from "./ProgressBar";
+import { showChangeProducerRecipeSelector } from "./selectors";
 
 const ProducerIcon = (p: { subkind: string }): string => p.subkind;
 

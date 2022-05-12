@@ -5,7 +5,6 @@ import "./InventoryDisplay.scss";
 
 export type InventoryDisplayProps = {
   inventory: ReadonlyItemBuffer;
-  showProgressBar?: boolean;
   entityIconLookup?: (entity: string) => string;
   addClickHandler?: (entity: string) => void;
   remClickHandler?: (entity: string) => void;
@@ -19,7 +18,6 @@ function InventorySlot({
   isOverCapacity,
   addClickHandler,
   remClickHandler,
-  progress,
   entityIconLookup = (entity: string): string => entity,
 }: {
   entity: string;
@@ -28,7 +26,6 @@ function InventorySlot({
   entityIconLookup?: (entity: string) => string;
   addClickHandler?: (s: string) => void;
   remClickHandler?: (s: string) => void;
-  progress?: number;
   debugPrint?: boolean;
 }) {
   //if (debugPrint) console.log(entity, entityIconLookup(entity));
@@ -39,11 +36,7 @@ function InventorySlot({
       }`}
       title={entity}
     >
-      <progress
-        max={1}
-        value={progress ?? 0}
-        className={`icon ${entityIconLookup(entity)}`}
-      />
+      <div className={`icon ${entityIconLookup(entity)}`} />
       <div className="item-stack-count-text">
         <span>{formatCountForDisplay(count)}</span>
       </div>
@@ -90,7 +83,6 @@ export function InventoryDisplay({
   inventory,
   addClickHandler,
   remClickHandler,
-  showProgressBar,
   entityIconLookup = (entity: string): string => entity,
   debugPrint,
   infiniteStackSize,
@@ -118,7 +110,6 @@ export function InventoryDisplay({
       slots.push(<div key={i} className="inventory-slot" />);
     } else {
       const [entity, count] = slotData;
-      const progress = showProgressBar ? count % 1 : 0;
       slots.push(
         <InventorySlot
           debugPrint={debugPrint}
@@ -129,7 +120,6 @@ export function InventoryDisplay({
           isOverCapacity={i >= inventory.Capacity}
           entity={entity}
           count={count}
-          progress={progress}
         />
       );
     }
