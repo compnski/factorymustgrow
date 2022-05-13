@@ -1,0 +1,9 @@
+name = "my-worker"
+main = "src/index.ts"
+workers_dev = true
+compatibility_date = "2022-05-13"
+kv_namespaces = [{ binding = "FACTORY_KV", preview_id = "d53df77db2174a22ba779e559bd31299", id = "d53df77db2174a22ba779e559bd31299" }
+]
+
+[env.production]
+ kv_namespaces = [{ binding = "FACTORY_KV", id = "3f79d0d9cf4b4bfd86d399acb4e03d45" }]
