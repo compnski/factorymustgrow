@@ -63,7 +63,6 @@ export function BuildingBufferDisplay({
           inventory={outputBuffers}
           addClickHandler={(outputInteractable && addClickHandler) || undefined}
           remClickHandler={(outputInteractable && remClickHandler) || undefined}
-          showProgressBar={true}
           entityIconLookup={entityIconLookup}
           debugPrint={debugPrint}
           infiniteStackSize={infiniteStackSize}
