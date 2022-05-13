@@ -4,7 +4,6 @@
 *** MainBus makes fan spin up (SVG animation?) Can disable gpu?
 *** Names sometime still too long "courageous ram"
 *** Plastic production seems hard to scale up, maybe oil issues?
-*** Pop-up recipe selector after placing building
 *** Research dialog overwrites any existing dialog
 *** Better re-arranging? (Maybe with research)
 *** Can't build rocket silo, factory doesn't fit enough resources
@@ -23,11 +22,8 @@
 ** Better UI for deleting belt lines
 ** Save progress during upgrades?
 *** Offer to save progress during upgrades if possible
-** Fix factories producing partial goods
-*** TODO figure out progress bar
+* BeltLine
 *** Update belt lines to use Progress Trackers
-** BeltLine
-*** Delete from both regions and refund all when deleting
 *** Only connect directly adjacent regions?
 *** Maybe some way to increase throughput?
 *** Some better visibility of contents

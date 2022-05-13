@@ -38,8 +38,9 @@ export function EmptyLaneCard(props: {
               props.buildingIdx,
               props.regions
             );
+            if (!item) return;
             const producerType = ProducerTypeFromEntity(item);
-            if (producerType == "Assembler" || producerType == "Miner")
+            if (shouldShowRecipeSelector(producerType))
               void showChangeProducerRecipeSelector(
                 producerType,
                 props.regionId,
@@ -56,5 +57,15 @@ export function EmptyLaneCard(props: {
         </div>
       </div>
     </div>
+  );
+}
+
+function shouldShowRecipeSelector(producerType: string): boolean {
+  return (
+    producerType == "Assembler" ||
+    producerType == "Miner" ||
+    producerType == "ChemPlant" ||
+    producerType == "Refinery" ||
+    producerType == "Smelter"
   );
 }

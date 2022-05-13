@@ -15,7 +15,7 @@ import { ReadonlyInventory } from "./inventory";
 import { loadStateFromLocalStorage } from "./localstorage";
 import { StackCapacity } from "./movement";
 import { Extractor, Factory, UpdateBuildingRecipe } from "./production";
-import { Lab, ResearchOutput, setLabResearch } from "./research";
+import { Lab, setLabResearch } from "./research";
 import {
   AddItemAction,
   AddMainBusLaneAction,
