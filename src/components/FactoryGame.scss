@@ -8,6 +8,18 @@ body {
   margin: 0 auto 5px;
 }
 
+.cursor-pointer {
+      cursor: pointer;
+}
+
+.cursor-grab {
+      cursor: grab;
+}
+
+.disabled {
+  opacity: .5;
+}
+
 .factory-game {
   font-size: 0;
   background-color: $bgColor;

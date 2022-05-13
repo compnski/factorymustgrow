@@ -36,7 +36,12 @@ export const BuildingCard = ({
   handleDrop,
   moveUp,
   moveDown,
-  region: { Id: regionId, Ore: regionalOre, Bus: regionalBus },
+  region: {
+    Id: regionId,
+    Ore: regionalOre,
+    Bus: regionalBus,
+    BuildingSlots: buildingSlots,
+  },
   uxDispatch,
   gameState,
 }: BuildingCardProps) => {
@@ -85,7 +90,6 @@ export const BuildingCard = ({
       buildingIdx: buildingIdx,
     });
   };
-
   const card =
     building.kind === "BeltLineDepot" ? (
       <BeltLineCard
@@ -147,11 +151,14 @@ export const BuildingCard = ({
       uxDispatch={uxDispatch}
     />
   ));
+  const isEmpty = building.kind === "Empty";
+  const canGoUp = !isEmpty && buildingIdx > 0;
+  const canGoDown = !isEmpty && buildingIdx < buildingSlots.length - 1;
   return (
     <div className="producer-card-container">
       <div
         className={`producer-card kind-${building.kind}`}
-        draggable={building.kind !== "Empty" && dragging}
+        draggable={!isEmpty && dragging}
         id={`b-${buildingIdx}`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -165,14 +172,33 @@ export const BuildingCard = ({
           onTouchStart={() => setDragging(true)}
           onTouchEnd={() => setDragging(false)}
         >
-          <span onClick={moveUp} className="material-icons arrow">
+          <span
+            onClick={moveUp}
+            className={`material-icons arrow ${
+              canGoUp ? "cursor-pointer" : "disabled"
+            }`}
+          >
             arrow_upward
           </span>
-          <span className="material-icons">reorder</span>
-          <span onClick={moveDown} className="material-icons arrow">
+          <span
+            className={`material-icons ${isEmpty ? "disabled" : "cursor-grab"}`}
+          >
+            reorder
+          </span>
+          <span
+            onClick={moveDown}
+            className={`material-icons arrow  ${
+              canGoDown ? "cursor-pointer" : "disabled"
+            }`}
+          >
             arrow_downward
           </span>
-          <span onDoubleClick={removeBuilding} className="material-icons">
+          <span
+            onDoubleClick={removeBuilding}
+            className={`material-icons ${
+              isEmpty ? "disabled" : "cursor-pointer"
+            }`}
+          >
             close
           </span>
         </div>
