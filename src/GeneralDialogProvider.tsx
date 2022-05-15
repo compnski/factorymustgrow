@@ -1,5 +1,6 @@
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import React from "react";
+import { IWithShortcut, withShortcut } from "react-keybind";
 
 const GeneralDialogContext = React.createContext<{
   openGeneralDialog(c: GeneralDialogConfig): void;
@@ -19,11 +20,12 @@ export type GeneralDialogConfig = {
   ) => JSX.Element;
 };
 
-export const GeneralDialogProvider = ({
+const GeneralDialogProviderWithShortcut = ({
   children,
+  shortcut,
 }: {
   children: JSX.Element;
-}) => {
+} & IWithShortcut) => {
   const [generalDialogConfig, setGeneralDialogConfig] =
     useState<GeneralDialogConfig>({
       title: "",
@@ -48,20 +50,32 @@ export const GeneralDialogProvider = ({
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onConfirm = (evt: SyntheticEvent, ...returnData: any) => {
+  const onConfirm = (
+    evt: SyntheticEvent | KeyboardEvent | undefined,
+    ...returnData: any
+  ) => {
     resetGeneralDialog();
     generalDialogConfig.actionCallback &&
       generalDialogConfig.actionCallback(returnData);
   };
 
-  /* const onDismiss = (evt: SyntheticEvent) => {
-   *   resetGeneralDialog();
-   *   iconSelectorConfig.actionCallback &&
-   *     iconSelectorConfig.actionCallback(evt, false);
-   * };
-   */
   const dialog =
     generalDialogConfig.component && generalDialogConfig.component(onConfirm);
+
+  useEffect(() => {
+    if (shortcut && shortcut.registerShortcut) {
+      shortcut.registerShortcut(
+        onConfirm,
+        ["escape"],
+        "Escape",
+        "Cancel Action"
+      );
+      return () => {
+        if (shortcut.unregisterShortcut) shortcut.unregisterShortcut(["esc"]);
+      };
+    }
+  }, []);
+
   return (
     <GeneralDialogContext.Provider value={{ openGeneralDialog }}>
       {children}
@@ -88,3 +102,7 @@ export const useGeneralDialog = (): ((
 
   return getConfirmation;
 };
+
+export const GeneralDialogProvider = withShortcut(
+  GeneralDialogProviderWithShortcut
+);
