@@ -14,6 +14,7 @@ import { PlaceBeltLinePanel } from "./PlaceBeltLinePanel";
 import { RecipeSelector } from "./RecipeSelector";
 import { RegionSelector } from "./RegionSelector";
 import { SelectResearchPanel } from "./SelectResearchPanel";
+import { SaveCard } from "./SaveCard";
 
 async function showIconSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
@@ -227,5 +228,14 @@ export async function showHelpCard(
   await showDialog({
     title: "Help",
     component: (onConfirm) => <HelpCard onConfirm={onConfirm} />,
+  });
+}
+
+export async function showSaveCard(
+  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>
+): Promise<void> {
+  await showDialog({
+    title: "Save",
+    component: (onConfirm) => <SaveCard onConfirm={onConfirm} />,
   });
 }
