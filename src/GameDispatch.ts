@@ -753,11 +753,15 @@ function ReorderBuildings(
   },
   region: { Id: string; BuildingSlots: ReadonlyBuildingSlot[] }
 ) {
-  dispatch({
-    kind: "SwapBuildings",
-    address: { regionId, buildingIdx },
-    moveToAddress: { regionId, buildingIdx: dropBuildingIdx },
-  });
+  if (
+    dropBuildingIdx != buildingIdx &&
+    dropBuildingIdx < region.BuildingSlots.length - 1
+  )
+    dispatch({
+      kind: "SwapBuildings",
+      address: { regionId, buildingIdx },
+      moveToAddress: { regionId, buildingIdx: dropBuildingIdx },
+    });
   fixInserters(dispatch, region);
 }
 
