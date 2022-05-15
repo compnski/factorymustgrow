@@ -9,6 +9,9 @@ import { FactoryGameState } from "../factoryGameState";
 
 import "./CommentsForm.scss";
 
+const backendUrl =
+  "https://factorymustgrow-production.factorymustgrow.workers.dev";
+
 type CommentsFormProps = {
   gameState: FactoryGameState;
 };
@@ -43,20 +46,16 @@ export function CommentsForm(props: CommentsFormProps) {
   async function sendFeedback(evt: FormEvent) {
     evt.preventDefault();
     console.log("sending feedback");
-    const resp = await fetch(
-      "https://my-worker-production.factorymustgrow.workers.dev/",
-      {
-        method: "POST",
-        mode: "no-cors",
-        body: JSON.stringify({
-          comment: commentText,
-          state: checked ? props.gameState : {},
-          userName: "",
-          userEmail: emailText,
-          feeling: "N/A",
-        }),
-      }
-    );
+    const resp = await fetch(backendUrl, {
+      method: "POST",
+      body: JSON.stringify({
+        comment: commentText,
+        state: checked ? props.gameState : {},
+        userName: "",
+        userEmail: emailText,
+        feeling: "N/A",
+      }),
+    });
     console.log(resp);
     setCommentText("");
     setFormOpen(false);

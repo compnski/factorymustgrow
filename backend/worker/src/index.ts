@@ -8,6 +8,12 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
+  "Access-Control-Max-Age": "86400",
+};
+
 type SaveStateRequest = {
   stateJson: string;
   stateName: string;
@@ -40,6 +46,7 @@ type Env = {
 };
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    const url = new URL(request.url);
     const body = await request.json();
     if (isCommentRequest(body)) {
       await saveComment(env, body);
@@ -47,7 +54,10 @@ export default {
     if (isSaveStateRequest(body)) {
       await saveState(env, body);
     }
-    return new Response(JSON.stringify({ status: "ok" }));
+    const r = new Response(JSON.stringify({ status: "ok" }));
+    r.headers.set("Access-Control-Allow-Origin", "*");
+    r.headers.append("Vary", "Origin");
+    return r;
   },
 };
 
