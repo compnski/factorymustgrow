@@ -4,6 +4,7 @@ import { NewBuildingSlot } from "../building";
 import { FactoryGameState, ReadonlyResearchState } from "../factoryGameState";
 import { ReactComponent as HelpOverlay } from "../helpTemplate.svg";
 import { ImmutableMap } from "../immutable";
+import { NewInserter } from "../inserter";
 import { ReadonlyInventory } from "../inventory";
 import { NewExtractorForRecipe, NewFactoryForRecipe } from "../production";
 import { GetRegionInfo } from "../region";
@@ -48,44 +49,36 @@ function buildHelpRegion() {
     10
   );
 
+  helpRegion.Bus = helpRegion.Bus.AddLane("iron-plate", 10);
+  helpRegion.Bus = helpRegion.Bus.AddLane("transport-belt", 10);
+
   helpRegion.BuildingSlots = [
-    NewBuildingSlot(miner),
-    NewBuildingSlot(smelter),
-    NewBuildingSlot(assembler),
-    NewBuildingSlot(assembler2),
+    NewBuildingSlot(miner, 3, NewInserter(1, "DOWN")),
+    NewBuildingSlot(
+      smelter,
+      [
+        {
+          Inserter: NewInserter(1, "TO_BUS"),
+          laneId: 1,
+        },
+        { Inserter: NewInserter(), laneId: undefined },
+        { Inserter: NewInserter(), laneId: undefined },
+      ],
+      NewInserter(1, "DOWN")
+    ),
+    NewBuildingSlot(assembler, 3, NewInserter(1, "DOWN")),
+    NewBuildingSlot(assembler2, [
+      {
+        Inserter: NewInserter(1, "FROM_BUS"),
+        laneId: 1,
+      },
+      {
+        Inserter: NewInserter(1, "TO_BUS"),
+        laneId: 2,
+      },
+      { Inserter: NewInserter(), laneId: undefined },
+    ]),
   ];
-
-  // TODO: Set up inserters
-  // TODO: Set up main bus
-
-  /*
-   *     [minerSlot, smelterSlot, assemblerSlot].forEach((s) => {
-   *            s.Inserter.direction = "DOWN";
-   *            s.Inserter.BuildingCount = 1;
-   *     });
-   *  */
-  /*
-   *   const plateLaneId = helpRegion.Bus.AddLane("iron-plate", 10);
-   *   let bc = smelterSlot.BeltConnections[0];
-   *   bc.direction = "TO_BUS";
-   *   bc.Inserter.direction = "TO_BUS";
-   *   bc.Inserter.BuildingCount = 1;
-   *   bc.laneId = plateLaneId;
-   *
-   *   const beltLaneId = helpRegion.Bus.AddLane("transport-belt", 10);
-   *
-   *   bc = assemblerSlot2.BeltConnections[0];
-   *   bc.direction = "FROM_BUS";
-   *   bc.Inserter.direction = "FROM_BUS";
-   *   bc.Inserter.BuildingCount = 1;
-   *   bc.laneId = plateLaneId;
-   *
-   *   bc = assemblerSlot2.BeltConnections[1];
-   *   bc.direction = "TO_BUS";
-   *   bc.Inserter.direction = "TO_BUS";
-   *   bc.Inserter.BuildingCount = 1;
-   *   bc.laneId = beltLaneId;
-   *  */
 
   return helpRegion;
 }

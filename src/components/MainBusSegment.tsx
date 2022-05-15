@@ -51,7 +51,7 @@ const getPathEnd = (
   return p;
 };
 
-const beltAnimationDuration = "4s";
+const beltAnimationDuration = "0s";
 
 export function MainBusSegment({
   mainBus,

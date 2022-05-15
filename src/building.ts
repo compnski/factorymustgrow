@@ -70,19 +70,23 @@ export function findFirstEmptyLane(
 
 export function NewBuildingSlot(
   Building: Building,
-  numBeltConnections = 3
+  numBeltConnections: number | BeltConnection[] = 3,
+  inserter = NewInserter()
 ): BuildingSlot {
-  const belts = [...Array(numBeltConnections)].map<BeltConnection>(
-    (): BeltConnection => {
-      return {
-        Inserter: NewInserter(),
-        laneId: undefined,
-      };
-    }
-  );
+  const belts =
+    typeof numBeltConnections == "number"
+      ? [...Array(numBeltConnections)].map<BeltConnection>(
+          (): BeltConnection => {
+            return {
+              Inserter: NewInserter(),
+              laneId: undefined,
+            };
+          }
+        )
+      : numBeltConnections;
   return {
     Building,
-    Inserter: NewInserter(),
+    Inserter: inserter,
     BeltConnections: belts,
   };
 }
