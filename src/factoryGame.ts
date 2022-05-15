@@ -143,10 +143,12 @@ function UpdateGameStateForRegion(
         region.BuildingSlots[idx + 1].Building
       );
     gameState = executeActions(gameState);
+    region = GetRegion(gameState, regionId);
   }
 
-  region = GetRegion(gameState, regionId);
-  region.BuildingSlots.forEach((slot, idx) => {
+  region.BuildingSlots.forEach((_, idx) => {
+    region = GetRegion(gameState, regionId);
+    const slot = region.BuildingSlots[idx];
     const address = { regionId: region.Id, buildingIdx: idx };
     if (!region) throw new Error("Missing region");
     PushPullFromMainBus(dispatch, slot, region.Bus, address);

@@ -6,7 +6,7 @@ export const NewBusLane = (
   Entity: string,
   initialCount = 0
 ): ReadonlyItemBuffer => {
-  const inv = new ReadonlyInventory(1, ImmutableMap([[Entity, initialCount]]));
+  const inv = new ReadonlyInventory(1, ImmutableMap([[Entity, initialCount]]), true);
   return inv;
 };
 

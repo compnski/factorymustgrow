@@ -71,9 +71,10 @@ export const MainBusHeader = ({
   }
   const lanes = [];
   for (const entry of mainBus.lanes.entries()) {
-    const [laneId, lane] = entry,
-      entity = lane.Entities()[0][0],
-      count = lane.Count(entity);
+    const [laneId, lane] = entry;
+    const stack = lane.Entities();
+    const entity = stack.length && stack[0].length ? stack[0][0] : "";
+    const count = lane.Count(entity);
     lanes.push(
       <div
         onDoubleClick={(evt) =>
@@ -130,8 +131,9 @@ export const MainBusHeader = ({
             const laneX =
                 MainBusConst.laneOffset +
                 idx * (MainBusConst.laneWidth + MainBusConst.interLaneWidth),
-              segmentHeight = 66,
-              entity = lane.Entities()[0][0];
+              segmentHeight = 66;
+            const stack = lane.Entities();
+            const entity = stack.length && stack[0].length ? stack[0][0] : "";
 
             return (
               <polyline

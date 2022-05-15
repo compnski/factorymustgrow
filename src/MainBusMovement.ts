@@ -46,7 +46,7 @@ export function PushPullFromMainBus(
 
     switch (laneConnection.Inserter.direction) {
       case "TO_BUS":
-        return VMPushToOtherBuilding(
+        VMPushToOtherBuilding(
           dispatch,
           { ...address, buffer: "output" },
           building,
@@ -54,9 +54,10 @@ export function PushPullFromMainBus(
           { inputBuffers: mb.Lane(laneConnection.laneId) },
           maxTransferred
         );
+        break;
 
       case "FROM_BUS":
-        return VMPushToOtherBuilding(
+        VMPushToOtherBuilding(
           dispatch,
           { regionId: address.regionId, laneId: laneConnection.laneId },
           { outputBuffers: mb.Lane(laneConnection.laneId) },

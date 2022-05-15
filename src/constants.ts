@@ -1,1 +1,1 @@
-export const TicksPerSecond = 2;
+export const TicksPerSecond = 4;

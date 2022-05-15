@@ -76,48 +76,50 @@ export function MainBusSegment({
     const laneX =
       MainBusConst.laneOffset +
       idx * (MainBusConst.laneWidth + MainBusConst.interLaneWidth);
-    laneIdxByBeltId[laneId] = idx;
-    const entity = lane.Entities()[0][0],
-      iconName = entityIconLookup(entity);
-    lanes.push(
-      <g key={`lane${laneId}`}>
-        <polyline
-          x={laneX}
-          fill="#3F4952"
-          stroke="#222"
-          onDoubleClick={() => busLaneClicked(laneId, entity)}
-          filter="url(#dropshadowSide)"
-          points={`${laneX},0 ${laneX},${segmentHeight + 2} ${
+      laneIdxByBeltId[laneId] = idx;
+      const stack = lane.Entities();
+      const entity = stack.length && stack[0].length ? stack[0][0] : "";
+      if(!entity) return (<></>)
+      const iconName = entityIconLookup(entity);
+      lanes.push(
+          <g key={`lane${laneId}`}>
+              <polyline
+                  x={laneX}
+                  fill="#3F4952"
+                  stroke="#222"
+                  onDoubleClick={() => busLaneClicked(laneId, entity)}
+                  filter="url(#dropshadowSide)"
+                  points={`${laneX},0 ${laneX},${segmentHeight + 2} ${
             laneX + MainBusConst.laneWidth
           },${segmentHeight + 2} ${laneX + MainBusConst.laneWidth},0`}
-        >
-          <title>{entity}</title>
-        </polyline>
-        {Icon(iconName)}
-        <use href={`#${iconName}`} width="16" height="16" x={laneX + 4} y={0}>
-          <animateTransform
-            attributeName="transform"
-            type="translate"
-            from={`0 0`}
-            to={`0 ${segmentHeight}`}
-            begin="0s"
-            dur={beltAnimationDuration}
-            repeatCount="indefinite"
-          />
-        </use>
-        <use href={`#${entity}`} width="16" height="16" x={laneX + 4} y={0}>
-          <animateTransform
-            attributeName="transform"
-            type="translate"
-            from={`0 ${-segmentHeight}`}
-            to={`0 0`}
-            begin="0s"
-            dur={beltAnimationDuration}
-            repeatCount="indefinite"
-          />
-        </use>
-      </g>
-    );
+              >
+                  <title>{entity}</title>
+              </polyline>
+              {Icon(iconName)}
+              <use href={`#${iconName}`} width="16" height="16" x={laneX + 4} y={0}>
+                  <animateTransform
+                      attributeName="transform"
+                      type="translate"
+                      from={`0 0`}
+                      to={`0 ${segmentHeight}`}
+                      begin="0s"
+                      dur={beltAnimationDuration}
+                      repeatCount="indefinite"
+                  />
+              </use>
+              <use href={`#${entity}`} width="16" height="16" x={laneX + 4} y={0}>
+                  <animateTransform
+                      attributeName="transform"
+                      type="translate"
+                      from={`0 ${-segmentHeight}`}
+                      to={`0 0`}
+                      begin="0s"
+                      dur={beltAnimationDuration}
+                      repeatCount="indefinite"
+                  />
+              </use>
+          </g>
+      );
     idx++;
   }
 
