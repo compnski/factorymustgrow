@@ -1,0 +1,36 @@
+.comments-form {
+  position: fixed;
+  right: 0;
+  height: 30px;
+  width: 200px;
+  bottom: 0;
+  background: orange;
+  padding: 0 6px;
+
+  label {
+    font-size: 12px;
+    padding: 2px;
+    display: inline-block;
+  }
+  .title {
+    text-align: center;
+    font-size: 22px;
+    line-height: 24px;
+    padding: 6px;
+    color: #22a;
+    .material-icons {
+      font-size: 18px;
+      vertical-align: baseline;
+    }
+  }
+  .form {
+    visibility: hidden;
+  }
+}
+
+.comments-form.open {
+  height: 200px;
+  .form {
+    visibility: visible;
+  }
+}

@@ -18,6 +18,7 @@ import { InventoryDisplay } from "./InventoryDisplay";
 import { MainBusHeader } from "./MainBusHeader";
 import { RegionTabBar } from "./RegionTabBar";
 import { showHelpCard } from "./selectors";
+import { CommentsForm } from "./CommentsForm";
 
 export const FactoryGame = (props: ReturnType<typeof getDispatchFunc>) => {
   const { gameState, dispatch, executeActions } = props;
@@ -100,6 +101,7 @@ export const FactoryGame = (props: ReturnType<typeof getDispatchFunc>) => {
           researchState={researchState}
           uxDispatch={uxDispatch}
         />
+        <CommentsForm gameState={gameState} />
       </div>
     );
   } catch (e: unknown) {
