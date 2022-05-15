@@ -15,7 +15,7 @@ const Regions = new Map<string, RegionInfo>([
     "region0",
     {
       Id: "region0",
-      LaneCount: 12,
+      LaneCount: 15,
       LaneSize: 50,
       MainBusCount: 10,
       Cost: [],

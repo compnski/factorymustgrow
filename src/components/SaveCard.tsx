@@ -26,11 +26,8 @@ export const SaveCard = function HelpCard({ onConfirm }: SaveCardProps) {
           close
         </span>
         <div className="help-text">
-          <div>Goal: Launch a rocket!</div>
-          <div style={{ fontSize: 16 }}>
-            Build a lab to research technologies and expand what your factory
-            can produce.
-          </div>
+          <div>Cloud Saves!</div>
+          <div style={{ fontSize: 16 }}>TBD</div>
         </div>
         <div className="inner-content"></div>
       </div>

@@ -51,7 +51,7 @@ export interface ReadonlyRegion {
   readonly BuildingSlots: ReadonlyBuildingSlot[];
 }
 
-export const CurrentGameStateVersion = "0.2.2";
+export const CurrentGameStateVersion = "0.2.3";
 
 export type ResearchState = {
   CurrentResearchId: string;
