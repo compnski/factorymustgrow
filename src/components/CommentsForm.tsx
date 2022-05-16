@@ -1,12 +1,5 @@
-import {
-  ChangeEvent,
-  FormEvent,
-  SyntheticEvent,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { FactoryGameState } from "../factoryGameState";
-
 import "./CommentsForm.scss";
 
 const backendUrl =

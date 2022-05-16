@@ -17,8 +17,9 @@ import { InfoHeader } from "./InfoHeader";
 import { InventoryDisplay } from "./InventoryDisplay";
 import { MainBusHeader } from "./MainBusHeader";
 import { RegionTabBar } from "./RegionTabBar";
-import { showHelpCard, showSaveCard } from "./selectors";
+import { showHelpCard, showSaveCard, showSettingCard } from "./selectors";
 import { CommentsForm } from "./CommentsForm";
+import { settings } from "../settings";
 
 export const FactoryGame = (props: ReturnType<typeof getDispatchFunc>) => {
   const { gameState, dispatch, executeActions } = props;
@@ -44,12 +45,19 @@ export const FactoryGame = (props: ReturnType<typeof getDispatchFunc>) => {
     const currentRegion = gameState.Regions.get(currentRegionId);
     const inventory = gameState.Inventory;
     const researchState = gameState.Research as ReadonlyResearchState;
+
     const showHelp = () => {
       void showHelpCard(generalDialog);
     };
+
     const showSaves = () => {
       void showSaveCard(generalDialog);
     };
+
+    const showSettings = () => {
+      void showSettingCard(generalDialog);
+    };
+
     const isRocketLaunching = gameState.RocketLaunchingAt > 0;
 
     const uxDispatch = (action: GameAction) => {
@@ -75,8 +83,14 @@ export const FactoryGame = (props: ReturnType<typeof getDispatchFunc>) => {
             inventory={inventory}
             setCurrentRegionId={setCurrentRegionId}
           />
-          <div onClick={showSaves} className="help-icon">
+          <div
+            onClick={showSaves}
+            className={`help-icon ${settings.cloudSaveEnabled ? "" : "hidden"}`}
+          >
             <span className="material-icons">save_as</span>
+          </div>
+          <div onClick={showSettings} className="help-icon">
+            <span className="material-icons">settings</span>
           </div>
           <div onClick={showHelp} className="help-icon">
             <span className="material-icons">help_outline</span>
