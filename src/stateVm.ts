@@ -131,8 +131,8 @@ function applyStateChangeAction(
   switch (action.kind) {
     case "Reset":
       return initialFactoryGameState();
-    case "ResetToDebugState":
-      return debugFactoryGameState();
+    case "ResetTo":
+      return action.state;
     case "AddResearchCount":
       return {
         ...state,

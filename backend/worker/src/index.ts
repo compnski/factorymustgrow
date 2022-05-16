@@ -47,6 +47,10 @@ type Env = {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+    if (isListSaveRequest(url)) {
+      return serveListSaveRequest(url);
+    }
+
     const body = await request.json();
     if (isCommentRequest(body)) {
       await saveComment(env, body);
@@ -78,4 +82,22 @@ function newKey({
   userName,
 }: Pick<SaveStateRequest, "stateName" | "userName">) {
   return `${userName}/${stateName}`;
+}
+
+function isListSaveRequest(url: URL) {
+  return url.pathname.endsWith("/states");
+}
+
+function serveListSaveRequest(url: URL): Response | PromiseLike<Response> {
+  const states = [
+    {
+      name: "Initial",
+      createdAt: new Date(Date.parse("2022-04-29")),
+      stateVersion: "0.2.3",
+    },
+  ];
+  const r = new Response(JSON.stringify(states));
+  r.headers.set("Access-Control-Allow-Origin", "*");
+  r.headers.append("Vary", "Origin");
+  return r;
 }

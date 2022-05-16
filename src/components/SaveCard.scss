@@ -1,0 +1,38 @@
+.save-card {
+  z-index: 10;
+  width: 100%;
+
+  .inner-frame {
+    padding: 10px;
+    height: 800px;
+    width: 1000px;
+    background: #222;
+    pointer-events: none;
+    border: 1px solid #ccc;
+  }
+  .help-text {
+    font-size: 24px;
+    color: #ccc;
+  }
+  .inner-content {
+    margin: 12px;
+    pointer-events: initial;
+
+    input {
+    }
+
+    color: #ccc;
+    .stateList li {
+      display: inline-block;
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  .close-icon {
+    color: #ccc;
+    border-color: #ccc;
+    pointer-events: all;
+  }
+}

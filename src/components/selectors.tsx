@@ -1,20 +1,20 @@
+import {
+  ReadonlyItemBuffer,
+  ReadonlyRegion,
+  ReadonlyResearchState,
+} from "../factoryGameState";
 import { GameAction } from "../GameAction";
 import { GetRecipe } from "../gen/entities";
 import { GeneralDialogConfig } from "../GeneralDialogProvider";
 import { ImmutableMap } from "../immutable";
 import { IsBuilding } from "../production";
 import { availableRecipes } from "../research";
-import {
-  ReadonlyItemBuffer,
-  ReadonlyRegion,
-  ReadonlyResearchState,
-} from "../factoryGameState";
 import { HelpCard } from "./HelpCard";
 import { PlaceBeltLinePanel } from "./PlaceBeltLinePanel";
 import { RecipeSelector } from "./RecipeSelector";
 import { RegionSelector } from "./RegionSelector";
-import { SelectResearchPanel } from "./SelectResearchPanel";
 import { SaveCard } from "./SaveCard";
+import { SelectResearchPanel } from "./SelectResearchPanel";
 
 async function showIconSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
@@ -234,8 +234,10 @@ export async function showHelpCard(
 export async function showSaveCard(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>
 ): Promise<void> {
-  await showDialog({
+  const stateToLoad = await showDialog({
     title: "Save",
     component: (onConfirm) => <SaveCard onConfirm={onConfirm} />,
   });
+  if (!stateToLoad) return;
+  console.log("Loading ", stateToLoad);
 }

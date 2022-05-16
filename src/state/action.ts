@@ -29,7 +29,9 @@ export type StateVMAction =
   | PlaceBeltLineAction
   | RemoveBeltLineAction;
 
-type ResetAction = { kind: "Reset" } | { kind: "ResetToDebugState" };
+type ResetAction =
+  | { kind: "Reset" }
+  | { kind: "ResetTo"; state: FactoryGameState };
 
 export type SetPropertyAction =
   | SetInserterPropertyAction

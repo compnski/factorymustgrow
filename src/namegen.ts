@@ -192,3 +192,9 @@ function randomElement<T>(items: T[]): T {
 export function randomName(): string {
   return `${randomElement(adjectives)} ${randomElement(animals)}`;
 }
+
+export function reallyRandomName(): string {
+  return `${randomElement(adjectives)} ${randomElement(
+    adjectives
+  )} ${randomElement(animals)}`;
+}
