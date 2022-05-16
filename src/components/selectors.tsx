@@ -15,6 +15,7 @@ import { RecipeSelector } from "./RecipeSelector";
 import { RegionSelector } from "./RegionSelector";
 import { SaveCard } from "./SaveCard";
 import { SelectResearchPanel } from "./SelectResearchPanel";
+import { SettingsCard } from "./SettingsCard";
 
 async function showIconSelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
@@ -240,4 +241,13 @@ export async function showSaveCard(
   });
   if (!stateToLoad) return;
   console.log("Loading ", stateToLoad);
+}
+
+export async function showSettingCard(
+  showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>
+): Promise<void> {
+  await showDialog({
+    title: "Setting",
+    component: (onConfirm) => <SettingsCard onConfirm={onConfirm} />,
+  });
 }

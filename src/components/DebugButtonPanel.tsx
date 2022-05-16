@@ -6,6 +6,7 @@ import { useState } from "react";
 import { availableItems } from "../research";
 import { ReadonlyResearchState } from "../factoryGameState";
 import { DebugInventory, DebugResearch } from "../debug";
+import { settings } from "../settings";
 
 export type DebugButtonPanelProps = {
   researchState: ReadonlyResearchState;
@@ -71,7 +72,10 @@ export function DebugButtonPanel({
     ];
 
   return (
-    <details className="debug-button-panel" open={isOpen}>
+    <details
+      className={`debug-button-panel ${settings.debugEnabled ? "" : "hidden"}`}
+      open={isOpen}
+    >
       <summary onClick={() => setOpen(!isOpen)}>Debug</summary>
       <div className="button-box">
         <ButtonPanel buttons={factoryButtons} />

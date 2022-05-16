@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { Icon } from "../gen/svgIcons";
 import { ReadonlyMainBus } from "../mainbus";
+import { settings } from "../settings";
 import { BeltConnection } from "../types";
 import { entityIconLookupByKind } from "../utils";
 import { MainBusConst } from "./uiConstants";
@@ -51,7 +53,7 @@ const getPathEnd = (
   return p;
 };
 
-const beltAnimationDuration = "0s";
+let beltAnimationDuration = "0s";
 
 export function MainBusSegment({
   mainBus,
@@ -70,6 +72,10 @@ export function MainBusSegment({
   let idx = 0;
   const laneIdxByBeltId: { [key: number]: number } = {};
   const entityIconLookup = entityIconLookupByKind("MainBus");
+
+  useEffect(() => {
+    beltAnimationDuration = settings.animatedEnabled ? "4s" : "0s";
+  }, [settings.animatedEnabled]);
 
   for (const [_laneId, lane] of mainBus.lanes.entries()) {
     const laneId = _laneId;

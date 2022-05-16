@@ -9,15 +9,19 @@ body {
 }
 
 .cursor-pointer {
-      cursor: pointer;
+  cursor: pointer;
 }
 
 .cursor-grab {
-      cursor: grab;
+  cursor: grab;
 }
 
 .disabled {
-  opacity: .5;
+  opacity: 0.5;
+}
+
+.hidden {
+  visibility: hidden;
 }
 
 .factory-game {
