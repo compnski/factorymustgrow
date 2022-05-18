@@ -10,7 +10,7 @@ import { ImmutableMap } from "../immutable";
 import { IsBuilding } from "../production";
 import { availableRecipes } from "../research";
 import { HelpCard } from "./HelpCard";
-import { PlaceBeltLinePanel } from "./PlaceBeltLinePanel";
+import { PlaceTruckLinePanel } from "./PlaceTruckLinePanel";
 import { RecipeSelector } from "./RecipeSelector";
 import { RegionSelector } from "./RegionSelector";
 import { SaveCard } from "./SaveCard";
@@ -125,7 +125,7 @@ export async function showPlaceBuildingSelector(
   ]);
 
   if (item === "transport-belt") {
-    await showPlaceBeltLineSelector(
+    await showPlaceTruckLineSelector(
       showDialog,
       uxDispatch,
       inventory,
@@ -165,7 +165,7 @@ export async function showResearchSelector(
   }
 }
 
-export async function showPlaceBeltLineSelector(
+export async function showPlaceTruckLineSelector(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
   uxDispatch: (a: GameAction) => void,
@@ -177,7 +177,7 @@ export async function showPlaceBeltLineSelector(
   const result = await showDialog({
     title: "Place Belt Line",
     component: (onConfirm) => (
-      <PlaceBeltLinePanel
+      <PlaceTruckLinePanel
         title="Place Belt Line"
         inventory={inventory}
         regions={regions}
@@ -189,7 +189,7 @@ export async function showPlaceBeltLineSelector(
     const [targetRegion, beltType, beltLength] = result;
     if (targetRegion && beltType)
       uxDispatch({
-        type: "PlaceBeltLine",
+        type: "PlaceTruckLine",
         targetRegion,
         entity: beltType,
         beltLength,

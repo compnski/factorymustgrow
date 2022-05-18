@@ -10,8 +10,8 @@ import {
   ReadonlyRegion,
 } from "./factoryGameState";
 
-export type BeltLineDepot = {
-  kind: "BeltLineDepot";
+export type TruckLineDepot = {
+  kind: "TruckLineDepot";
   subkind: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
   ProducerType: "Depot";
   inputBuffers: ReadonlyItemBuffer;
@@ -21,7 +21,7 @@ export type BeltLineDepot = {
   beltLineId: string;
 };
 
-export type BeltLine = {
+export type TruckLine = {
   beltLineId: string;
   BuildingCount: number;
   length: number;
@@ -29,14 +29,14 @@ export type BeltLine = {
   name: string;
 };
 
-export function FindDepotForBeltLineInRegion(
+export function FindDepotForTruckLineInRegion(
   r: ReadonlyRegion,
   beltLineId: string,
   direction: string
-): BeltLineDepot | undefined {
+): TruckLineDepot | undefined {
   for (const slot of r.BuildingSlots) {
-    if (slot.Building.kind === "BeltLineDepot") {
-      const depot = slot.Building as BeltLineDepot;
+    if (slot.Building.kind === "TruckLineDepot") {
+      const depot = slot.Building as TruckLineDepot;
       if (depot.beltLineId === beltLineId && depot.direction === direction) {
         return depot;
       }
@@ -45,7 +45,7 @@ export function FindDepotForBeltLineInRegion(
   return undefined;
 }
 
-export function AdvanceBeltLine(beltLine: BeltLine): BeltLine {
+export function AdvanceTruckLine(beltLine: TruckLine): TruckLine {
   // TODO: Perf improvements?
 
   const lastIdx = beltLine.internalBeltBuffer.length - 1;
@@ -65,15 +65,15 @@ export function AdvanceBeltLine(beltLine: BeltLine): BeltLine {
   return { ...beltLine, internalBeltBuffer: belt };
 }
 
-export function UpdateBeltLineDepot(
-  building: BeltLineDepot,
+export function UpdateTruckLineDepot(
+  building: TruckLineDepot,
   vmDispatch: DispatchFunc,
   address: BuildingAddress,
   state: FactoryGameState,
   tick: number
 ) {
   // TODO: Progress tracker for movement (per lane)
-  const beltLine = state.BeltLines.get(building.beltLineId);
+  const beltLine = state.TruckLines.get(building.beltLineId);
   if (!beltLine)
     throw new Error("Cannot find beltLine for " + building.beltLineId);
   //console.log(beltLine.beltLineId, building.direction);
@@ -135,7 +135,7 @@ export function UpdateBeltLineDepot(
   }
 }
 
-export function NewBeltLineDepot({
+export function NewTruckLineDepot({
   subkind,
   direction,
   beltLineId,
@@ -145,11 +145,11 @@ export function NewBeltLineDepot({
   direction: "FROM_BELT" | "TO_BELT";
   beltLineId: string;
   initialLaneCount?: number;
-}): BeltLineDepot {
+}): TruckLineDepot {
   const [inputCount, outputCount] = direction == "FROM_BELT" ? [0, 1] : [1, 0];
 
   return {
-    kind: "BeltLineDepot",
+    kind: "TruckLineDepot",
     ProducerType: "Depot",
     subkind: subkind,
     BuildingCount: initialLaneCount,
@@ -160,12 +160,12 @@ export function NewBeltLineDepot({
   };
 }
 
-export function NewBeltLine(
+export function NewTruckLine(
   beltLineId: string,
   subkind: "transport-belt" | "fast-transport-belt" | "express-transport-belt",
   length: number,
   initialLaneCount = 1
-): BeltLine {
+): TruckLine {
   const sharedBeltBuffer = Array<EntityStack>(length);
   for (let idx = 0; idx < sharedBeltBuffer.length; idx++)
     // TODO Size based on speed?

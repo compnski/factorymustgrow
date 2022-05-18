@@ -69,7 +69,7 @@ type BuildingAction =
       buildingIdx: number;
     }
   | {
-      type: "PlaceBeltLine";
+      type: "PlaceTruckLine";
       entity:
         | "transport-belt"
         | "fast-transport-belt"

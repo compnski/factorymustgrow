@@ -22,11 +22,11 @@ import {
   AddProgressTrackerAction,
   AddRegionAction,
   AddResearchCountAction,
-  AdvanceBeltLineAction,
-  isPlaceBeltLineDepotAction,
-  PlaceBeltLineAction,
+  AdvanceTruckLineAction,
+  isPlaceTruckLineDepotAction,
+  PlaceTruckLineAction,
   PlaceBuildingAction,
-  RemoveBeltLineAction,
+  RemoveTruckLineAction,
   RemoveMainBusLaneAction,
   SetBeltConnectionPropertyAction,
   SetBuildingPropertyAction,
@@ -39,10 +39,10 @@ import {
   SwapBuildingsAction,
 } from "./state/action";
 import {
-  BeltLineAddress,
+  TruckLineAddress,
   BuildingAddress,
   isBeltConnectionAddress,
-  isBeltLineAddress,
+  isTruckLineAddress,
   isBuildingAddress,
   isGlobalAddress,
   isInserterAddress,
@@ -51,7 +51,7 @@ import {
   isRegionAddress,
   MainBusAddress,
 } from "./state/address";
-import { AdvanceBeltLine, NewBeltLine, NewBeltLineDepot } from "./transport";
+import { AdvanceTruckLine, NewTruckLine, NewTruckLineDepot } from "./transport";
 import {
   AddToEntityStack,
   BeltConnection,
@@ -154,12 +154,12 @@ function applyStateChangeAction(
       return stateChangeSwapBuildings(state, action);
     case "AddRegion":
       return stateChangeAddRegion(state, action);
-    case "AdvanceBeltLine":
-      return stateChangeAdvanceBeltLine(state, action);
-    case "PlaceBeltLine":
-      return stateChangePlaceBeltLine(state, action);
-    case "RemoveBeltLine":
-      return stateChangeRemoveBeltLine(state, action);
+    case "AdvanceTruckLine":
+      return stateChangeAdvanceTruckLine(state, action);
+    case "PlaceTruckLine":
+      return stateChangePlaceTruckLine(state, action);
+    case "RemoveTruckLine":
+      return stateChangeRemoveTruckLine(state, action);
     case "AddMainBusLane":
       return stateChangeAddMainBusLane(state, action);
     case "RemoveMainBusLane":
@@ -386,8 +386,8 @@ function stateChangePlaceBuilding(
     case "express-transport-belt":
     case "fast-transport-belt":
     case "transport-belt":
-      if (isPlaceBeltLineDepotAction(action))
-        slot.Building = NewBeltLineDepot({
+      if (isPlaceTruckLineDepotAction(action))
+        slot.Building = NewTruckLineDepot({
           subkind: entity,
           direction: action.direction,
           beltLineId: action.beltLineAddress.beltLineId,
@@ -483,8 +483,8 @@ function stateChangeAddItemCount(
   const { address, count, entity } = action;
   if (isMainBusAddress(address)) {
     return addItemsToMainBus(address, state, entity, count);
-  } else if (isBeltLineAddress(address)) {
-    return addItemsToBeltLine(address, state, entity, count);
+  } else if (isTruckLineAddress(address)) {
+    return addItemsToTruckLine(address, state, entity, count);
   } else if (isBuildingAddress(address)) {
     return addItemsToBuilding(address, state, entity, count);
   } else if (isInventoryAddress(address)) {
@@ -560,15 +560,15 @@ function addItemsToBuilding(
   };
 }
 
-function addItemsToBeltLine(
-  address: BeltLineAddress,
+function addItemsToTruckLine(
+  address: TruckLineAddress,
   state: FactoryGameState,
   entity: string,
   count: number
 ) {
   if (!count) return state;
   const { beltLineId } = address;
-  let beltLine = state.BeltLines.get(beltLineId);
+  let beltLine = state.TruckLines.get(beltLineId);
   if (!beltLine) throw new Error("Cannot find beltline " + beltLineId);
 
   if (count > 0) {
@@ -605,7 +605,7 @@ function addItemsToBeltLine(
 
   return {
     ...state,
-    BeltLines: state.BeltLines.set(beltLineId, beltLine),
+    TruckLines: state.TruckLines.set(beltLineId, beltLine),
   };
 }
 
@@ -657,25 +657,25 @@ function stateChangeAddRegion(
   };
 }
 
-function stateChangeAdvanceBeltLine(
+function stateChangeAdvanceTruckLine(
   state: FactoryGameState,
-  action: AdvanceBeltLineAction
+  action: AdvanceTruckLineAction
 ): FactoryGameState {
-  const beltLine = state.BeltLines.get(action.address.beltLineId);
+  const beltLine = state.TruckLines.get(action.address.beltLineId);
   if (!beltLine)
     throw new Error("Cannot find beltLine = " + action.address.beltLineId);
-  const newBeltLine = AdvanceBeltLine(beltLine);
+  const newTruckLine = AdvanceTruckLine(beltLine);
   return {
     ...state,
-    BeltLines: state.BeltLines.set(action.address.beltLineId, newBeltLine),
+    TruckLines: state.TruckLines.set(action.address.beltLineId, newTruckLine),
   };
 }
 
-function stateChangePlaceBeltLine(
+function stateChangePlaceTruckLine(
   state: FactoryGameState,
-  action: PlaceBeltLineAction
+  action: PlaceTruckLineAction
 ): FactoryGameState {
-  const newBeltLine = NewBeltLine(
+  const newTruckLine = NewTruckLine(
     action.address.beltLineId,
     action.entity,
     action.length,
@@ -683,17 +683,17 @@ function stateChangePlaceBeltLine(
   );
   return {
     ...state,
-    BeltLines: state.BeltLines.set(action.address.beltLineId, newBeltLine),
+    TruckLines: state.TruckLines.set(action.address.beltLineId, newTruckLine),
   };
 }
 
-function stateChangeRemoveBeltLine(
+function stateChangeRemoveTruckLine(
   state: FactoryGameState,
-  action: RemoveBeltLineAction
+  action: RemoveTruckLineAction
 ): FactoryGameState {
   return {
     ...state,
-    BeltLines: state.BeltLines.delete(action.address.beltLineId),
+    TruckLines: state.TruckLines.delete(action.address.beltLineId),
   };
 }
 

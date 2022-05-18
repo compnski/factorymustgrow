@@ -4,7 +4,7 @@ import { ImmutableMap } from "./immutable";
 import { ReadonlyInventory } from "./inventory";
 import { GetRegionInfo } from "./region";
 import { availableItems } from "./research";
-import { BeltLine } from "./transport";
+import { TruckLine } from "./transport";
 import { NewEntityStack, NewRegionFromInfo } from "./types";
 
 export class DebugInventory extends ReadonlyInventory {
@@ -62,6 +62,6 @@ export function debugFactoryGameState() {
     Regions: ImmutableMap([
       ["region0", NewRegionFromInfo(GetRegionInfo("region0"))],
     ]),
-    BeltLines: ImmutableMap<string, Readonly<BeltLine>>(),
+    TruckLines: ImmutableMap<string, Readonly<TruckLine>>(),
   };
 }

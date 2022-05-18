@@ -96,8 +96,8 @@ export const GameDispatch = (
       RemoveBuilding(dispatch, action, gameState);
       break;
 
-    case "PlaceBeltLine":
-      PlaceBeltLine(
+    case "PlaceTruckLine":
+      PlaceTruckLine(
         dispatch,
         action,
         GetRegion(gameState, action.regionId),
@@ -544,7 +544,7 @@ function decreaseBuildingCount(
 ) {
   const b = building(gameState, action) as Producer;
   // TODO: Handle belt lines
-  if (b?.kind === "BeltLineDepot") {
+  if (b?.kind === "TruckLineDepot") {
     console.log("Can't remove lanes to beltlines");
     return;
   }
@@ -580,7 +580,7 @@ function increaseBuildingCount(
 ) {
   const b = building(gameState, action) as Producer;
   // TODO: Handle belt lines
-  if (b?.kind === "BeltLineDepot") {
+  if (b?.kind === "TruckLineDepot") {
     console.log("Can't add lanes to beltlines");
     return;
   }
@@ -672,7 +672,7 @@ function PlaceBuilding(
   moveToInventory(dispatch, action.entity, -1);
 }
 
-function PlaceBeltLine(
+function PlaceTruckLine(
   dispatch: DispatchFunc,
   action: {
     regionId: string;
@@ -708,11 +708,11 @@ function PlaceBeltLine(
 
   const beltLineId = (new Date().getTime() % 100000).toString();
 
-  if (gameState.BeltLines.has(beltLineId)) {
-    throw new Error("Duplicate BeltLine ID");
+  if (gameState.TruckLines.has(beltLineId)) {
+    throw new Error("Duplicate TruckLine ID");
   }
   dispatch({
-    kind: "PlaceBeltLine",
+    kind: "PlaceTruckLine",
     entity: action.entity,
     address: { beltLineId },
     BuildingCount: 1,
@@ -765,23 +765,23 @@ function ReorderBuildings(
   fixInserters(dispatch, region);
 }
 
-function removeBeltLine(
+function removeTruckLine(
   dispatch: DispatchFunc,
   action: { regionId: string; buildingIdx: number },
   gameState: FactoryGameState
 ) {
   const b = building(gameState, action);
-  if (!b || b.kind != "BeltLineDepot" || !b.beltLineId)
+  if (!b || b.kind != "TruckLineDepot" || !b.beltLineId)
     throw new Error("Only removes belt line depots");
   const beltLineId = b.beltLineId;
-  const beltLine = gameState.BeltLines.get(beltLineId);
+  const beltLine = gameState.TruckLines.get(beltLineId);
 
   let removedCount = 0;
   // Find other depots for this belt line
   gameState.Regions.forEach((region, regionId) => {
     region.BuildingSlots.forEach(({ Building }, buildingIdx) => {
       if (
-        Building.kind === "BeltLineDepot" &&
+        Building.kind === "TruckLineDepot" &&
         Building.beltLineId === beltLineId
       ) {
         dispatch({
@@ -815,7 +815,7 @@ function removeBeltLine(
     // Refund belt itself
     moveToInventory(dispatch, b.subkind, beltLine.length);
     dispatch({
-      kind: "RemoveBeltLine",
+      kind: "RemoveTruckLine",
       address: { beltLineId },
     });
   }
@@ -833,10 +833,10 @@ function RemoveBuilding(
   const address = { regionId, buildingIdx };
   const b = building(gameState, action); // as Producer;
   if (!b) return;
-  if (b.kind === "BeltLineDepot") {
+  if (b.kind === "TruckLineDepot") {
     // Remove beltline, refund
     // search all regions, find other depot, remove
-    removeBeltLine(dispatch, action, gameState);
+    removeTruckLine(dispatch, action, gameState);
   } else {
     dispatch({
       kind: "PlaceBuilding",

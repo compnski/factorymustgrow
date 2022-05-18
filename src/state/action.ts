@@ -7,7 +7,7 @@ import {
   RegionAddress,
   MainBusAddress,
   StateAddress,
-  BeltLineAddress,
+  TruckLineAddress,
 } from "./address";
 import { BeltConnection, RegionInfo } from "../types";
 import { FactoryGameState } from "../factoryGameState";
@@ -25,9 +25,9 @@ export type StateVMAction =
   | ResetAction
   | AddMainBusLaneAction
   | RemoveMainBusLaneAction
-  | AdvanceBeltLineAction
-  | PlaceBeltLineAction
-  | RemoveBeltLineAction;
+  | AdvanceTruckLineAction
+  | PlaceTruckLineAction
+  | RemoveTruckLineAction;
 
 type ResetAction =
   | { kind: "Reset" }
@@ -115,9 +115,9 @@ export type AddResearchCountAction = {
   maxCount: number;
 };
 
-export type AdvanceBeltLineAction = {
-  kind: "AdvanceBeltLine";
-  address: BeltLineAddress;
+export type AdvanceTruckLineAction = {
+  kind: "AdvanceTruckLine";
+  address: TruckLineAddress;
 };
 
 export type SetCurrentResearchAction = {
@@ -132,28 +132,28 @@ export type PlaceBuildingAction =
       address: BuildingAddress;
       BuildingCount: number;
     }
-  | PlaceBeltLineDepotAction;
+  | PlaceTruckLineDepotAction;
 
-type PlaceBeltLineDepotAction = {
+type PlaceTruckLineDepotAction = {
   kind: "PlaceBuilding";
   address: BuildingAddress;
   BuildingCount: number;
   entity: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
   direction: "TO_BELT" | "FROM_BELT";
-  beltLineAddress: BeltLineAddress;
+  beltLineAddress: TruckLineAddress;
 };
 
-export type PlaceBeltLineAction = {
-  kind: "PlaceBeltLine";
+export type PlaceTruckLineAction = {
+  kind: "PlaceTruckLine";
   entity: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
-  address: BeltLineAddress;
+  address: TruckLineAddress;
   BuildingCount: number;
   length: number;
 };
 
-export type RemoveBeltLineAction = {
-  kind: "RemoveBeltLine";
-  address: BeltLineAddress;
+export type RemoveTruckLineAction = {
+  kind: "RemoveTruckLine";
+  address: TruckLineAddress;
 };
 
 export type SwapBuildingsAction = {
@@ -168,8 +168,8 @@ export type AddRegionAction = {
   regionId: string;
 };
 
-export function isPlaceBeltLineDepotAction(
+export function isPlaceTruckLineDepotAction(
   a: PlaceBuildingAction
-): a is PlaceBeltLineDepotAction {
-  return (a as PlaceBeltLineDepotAction).direction != undefined;
+): a is PlaceTruckLineDepotAction {
+  return (a as PlaceTruckLineDepotAction).direction != undefined;
 }

@@ -1,17 +1,17 @@
 import { GameAction } from "../GameAction";
 import { ImmutableMap } from "../immutable";
-import { BeltLine } from "../transport";
+import { TruckLine } from "../transport";
 import { ReadonlyBuilding } from "../factoryGameState";
 import { entityIconLookupByKind } from "../utils";
 import { BuildingBufferDisplay } from "./BuildingBufferDisplay";
 import "./BuildingCard.scss";
 
-export type BeltLineCardProps = {
+export type TruckLineCardProps = {
   building: ReadonlyBuilding;
   buildingIdx: number;
   regionId: string;
   uxDispatch: (a: GameAction) => void;
-  beltLines: ImmutableMap<string, BeltLine>;
+  beltLines: ImmutableMap<string, TruckLine>;
 };
 
 function direction(d: "TO_BELT" | "FROM_BELT" | undefined): string {
@@ -25,12 +25,12 @@ function direction(d: "TO_BELT" | "FROM_BELT" | undefined): string {
   }
 }
 
-export function BeltLineCard(props: BeltLineCardProps) {
+export function TruckLineCard(props: TruckLineCardProps) {
   const { building, buildingIdx, regionId, uxDispatch, beltLines } = props;
 
   const inputBuffersForDisplay = building.inputBuffers,
     outputBuffersForDisplay = building.outputBuffers;
-  if (!building.beltLineId) throw new Error("BeltLineDepot missing beltLineId");
+  if (!building.beltLineId) throw new Error("TruckLineDepot missing beltLineId");
   const beltLine = beltLines.get(building.beltLineId);
   const name = beltLine ? beltLine.name : "Invalid";
 

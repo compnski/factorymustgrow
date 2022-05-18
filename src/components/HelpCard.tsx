@@ -98,7 +98,7 @@ const helpGameState: FactoryGameState = {
   Research: researchState,
   Regions: ImmutableMap([[helpRegion.Id, helpRegion]]),
   Inventory: new ReadonlyInventory(8),
-  BeltLines: ImmutableMap(),
+  TruckLines: ImmutableMap(),
   RocketLaunchingAt: 0,
 };
 

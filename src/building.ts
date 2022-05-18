@@ -3,7 +3,7 @@ import { ReadonlyInventory } from "./inventory";
 import { Extractor, Factory } from "./production";
 import { Lab } from "./research";
 import { Chest } from "./storage";
-import { BeltLineDepot } from "./transport";
+import { TruckLineDepot } from "./transport";
 import { BeltConnection } from "./types";
 import { ReadonlyBuildingSlot, ReadonlyItemBuffer } from "./factoryGameState";
 
@@ -95,7 +95,7 @@ export type Building =
   | Factory
   | Extractor
   | Lab
-  | BeltLineDepot
+  | TruckLineDepot
   | Chest
   | EmptyLane;
 

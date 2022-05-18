@@ -1,9 +1,9 @@
 import { SyntheticEvent, useState } from "react";
 import { ImmutableMap } from "../immutable";
 import { ReadonlyItemBuffer, ReadonlyRegion } from "../factoryGameState";
-import "./PlaceBeltLinePanel.scss";
+import "./PlaceTruckLinePanel.scss";
 
-export type PlaceBeltLineProps = {
+export type PlaceTruckLineProps = {
   inventory: ReadonlyItemBuffer;
   regions: ImmutableMap<string, ReadonlyRegion>;
   title: string;
@@ -15,7 +15,7 @@ export type PlaceBeltLineProps = {
   ) => void;
 };
 
-export function PlaceBeltLinePanel(props: PlaceBeltLineProps) {
+export function PlaceTruckLinePanel(props: PlaceTruckLineProps) {
   const { inventory, onConfirm, title, regions } = props;
   const [selectValue, setSelectValue] = useState<string>(
     regions.keys().next().value

@@ -7,7 +7,7 @@ import {
 } from "../factoryGameState";
 import { GameAction } from "../GameAction";
 import { BuildingHasInput, BuildingHasOutput } from "../utils";
-import { BeltLineCard } from "./BeltLineCard";
+import { TruckLineCard } from "./TruckLineCard";
 import "./BuildingCard.scss";
 import { EmptyLaneCard } from "./EmptyLaneCard";
 import { InserterCard } from "./InserterCard";
@@ -91,13 +91,13 @@ export const BuildingCard = ({
     });
   };
   const card =
-    building.kind === "BeltLineDepot" ? (
-      <BeltLineCard
+    building.kind === "TruckLineDepot" ? (
+      <TruckLineCard
         building={building}
         regionId={regionId}
         buildingIdx={buildingIdx}
         uxDispatch={uxDispatch}
-        beltLines={gameState.BeltLines}
+        beltLines={gameState.TruckLines}
       />
     ) : building.kind === "Chest" ? (
       <StorageCard

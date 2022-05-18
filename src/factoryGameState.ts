@@ -4,7 +4,7 @@ import { Inserter } from "./inserter";
 import { ReadonlyInventory } from "./inventory";
 import { ReadonlyMainBus } from "./mainbus";
 import { GetRegionInfo } from "./region";
-import { BeltLine, BeltLineDepot } from "./transport";
+import { TruckLine, TruckLineDepot } from "./transport";
 import {
   BeltConnection,
   EntityStack,
@@ -34,7 +34,7 @@ export type ReadonlyBuilding = {
   Pick<Building, "kind" | "subkind" | "ProducerType" | "BuildingCount">
 > &
   Partial<{ RecipeId: string }> &
-  Partial<Pick<BeltLineDepot, "direction" | "beltLineId">> &
+  Partial<Pick<TruckLineDepot, "direction" | "beltLineId">> &
   Partial<{ readonly progressTrackers: Readonly<number[]> }>;
 
 export interface ReadonlyBuildingSlot {
@@ -51,7 +51,7 @@ export interface ReadonlyRegion {
   readonly BuildingSlots: ReadonlyBuildingSlot[];
 }
 
-export const CurrentGameStateVersion = "0.2.3";
+export const CurrentGameStateVersion = "0.2.4";
 
 export type ResearchState = {
   CurrentResearchId: string;
@@ -64,7 +64,7 @@ export type FactoryGameState = {
   readonly Research: ReadonlyResearchState;
   readonly Inventory: ReadonlyInventory;
   readonly Regions: ImmutableMap<string, ReadonlyRegion>;
-  readonly BeltLines: ImmutableMap<string, Readonly<BeltLine>>;
+  readonly TruckLines: ImmutableMap<string, Readonly<TruckLine>>;
 };
 
 const initialInventorySize = 16;
@@ -98,5 +98,5 @@ export const initialFactoryGameState = () => ({
   Regions: ImmutableMap([
     ["region0", NewRegionFromInfo(GetRegionInfo("region0"))],
   ]),
-  BeltLines: ImmutableMap<string, Readonly<BeltLine>>(),
+  TruckLines: ImmutableMap<string, Readonly<TruckLine>>(),
 });

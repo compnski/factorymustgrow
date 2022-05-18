@@ -22,7 +22,7 @@
 ** Better UI for deleting belt lines
 ** Save progress during upgrades?
 *** Offer to save progress during upgrades if possible
-* BeltLine
+* TruckLine
 *** Update belt lines to use Progress Trackers
 *** Only connect directly adjacent regions?
 *** Maybe some way to increase throughput?

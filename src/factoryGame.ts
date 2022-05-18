@@ -15,7 +15,7 @@ import {
 import { IsResearchComplete, Lab, ResearchInLab } from "./research";
 import { DispatchFunc } from "./stateVm";
 import { Chest, UpdateChest } from "./storage";
-import { BeltLineDepot, UpdateBeltLineDepot } from "./transport";
+import { TruckLineDepot, UpdateTruckLineDepot } from "./transport";
 import { FactoryGameState, ReadonlyBuildingSlot } from "./factoryGameState";
 
 export async function UpdateGameState(
@@ -39,10 +39,10 @@ export async function UpdateGameState(
   };
 
   try {
-    for (const [, currentBeltLine] of gameState.BeltLines) {
+    for (const [, currentTruckLine] of gameState.TruckLines) {
       dispatch({
-        kind: "AdvanceBeltLine",
-        address: { beltLineId: currentBeltLine.beltLineId },
+        kind: "AdvanceTruckLine",
+        address: { beltLineId: currentTruckLine.beltLineId },
       });
     }
     for (const [regionId] of gameState.Regions) {
@@ -123,9 +123,9 @@ function UpdateGameStateForRegion(
       case "Chest":
         UpdateChest(building as Chest, tick);
         break;
-      case "BeltLineDepot":
-        UpdateBeltLineDepot(
-          building as BeltLineDepot,
+      case "TruckLineDepot":
+        UpdateTruckLineDepot(
+          building as TruckLineDepot,
           dispatch,
           address,
           gameState,
