@@ -488,7 +488,10 @@ function stateChangeAddItemCount(
   } else if (isBuildingAddress(address)) {
     return addItemsToBuilding(address, state, entity, count);
   } else if (isInventoryAddress(address)) {
-    return { ...state, Inventory: state.Inventory.AddItems(entity, count) };
+    return {
+      ...state,
+      Inventory: state.Inventory.AddItems(entity, count, true),
+    };
   } else if (isRegionAddress(address)) {
     const { regionId, buffer } = address;
     const region = state.Regions.get(regionId);

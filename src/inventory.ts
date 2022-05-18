@@ -32,12 +32,16 @@ export class ReadonlyInventory implements ReadonlyItemBuffer {
   }
 
   // throws if it cannot hold the given number
-  AddItems(entity: string, count: number): ReadonlyInventory {
+  AddItems(
+    entity: string,
+    count: number,
+    canExceedCapacity = false
+  ): ReadonlyInventory {
     if (count < 0) {
       return this.RemoveItems(entity, -count);
     }
     const newCount = (this.Count(entity) || 0) + count;
-    if (count > this.AvailableSpace(entity)) {
+    if (count > this.AvailableSpace(entity) && !canExceedCapacity) {
       // console.log(
       //   "INAD",
       //   entity,
