@@ -22,7 +22,7 @@ export function PlaceTruckLinePanel(props: PlaceTruckLineProps) {
   );
 
   const cost = 50,
-    entity = "transport-belt";
+    entity = "concrete";
 
   const enoughBeltsInInventory = inventory.Count(entity) >= cost;
   return (
@@ -42,7 +42,7 @@ export function PlaceTruckLinePanel(props: PlaceTruckLineProps) {
           onChange={(evt) => setSelectValue(evt.target.value)}
         >
           {[...regions.entries()].map(([regionName]) => {
-            const costTxt = `${cost} Yellow Belts`;
+            const costTxt = `${cost} Concrete`;
             return (
               <option key={regionName} value={regionName}>
                 {regionName} - {costTxt}
@@ -55,7 +55,7 @@ export function PlaceTruckLinePanel(props: PlaceTruckLineProps) {
         <div
           onClick={(evt) =>
             enoughBeltsInInventory &&
-            onConfirm(evt, selectValue, "transport-belt", cost)
+            onConfirm(evt, selectValue, "concrete", cost)
           }
           className={`clickable place-belt-line-build-button ${
             !enoughBeltsInInventory ? "disabled" : ""

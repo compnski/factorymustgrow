@@ -42,7 +42,7 @@ export async function UpdateGameState(
     for (const [, currentTruckLine] of gameState.TruckLines) {
       dispatch({
         kind: "AdvanceTruckLine",
-        address: { beltLineId: currentTruckLine.beltLineId },
+        address: { truckLineId: currentTruckLine.truckLineId },
       });
     }
     for (const [regionId] of gameState.Regions) {

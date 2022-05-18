@@ -383,14 +383,12 @@ function stateChangePlaceBuilding(
     case "empty-lane":
       slot.Building = NewEmptyLane();
       break;
-    case "express-transport-belt":
-    case "fast-transport-belt":
-    case "transport-belt":
+    case "concrete":
       if (isPlaceTruckLineDepotAction(action))
         slot.Building = NewTruckLineDepot({
           subkind: entity,
           direction: action.direction,
-          beltLineId: action.beltLineAddress.beltLineId,
+          truckLineId: action.truckLineAddress.truckLineId,
         });
       break;
     default:
@@ -567,37 +565,37 @@ function addItemsToTruckLine(
   count: number
 ) {
   if (!count) return state;
-  const { beltLineId } = address;
-  let beltLine = state.TruckLines.get(beltLineId);
-  if (!beltLine) throw new Error("Cannot find beltline " + beltLineId);
+  const { truckLineId } = address;
+  let truckLine = state.TruckLines.get(truckLineId);
+  if (!truckLine) throw new Error("Cannot find beltline " + truckLineId);
 
   if (count > 0) {
-    const firstStack = beltLine.internalBeltBuffer[0];
+    const firstStack = truckLine.internalBeltBuffer[0];
     if (!StackCapacity(firstStack)) return state;
     if (!firstStack.Entity) firstStack.Entity = entity;
     if (firstStack.Entity != entity)
       throw new Error("Entity mismatch in beltline");
 
-    beltLine = {
-      ...beltLine,
+    truckLine = {
+      ...truckLine,
       internalBeltBuffer: replaceItem(
-        beltLine.internalBeltBuffer,
+        truckLine.internalBeltBuffer,
         0,
         AddToEntityStack(firstStack, count)
       ),
     };
   } else if (count < 0) {
     const lastStack =
-      beltLine.internalBeltBuffer[beltLine.internalBeltBuffer.length - 1];
+      truckLine.internalBeltBuffer[truckLine.internalBeltBuffer.length - 1];
     if (!lastStack.Count) return state;
     if (lastStack.Entity && lastStack.Entity != entity)
       throw new Error("Entity mismatch in beltline");
 
-    beltLine = {
-      ...beltLine,
+    truckLine = {
+      ...truckLine,
       internalBeltBuffer: replaceItem(
-        beltLine.internalBeltBuffer,
-        beltLine.internalBeltBuffer.length - 1,
+        truckLine.internalBeltBuffer,
+        truckLine.internalBeltBuffer.length - 1,
         AddToEntityStack(lastStack, count)
       ),
     };
@@ -605,7 +603,7 @@ function addItemsToTruckLine(
 
   return {
     ...state,
-    TruckLines: state.TruckLines.set(beltLineId, beltLine),
+    TruckLines: state.TruckLines.set(truckLineId, truckLine),
   };
 }
 
@@ -661,13 +659,13 @@ function stateChangeAdvanceTruckLine(
   state: FactoryGameState,
   action: AdvanceTruckLineAction
 ): FactoryGameState {
-  const beltLine = state.TruckLines.get(action.address.beltLineId);
-  if (!beltLine)
-    throw new Error("Cannot find beltLine = " + action.address.beltLineId);
-  const newTruckLine = AdvanceTruckLine(beltLine);
+  const truckLine = state.TruckLines.get(action.address.truckLineId);
+  if (!truckLine)
+    throw new Error("Cannot find truckLine = " + action.address.truckLineId);
+  const newTruckLine = AdvanceTruckLine(truckLine);
   return {
     ...state,
-    TruckLines: state.TruckLines.set(action.address.beltLineId, newTruckLine),
+    TruckLines: state.TruckLines.set(action.address.truckLineId, newTruckLine),
   };
 }
 
@@ -676,14 +674,14 @@ function stateChangePlaceTruckLine(
   action: PlaceTruckLineAction
 ): FactoryGameState {
   const newTruckLine = NewTruckLine(
-    action.address.beltLineId,
+    action.address.truckLineId,
     action.entity,
     action.length,
     action.BuildingCount
   );
   return {
     ...state,
-    TruckLines: state.TruckLines.set(action.address.beltLineId, newTruckLine),
+    TruckLines: state.TruckLines.set(action.address.truckLineId, newTruckLine),
   };
 }
 
@@ -693,7 +691,7 @@ function stateChangeRemoveTruckLine(
 ): FactoryGameState {
   return {
     ...state,
-    TruckLines: state.TruckLines.delete(action.address.beltLineId),
+    TruckLines: state.TruckLines.delete(action.address.truckLineId),
   };
 }
 

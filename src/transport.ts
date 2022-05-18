@@ -12,17 +12,17 @@ import {
 
 export type TruckLineDepot = {
   kind: "TruckLineDepot";
-  subkind: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
+  subkind: "concrete";
   ProducerType: "Depot";
   inputBuffers: ReadonlyItemBuffer;
   outputBuffers: ReadonlyItemBuffer;
   BuildingCount: number;
   direction: "FROM_BELT" | "TO_BELT";
-  beltLineId: string;
+  truckLineId: string;
 };
 
 export type TruckLine = {
-  beltLineId: string;
+  truckLineId: string;
   BuildingCount: number;
   length: number;
   internalBeltBuffer: Array<EntityStack>;
@@ -31,13 +31,13 @@ export type TruckLine = {
 
 export function FindDepotForTruckLineInRegion(
   r: ReadonlyRegion,
-  beltLineId: string,
+  truckLineId: string,
   direction: string
 ): TruckLineDepot | undefined {
   for (const slot of r.BuildingSlots) {
     if (slot.Building.kind === "TruckLineDepot") {
       const depot = slot.Building as TruckLineDepot;
-      if (depot.beltLineId === beltLineId && depot.direction === direction) {
+      if (depot.truckLineId === truckLineId && depot.direction === direction) {
         return depot;
       }
     }
@@ -45,11 +45,11 @@ export function FindDepotForTruckLineInRegion(
   return undefined;
 }
 
-export function AdvanceTruckLine(beltLine: TruckLine): TruckLine {
+export function AdvanceTruckLine(truckLine: TruckLine): TruckLine {
   // TODO: Perf improvements?
 
-  const lastIdx = beltLine.internalBeltBuffer.length - 1;
-  const belt = beltLine.internalBeltBuffer.map((s) => ({ ...s }));
+  const lastIdx = truckLine.internalBeltBuffer.length - 1;
+  const belt = truckLine.internalBeltBuffer.map((s) => ({ ...s }));
 
   for (let idx = lastIdx - 1; idx >= 0; idx--) {
     const slot = belt[idx],
@@ -62,7 +62,7 @@ export function AdvanceTruckLine(beltLine: TruckLine): TruckLine {
     }
   }
 
-  return { ...beltLine, internalBeltBuffer: belt };
+  return { ...truckLine, internalBeltBuffer: belt };
 }
 
 export function UpdateTruckLineDepot(
@@ -73,17 +73,17 @@ export function UpdateTruckLineDepot(
   tick: number
 ) {
   // TODO: Progress tracker for movement (per lane)
-  const beltLine = state.TruckLines.get(building.beltLineId);
-  if (!beltLine)
-    throw new Error("Cannot find beltLine for " + building.beltLineId);
-  //console.log(beltLine.beltLineId, building.direction);
+  const truckLine = state.TruckLines.get(building.truckLineId);
+  if (!truckLine)
+    throw new Error("Cannot find truckLine for " + building.truckLineId);
+  //console.log(truckLine.truckLineId, building.direction);
   //If FROM, has input buffer
   // If space, Move from input buffer to beltline
   // ELSE is TO
   // move from end of beltline to output buffer (if space)
   if (building.direction === "TO_BELT") {
     const entityStack = building.inputBuffers.Entities()[0];
-    const firstStack = beltLine.internalBeltBuffer[0];
+    const firstStack = truckLine.internalBeltBuffer[0];
 
     if (entityStack) {
       const [entity, availableCount] = entityStack;
@@ -95,7 +95,7 @@ export function UpdateTruckLineDepot(
         kind: "AddItemCount",
         entity,
         count,
-        address: { beltLineId: building.beltLineId },
+        address: { truckLineId: building.truckLineId },
       });
 
       vmDispatch({
@@ -107,7 +107,7 @@ export function UpdateTruckLineDepot(
     }
   } else if (building.direction === "FROM_BELT") {
     const lastStack =
-      beltLine.internalBeltBuffer[beltLine.internalBeltBuffer.length - 1];
+      truckLine.internalBeltBuffer[truckLine.internalBeltBuffer.length - 1];
 
     if (lastStack) {
       const { Entity: entity, Count: availableCount } = lastStack;
@@ -122,7 +122,7 @@ export function UpdateTruckLineDepot(
         kind: "AddItemCount",
         entity,
         count: -count,
-        address: { beltLineId: building.beltLineId },
+        address: { truckLineId: building.truckLineId },
       });
 
       vmDispatch({
@@ -138,12 +138,12 @@ export function UpdateTruckLineDepot(
 export function NewTruckLineDepot({
   subkind,
   direction,
-  beltLineId,
+  truckLineId,
   initialLaneCount = 1,
 }: {
-  subkind: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
+  subkind: "concrete";
   direction: "FROM_BELT" | "TO_BELT";
-  beltLineId: string;
+  truckLineId: string;
   initialLaneCount?: number;
 }): TruckLineDepot {
   const [inputCount, outputCount] = direction == "FROM_BELT" ? [0, 1] : [1, 0];
@@ -156,13 +156,13 @@ export function NewTruckLineDepot({
     inputBuffers: new ReadonlyInventory(inputCount),
     outputBuffers: new ReadonlyInventory(outputCount),
     direction,
-    beltLineId,
+    truckLineId,
   };
 }
 
 export function NewTruckLine(
-  beltLineId: string,
-  subkind: "transport-belt" | "fast-transport-belt" | "express-transport-belt",
+  truckLineId: string,
+  subkind: "concrete",
   length: number,
   initialLaneCount = 1
 ): TruckLine {
@@ -171,9 +171,9 @@ export function NewTruckLine(
     // TODO Size based on speed?
     sharedBeltBuffer[idx] = NewEntityStack("", 0, 16);
 
-  let beltLineName = "";
-  for (; beltLineName === "" || beltLineName.length > 14; ) {
-    beltLineName = randomName();
+  let truckLineName = "";
+  for (; truckLineName === "" || truckLineName.length > 14; ) {
+    truckLineName = randomName();
   }
   // Belt should be thought of as a chain of EntityStacks,
   // each with a small StackSize.
@@ -186,20 +186,20 @@ export function NewTruckLine(
   // initialize Input/Output buffers
   // initialize sharedBeltBuffer
 
-  // need beltLineId to link beltlines and depots
+  // need truckLineId to link beltlines and depots
   // current link probably won't surivve storage
 
-  const beltLine = {
-    beltLineId: beltLineId,
+  const truckLine = {
+    truckLineId: truckLineId,
     BuildingCount: initialLaneCount,
     //    toRegionId: toRegion.Id,
     //    fromRegionId: fromRegion.Id,
     length: length,
     internalBeltBuffer: sharedBeltBuffer,
-    name: beltLineName,
+    name: truckLineName,
   };
 
-  return beltLine;
+  return truckLine;
 }
 
 // export type TrainStation = {

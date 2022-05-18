@@ -97,7 +97,7 @@ export const BuildingCard = ({
         regionId={regionId}
         buildingIdx={buildingIdx}
         uxDispatch={uxDispatch}
-        beltLines={gameState.TruckLines}
+        truckLines={gameState.TruckLines}
       />
     ) : building.kind === "Chest" ? (
       <StorageCard

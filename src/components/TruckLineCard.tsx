@@ -11,7 +11,7 @@ export type TruckLineCardProps = {
   buildingIdx: number;
   regionId: string;
   uxDispatch: (a: GameAction) => void;
-  beltLines: ImmutableMap<string, TruckLine>;
+  truckLines: ImmutableMap<string, TruckLine>;
 };
 
 function direction(d: "TO_BELT" | "FROM_BELT" | undefined): string {
@@ -26,13 +26,14 @@ function direction(d: "TO_BELT" | "FROM_BELT" | undefined): string {
 }
 
 export function TruckLineCard(props: TruckLineCardProps) {
-  const { building, buildingIdx, regionId, uxDispatch, beltLines } = props;
+  const { building, buildingIdx, regionId, uxDispatch, truckLines } = props;
 
   const inputBuffersForDisplay = building.inputBuffers,
     outputBuffersForDisplay = building.outputBuffers;
-  if (!building.beltLineId) throw new Error("TruckLineDepot missing beltLineId");
-  const beltLine = beltLines.get(building.beltLineId);
-  const name = beltLine ? beltLine.name : "Invalid";
+  if (!building.truckLineId)
+    throw new Error("TruckLineDepot missing truckLineId");
+  const truckLine = truckLines.get(building.truckLineId);
+  const name = truckLine ? truckLine.name : "Invalid";
 
   return (
     <div className="main-area">

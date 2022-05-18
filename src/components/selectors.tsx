@@ -124,7 +124,7 @@ export async function showPlaceBuildingSelector(
     ),
   ]);
 
-  if (item === "transport-belt") {
+  if (item === "concrete") {
     await showPlaceTruckLineSelector(
       showDialog,
       uxDispatch,

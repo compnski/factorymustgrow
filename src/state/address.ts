@@ -12,7 +12,7 @@ type GlobalAddress = "global";
 export type InserterAddress = InserterId;
 export type BeltConnectionAddress = BuildingAddress & { connectionIdx: number };
 export type TruckLineAddress = {
-  beltLineId: string;
+  truckLineId: string;
 };
 export type MainBusAddress = {
   regionId: string;
@@ -36,7 +36,7 @@ export function isMainBusAddress(s: StateAddress): s is MainBusAddress {
   return (s as MainBusAddress).laneId !== undefined;
 }
 export function isTruckLineAddress(s: StateAddress): s is TruckLineAddress {
-  return (s as TruckLineAddress).beltLineId !== undefined;
+  return (s as TruckLineAddress).truckLineId !== undefined;
 }
 export function isBeltConnectionAddress(
   s: StateAddress

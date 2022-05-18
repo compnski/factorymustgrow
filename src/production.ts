@@ -216,7 +216,7 @@ const entityToProducerTypeMap: { [key: string]: BuildingType } = {
   lab: "Lab",
   "iron-chest": "Chest",
   "steel-chest": "Chest",
-  "transport-belt": "Depot",
+  concrete: "Depot",
   pumpjack: "Pumpjack",
   incinerator: "Chest",
   "offshore-pump": "WaterPump",
@@ -248,7 +248,7 @@ export function ProducerTypeFromEntity(entity: string): BuildingType {
       return "Chest";
     case "steel-chest":
       return "Chest";
-    case "transport-belt":
+    case "concrete":
       return "Depot";
     case "pumpjack":
       return "Pumpjack";

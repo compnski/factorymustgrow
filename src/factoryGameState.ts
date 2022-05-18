@@ -34,7 +34,7 @@ export type ReadonlyBuilding = {
   Pick<Building, "kind" | "subkind" | "ProducerType" | "BuildingCount">
 > &
   Partial<{ RecipeId: string }> &
-  Partial<Pick<TruckLineDepot, "direction" | "beltLineId">> &
+  Partial<Pick<TruckLineDepot, "direction" | "truckLineId">> &
   Partial<{ readonly progressTrackers: Readonly<number[]> }>;
 
 export interface ReadonlyBuildingSlot {
@@ -93,6 +93,7 @@ export const initialFactoryGameState = () => ({
       ["inserter", 50],
       ["iron-chest", 5],
       ["automation-science-pack", 100],
+      ["concrete", 50],
     ])
   ),
   Regions: ImmutableMap([

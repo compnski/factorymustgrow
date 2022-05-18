@@ -14,10 +14,10 @@ import { NewTruckLine } from "./transport";
 
 describe("TruckLine", () => {
   it("Initializes properly", function () {
-    const beltLine = NewTruckLine("123", "transport-belt", 3);
+    const truckLine = NewTruckLine("123", "concrete", 3);
 
-    expect(beltLine.length).toBe(3);
-    expect(beltLine.beltLineId).toBe("123");
+    expect(truckLine.length).toBe(3);
+    expect(truckLine.truckLineId).toBe("123");
   });
 
   // it("Transports items of one type across regions", function () {
@@ -25,7 +25,7 @@ describe("TruckLine", () => {
   //   const fromRegion = NewTestRegion(),
   //     toRegion = NewTestRegion();
 
-  //   const [beltLine, fromDepot, toDepot] = NewTruckLinePair(
+  //   const [truckLine, fromDepot, toDepot] = NewTruckLinePair(
   //     fromRegion,
   //     toRegion,
   //     "transport-belt",
@@ -36,17 +36,17 @@ describe("TruckLine", () => {
   //   toRegion.BuildingSlots.push(NewBuildingSlot(toDepot));
 
   //   fromDepot.inputBuffers.Add(NewEntityStack("iron-ore", 50, 50), Infinity);
-  //   //UpdateTruckLine(0, testRegions, beltLine);
+  //   //UpdateTruckLine(0, testRegions, truckLine);
   //   for (var i = 1; i < 4; i++) {
-  //     UpdateTruckLine(0, testRegions, beltLine);
+  //     UpdateTruckLine(0, testRegions, truckLine);
   //     expect(fromDepot.inputBuffers.Count("iron-ore")).toBe(50 - 16 * i);
   //     expect(toDepot.outputBuffers.Entities()).toEqual([]);
   //   }
-  //   UpdateTruckLine(0, testRegions, beltLine);
+  //   UpdateTruckLine(0, testRegions, truckLine);
   //   expect(fromDepot.inputBuffers.Count("iron-ore")).toBe(0);
   //   expect(toDepot.outputBuffers.Entities()).toEqual([["iron-ore", 16]]);
   //   for (var i = 2; i < 5; i++) {
-  //     UpdateTruckLine(0, testRegions, beltLine);
+  //     UpdateTruckLine(0, testRegions, truckLine);
   //     expect(toDepot.outputBuffers.Count("iron-ore")).toBe(
   //       Math.min(16 * i, 50)
   //     );
@@ -58,7 +58,7 @@ describe("TruckLine", () => {
   //   const fromRegion = NewTestRegion(),
   //     toRegion = NewTestRegion();
 
-  //   const [beltLine, fromDepot, toDepot] = NewTruckLinePair(
+  //   const [truckLine, fromDepot, toDepot] = NewTruckLinePair(
   //     fromRegion,
   //     toRegion,
   //     "transport-belt",
@@ -69,9 +69,9 @@ describe("TruckLine", () => {
   //   toRegion.BuildingSlots.push(NewBuildingSlot(toDepot));
 
   //   fromDepot.inputBuffers.Add(NewEntityStack("iron-ore", 20, 50), Infinity);
-  //   //UpdateTruckLine(0, testRegions, beltLine);
+  //   //UpdateTruckLine(0, testRegions, truckLine);
   //   for (var i = 1; i < 4; i++) {
-  //     UpdateTruckLine(0, testRegions, beltLine);
+  //     UpdateTruckLine(0, testRegions, truckLine);
   //     expect(fromDepot.inputBuffers.Count("iron-ore")).toBe(
   //       Math.max(0, 20 - 16 * i)
   //     );
@@ -79,9 +79,9 @@ describe("TruckLine", () => {
   //   }
 
   //   fromDepot.inputBuffers.Add(NewEntityStack("copper-ore", 20, 50), Infinity);
-  //   //UpdateTruckLine(0, testRegions, beltLine);
+  //   //UpdateTruckLine(0, testRegions, truckLine);
   //   for (var i = 1; i < 4; i++) {
-  //     UpdateTruckLine(0, testRegions, beltLine);
+  //     UpdateTruckLine(0, testRegions, truckLine);
   //     expect(fromDepot.inputBuffers.Count("copper-ore")).toBe(
   //       Math.max(0, 20 - 16 * i)
   //     );
@@ -94,12 +94,12 @@ describe("TruckLine", () => {
   //     toDepot.outputBuffers.Remove(NewEntityStack("iron-ore", 0, 50))
   //   ).toBe(20);
 
-  //   UpdateTruckLine(0, testRegions, beltLine);
+  //   UpdateTruckLine(0, testRegions, truckLine);
   //   expect(
   //     toDepot.outputBuffers.Remove(NewEntityStack("copper-ore", 0, 50))
   //   ).toBe(16);
 
-  //   UpdateTruckLine(0, testRegions, beltLine);
+  //   UpdateTruckLine(0, testRegions, truckLine);
   //   expect(
   //     toDepot.outputBuffers.Remove(NewEntityStack("copper-ore", 0, 50))
   //   ).toBe(4);

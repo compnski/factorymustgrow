@@ -70,10 +70,7 @@ type BuildingAction =
     }
   | {
       type: "PlaceTruckLine";
-      entity:
-        | "transport-belt"
-        | "fast-transport-belt"
-        | "express-transport-belt";
+      entity: "concrete";
       beltLength: number;
       targetRegion: string;
       regionId: string;

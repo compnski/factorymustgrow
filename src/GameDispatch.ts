@@ -676,7 +676,7 @@ function PlaceTruckLine(
   dispatch: DispatchFunc,
   action: {
     regionId: string;
-    entity: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
+    entity: "concrete";
     beltLength: number;
     targetRegion: string;
     buildingIdx: number;
@@ -706,15 +706,15 @@ function PlaceTruckLine(
   if (toRegionBuildingIdx < 0)
     throw new Error("No empty lane in region " + action.targetRegion);
 
-  const beltLineId = (new Date().getTime() % 100000).toString();
+  const truckLineId = (new Date().getTime() % 100000).toString();
 
-  if (gameState.TruckLines.has(beltLineId)) {
+  if (gameState.TruckLines.has(truckLineId)) {
     throw new Error("Duplicate TruckLine ID");
   }
   dispatch({
     kind: "PlaceTruckLine",
     entity: action.entity,
-    address: { beltLineId },
+    address: { truckLineId },
     BuildingCount: 1,
     length: action.beltLength,
   });
@@ -726,7 +726,7 @@ function PlaceTruckLine(
     address: { regionId: currentRegion.Id, buildingIdx: action.buildingIdx },
     BuildingCount: 1,
     direction: "TO_BELT",
-    beltLineAddress: { beltLineId },
+    truckLineAddress: { truckLineId },
   });
 
   dispatch({
@@ -735,7 +735,7 @@ function PlaceTruckLine(
     address: { regionId: toRegion.Id, buildingIdx: toRegionBuildingIdx },
     BuildingCount: 1,
     direction: "FROM_BELT",
-    beltLineAddress: { beltLineId },
+    truckLineAddress: { truckLineId },
   });
 }
 
@@ -771,10 +771,10 @@ function removeTruckLine(
   gameState: FactoryGameState
 ) {
   const b = building(gameState, action);
-  if (!b || b.kind != "TruckLineDepot" || !b.beltLineId)
+  if (!b || b.kind != "TruckLineDepot" || !b.truckLineId)
     throw new Error("Only removes belt line depots");
-  const beltLineId = b.beltLineId;
-  const beltLine = gameState.TruckLines.get(beltLineId);
+  const truckLineId = b.truckLineId;
+  const truckLine = gameState.TruckLines.get(truckLineId);
 
   let removedCount = 0;
   // Find other depots for this belt line
@@ -782,7 +782,7 @@ function removeTruckLine(
     region.BuildingSlots.forEach(({ Building }, buildingIdx) => {
       if (
         Building.kind === "TruckLineDepot" &&
-        Building.beltLineId === beltLineId
+        Building.truckLineId === truckLineId
       ) {
         dispatch({
           kind: "PlaceBuilding",
@@ -790,19 +790,19 @@ function removeTruckLine(
           address: { regionId, buildingIdx },
           BuildingCount: 0,
         });
-        RefundBuildingMaterial(dispatch, Building);
+        //RefundBuildingMaterial(dispatch, Building); //disabled --Currently depots have no cost
         removedCount++;
       }
     });
   });
   if (removedCount != 2)
     console.warn(
-      `Removed ${removedCount} buildings when trying to remove beltLine ${beltLineId}`
+      `Removed ${removedCount} buildings when trying to remove truckLine ${truckLineId}`
     );
-  if (removedCount > 0 && beltLine) {
+  if (removedCount > 0 && truckLine) {
     // Refund entities on beltline
     const refundMap = new Map<string, number>();
-    beltLine.internalBeltBuffer.forEach((stack) => {
+    truckLine.internalBeltBuffer.forEach((stack) => {
       if (stack.Entity && stack.Count)
         refundMap.set(
           stack.Entity,
@@ -813,10 +813,10 @@ function removeTruckLine(
       moveToInventory(dispatch, entity, count)
     );
     // Refund belt itself
-    moveToInventory(dispatch, b.subkind, beltLine.length);
+    moveToInventory(dispatch, b.subkind, truckLine.length);
     dispatch({
       kind: "RemoveTruckLine",
-      address: { beltLineId },
+      address: { truckLineId },
     });
   }
 }

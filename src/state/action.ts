@@ -138,14 +138,14 @@ type PlaceTruckLineDepotAction = {
   kind: "PlaceBuilding";
   address: BuildingAddress;
   BuildingCount: number;
-  entity: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
+  entity: "concrete";
   direction: "TO_BELT" | "FROM_BELT";
-  beltLineAddress: TruckLineAddress;
+  truckLineAddress: TruckLineAddress;
 };
 
 export type PlaceTruckLineAction = {
   kind: "PlaceTruckLine";
-  entity: "transport-belt" | "fast-transport-belt" | "express-transport-belt";
+  entity: "concrete";
   address: TruckLineAddress;
   BuildingCount: number;
   length: number;
