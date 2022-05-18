@@ -214,6 +214,7 @@ export const BuildingCard = ({
           beltConnectionClicked={beltConnectionClicked}
           segmentHeight={136}
           beltConnections={buildingSlot.BeltConnections}
+          buildingIdx={buildingIdx}
         />
       ) : (
         <MainBusSegment
