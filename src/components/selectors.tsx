@@ -175,10 +175,10 @@ export async function showPlaceTruckLineSelector(
   buildingIdx: number
 ) {
   const result = await showDialog({
-    title: "Place Belt Line",
+    title: "Ship resources to another region",
     component: (onConfirm) => (
       <PlaceTruckLinePanel
-        title="Place Belt Line"
+        title="Ship resources to another region"
         inventory={inventory}
         regions={regions}
         onConfirm={onConfirm}
@@ -244,7 +244,7 @@ export async function showSaveCard(
 }
 
 export async function showSettingCard(
-  showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>
+  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>
 ): Promise<void> {
   await showDialog({
     title: "Setting",

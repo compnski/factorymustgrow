@@ -10,7 +10,7 @@ export type PlaceTruckLineProps = {
   onConfirm: (
     evt: SyntheticEvent,
     targetRegion: string,
-    beltType: string,
+    subkind: string,
     count: number
   ) => void;
 };
@@ -24,7 +24,7 @@ export function PlaceTruckLinePanel(props: PlaceTruckLineProps) {
   const cost = 50,
     entity = "concrete";
 
-  const enoughBeltsInInventory = inventory.Count(entity) >= cost;
+  const enoughConcreteInInventory = inventory.Count(entity) >= cost;
   return (
     <div className="place-belt-line modal">
       <span
@@ -54,11 +54,11 @@ export function PlaceTruckLinePanel(props: PlaceTruckLineProps) {
       <div className="place-belt-line-button-row">
         <div
           onClick={(evt) =>
-            enoughBeltsInInventory &&
+            enoughConcreteInInventory &&
             onConfirm(evt, selectValue, "concrete", cost)
           }
           className={`clickable place-belt-line-build-button ${
-            !enoughBeltsInInventory ? "disabled" : ""
+            !enoughConcreteInInventory ? "disabled" : ""
           }`}
         >
           Build!

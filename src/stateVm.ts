@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { HasProgressTrackers } from "./AddProgressTracker";
 import { NewEmptyLane } from "./building";
-import { debugFactoryGameState } from "./debug";
 import {
   FactoryGameState,
   initialFactoryGameState,
@@ -24,10 +23,10 @@ import {
   AddResearchCountAction,
   AdvanceTruckLineAction,
   isPlaceTruckLineDepotAction,
-  PlaceTruckLineAction,
   PlaceBuildingAction,
-  RemoveTruckLineAction,
+  PlaceTruckLineAction,
   RemoveMainBusLaneAction,
+  RemoveTruckLineAction,
   SetBeltConnectionPropertyAction,
   SetBuildingPropertyAction,
   SetCurrentResearchAction,
@@ -39,17 +38,17 @@ import {
   SwapBuildingsAction,
 } from "./state/action";
 import {
-  TruckLineAddress,
   BuildingAddress,
   isBeltConnectionAddress,
-  isTruckLineAddress,
   isBuildingAddress,
   isGlobalAddress,
   isInserterAddress,
   isInventoryAddress,
   isMainBusAddress,
   isRegionAddress,
+  isTruckLineAddress,
   MainBusAddress,
+  TruckLineAddress,
 } from "./state/address";
 import { AdvanceTruckLine, NewTruckLine, NewTruckLineDepot } from "./transport";
 import {

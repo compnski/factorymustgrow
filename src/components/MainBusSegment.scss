@@ -1,0 +1,99 @@
+@import "./_constants";
+
+.main-bus-segment.new {
+  display: flex;
+  .bus-lane {
+    &:first-child {
+      margin-left: 15px;
+    }
+    width: 25px;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+
+    &.flipped {
+      .bus-piece.bottom.left {
+        margin-left: 0;
+      }
+      .bus-piece.bottom.right {
+        margin-left: -8px;
+      }
+      .bus-piece.bottom.stop {
+        //margin-top: 0px;
+      }
+      .bus-piece .belt {
+        transform: rotate(180deg);
+      }
+    }
+
+    .bus-piece {
+      .belt {
+        background-color: #3f4952;
+        background-image: url("../transport_belt.png");
+        background-size: 30px;
+        background-repeat-y: repeat;
+        height: 100%;
+        width: 100%;
+        display: block;
+      }
+
+      filter: drop-shadow(2px 4px #222);
+
+      &.top {
+        height: 100px;
+      }
+
+      &.bottom {
+        .belt {
+          background-color: #3f4952;
+        }
+      }
+      &.bottom.left {
+        height: 30px;
+        width: 34px;
+        margin-left: -8px;
+        transform: rotate(90deg);
+      }
+
+      &.bottom.right {
+        height: 30px;
+        width: 34px;
+        transform: rotate(-90deg);
+      }
+
+      &.bottom.down {
+        height: 40px;
+        //width: 32px;
+      }
+
+      &.bottom.stop {
+        height: 30px;
+      }
+    }
+
+    .icon {
+      will-change: transform;
+      transform: scale(0.35);
+      margin: -20px;
+      position: absolute;
+      z-index: 1;
+
+      &.animate {
+        animation-duration: 6s;
+        animation-name: slidein;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+    }
+  }
+}
+
+@keyframes slidein {
+  from {
+    transform: translateY(0) scale(0.35);
+  }
+
+  to {
+    transform: translateY($cardHeight) scale(0.35);
+  }
+}

@@ -134,7 +134,7 @@ export const MainBusHeader = ({
               segmentHeight = 66;
             const stack = lane.Entities();
             const entity = stack.length && stack[0].length ? stack[0][0] : "";
-
+            return <></>;
             return (
               <polyline
                 key={laneId}

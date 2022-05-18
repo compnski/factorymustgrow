@@ -16,6 +16,7 @@ import { MainBusSegment } from "./MainBusSegment";
 import { ProducerCard } from "./ProducerCard";
 import { RocketSiloCard } from "./RocketSiloCard";
 import { StorageCard } from "./StorageCard";
+import { HTMLMainBusSegment } from "./HTMLMainBusSegment";
 
 export type BuildingCardProps = {
   buildingSlot: ReadonlyBuildingSlot;
@@ -206,13 +207,23 @@ export const BuildingCard = ({
         {card}
         <div className="output-area">{beltInserters}</div>
       </div>
-      <MainBusSegment
-        mainBus={regionalBus}
-        busLaneClicked={busLaneClicked}
-        beltConnectionClicked={beltConnectionClicked}
-        segmentHeight={136}
-        beltConnections={buildingSlot.BeltConnections}
-      />
+      {buildingIdx % 6 < 4 ? (
+        <HTMLMainBusSegment
+          mainBus={regionalBus}
+          busLaneClicked={busLaneClicked}
+          beltConnectionClicked={beltConnectionClicked}
+          segmentHeight={136}
+          beltConnections={buildingSlot.BeltConnections}
+        />
+      ) : (
+        <MainBusSegment
+          mainBus={regionalBus}
+          busLaneClicked={busLaneClicked}
+          beltConnectionClicked={beltConnectionClicked}
+          segmentHeight={136}
+          beltConnections={buildingSlot.BeltConnections}
+        />
+      )}
     </div>
   );
 };
