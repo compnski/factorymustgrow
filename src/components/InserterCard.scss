@@ -20,7 +20,7 @@ $inserterColor: slategrey;
     box-sizing: border-box;
     background-color: $inserterColor;
 
-    left: ($appWidth / 2 + 20px);
+    left: calc($appWidth / 2 + 20px);
     top: -10px;
     position: relative;
     z-index: 1;
