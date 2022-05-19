@@ -1,73 +1,16 @@
+import { SyntheticEvent, useState } from "react";
 import { ReadonlyMainBus } from "../mainbus";
 import { settings } from "../settings";
-import { BeltConnection } from "../types";
+import { Belt, BeltConnection, BeltHandlerFunc } from "../types";
 import { entityIconLookupByKind } from "../utils";
 
 import "./MainBusSegment.scss";
 
-type Belt = {
-  laneIdx: number;
-  startingSlotIdx: number; // Upper slot
-  length: number;
-  beltDirection: "UP" | "DOWN";
-  endDirection: "LEFT" | "RIGHT" | "NONE";
-  entity: string;
-};
-
-const belts: Belt[] = [
-  {
-    laneIdx: 2,
-    startingSlotIdx: 0,
-    length: 3,
-    beltDirection: "DOWN",
-    endDirection: "RIGHT",
-    entity: "copper-ore",
-  },
-  {
-    laneIdx: 4,
-    startingSlotIdx: 1,
-    length: 3,
-    beltDirection: "DOWN",
-    endDirection: "LEFT",
-    entity: "copper-plate",
-  },
-  {
-    laneIdx: 5,
-    startingSlotIdx: 1,
-    length: 4,
-    beltDirection: "UP",
-    endDirection: "LEFT",
-    entity: "copper-plate",
-  },
-  {
-    laneIdx: 1,
-    startingSlotIdx: 2,
-    length: 4,
-    beltDirection: "UP",
-    endDirection: "RIGHT",
-    entity: "automation-science-pack",
-  },
-  {
-    laneIdx: 3,
-    startingSlotIdx: 5,
-    length: 4,
-    beltDirection: "UP",
-    endDirection: "NONE",
-    entity: "iron-plate",
-  },
-  {
-    laneIdx: 6,
-    startingSlotIdx: 3,
-    length: 4,
-    beltDirection: "DOWN",
-    endDirection: "NONE",
-    entity: "transport-belt",
-  },
-];
-
 export function HTMLMainBusSegment({
   mainBus,
   buildingIdx,
+  beltState,
+  beltHandler,
   segmentHeight,
   beltConnections = [],
   busLaneClicked = () => void {},
@@ -79,20 +22,22 @@ export function HTMLMainBusSegment({
   beltConnections?: BeltConnection[];
   busLaneClicked?: (laneId: number, entity: string) => void;
   beltConnectionClicked?: (connectionIdx: number) => void;
+  beltHandler: BeltHandlerFunc;
+  beltState: Belt[];
 }) {
   const lanes = [];
   const entityIconLookup = entityIconLookupByKind("MainBus");
   // belts to map?
 
   const beltsByLane = new Map<number, Belt[]>();
-  let maxLaneId = 0;
-  belts.forEach((belt) => {
+  let maxLaneId = 8; // TODO: Read from region
+  beltState.forEach((belt) => {
     maxLaneId = Math.max(maxLaneId, belt.laneIdx);
     beltsByLane.set(
       belt.laneIdx,
       (beltsByLane.get(belt.laneIdx) || [])
         .concat([belt])
-        .sort((a, b) => a.startingSlotIdx - b.startingSlotIdx)
+        .sort((a, b) => b.startingSlotIdx - a.startingSlotIdx)
     );
   });
 
@@ -156,7 +101,10 @@ export function HTMLMainBusSegment({
 
       lanes.push(
         <div
-          onClick={() => console.log("clicked", laneId, buildingIdx)}
+          onMouseDown={(e) => beltHandler(e, "down", laneId, buildingIdx)}
+          onMouseUp={(e) => beltHandler(e, "up", laneId, buildingIdx)}
+          //onMouseLeave={(e) => beltHandler(e,"leave", laneId, buildingIdx)}
+          onMouseEnter={(e) => beltHandler(e, "enter", laneId, buildingIdx)}
           className={`bus-lane ${flipped ? "flipped" : ""}`}
           key={`${belt.startingSlotIdx}-${laneId}`}
         >
@@ -168,7 +116,10 @@ export function HTMLMainBusSegment({
         <div
           className={`bus-lane`}
           key={laneId}
-          onClick={() => console.log("empty clicked", laneId, buildingIdx)}
+          onMouseDown={(e) => beltHandler(e, "down", laneId, buildingIdx)}
+          onMouseUp={(e) => beltHandler(e, "up", laneId, buildingIdx)}
+          //onMouseLeave={(e) => beltHandler(e,"leave", laneId, buildingIdx)}
+          onMouseEnter={(e) => beltHandler(e, "enter", laneId, buildingIdx)}
         />
       );
     }

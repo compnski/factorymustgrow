@@ -1,8 +1,10 @@
 @import "./_constants";
 
 .main-bus-segment.new {
+  user-select: none;
   display: flex;
   .bus-lane {
+    background-color: #1111;
     &:first-child {
       margin-left: 15px;
     }

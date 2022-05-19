@@ -17,6 +17,7 @@ import { ProducerCard } from "./ProducerCard";
 import { RocketSiloCard } from "./RocketSiloCard";
 import { StorageCard } from "./StorageCard";
 import { HTMLMainBusSegment } from "./HTMLMainBusSegment";
+import { Belt, BeltHandlerFunc } from "../types";
 
 export type BuildingCardProps = {
   buildingSlot: ReadonlyBuildingSlot;
@@ -28,6 +29,8 @@ export type BuildingCardProps = {
   moveDown: (evt: SyntheticEvent) => void;
   region: ReadonlyRegion;
   gameState: FactoryGameState;
+  beltHandler: BeltHandlerFunc;
+  beltState: Belt[];
 };
 
 export const BuildingCard = ({
@@ -45,6 +48,8 @@ export const BuildingCard = ({
   },
   uxDispatch,
   gameState,
+  beltHandler,
+  beltState,
 }: BuildingCardProps) => {
   // TOOD: Change to use Events
   const building = buildingSlot.Building;
@@ -215,6 +220,8 @@ export const BuildingCard = ({
           segmentHeight={136}
           beltConnections={buildingSlot.BeltConnections}
           buildingIdx={buildingIdx}
+          beltHandler={beltHandler}
+          beltState={beltState}
         />
       ) : (
         <MainBusSegment

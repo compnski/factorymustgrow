@@ -3,6 +3,23 @@ import { Inserter } from "./inserter";
 import { ReadonlyFixedInventory, ReadonlyInventory } from "./inventory";
 import { ReadonlyMainBus } from "./mainbus";
 import { ReadonlyItemBuffer } from "./factoryGameState";
+import { SyntheticEvent } from "react";
+
+export type Belt = {
+  laneIdx: number;
+  startingSlotIdx: number; // Upper slot
+  length: number;
+  beltDirection: "UP" | "DOWN";
+  endDirection: "LEFT" | "RIGHT" | "NONE";
+  entity: string;
+};
+
+export type BeltHandlerFunc = (
+  evt: SyntheticEvent<HTMLDivElement, MouseEvent>,
+  action: string,
+  laneId: number,
+  buildingIdx: number
+) => void;
 
 export interface Producer {
   kind: string;
