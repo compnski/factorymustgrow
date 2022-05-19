@@ -25,11 +25,43 @@ const belts: Belt[] = [
   },
   {
     laneIdx: 4,
-    startingSlotIdx: 4,
+    startingSlotIdx: 1,
     length: 3,
     beltDirection: "DOWN",
-    endDirection: "RIGHT",
+    endDirection: "LEFT",
     entity: "copper-plate",
+  },
+  {
+    laneIdx: 5,
+    startingSlotIdx: 1,
+    length: 4,
+    beltDirection: "UP",
+    endDirection: "LEFT",
+    entity: "copper-plate",
+  },
+  {
+    laneIdx: 1,
+    startingSlotIdx: 2,
+    length: 4,
+    beltDirection: "UP",
+    endDirection: "RIGHT",
+    entity: "automation-science-pack",
+  },
+  {
+    laneIdx: 3,
+    startingSlotIdx: 5,
+    length: 4,
+    beltDirection: "UP",
+    endDirection: "NONE",
+    entity: "iron-plate",
+  },
+  {
+    laneIdx: 6,
+    startingSlotIdx: 3,
+    length: 4,
+    beltDirection: "DOWN",
+    endDirection: "NONE",
+    entity: "transport-belt",
   },
 ];
 
@@ -49,7 +81,6 @@ export function HTMLMainBusSegment({
   beltConnectionClicked?: (connectionIdx: number) => void;
 }) {
   const lanes = [];
-  const laneIdxByBeltId: { [key: number]: number } = {};
   const entityIconLookup = entityIconLookupByKind("MainBus");
   // belts to map?
 
@@ -65,57 +96,82 @@ export function HTMLMainBusSegment({
     );
   });
 
-  function shouldRenderSegment(laneIdx: number) {
+  function beltSegment(laneIdx: number): Belt | false {
     const blist = beltsByLane.get(laneIdx);
     if (!blist) return false;
     for (const b of blist) {
       if (
-        buildingIdx > b.startingSlotIdx &&
+        buildingIdx >= b.startingSlotIdx &&
         buildingIdx < b.startingSlotIdx + b.length
       )
-        return true;
+        return b;
       if (buildingIdx > b.startingSlotIdx + b.length) return false;
     }
     return false;
   }
 
+  function beltDirection(buildingIdx: number, belt: Belt): string {
+    if (belt.beltDirection == "DOWN")
+      return buildingIdx < belt.startingSlotIdx + belt.length - 1
+        ? "down"
+        : belt.endDirection.toLowerCase();
+    else
+      return buildingIdx != belt.startingSlotIdx
+        ? "down"
+        : belt.endDirection.toLowerCase();
+  }
+
   //for (const [_laneId, lane] of mainBus.lanes.entries()) {
   for (let laneId = 1; laneId <= maxLaneId; laneId++) {
     //const stack = lane.Entities();
-    const entity = "copper"; //stack.length && stack[0].length ? stack[0][0] : "";
-    const md = laneId % 4;
-    const dir =
-      md == 2 ? "left" : md == 1 ? "down" : md == 0 ? "right" : "stop";
-    const flipped = true;
+
     let inside = <></>;
-    if (shouldRenderSegment(laneId)) {
+    const belt = beltSegment(laneId);
+    if (belt) {
+      const entity = belt.entity;
+      const flipped = belt.beltDirection == "UP";
+
+      const dir = beltDirection(buildingIdx, belt);
       const top = (
-          <div className={`bus-piece top ${dir}`}>
+          <div key="top" className={`bus-piece top ${dir}`}>
             <span className="belt" />
           </div>
         ),
         bottom = (
-          <div className={`bus-piece bottom ${dir}`}>
+          <div key="bottom" className={`bus-piece bottom ${dir}`}>
             <span className="belt" />
           </div>
         );
       inside = (
-        <>
+        <span>
           <span
             className={`icon ${entityIconLookup(entity)} ${
               settings.animatedEnabled ? "animate" : ""
             }`}
           />
+
           {flipped ? [bottom, top] : [top, bottom]}
-        </>
+        </span>
       );
-    }
-    if (entity)
+
       lanes.push(
-        <div className={`bus-lane ${flipped ? "flipped" : ""}`} key={laneId}>
+        <div
+          onClick={() => console.log("clicked", laneId, buildingIdx)}
+          className={`bus-lane ${flipped ? "flipped" : ""}`}
+          key={`${belt.startingSlotIdx}-${laneId}`}
+        >
           {inside}
         </div>
       );
+    } else {
+      lanes.push(
+        <div
+          className={`bus-lane`}
+          key={laneId}
+          onClick={() => console.log("empty clicked", laneId, buildingIdx)}
+        />
+      );
+    }
   }
   return <div className="new main-bus-segment">{lanes.flat()}</div>;
 }

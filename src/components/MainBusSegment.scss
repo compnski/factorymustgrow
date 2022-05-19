@@ -13,13 +13,17 @@
 
     &.flipped {
       .bus-piece.bottom.left {
-        margin-left: 0;
+        margin-left: -8px;
+        transform: rotate(-90deg);
+        margin-top: 10px;
       }
       .bus-piece.bottom.right {
         margin-left: -8px;
+        transform: rotate(90deg);
+        margin-top: 10px;
       }
-      .bus-piece.bottom.stop {
-        //margin-top: 0px;
+      .bus-piece.bottom.none {
+        margin-top: 10px;
       }
       .bus-piece .belt {
         transform: rotate(180deg);
@@ -66,14 +70,14 @@
         //width: 32px;
       }
 
-      &.bottom.stop {
+      &.bottom.none {
         height: 30px;
       }
     }
 
     .icon {
       will-change: transform;
-      transform: scale(0.35);
+      transform: scale(0.4);
       margin: -20px;
       position: absolute;
       margin-top: 20px;
@@ -91,10 +95,10 @@
 
 @keyframes slidein {
   from {
-    transform: translateY(0) scale(0.35);
+    transform: translateY(0) scale(0.4);
   }
 
   to {
-    transform: translateY($cardHeight) scale(0.35);
+    transform: translateY($cardHeight) scale(0.4);
   }
 }

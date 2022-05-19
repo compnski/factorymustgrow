@@ -72,6 +72,7 @@ export const MainBusHeader = ({
   const lanes = [];
   for (const entry of mainBus.lanes.entries()) {
     const [laneId, lane] = entry;
+
     const stack = lane.Entities();
     const entity = stack.length && stack[0].length ? stack[0][0] : "";
     const count = lane.Count(entity);
@@ -86,12 +87,12 @@ export const MainBusHeader = ({
             uxDispatch
           )
         }
-        key={laneId}
+        key={`${entity}-${laneId}`}
         className="lane-header-item-stack"
       >
         <title>${entity}</title>
-        <div className={`icon ${entity}`} />
-        <div className="item-stack-count-text">
+        <div key="icon" className={`icon ${entity}`} />
+        <div key="count" className="item-stack-count-text">
           <span>{count}</span>
         </div>
       </div>

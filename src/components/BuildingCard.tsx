@@ -207,7 +207,7 @@ export const BuildingCard = ({
         {card}
         <div className="output-area">{beltInserters}</div>
       </div>
-      {buildingIdx % 6 < 4 ? (
+      {buildingIdx < 10 ? (
         <HTMLMainBusSegment
           mainBus={regionalBus}
           busLaneClicked={busLaneClicked}
