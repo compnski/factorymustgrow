@@ -1,6 +1,11 @@
 #+TITLE: Todo
 * In progress
 ** Bugs
+*** Dialogs hold onto previous gameState via uxDispatch
+Maybe set uxDispatch in generalDialog? or pass it in someplace else?
+Very visible now with setting entity on belt
+Maybe it sets an action into an event queue that is read by the real uxDispatch
+
 *** MainBus makes fan spin up (SVG animation?) Can disable gpu?
 *** Names sometime still too long "courageous ram"
 *** Plastic production seems hard to scale up, maybe oil issues?
