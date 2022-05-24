@@ -18,7 +18,8 @@ export type BeltHandlerFunc = (
   evt: SyntheticEvent<HTMLDivElement, MouseEvent>,
   action: string,
   laneId: number,
-  buildingIdx: number
+  buildingIdx: number,
+  beltStartingSlotIdx?: number
 ) => void;
 
 export interface Producer {

@@ -101,10 +101,16 @@ export function HTMLMainBusSegment({
 
       lanes.push(
         <div
-          onMouseDown={(e) => beltHandler(e, "down", laneId, buildingIdx)}
-          onMouseUp={(e) => beltHandler(e, "up", laneId, buildingIdx)}
-          //onMouseLeave={(e) => beltHandler(e,"leave", laneId, buildingIdx)}
-          onMouseEnter={(e) => beltHandler(e, "enter", laneId, buildingIdx)}
+          onMouseDown={(e) =>
+            beltHandler(e, "down", laneId, buildingIdx, belt.startingSlotIdx)
+          }
+          onMouseUp={(e) =>
+            beltHandler(e, "up", laneId, buildingIdx, belt.startingSlotIdx)
+          }
+          //onMouseLeave={(e) => beltHandler(e,"leave", laneId, buildingIdx,belt.startingSlotIdx)}
+          onMouseEnter={(e) =>
+            beltHandler(e, "enter", laneId, buildingIdx, belt.startingSlotIdx)
+          }
           className={`bus-lane ${flipped ? "flipped" : ""}`}
           key={`${belt.startingSlotIdx}-${laneId}`}
         >

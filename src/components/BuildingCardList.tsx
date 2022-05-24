@@ -154,44 +154,119 @@ export const BuildingCardList = ({
   const [clickInfo, setClickInfo] = useState<ClickInfo | undefined>();
   const [ghostBelt, setGhostBelt] = useState<Belt | undefined>();
 
+  function findBelt(
+    laneId: number,
+    beltStartingLaneIdx: number
+  ): Belt | undefined {
+    return beltState.find(
+      (b) => b.laneIdx == laneId && b.startingSlotIdx == beltStartingLaneIdx
+    );
+  }
+
+  function removeBelt(existingBelt: Belt) {
+    setBeltState(
+      beltState.filter(
+        (b) =>
+          !(
+            b.laneIdx == existingBelt.laneIdx &&
+            b.startingSlotIdx == existingBelt.startingSlotIdx
+          )
+      )
+    );
+  }
+
   const beltHandler: BeltHandlerFunc = (
     evt: SyntheticEvent<HTMLDivElement, MouseEvent>,
 
     action: string,
     laneId: number,
-    buildingIdx: number
+    buildingIdx: number,
+    beltStartingLaneIdx?: number
   ) => {
     evt.stopPropagation();
+    const existingBelt =
+      beltStartingLaneIdx != undefined
+        ? findBelt(laneId, beltStartingLaneIdx)
+        : undefined;
     //    console.log(action, laneId, buildingIdx);
     //    console.log(evt.type);
     //console.log(evt.type);
+
+    // Staring on existing belt:
+    // - remove exsiting belt, set it as ghost belt
+    // ending on existing belt:
+    // - if same direction, join it
+    // - if other mission, do not extend?
+
     switch (evt.type) {
       case "mousedown":
-        setClickInfo({
-          clientX: evt.nativeEvent.clientX,
-          clientY: evt.nativeEvent.clientY,
-          buildingIdx,
-          laneId,
-        });
+        if (existingBelt) {
+          setClickInfo({
+            clientX: evt.nativeEvent.clientX,
+            clientY: evt.nativeEvent.clientY,
+            buildingIdx:
+              existingBelt.beltDirection == "UP"
+                ? existingBelt.startingSlotIdx + existingBelt.length
+                : existingBelt.startingSlotIdx,
+            laneId,
+          });
+
+          setGhostBelt(existingBelt);
+          removeBelt(existingBelt);
+        } else {
+          setClickInfo({
+            clientX: evt.nativeEvent.clientX,
+            clientY: evt.nativeEvent.clientY,
+            buildingIdx,
+            laneId,
+          });
+        }
         break;
       case "mouseup":
       case "mouseleave":
-        if (ghostBelt) setBeltState([...beltState, ghostBelt]);
+        if (ghostBelt) {
+          setBeltState([...beltState, ghostBelt]);
+          console.log([...beltState, ghostBelt]);
+        }
         setClickInfo(undefined);
         setGhostBelt(undefined);
         break;
       case "mouseenter":
         if (clickInfo != undefined)
           if (clickInfo.buildingIdx == buildingIdx) setGhostBelt(undefined);
-          else
-            setGhostBelt({
-              laneIdx: clickInfo.laneId,
-              startingSlotIdx: Math.min(clickInfo.buildingIdx, buildingIdx),
-              length: Math.abs(clickInfo.buildingIdx - buildingIdx) + 1,
-              endDirection: xDir(evt.nativeEvent, clickInfo),
-              beltDirection: yDir(evt.nativeEvent, clickInfo),
-              entity: "",
-            });
+          else {
+            const beltDirection = yDir(evt.nativeEvent, clickInfo);
+            if (existingBelt) {
+              if (existingBelt.beltDirection == beltDirection) {
+                removeBelt(existingBelt);
+                const startingSlotIdx = Math.min(
+                  existingBelt.startingSlotIdx,
+                  buildingIdx,
+                  clickInfo.buildingIdx
+                );
+                setGhostBelt({
+                  laneIdx: clickInfo.laneId,
+                  startingSlotIdx,
+                  length:
+                    beltDirection == "UP"
+                      ? clickInfo.buildingIdx - startingSlotIdx + 1
+                      : existingBelt.length +
+                        Math.abs(clickInfo.buildingIdx - buildingIdx),
+                  endDirection: xDir(evt.nativeEvent, clickInfo),
+                  beltDirection,
+                  entity: "",
+                });
+              }
+            } else
+              setGhostBelt({
+                laneIdx: clickInfo.laneId,
+                startingSlotIdx: Math.min(clickInfo.buildingIdx, buildingIdx),
+                length: Math.abs(clickInfo.buildingIdx - buildingIdx) + 1,
+                endDirection: xDir(evt.nativeEvent, clickInfo),
+                beltDirection,
+                entity: "",
+              });
+          }
     }
   };
 
