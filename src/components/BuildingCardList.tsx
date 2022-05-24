@@ -197,6 +197,14 @@ export const BuildingCardList = ({
     // ending on existing belt:
     // - if same direction, join it
     // - if other mission, do not extend?
+    // TODO: Move this out of this file
+    // TODO: Handle entity selection on belt connection creation
+    // Try to infer, if not, show a list
+    // Need a way to change/override if we guess wrong
+    // Need to store belt state in region
+    // Reconcile beltState with regional state?
+    // Question is when do we remove the belt we drag over, probably on mouseup or whenever ghostBelt is removed
+    //
 
     switch (evt.type) {
       case "mousedown":

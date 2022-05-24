@@ -93,6 +93,20 @@
       }
     }
   }
+
+  .belt-connection {
+    height: 20px;
+    position: absolute;
+    border-radius: 4px;
+    background: rgb(18 21 21 / 90%);
+    top: 50px;
+    left: 0;
+    margin-top: 10px;
+  }
+  .belt-connections {
+    position: relative;
+    z-index: 1;
+  }
 }
 
 @keyframes slidein {

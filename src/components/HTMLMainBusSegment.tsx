@@ -111,6 +111,10 @@ export function HTMLMainBusSegment({
           onMouseEnter={(e) =>
             beltHandler(e, "enter", laneId, buildingIdx, belt.startingSlotIdx)
           }
+          onDoubleClick={(e) => [
+            console.log(e),
+            busLaneClicked(laneId, "copper-ore"),
+          ]}
           className={`bus-lane ${flipped ? "flipped" : ""}`}
           key={`${belt.startingSlotIdx}-${laneId}`}
         >
@@ -130,5 +134,27 @@ export function HTMLMainBusSegment({
       );
     }
   }
-  return <div className="new main-bus-segment">{lanes.flat()}</div>;
+
+  return (
+    <div className="new main-bus-segment">
+      <div className="belt-connections">
+        {beltConnections.map((b, idx) => {
+          if (!b.laneId) return undefined;
+          const style = {
+            top: idx * 30,
+            width: 25 + (b.laneId - 1) * 35,
+          };
+          return (
+            <div
+              key={`${idx}-${b.laneId}`}
+              style={style}
+              className="belt-connection"
+              onDoubleClick={(e) => beltConnectionClicked(idx)}
+            />
+          );
+        })}
+      </div>
+      {lanes.flat()}
+    </div>
+  );
 }

@@ -40,6 +40,7 @@ export const GameDispatch = (
   gameState: FactoryGameState,
   action: GameAction
 ) => {
+  console.log(action);
   switch (action.type) {
     case "UpdateState":
       dispatch(action.action);
