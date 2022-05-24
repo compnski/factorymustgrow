@@ -1,9 +1,7 @@
-import { SyntheticEvent, useState } from "react";
 import { ReadonlyMainBus } from "../mainbus";
 import { settings } from "../settings";
-import { Belt, BeltConnection, BeltHandlerFunc } from "../types";
+import { Belt, BeltConnection, BeltHandlerFunc, NewMainBus } from "../types";
 import { entityIconLookupByKind } from "../utils";
-
 import "./MainBusSegment.scss";
 
 export function HTMLMainBusSegment({
@@ -16,7 +14,7 @@ export function HTMLMainBusSegment({
   busLaneClicked = () => void {},
   beltConnectionClicked = () => void {},
 }: {
-  mainBus: ReadonlyMainBus;
+  mainBus: NewMainBus;
   buildingIdx: number;
   segmentHeight: number;
   beltConnections?: BeltConnection[];
@@ -37,7 +35,7 @@ export function HTMLMainBusSegment({
       belt.laneIdx,
       (beltsByLane.get(belt.laneIdx) || [])
         .concat([belt])
-        .sort((a, b) => b.startingSlotIdx - a.startingSlotIdx)
+        .sort((a, b) => b.upperSlotIdx - a.upperSlotIdx)
     );
   });
 
@@ -45,23 +43,20 @@ export function HTMLMainBusSegment({
     const blist = beltsByLane.get(laneIdx);
     if (!blist) return false;
     for (const b of blist) {
-      if (
-        buildingIdx >= b.startingSlotIdx &&
-        buildingIdx < b.startingSlotIdx + b.length
-      )
+      if (buildingIdx >= b.upperSlotIdx && buildingIdx <= b.lowerSlotIdx)
         return b;
-      if (buildingIdx > b.startingSlotIdx + b.length) return false;
+      if (buildingIdx > b.lowerSlotIdx) return false;
     }
     return false;
   }
 
   function beltDirection(buildingIdx: number, belt: Belt): string {
     if (belt.beltDirection == "DOWN")
-      return buildingIdx < belt.startingSlotIdx + belt.length - 1
+      return buildingIdx < belt.lowerSlotIdx
         ? "down"
         : belt.endDirection.toLowerCase();
     else
-      return buildingIdx != belt.startingSlotIdx
+      return buildingIdx != belt.upperSlotIdx
         ? "down"
         : belt.endDirection.toLowerCase();
   }
@@ -102,21 +97,22 @@ export function HTMLMainBusSegment({
       lanes.push(
         <div
           onMouseDown={(e) =>
-            beltHandler(e, "down", laneId, buildingIdx, belt.startingSlotIdx)
+            beltHandler(e, "down", laneId, buildingIdx, belt.upperSlotIdx)
           }
           onMouseUp={(e) =>
-            beltHandler(e, "up", laneId, buildingIdx, belt.startingSlotIdx)
+            beltHandler(e, "up", laneId, buildingIdx, belt.upperSlotIdx)
           }
           //onMouseLeave={(e) => beltHandler(e,"leave", laneId, buildingIdx,belt.startingSlotIdx)}
           onMouseEnter={(e) =>
-            beltHandler(e, "enter", laneId, buildingIdx, belt.startingSlotIdx)
+            beltHandler(e, "enter", laneId, buildingIdx, belt.upperSlotIdx)
           }
           onDoubleClick={(e) => [
             console.log(e),
             busLaneClicked(laneId, "copper-ore"),
           ]}
+          onContextMenu={(e) => beltHandler(e, "cancel", -1, -1)}
           className={`bus-lane ${flipped ? "flipped" : ""}`}
-          key={`${belt.startingSlotIdx}-${laneId}`}
+          key={`${belt.upperSlotIdx}-${laneId}`}
         >
           {inside}
         </div>
@@ -130,6 +126,7 @@ export function HTMLMainBusSegment({
           onMouseUp={(e) => beltHandler(e, "up", laneId, buildingIdx)}
           //onMouseLeave={(e) => beltHandler(e,"leave", laneId, buildingIdx)}
           onMouseEnter={(e) => beltHandler(e, "enter", laneId, buildingIdx)}
+          onContextMenu={(e) => beltHandler(e, "cancel", -1, -1)}
         />
       );
     }
@@ -149,7 +146,7 @@ export function HTMLMainBusSegment({
               key={`${idx}-${b.laneId}`}
               style={style}
               className="belt-connection"
-              onDoubleClick={(e) => beltConnectionClicked(idx)}
+              onDoubleClick={() => beltConnectionClicked(idx)}
             />
           );
         })}

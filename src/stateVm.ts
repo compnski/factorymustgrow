@@ -32,6 +32,7 @@ import {
   SetCurrentResearchAction,
   SetGlobalPropertyAction,
   SetInserterPropertyAction,
+  SetMainBusBeltPropertyAction,
   SetPropertyAction,
   SetRecipeAction,
   StateVMAction,
@@ -53,6 +54,7 @@ import {
 import { AdvanceTruckLine, NewTruckLine, NewTruckLineDepot } from "./transport";
 import {
   AddToEntityStack,
+  Belt,
   BeltConnection,
   NewEntityStack,
   NewRegionFromInfo,
@@ -211,6 +213,8 @@ function stateChangeSetProperty(
     region = setInserterProperty(region, action as SetInserterPropertyAction);
   else if (isBuildingAddress(action.address))
     region = setBuildingProperty(region, action as SetBuildingPropertyAction);
+  else if (isMainBusAddress(action.address))
+    region = setMainBusProperty(region, action as SetMainBusBeltPropertyAction);
   else throw new Error("Bad address: " + action.address);
   return {
     ...state,
@@ -335,6 +339,35 @@ function setBeltConnectionProperty(
   return {
     ...region,
     BuildingSlots: replaceItem(region.BuildingSlots, buildingIdx, slot),
+  };
+}
+
+function setMainBusProperty(
+  region: ReadonlyRegion,
+  {
+    property,
+    value,
+    address: { laneId, upperSlotIdx },
+  }: SetMainBusBeltPropertyAction
+): ReadonlyRegion {
+  const beltIdx = region.Bus.Belts.findIndex(
+    (b) => b.laneIdx == laneId && b.upperSlotIdx == upperSlotIdx
+  );
+  console.log(beltIdx, laneId, upperSlotIdx);
+  if (beltIdx < 0) return region;
+  const Belt = region.Bus.Belts[beltIdx];
+  const b = {
+    ...Belt,
+    [property]: value,
+  };
+  console.log(b);
+
+  return {
+    ...region,
+    Bus: {
+      ...region.Bus,
+      Belts: replaceItem(region.Bus.Belts as Belt[], beltIdx, b),
+    },
   };
 }
 
@@ -694,15 +727,43 @@ function stateChangeRemoveTruckLine(
   };
 }
 
+function NewBelt(
+  address: MainBusAddress,
+  lowerSlotIdx: number,
+  beltDirection: "UP" | "DOWN"
+): Belt {
+  const { upperSlotIdx, laneId } = address;
+  console.log(lowerSlotIdx - upperSlotIdx + 1);
+  return {
+    laneIdx: laneId,
+    upperSlotIdx,
+    lowerSlotIdx,
+    endDirection: "NONE",
+    beltDirection,
+    entity: "",
+    internalBeltBuffer: new Array(lowerSlotIdx - upperSlotIdx + 1),
+  };
+}
+
 function stateChangeAddMainBusLane(
   state: FactoryGameState,
   action: AddMainBusLaneAction
 ): FactoryGameState {
   const region = state.Regions.get(action.address.regionId);
   if (!region) throw new Error("Missing region " + action.address.regionId);
+  const { laneId, upperSlotIdx } = action.address;
+
+  // remove existing belts
+  const Belts = region.Bus.Belts.filter(
+    (b) =>
+      b.laneIdx != laneId ||
+      b.lowerSlotIdx > action.lowerSlotIdx ||
+      b.upperSlotIdx < upperSlotIdx
+  ).concat(NewBelt(action.address, action.lowerSlotIdx, action.beltDirection));
+  console.log(Belts);
   const newRegion: ReadonlyRegion = {
     ...region,
-    Bus: region.Bus.AddLane(action.entity),
+    Bus: { ...region.Bus, Belts },
   };
 
   return {
@@ -717,9 +778,16 @@ function stateChangeRemoveMainBusLane(
 ): FactoryGameState {
   const region = state.Regions.get(action.address.regionId);
   if (!region) throw new Error("Missing region " + action.address.regionId);
+  const { laneId, upperSlotIdx } = action.address;
+
+  // remove existing belts
+  const Belts = region.Bus.Belts.filter(
+    (b) => b.laneIdx != laneId || b.upperSlotIdx != upperSlotIdx
+  );
+  console.log(Belts);
   const newRegion: ReadonlyRegion = {
     ...region,
-    Bus: region.Bus.RemoveLane(action.address.laneId),
+    Bus: { ...region.Bus, Belts },
   };
 
   return {
@@ -734,15 +802,16 @@ function addItemsToMainBus(
   entity: string,
   count: number
 ): FactoryGameState {
-  const region = state.Regions.get(address.regionId);
-  if (!region) throw new Error("Missing region");
-  const newRegion = {
-    ...region,
-    Bus: region.Bus.AddItemToLane(address.laneId, entity, count),
-  };
+  throw new Error("NYI");
+  // const region = state.Regions.get(address.regionId);
+  // if (!region) throw new Error("Missing region");
+  // const newRegion = {
+  //   ...region,
+  //   Bus: region.Bus.AddItemToLane(address.laneId, entity, count),
+  // };
 
-  return {
-    ...state,
-    Regions: state.Regions.set(address.regionId, newRegion),
-  };
+  // return {
+  //   ...state,
+  //   Regions: state.Regions.set(address.regionId, newRegion),
+  //  };
 }

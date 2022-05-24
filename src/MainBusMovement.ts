@@ -3,7 +3,7 @@ import { ReadonlyMainBus } from "./mainbus";
 import { VMPushToOtherBuilding } from "./movement";
 import { StateVMAction } from "./state/action";
 import { BuildingAddress } from "./state/address";
-import { BeltConnection, EntityStack } from "./types";
+import { BeltConnection, EntityStack, NewMainBus } from "./types";
 import { ReadonlyItemBuffer } from "./factoryGameState";
 
 interface MainBusConnector {
@@ -22,49 +22,50 @@ export type MainBusConnection = {
 export function PushPullFromMainBus(
   dispatch: (a: StateVMAction) => void,
   slot: { Building: MainBusConnector; BeltConnections: BeltConnection[] },
-  mb: ReadonlyMainBus,
+  mb: NewMainBus,
   address: BuildingAddress
 ) {
-  const building = slot.Building;
-  for (const laneConnection of slot.BeltConnections) {
-    if (laneConnection?.laneId === undefined) continue;
-    const maxTransferred = InserterTransferRate(laneConnection.Inserter);
-    if (maxTransferred <= 0) continue;
-    const busLane = mb.lanes.get(laneConnection.laneId);
-    if (!busLane) {
-      throw new Error(
-        `Missing bus lane ${
-          laneConnection.laneId
-        } from main bus ${JSON.stringify(mb)}`
-      );
-    }
-    if (
-      laneConnection.Inserter.direction != "TO_BUS" &&
-      laneConnection.Inserter.direction != "FROM_BUS"
-    )
-      throw new Error("bad inserter");
+  return;
+  // const building = slot.Building;
+  // for (const laneConnection of slot.BeltConnections) {
+  //   if (laneConnection?.laneId === undefined) continue;
+  //   const maxTransferred = InserterTransferRate(laneConnection.Inserter);
+  //   if (maxTransferred <= 0) continue;
+  //   const busLane = mb.lanes.get(laneConnection.laneId);
+  //   if (!busLane) {
+  //     throw new Error(
+  //       `Missing bus lane ${
+  //         laneConnection.laneId
+  //       } from main bus ${JSON.stringify(mb)}`
+  //     );
+  //   }
+  //   if (
+  //     laneConnection.Inserter.direction != "TO_BUS" &&
+  //     laneConnection.Inserter.direction != "FROM_BUS"
+  //   )
+  //     throw new Error("bad inserter");
 
-    switch (laneConnection.Inserter.direction) {
-      case "TO_BUS":
-        VMPushToOtherBuilding(
-          dispatch,
-          { ...address, buffer: "output" },
-          building,
-          { regionId: address.regionId, laneId: laneConnection.laneId },
-          { inputBuffers: mb.Lane(laneConnection.laneId) },
-          maxTransferred
-        );
-        break;
+  //   switch (laneConnection.Inserter.direction) {
+  //     case "TO_BUS":
+  //       VMPushToOtherBuilding(
+  //         dispatch,
+  //         { ...address, buffer: "output" },
+  //         building,
+  //         { regionId: address.regionId, laneId: laneConnection.laneId },
+  //         { inputBuffers: mb.Lane(laneConnection.laneId) },
+  //         maxTransferred
+  //       );
+  //       break;
 
-      case "FROM_BUS":
-        VMPushToOtherBuilding(
-          dispatch,
-          { regionId: address.regionId, laneId: laneConnection.laneId },
-          { outputBuffers: mb.Lane(laneConnection.laneId) },
-          { ...address, buffer: "input" },
-          building,
-          maxTransferred
-        );
-    }
-  }
+  //     case "FROM_BUS":
+  //       VMPushToOtherBuilding(
+  //         dispatch,
+  //         { regionId: address.regionId, laneId: laneConnection.laneId },
+  //         { outputBuffers: mb.Lane(laneConnection.laneId) },
+  //         { ...address, buffer: "input" },
+  //         building,
+  //         maxTransferred
+  //       );
+  //   }
+  // }
 }

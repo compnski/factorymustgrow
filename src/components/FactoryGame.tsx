@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { TicksPerSecond } from "../constants";
 import { UpdateGameState } from "../factoryGame";
+import { ReadonlyResearchState } from "../factoryGameState";
 import { GameAction } from "../GameAction";
 import { GameDispatch } from "../GameDispatch";
 import { useGeneralDialog } from "../GeneralDialogProvider";
@@ -8,18 +9,16 @@ import { saveStateToLocalStorage } from "../localstorage";
 import { Macro, setMacroRegionId } from "../macro_def";
 import { useInterval } from "../reactUtils";
 import { ReactComponent as RocketShip } from "../rocket-launch.svg";
+import { settings } from "../settings";
 import { getDispatchFunc } from "../stateVm";
-import { ReadonlyResearchState } from "../factoryGameState";
 import { BuildingCardList } from "./BuildingCardList";
+import { CommentsForm } from "./CommentsForm";
 import { DebugButtonPanel } from "./DebugButtonPanel";
 import "./FactoryGame.scss";
 import { InfoHeader } from "./InfoHeader";
 import { InventoryDisplay } from "./InventoryDisplay";
-import { MainBusHeader } from "./MainBusHeader";
 import { RegionTabBar } from "./RegionTabBar";
 import { showHelpCard, showSaveCard, showSettingCard } from "./selectors";
-import { CommentsForm } from "./CommentsForm";
-import { settings } from "../settings";
 
 export const FactoryGame = (props: ReturnType<typeof getDispatchFunc>) => {
   const { gameState, dispatch, executeActions } = props;
@@ -100,12 +99,6 @@ export const FactoryGame = (props: ReturnType<typeof getDispatchFunc>) => {
           <InfoHeader
             currentRegion={currentRegion}
             researchState={researchState}
-            uxDispatch={uxDispatch}
-          />
-          <MainBusHeader
-            mainBus={currentRegion.Bus}
-            researchState={researchState}
-            regionId={currentRegion.Id}
             uxDispatch={uxDispatch}
           />
         </div>

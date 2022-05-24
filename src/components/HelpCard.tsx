@@ -49,8 +49,26 @@ function buildHelpRegion() {
     10
   );
 
-  helpRegion.Bus = helpRegion.Bus.AddLane("iron-plate", 10);
-  helpRegion.Bus = helpRegion.Bus.AddLane("transport-belt", 10);
+  helpRegion.Bus.Belts = [
+    {
+      laneIdx: 1,
+      upperSlotIdx: 1,
+      lowerSlotIdx: 3,
+      entity: "iron-plate",
+      endDirection: "NONE",
+      beltDirection: "DOWN",
+      internalBeltBuffer: new Array(5),
+    },
+    {
+      laneIdx: 2,
+      upperSlotIdx: 0,
+      lowerSlotIdx: 3,
+      entity: "transport-belt",
+      endDirection: "NONE",
+      beltDirection: "UP",
+      internalBeltBuffer: new Array(5),
+    },
+  ];
 
   helpRegion.BuildingSlots = [
     NewBuildingSlot(miner, 3, NewInserter(1, "DOWN")),

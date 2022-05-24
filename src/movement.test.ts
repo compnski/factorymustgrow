@@ -13,7 +13,12 @@ import {
 import { NewLab } from "./research";
 import { NewChest } from "./storage";
 import { AddItemsToReadonlyFixedBuffer } from "./test_utils";
-import { BeltConnection, EntityStack, NewEntityStack } from "./types";
+import {
+  BeltConnection,
+  EntityStack,
+  NewEntityStack,
+  NewMainBus,
+} from "./types";
 
 function NewTestFactory(r: string, count = 1): Factory {
   const factory = NewFactoryForRecipe(
@@ -211,121 +216,108 @@ describe("VMPushToOtherBuilding", () => {
 });
 
 describe("PushPullFromMainBus", () => {
-  function TestMovement(
-    slot: { Building: Building; BeltConnections: BeltConnection[] },
-    bus: ReadonlyMainBus,
-    expected: {
-      inputBuffers: EntityStack[];
-      outputBuffers: EntityStack[];
-      busCounts: Map<number, number>;
-    }
-  ) {
-    const dispatch = jest.fn();
-    const building = slot.Building;
-    PushPullFromMainBus(dispatch, slot, bus, {
-      regionId: "testRegion",
-      buildingIdx: 1,
-    });
-
-    for (const expectedOutput of expected.outputBuffers) {
-      expect(building.outputBuffers.Count(expectedOutput.Entity)).toBe(
-        expectedOutput.Count
-      );
-    }
-
-    for (const [beltId, count] of expected.busCounts) {
-      const lane = bus.lanes.get(beltId),
-        entity = lane?.Entities()[0][0] || "";
-      expect(lane?.Count(entity)).toBe(count);
-    }
-
-    for (const expectedInput of expected.inputBuffers) {
-      expect(building.inputBuffers.Count(expectedInput.Entity)).toBe(
-        expectedInput.Count
-      );
-    }
-  }
-
-  it.todo("Only pushes up to #producer count");
-
-  xit("Moves between Factory and MainBus", () => {
-    const mb = new ReadonlyMainBus(
-      4,
-      ImmutableMap([
-        [1, NewBusLane("test-item", 0)],
-        [2, NewBusLane("test-ore", 5)],
-        [3, NewBusLane("test-slow-ore", 10)],
-      ])
-    );
-
-    const factory = NewTestFactory("test-item", 0);
-    const slot = NewBuildingSlot(factory, 3);
-
-    factory.outputBuffers = AddItemsToReadonlyFixedBuffer(
-      factory.outputBuffers,
-      5
-    );
-
-    slot.BeltConnections = [
-      {
-        laneId: 1,
-        Inserter: NewInserter(1, "TO_BUS"),
-      },
-      {
-        laneId: 2,
-        Inserter: NewInserter(1, "FROM_BUS"),
-      },
-      {
-        laneId: 3,
-        Inserter: NewInserter(1, "FROM_BUS"),
-      },
-    ];
-
-    TestMovement(slot, mb, {
-      inputBuffers: [
-        NewEntityStack("test-ore", 1),
-        NewEntityStack("test-slow-ore", 1),
-      ],
-      busCounts: new Map([
-        [1, 1],
-        [2, 4],
-        [3, 9],
-      ]),
-      outputBuffers: [NewEntityStack("test-item", 4)],
-    });
-  });
-
-  it.skip("Moves between Lab and MainBus", () => {
-    const mb = new ReadonlyMainBus(
-      2,
-      ImmutableMap([[1, NewBusLane("automation-science-pack", 10)]])
-    );
-    const lab = NewLab(1);
-    lab.inputBuffers = AddItemsToReadonlyFixedBuffer(lab.inputBuffers, 10);
-
-    const slot = NewBuildingSlot(lab, 3);
-
-    slot.BeltConnections = [
-      {
-        laneId: 1,
-        Inserter: NewInserter(1, "TO_BUS"),
-      },
-      {
-        laneId: 2,
-        Inserter: NewInserter(1, "FROM_BUS"),
-      },
-      {
-        laneId: 3,
-        Inserter: NewInserter(1, "FROM_BUS"),
-      },
-    ];
-
-    TestMovement(slot, mb, {
-      inputBuffers: [NewEntityStack("automation-science-pack", 1)],
-      busCounts: new Map([[1, 9]]),
-      outputBuffers: [],
-    });
-  });
+  // function TestMovement(
+  //   slot: { Building: Building; BeltConnections: BeltConnection[] },
+  //   bus: NewMainBus,
+  //   expected: {
+  //     inputBuffers: EntityStack[];
+  //     outputBuffers: EntityStack[];
+  //     busCounts: Map<number, number>;
+  //   }
+  // ) {
+  //   const dispatch = jest.fn();
+  //   const building = slot.Building;
+  //   PushPullFromMainBus(dispatch, slot, bus, {
+  //     regionId: "testRegion",
+  //     buildingIdx: 1,
+  //   });
+  //   for (const expectedOutput of expected.outputBuffers) {
+  //     expect(building.outputBuffers.Count(expectedOutput.Entity)).toBe(
+  //       expectedOutput.Count
+  //     );
+  //   }
+  //   // for (const [beltId, count] of expected.busCounts) {
+  //   //   const lane = bus.lanes.get(beltId),
+  //   //     entity = lane?.Entities()[0][0] || "";
+  //   //   expect(lane?.Count(entity)).toBe(count);
+  //   // }
+  //   for (const expectedInput of expected.inputBuffers) {
+  //     expect(building.inputBuffers.Count(expectedInput.Entity)).toBe(
+  //       expectedInput.Count
+  //     );
+  //   }
+  // }
+  // it.todo("Only pushes up to #producer count");
+  // xit("Moves between Factory and MainBus", () => {
+  //   const mb = new ReadonlyMainBus(
+  //     4,
+  //     ImmutableMap([
+  //       [1, NewBusLane("test-item", 0)],
+  //       [2, NewBusLane("test-ore", 5)],
+  //       [3, NewBusLane("test-slow-ore", 10)],
+  //     ])
+  //   );
+  //   const factory = NewTestFactory("test-item", 0);
+  //   const slot = NewBuildingSlot(factory, 3);
+  //   factory.outputBuffers = AddItemsToReadonlyFixedBuffer(
+  //     factory.outputBuffers,
+  //     5
+  //   );
+  //   slot.BeltConnections = [
+  //     {
+  //       laneId: 1,
+  //       Inserter: NewInserter(1, "TO_BUS"),
+  //     },
+  //     {
+  //       laneId: 2,
+  //       Inserter: NewInserter(1, "FROM_BUS"),
+  //     },
+  //     {
+  //       laneId: 3,
+  //       Inserter: NewInserter(1, "FROM_BUS"),
+  //     },
+  //   ];
+  //   TestMovement(slot, mb, {
+  //     inputBuffers: [
+  //       NewEntityStack("test-ore", 1),
+  //       NewEntityStack("test-slow-ore", 1),
+  //     ],
+  //     busCounts: new Map([
+  //       [1, 1],
+  //       [2, 4],
+  //       [3, 9],
+  //     ]),
+  //     outputBuffers: [NewEntityStack("test-item", 4)],
+  //   });
+  // });
+  // it.skip("Moves between Lab and MainBus", () => {
+  //   const mb = new ReadonlyMainBus(
+  //     2,
+  //     ImmutableMap([[1, NewBusLane("automation-science-pack", 10)]])
+  //   );
+  //   const lab = NewLab(1);
+  //   lab.inputBuffers = AddItemsToReadonlyFixedBuffer(lab.inputBuffers, 10);
+  //   const slot = NewBuildingSlot(lab, 3);
+  //   slot.BeltConnections = [
+  //     {
+  //       laneId: 1,
+  //       Inserter: NewInserter(1, "TO_BUS"),
+  //     },
+  //     {
+  //       laneId: 2,
+  //       Inserter: NewInserter(1, "FROM_BUS"),
+  //     },
+  //     {
+  //       laneId: 3,
+  //       Inserter: NewInserter(1, "FROM_BUS"),
+  //     },
+  //   ];
+  //   TestMovement(slot, mb, {
+  //     inputBuffers: [NewEntityStack("automation-science-pack", 1)],
+  //     busCounts: new Map([[1, 9]]),
+  //     outputBuffers: [],
+  //   });
+  // });
 });
 
 it.todo("Moves to above neighbor");

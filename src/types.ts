@@ -7,11 +7,13 @@ import { SyntheticEvent } from "react";
 
 export type Belt = {
   laneIdx: number;
-  startingSlotIdx: number; // Upper slot
-  length: number;
+  upperSlotIdx: number; // Upper slot
+  lowerSlotIdx: number;
+  //length: number;
   beltDirection: "UP" | "DOWN";
   endDirection: "LEFT" | "RIGHT" | "NONE";
   entity: string;
+  internalBeltBuffer: Array<number>;
 };
 
 export type BeltHandlerFunc = (
@@ -21,6 +23,11 @@ export type BeltHandlerFunc = (
   buildingIdx: number,
   beltStartingSlotIdx?: number
 ) => void;
+
+export type NewMainBus = {
+  numLanes: number;
+  Belts: Readonly<Belt[]>;
+};
 
 export interface Producer {
   kind: string;
@@ -159,8 +166,7 @@ export type Region = {
   LaneSize: number;
   MainBusCount: number;
   BuildingSlots: BuildingSlot[];
-  //Inserters: Inserter[];
-  Bus: ReadonlyMainBus;
+  Bus: NewMainBus;
 };
 
 export const NewRegion = (
@@ -187,7 +193,7 @@ export const NewRegion = (
     MainBusCount,
     Ore: ReadonlyFixedInventory(ore),
     BuildingSlots,
-    Bus: new ReadonlyMainBus(),
+    Bus: { Belts: [], numLanes: MainBusCount },
   };
 };
 

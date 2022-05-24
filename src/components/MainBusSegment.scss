@@ -80,11 +80,11 @@
     .icon {
       will-change: transform;
       transform: scale(0.4);
-      margin: -20px;
+      margin: -22px;
       position: absolute;
       margin-top: 20px;
       z-index: 1;
-
+      filter: drop-shadow(2px 5px black);
       &.animate {
         animation-duration: 6s;
         animation-name: slidein;

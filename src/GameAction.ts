@@ -23,16 +23,29 @@ type UpdateStateAction = {
 type AddBuildingAction = {
   type: "AddBuilding";
 } & Pick<Building, "kind" | "subkind">;
+
 type LaneAction =
   | {
       type: "RemoveLane";
       laneId: number;
+      upperSlotIdx: number;
+      regionId: string;
+      lowerSlotIdx: number;
+    }
+  | {
+      type: "SetLaneEntity";
+      laneId: number;
+      upperSlotIdx: number;
+      entity: string;
       regionId: string;
     }
   | {
       type: "AddLane";
-      entity: string;
       regionId: string;
+      laneId: number;
+      upperSlotIdx: number;
+      lowerSlotIdx: number;
+      beltDirection: "UP" | "DOWN";
     };
 type RegionAction = {
   type: "ClaimRegion";

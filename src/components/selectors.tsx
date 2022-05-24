@@ -70,17 +70,21 @@ export async function showMoveItemToFromInventorySelector(
     );
 }
 
-export async function showAddLaneItemSelector(
+export async function showSetLaneEntitySelector(
   showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
   uxDispatch: (a: GameAction) => void,
   regionId: string,
+  laneId: number,
+  upperSlotIdx: number,
   items: string[]
 ): Promise<void> {
-  const item = await showIconSelector(showDialog, "Add Bus Lane", items);
+  const item = await showIconSelector(showDialog, "Choose Item Filter", items);
   if (item)
     uxDispatch({
-      type: "AddLane",
+      type: "SetLaneEntity",
       entity: item,
+      laneId,
+      upperSlotIdx,
       regionId,
     });
 }

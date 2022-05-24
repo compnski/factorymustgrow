@@ -9,7 +9,7 @@ import {
   StateAddress,
   TruckLineAddress,
 } from "./address";
-import { BeltConnection, RegionInfo } from "../types";
+import { Belt, BeltConnection, RegionInfo } from "../types";
 import { FactoryGameState } from "../factoryGameState";
 
 export type StateVMAction =
@@ -37,7 +37,9 @@ export type SetPropertyAction =
   | SetInserterPropertyAction
   | SetBuildingPropertyAction
   | SetGlobalPropertyAction
-  | SetBeltConnectionPropertyAction;
+  | SetBeltConnectionPropertyAction
+  | SetMainBusBeltPropertyAction;
+
 export type SetInserterPropertyAction =
   | TSetInserterPropertyAction<"direction">
   | TSetInserterPropertyAction<"BuildingCount">;
@@ -48,6 +50,15 @@ export type SetBeltConnectionPropertyAction =
 export type SetGlobalPropertyAction = TSetGlobalPropertyAction<
   "RocketLaunchingAt" | "Inventory" | "Research"
 >;
+export type SetMainBusBeltPropertyAction =
+  TSetMainBusBeltPropertyAction<"entity">;
+
+type TSetMainBusBeltPropertyAction<P extends keyof Belt> = {
+  kind: "SetProperty";
+  address: MainBusAddress;
+  property: P;
+  value: Belt[P];
+};
 
 type TSetBeltConnectionPropertyAction<P extends keyof BeltConnection> = {
   kind: "SetProperty";
@@ -85,8 +96,9 @@ export type SetRecipeAction = {
 
 export type AddMainBusLaneAction = {
   kind: "AddMainBusLane";
-  address: RegionAddress;
-  entity: string;
+  address: MainBusAddress;
+  lowerSlotIdx: number;
+  beltDirection: "UP" | "DOWN";
 };
 
 export type RemoveMainBusLaneAction = {

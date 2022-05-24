@@ -6,18 +6,17 @@ import {
   ReadonlyRegion,
 } from "../factoryGameState";
 import { GameAction } from "../GameAction";
+import { Belt, BeltHandlerFunc } from "../types";
 import { BuildingHasInput, BuildingHasOutput } from "../utils";
-import { TruckLineCard } from "./TruckLineCard";
 import "./BuildingCard.scss";
 import { EmptyLaneCard } from "./EmptyLaneCard";
+import { HTMLMainBusSegment } from "./HTMLMainBusSegment";
 import { InserterCard } from "./InserterCard";
 import { LabCard } from "./LabCard";
-import { MainBusSegment } from "./MainBusSegment";
 import { ProducerCard } from "./ProducerCard";
 import { RocketSiloCard } from "./RocketSiloCard";
 import { StorageCard } from "./StorageCard";
-import { HTMLMainBusSegment } from "./HTMLMainBusSegment";
-import { Belt, BeltHandlerFunc } from "../types";
+import { TruckLineCard } from "./TruckLineCard";
 
 export type BuildingCardProps = {
   buildingSlot: ReadonlyBuildingSlot;
@@ -212,26 +211,16 @@ export const BuildingCard = ({
         {card}
         <div className="output-area">{beltInserters}</div>
       </div>
-      {buildingIdx < 10 ? (
-        <HTMLMainBusSegment
-          mainBus={regionalBus}
-          busLaneClicked={busLaneClicked}
-          beltConnectionClicked={beltConnectionClicked}
-          segmentHeight={136}
-          beltConnections={buildingSlot.BeltConnections}
-          buildingIdx={buildingIdx}
-          beltHandler={beltHandler}
-          beltState={beltState}
-        />
-      ) : (
-        <MainBusSegment
-          mainBus={regionalBus}
-          busLaneClicked={busLaneClicked}
-          beltConnectionClicked={beltConnectionClicked}
-          segmentHeight={136}
-          beltConnections={buildingSlot.BeltConnections}
-        />
-      )}
+      <HTMLMainBusSegment
+        mainBus={regionalBus}
+        busLaneClicked={busLaneClicked}
+        beltConnectionClicked={beltConnectionClicked}
+        segmentHeight={136}
+        beltConnections={buildingSlot.BeltConnections}
+        buildingIdx={buildingIdx}
+        beltHandler={beltHandler}
+        beltState={beltState}
+      />
     </div>
   );
 };

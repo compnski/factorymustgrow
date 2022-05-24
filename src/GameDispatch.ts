@@ -63,8 +63,26 @@ export const GameDispatch = (
     case "AddLane":
       dispatch({
         kind: "AddMainBusLane",
-        address: { regionId: action.regionId },
-        entity: action.entity,
+        address: {
+          regionId: action.regionId,
+          laneId: action.laneId,
+          upperSlotIdx: action.upperSlotIdx,
+        },
+        lowerSlotIdx: action.lowerSlotIdx,
+        beltDirection: action.beltDirection,
+      });
+      break;
+
+    case "SetLaneEntity":
+      dispatch({
+        kind: "SetProperty",
+        address: {
+          regionId: action.regionId,
+          laneId: action.laneId,
+          upperSlotIdx: action.upperSlotIdx,
+        },
+        property: "entity",
+        value: action.entity,
       });
       break;
 
@@ -346,48 +364,47 @@ function toggleBeltInserterDirection(
   },
   gameState: FactoryGameState
 ) {
-  const i = inserter(gameState, action),
-    b = building(gameState, action);
-  const region = GetRegion(gameState, action.regionId);
+  throw new Error("NYI");
 
-  const beltConn =
-      region.BuildingSlots[action.buildingIdx].BeltConnections[
-        action.connectionIdx
-      ],
-    mainBusLaneId = beltConn.laneId;
-  if (mainBusLaneId !== undefined && region.Bus.HasLane(mainBusLaneId)) {
-    const busLane = region.Bus.lanes.get(mainBusLaneId);
-    // Check if the inserter can be toggled
-    // IF so, flip it
-    if (i && b && busLane) {
-      const canGoLeft = BuildingHasInput(b, busLane.Entities()[0][0]),
-        canGoRight = BuildingHasOutput(b, busLane.Entities()[0][0]);
-
-      const newDirection =
-        canGoLeft && canGoRight
-          ? i.direction === "TO_BUS"
-            ? "FROM_BUS"
-            : i.direction === "FROM_BUS"
-            ? "NONE"
-            : "TO_BUS"
-          : canGoLeft
-          ? i.direction === "NONE"
-            ? "FROM_BUS"
-            : "NONE"
-          : canGoRight
-          ? i.direction === "NONE"
-            ? "TO_BUS"
-            : "NONE"
-          : "NONE";
-
-      dispatch({
-        kind: "SetProperty",
-        address: { ...action, location: "BELT" },
-        property: "direction",
-        value: newDirection,
-      });
-    }
-  }
+  // const i = inserter(gameState, action),
+  //   b = building(gameState, action);
+  // const region = GetRegion(gameState, action.regionId);
+  // const beltConn =
+  //     region.BuildingSlots[action.buildingIdx].BeltConnections[
+  //       action.connectionIdx
+  //     ],
+  //   mainBusLaneId = beltConn.laneId;
+  // if (mainBusLaneId !== undefined && region.Bus.HasLane(mainBusLaneId)) {
+  //   const busLane = region.Bus.lanes.get(mainBusLaneId);
+  //   // Check if the inserter can be toggled
+  //   // IF so, flip it
+  //   if (i && b && busLane) {
+  //     const canGoLeft = BuildingHasInput(b, busLane.Entities()[0][0]),
+  //       canGoRight = BuildingHasOutput(b, busLane.Entities()[0][0]);
+  //     const newDirection =
+  //       canGoLeft && canGoRight
+  //         ? i.direction === "TO_BUS"
+  //           ? "FROM_BUS"
+  //           : i.direction === "FROM_BUS"
+  //           ? "NONE"
+  //           : "TO_BUS"
+  //         : canGoLeft
+  //         ? i.direction === "NONE"
+  //           ? "FROM_BUS"
+  //           : "NONE"
+  //         : canGoRight
+  //         ? i.direction === "NONE"
+  //           ? "TO_BUS"
+  //           : "NONE"
+  //         : "NONE";
+  //     dispatch({
+  //       kind: "SetProperty",
+  //       address: { ...action, location: "BELT" },
+  //       property: "direction",
+  //       value: newDirection,
+  //     });
+  //   }
+  // }
 }
 
 function toggleInserterDirection(
@@ -614,34 +631,51 @@ function completeResearch(dispatch: DispatchFunc, gameState: FactoryGameState) {
 function removeLane(
   dispatch: DispatchFunc,
   currentRegion: ReadonlyRegion,
-  action: { type: "RemoveLane"; laneId: number },
+  action: {
+    type: "RemoveLane";
+    laneId: number;
+    upperSlotIdx: number;
+    lowerSlotIdx: number;
+  },
   gameState: FactoryGameState
 ) {
+  //throw new Error("NYI");
   dispatch({
     kind: "RemoveMainBusLane",
-    address: { regionId: currentRegion.Id, laneId: action.laneId },
+    address: {
+      regionId: currentRegion.Id,
+      laneId: action.laneId,
+      upperSlotIdx: action.upperSlotIdx,
+    },
   });
-  for (const [entity, count] of currentRegion.Bus.Lane(
-    action.laneId
-  ).Entities()) {
-    if (count > 0) moveToInventory(dispatch, entity, count);
-  }
+
+  // TODO: Refunds
+
+  // for (const [entity, count] of currentRegion.Bus.Lane(
+  //   action.laneId
+  // ).Entities()) {
+  //   if (count > 0) moveToInventory(dispatch, entity, count);
+  // }
 
   // Remove attached inserters
   currentRegion.BuildingSlots.forEach((buildingSlot, buildingSlotIdx) => {
-    buildingSlot.BeltConnections.forEach((beltConn, beltConnIdx) => {
-      if (beltConn.laneId === action.laneId) {
-        removeMainBusConnection(
-          dispatch,
-          {
-            buildingIdx: buildingSlotIdx,
-            connectionIdx: beltConnIdx,
-            regionId: currentRegion.Id,
-          },
-          gameState
-        );
-      }
-    });
+    if (
+      buildingSlotIdx >= action.upperSlotIdx &&
+      buildingSlotIdx <= action.lowerSlotIdx
+    )
+      buildingSlot.BeltConnections.forEach((beltConn, beltConnIdx) => {
+        if (beltConn.laneId === action.laneId) {
+          removeMainBusConnection(
+            dispatch,
+            {
+              buildingIdx: buildingSlotIdx,
+              connectionIdx: beltConnIdx,
+              regionId: currentRegion.Id,
+            },
+            gameState
+          );
+        }
+      });
   });
 }
 
@@ -889,13 +923,14 @@ function addressAndCountForTransfer(
     case "Void":
       return { address: undefined, count: Infinity };
     case "MainBus":
-      return {
-        address: { regionId: action.regionId, laneId: action.laneId },
-        count:
-          GetRegion(gameState, action.regionId)
-            .Bus.lanes.get(action.laneId)
-            ?.Count(action.entity) || 0,
-      };
+      throw new Error("NYI");
+    // return {
+    //   address: { regionId: action.regionId, laneId: action.laneId },
+    //   count:
+    //     GetRegion(gameState, action.regionId)
+    //       .Bus.lanes.get(action.laneId)
+    //       ?.Count(action.entity) || 0,
+    //      };
     case "Building":
       b = GetRegion(gameState, action.regionId).BuildingSlots[
         action.buildingIdx

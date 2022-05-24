@@ -9,6 +9,7 @@ import {
   BeltConnection,
   EntityStack,
   NewEntityStack,
+  NewMainBus,
   NewRegionFromInfo,
 } from "./types";
 
@@ -47,11 +48,11 @@ export interface ReadonlyRegion {
   readonly Id: string;
   readonly Ore: ReadonlyInventory;
   readonly LaneCount: number;
-  readonly Bus: ReadonlyMainBus;
+  readonly Bus: NewMainBus;
   readonly BuildingSlots: ReadonlyBuildingSlot[];
 }
 
-export const CurrentGameStateVersion = "0.2.4";
+export const CurrentGameStateVersion = "0.2.5";
 
 export type ResearchState = {
   CurrentResearchId: string;

@@ -17,6 +17,7 @@ export type TruckLineAddress = {
 export type MainBusAddress = {
   regionId: string;
   laneId: number;
+  upperSlotIdx: number;
 };
 
 export type BuildingAddress = {
