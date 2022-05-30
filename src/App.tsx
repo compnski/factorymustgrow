@@ -1,5 +1,7 @@
+import { ErrorBoundary } from "react-error-boundary";
 import { ShortcutProvider } from "react-keybind";
 import "./App.scss";
+import { ErrorFallback } from "./components/ErrorFallback";
 import { FactoryGame } from "./components/FactoryGame";
 import { GeneralDialogProvider } from "./GeneralDialogProvider";
 import "./icons.scss";
@@ -8,25 +10,40 @@ import { getDispatchFunc } from "./stateVm";
 import "./technology.css";
 
 function App() {
-  const { gameState, dispatch, executeActions } = getDispatchFunc();
-  return (
-    <ShortcutProvider>
-      <GeneralDialogProvider>
-        <div
-          className="App"
-          onClick={(evt) => {
-            if ((evt.target as Element).classList.contains("clickable")) return;
-          }}
-        >
-          <FactoryGame
-            gameState={gameState}
-            dispatch={dispatch}
-            executeActions={executeActions}
-          />
-        </div>
-      </GeneralDialogProvider>
-    </ShortcutProvider>
-  );
-}
+  try {
+    const { gameState, dispatch, executeActions } = getDispatchFunc();
 
+    const resetGame = () => dispatch({ kind: "Reset" });
+
+    return (
+      <ShortcutProvider>
+        <GeneralDialogProvider>
+          <div
+            className="App"
+            onClick={(evt) => {
+              if ((evt.target as Element).classList.contains("clickable"))
+                return;
+            }}
+          >
+            <ErrorBoundary
+              FallbackComponent={ErrorFallback}
+              onReset={resetGame}
+            >
+              <FactoryGame
+                gameState={gameState}
+                dispatch={dispatch}
+                executeActions={executeActions}
+              />
+            </ErrorBoundary>
+          </div>
+        </GeneralDialogProvider>
+      </ShortcutProvider>
+    );
+  } catch (e) {
+    return ErrorFallback({
+      error: e as Error,
+      resetErrorBoundary: () => localStorage.clear(),
+    });
+  }
+}
 export default App;
