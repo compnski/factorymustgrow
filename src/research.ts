@@ -259,6 +259,15 @@ const IgnoredRecipies: Set<string> = new Set([
   "rail-chain-signal",
   "firearm-magazine",
   "small-lamp",
+  // Powergen
+  "boiler",
+  "steam-engine",
+  "electric-mining-drill",
+  "electric-furnace",
+  "locomotive",
+  "cargo-wagon",
+  "steel-furnace",
+  "assembling-machine-2",
 ]);
 
 // Returns all recipes that can be crafted given the completed research
