@@ -1,6 +1,10 @@
 import { ImmutableMap } from "./immutable";
 import { ReadonlyInventory } from "./inventory";
 import { ReadonlyItemBuffer } from "./factoryGameState";
+import { DispatchFunc } from "./stateVm";
+import { BuildingAddress } from "./state/address";
+import { ProduceWithTracker } from "./AddProgressTracker";
+import { EntityStack, NewEntityStack } from "./types";
 
 export type Chest = {
   kind: "Chest";
@@ -9,6 +13,7 @@ export type Chest = {
   inputBuffers: ReadonlyItemBuffer;
   outputBuffers: ReadonlyItemBuffer;
   BuildingCount: number;
+  progressTrackers: number[];
 };
 
 export function NewChest(
@@ -25,13 +30,34 @@ export function NewChest(
     BuildingCount: size,
     inputBuffers: sharedStorage,
     outputBuffers: sharedStorage,
+    progressTrackers: [],
   };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function UpdateChest(chest: Chest, tick: number) {
-  // if (chest.subkind === "incinerator")
-  //   chest.inputBuffers.Entities().forEach(([entity]) => {
-  //     chest.inputBuffers.Remove(NewEntityStack(entity, 0, Infinity), 1);
-  //   });
+export function UpdateChest(
+  dispatch: DispatchFunc,
+  chest: Chest,
+  address: BuildingAddress,
+  currentTick: number
+) {
+  if (chest.subkind === "incinerator") {
+    return ProduceWithTracker({
+      dispatch,
+      currentTick,
+      buildingAddress: address,
+      recipe: toRecipe(chest.inputBuffers),
+      building: { ...chest, BuildingCount: 1 },
+    });
+  }
+}
+
+function toRecipe(inputBuffers: ReadonlyItemBuffer) {
+  return {
+    Input: inputBuffers
+      .Entities()
+      .map(([entity, count]) => NewEntityStack(entity, Math.min(count, 5))),
+    Output: [] as EntityStack[],
+    DurationSeconds: 1,
+  };
 }

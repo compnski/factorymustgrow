@@ -121,7 +121,7 @@ function UpdateGameStateForRegion(
         );
         break;
       case "Chest":
-        UpdateChest(building as Chest, tick);
+        UpdateChest(dispatch, building as Chest, address, tick);
         break;
       case "TruckLineDepot":
         UpdateTruckLineDepot(
