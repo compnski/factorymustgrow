@@ -78,7 +78,6 @@ export const FactoryGame = (props: ReturnType<typeof getDispatchFunc>) => {
           <RegionTabBar
             currentRegionId={currentRegionId}
             regionIds={regionIds}
-            uxDispatch={uxDispatch}
             inventory={inventory}
             setCurrentRegionId={setCurrentRegionId}
           />
@@ -99,7 +98,6 @@ export const FactoryGame = (props: ReturnType<typeof getDispatchFunc>) => {
           <InfoHeader
             currentRegion={currentRegion}
             researchState={researchState}
-            uxDispatch={uxDispatch}
           />
         </div>
         <div className="scroller">

@@ -118,7 +118,6 @@ export const BuildingCard = ({
         buildingIdx={buildingIdx}
         inventory={gameState.Inventory}
         regions={gameState.Regions}
-        uxDispatch={uxDispatch}
         researchState={gameState.Research}
       />
     ) : building.kind === "Lab" ? (

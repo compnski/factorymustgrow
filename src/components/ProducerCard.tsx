@@ -66,7 +66,6 @@ export function ProducerCard({
               regionId,
               buildingIdx,
               generalDialog,
-              uxDispatch,
               researchState
             );
           }}

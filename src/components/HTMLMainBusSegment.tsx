@@ -1,4 +1,3 @@
-import { ReadonlyMainBus } from "../mainbus";
 import { settings } from "../settings";
 import { Belt, BeltConnection, BeltHandlerFunc, NewMainBus } from "../types";
 import { entityIconLookupByKind } from "../utils";

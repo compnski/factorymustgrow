@@ -3,6 +3,8 @@ import { ShortcutProvider } from "react-keybind";
 import "./App.scss";
 import { ErrorFallback } from "./components/ErrorFallback";
 import { FactoryGame } from "./components/FactoryGame";
+import { GameAction } from "./GameAction";
+import { GameDispatch } from "./GameDispatch";
 import { GeneralDialogProvider } from "./GeneralDialogProvider";
 import "./icons.scss";
 import "./macro_def";
@@ -12,12 +14,16 @@ import "./technology.css";
 function App() {
   try {
     const { gameState, dispatch, executeActions } = getDispatchFunc();
+    const uxDispatch = (action: GameAction) => {
+      GameDispatch(dispatch, gameState, action);
+      executeActions(gameState);
+    };
 
     const resetGame = () => dispatch({ kind: "Reset" });
 
     return (
       <ShortcutProvider>
-        <GeneralDialogProvider>
+        <GeneralDialogProvider uxDispatch={uxDispatch}>
           <div
             className="App"
             onClick={(evt) => {

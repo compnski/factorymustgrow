@@ -1,6 +1,9 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import React from "react";
 import { IWithShortcut, withShortcut } from "react-keybind";
+import { FactoryGameState } from "./factoryGameState";
+import { DispatchFunc } from "./stateVm";
+import { GameAction } from "./GameAction";
 
 const GeneralDialogContext = React.createContext<{
   openGeneralDialog(c: GeneralDialogConfig): void;
@@ -12,7 +15,10 @@ const GeneralDialogContext = React.createContext<{
 
 export type GeneralDialogConfig = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  actionCallback?: (returnData: any | false) => void;
+  actionCallback?: (arg0: {
+    returnData: any | false;
+    uxDispatch: (a: GameAction) => void;
+  }) => void;
   title: string;
   component?: (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,8 +29,10 @@ export type GeneralDialogConfig = {
 const GeneralDialogProviderWithShortcut = ({
   children,
   shortcut,
+  uxDispatch,
 }: {
   children: JSX.Element;
+  uxDispatch: (a: GameAction) => void;
 } & IWithShortcut) => {
   const [generalDialogConfig, setGeneralDialogConfig] =
     useState<GeneralDialogConfig>({
@@ -56,7 +64,7 @@ const GeneralDialogProviderWithShortcut = ({
   ) => {
     resetGeneralDialog();
     generalDialogConfig.actionCallback &&
-      generalDialogConfig.actionCallback(returnData);
+      generalDialogConfig.actionCallback({ returnData, uxDispatch });
   };
 
   const dialog =
@@ -87,14 +95,20 @@ const GeneralDialogProviderWithShortcut = ({
 export const useGeneralDialog = (): ((
   c: GeneralDialogConfig
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-) => Promise<any[] | false>) => {
+) => Promise<{
+  returnData: any[] | false;
+  uxDispatch: (a: GameAction) => void;
+}>) => {
   const { openGeneralDialog } = React.useContext(GeneralDialogContext);
 
   const getConfirmation = ({ title, component }: GeneralDialogConfig) =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    new Promise<any[] | false>((res) => {
+    new Promise<{
+      returnData: any[] | false;
+      uxDispatch: (a: GameAction) => void;
+    }>((resolve) => {
       openGeneralDialog({
-        actionCallback: res,
+        actionCallback: resolve,
         title,
         component,
       });

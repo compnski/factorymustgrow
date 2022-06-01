@@ -32,12 +32,11 @@ export async function UpdateGameState(
   },
   tick: number,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  generalDialog: (arg0: GeneralDialogConfig) => Promise<any[] | false>
+  generalDialog: (arg0: GeneralDialogConfig) => Promise<{
+    returnData: string[] | false;
+    uxDispatch: (a: GameAction) => void;
+  }>
 ) {
-  const uxDispatch = (action: GameAction) => {
-    GameDispatch(dispatch, gameState, action);
-  };
-
   try {
     for (const [, currentTruckLine] of gameState.TruckLines) {
       dispatch({
@@ -58,7 +57,7 @@ export async function UpdateGameState(
     if (IsResearchComplete(gameState.Research)) {
       console.log("Research Complete!");
       dispatch({ kind: "SetCurrentResearch", researchId: "" });
-      void showResearchSelector(generalDialog, uxDispatch, gameState.Research);
+      void showResearchSelector(generalDialog, gameState.Research);
     }
   } catch (e) {
     //TODO Show error dialog

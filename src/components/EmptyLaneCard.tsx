@@ -16,7 +16,6 @@ export function EmptyLaneCard(props: {
   regionId: string;
   buildingIdx: number;
   inventory: ReadonlyItemBuffer;
-  uxDispatch: (a: GameAction) => void;
   regions: ImmutableMap<string, ReadonlyRegion>;
   researchState: ResearchState;
 }) {
@@ -32,7 +31,6 @@ export function EmptyLaneCard(props: {
           onClick={async () => {
             const item = await showPlaceBuildingSelector(
               generalDialog,
-              props.uxDispatch,
               props.inventory,
               props.regionId,
               props.buildingIdx,
@@ -46,7 +44,6 @@ export function EmptyLaneCard(props: {
                 props.regionId,
                 props.buildingIdx,
                 generalDialog,
-                props.uxDispatch,
                 props.researchState
               );
             // if resaerch and not current research id, show select research

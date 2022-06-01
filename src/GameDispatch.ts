@@ -51,6 +51,11 @@ export const GameDispatch = (
       window.scrollTo(0, 0);
       break;
 
+    case "ResetTo":
+      dispatch({ kind: "ResetTo", state: action.state });
+      window.scrollTo(0, 0);
+      break;
+
     case "RemoveLane":
       removeLane(
         dispatch,
@@ -364,47 +369,46 @@ function toggleBeltInserterDirection(
   },
   gameState: FactoryGameState
 ) {
-  throw new Error("NYI");
+  const i = inserter(gameState, action),
+    b = building(gameState, action);
+  const region = GetRegion(gameState, action.regionId);
+  const beltConn =
+      region.BuildingSlots[action.buildingIdx].BeltConnections[
+        action.connectionIdx
+      ],
+    mainBusLaneId = beltConn.laneId;
 
-  // const i = inserter(gameState, action),
-  //   b = building(gameState, action);
-  // const region = GetRegion(gameState, action.regionId);
-  // const beltConn =
-  //     region.BuildingSlots[action.buildingIdx].BeltConnections[
-  //       action.connectionIdx
-  //     ],
-  //   mainBusLaneId = beltConn.laneId;
-  // if (mainBusLaneId !== undefined && region.Bus.HasLane(mainBusLaneId)) {
-  //   const busLane = region.Bus.lanes.get(mainBusLaneId);
-  //   // Check if the inserter can be toggled
-  //   // IF so, flip it
-  //   if (i && b && busLane) {
-  //     const canGoLeft = BuildingHasInput(b, busLane.Entities()[0][0]),
-  //       canGoRight = BuildingHasOutput(b, busLane.Entities()[0][0]);
-  //     const newDirection =
-  //       canGoLeft && canGoRight
-  //         ? i.direction === "TO_BUS"
-  //           ? "FROM_BUS"
-  //           : i.direction === "FROM_BUS"
-  //           ? "NONE"
-  //           : "TO_BUS"
-  //         : canGoLeft
-  //         ? i.direction === "NONE"
-  //           ? "FROM_BUS"
-  //           : "NONE"
-  //         : canGoRight
-  //         ? i.direction === "NONE"
-  //           ? "TO_BUS"
-  //           : "NONE"
-  //         : "NONE";
-  //     dispatch({
-  //       kind: "SetProperty",
-  //       address: { ...action, location: "BELT" },
-  //       property: "direction",
-  //       value: newDirection,
-  //     });
+  //   if (mainBusLaneId !== undefined && region.Bus.HasLane(mainBusLaneId)) {
+  //     const busLane = region.Bus.lanes.get(mainBusLaneId);
+  //     // Check if the inserter can be toggled
+  //     // IF so, flip it
+  //     if (i && b && busLane) {
+  //       const canGoLeft = BuildingHasInput(b, busLane.Entities()[0][0]),
+  //         canGoRight = BuildingHasOutput(b, busLane.Entities()[0][0]);
+  //       const newDirection =
+  //         canGoLeft && canGoRight
+  //           ? i.direction === "TO_BUS"
+  //             ? "FROM_BUS"
+  //             : i.direction === "FROM_BUS"
+  //             ? "NONE"
+  //             : "TO_BUS"
+  //           : canGoLeft
+  //           ? i.direction === "NONE"
+  //             ? "FROM_BUS"
+  //             : "NONE"
+  //           : canGoRight
+  //           ? i.direction === "NONE"
+  //             ? "TO_BUS"
+  //             : "NONE"
+  //           : "NONE";
+  //       dispatch({
+  //         kind: "SetProperty",
+  //         address: { ...action, location: "BELT" },
+  //         property: "direction",
+  //         value: newDirection,
+  //       });
+  //     }
   //   }
-  // }
 }
 
 function toggleInserterDirection(

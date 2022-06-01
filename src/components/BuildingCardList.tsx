@@ -72,7 +72,6 @@ export const BuildingCardList = ({
       // TODO: dialog for entity
       void showSetLaneEntitySelector(
         generalDialog,
-        uxDispatch,
         regionId,
         ghostBelt.laneIdx,
         ghostBelt.upperSlotIdx,

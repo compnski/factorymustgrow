@@ -35,7 +35,6 @@ export function DebugButtonPanel({
         clickHandler: () =>
           showMoveItemToFromInventorySelector(
             generalDialog,
-            uxDispatch,
             "TransferToInventory",
             availableItems(researchState)
           ),

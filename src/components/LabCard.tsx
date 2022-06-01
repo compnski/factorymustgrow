@@ -56,11 +56,7 @@ export function LabCard({
         <div
           className="title"
           onClick={async () => {
-            await showResearchSelector(
-              generalDialog,
-              uxDispatch,
-              researchState
-            );
+            await showResearchSelector(generalDialog, researchState);
           }}
           title="Select Research"
         >

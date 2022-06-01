@@ -2,7 +2,6 @@ import { isImmutable, isMap } from "immutable";
 import { DebugInventory } from "./debug";
 import { ImmutableMap } from "./immutable";
 import { ReadonlyInventory } from "./inventory";
-import { ReadonlyMainBus } from "./mainbus";
 import { ResearchOutput } from "./research";
 import { NewChest } from "./storage";
 import { Region } from "./types";
@@ -51,12 +50,6 @@ const replacer = (key: string, value: any): any => {
         dataType: "Set",
         value: [...value],
       }
-    : value instanceof Object && value.constructor.name == "ReadonlyMainBus"
-    ? {
-        dataType: "ReadonlyMainBus",
-        nextId: value.nextLaneId,
-        lanes: [...value.lanes.entries()],
-      }
     : value instanceof Object && value.constructor.name == "ResearchOutput"
     ? {
         dataType: "ResearchOutput",
@@ -93,8 +86,6 @@ const reviver = (key: string, value: any): any => {
     ? ImmutableMap(value.value)
     : value.dataType === "Set"
     ? new Set(value.value)
-    : value.dataType === "ReadonlyMainBus"
-    ? new ReadonlyMainBus(value.nextId, ImmutableMap(value.lanes))
     : value.dataType === "DebugInventory"
     ? new DebugInventory()
     : value.dataType === "ReadonlyInventory"

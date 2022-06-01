@@ -1,10 +1,7 @@
-import { InserterTransferRate } from "./inserter";
-import { ReadonlyMainBus } from "./mainbus";
-import { VMPushToOtherBuilding } from "./movement";
+import { ReadonlyItemBuffer } from "./factoryGameState";
 import { StateVMAction } from "./state/action";
 import { BuildingAddress } from "./state/address";
 import { BeltConnection, EntityStack, NewMainBus } from "./types";
-import { ReadonlyItemBuffer } from "./factoryGameState";
 
 interface MainBusConnector {
   inputBuffers: ReadonlyItemBuffer;

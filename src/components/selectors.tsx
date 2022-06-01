@@ -7,6 +7,7 @@ import { GameAction } from "../GameAction";
 import { GetRecipe } from "../gen/entities";
 import { GeneralDialogConfig } from "../GeneralDialogProvider";
 import { ImmutableMap } from "../immutable";
+import { parse } from "../localstorage";
 import { IsBuilding } from "../production";
 import { availableRecipes } from "../research";
 import { HelpCard } from "./HelpCard";
@@ -18,11 +19,14 @@ import { SelectResearchPanel } from "./SelectResearchPanel";
 import { SettingsCard } from "./SettingsCard";
 
 async function showIconSelector(
-  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
+  showDialog: (c: GeneralDialogConfig) => Promise<{
+    returnData: string[] | false;
+    uxDispatch: (a: GameAction) => void;
+  }>,
   title: string,
   recipes: { map(f: (r: string) => string): unknown },
   entityIconLookup?: (entity: string) => string
-): Promise<string> {
+): Promise<{ selected: string; uxDispatch: (a: GameAction) => void }> {
   const results = await showDialog({
     title: title,
     component: (onConfirm) => (
@@ -34,35 +38,44 @@ async function showIconSelector(
       />
     ),
   });
-  if (results) {
-    const [recipe] = results;
-    return recipe;
+  if (results.returnData) {
+    const {
+      returnData: [recipe],
+      uxDispatch,
+    } = results;
+    return { selected: recipe, uxDispatch };
   }
-  return "";
+  return { selected: "", uxDispatch: results.uxDispatch };
 }
 
 export async function showMoveItemToFromInventorySelector(
-  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
-  uxDispatch: (a: GameAction) => void,
+  showDialog: (c: GeneralDialogConfig) => Promise<{
+    returnData: string[] | false;
+    uxDispatch: (a: GameAction) => void;
+  }>,
   direction: "TransferToInventory" | "TransferFromInventory",
   items: string[],
   regionId?: string,
   buildingIdx?: number
   //filter?: (entity: string) => boolean
 ): Promise<void> {
-  const recipe = await showIconSelector(showDialog, "Add Stack", items);
+  const { selected, uxDispatch } = await showIconSelector(
+    showDialog,
+    "Add Stack",
+    items
+  );
 
-  if (recipe)
+  if (selected)
     uxDispatch(
       buildingIdx === undefined || regionId === undefined
         ? {
             type: direction,
-            entity: recipe,
+            entity: selected,
             otherStackKind: "Void",
           }
         : {
             type: direction,
-            entity: recipe,
+            entity: selected,
             otherStackKind: "Building",
             buildingIdx: buildingIdx,
             regionId,
@@ -71,14 +84,20 @@ export async function showMoveItemToFromInventorySelector(
 }
 
 export async function showSetLaneEntitySelector(
-  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
-  uxDispatch: (a: GameAction) => void,
+  showDialog: (c: GeneralDialogConfig) => Promise<{
+    returnData: string[] | false;
+    uxDispatch: (a: GameAction) => void;
+  }>,
   regionId: string,
   laneId: number,
   upperSlotIdx: number,
   items: string[]
 ): Promise<void> {
-  const item = await showIconSelector(showDialog, "Choose Item Filter", items);
+  const { selected: item, uxDispatch } = await showIconSelector(
+    showDialog,
+    "Choose Item Filter",
+    items
+  );
   if (item)
     uxDispatch({
       type: "SetLaneEntity",
@@ -93,11 +112,13 @@ export async function showChangeProducerRecipeSelector(
   producerType: string,
   regionId: string,
   buildingIdx: number,
-  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
-  uxDispatch: (a: GameAction) => void,
+  showDialog: (c: GeneralDialogConfig) => Promise<{
+    returnData: string[] | false;
+    uxDispatch: (a: GameAction) => void;
+  }>,
   researchState: ReadonlyResearchState
 ): Promise<void> {
-  const recipeId = await showIconSelector(
+  const { selected: recipeId, uxDispatch } = await showIconSelector(
     showDialog,
     "Choose Recipe",
     availableRecipes(researchState).filter(function filterRecipes(
@@ -112,26 +133,31 @@ export async function showChangeProducerRecipeSelector(
 }
 
 export async function showPlaceBuildingSelector(
-  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>,
-  uxDispatch: (a: GameAction) => void,
+  showDialog: (c: GeneralDialogConfig) => Promise<{
+    returnData: string[] | false;
+    uxDispatch: (a: GameAction) => void;
+  }>,
   inventory: ReadonlyItemBuffer,
   regionId: string,
   buildingIdx: number,
   regions: ImmutableMap<string, ReadonlyRegion>
 ) {
-  const item = await showIconSelector(showDialog, "Choose Building", [
-    ...new Set(
-      inventory
-        .Entities()
-        .map((s) => s[0])
-        .filter((e) => IsBuilding(e))
-    ),
-  ]);
+  const { selected: item, uxDispatch } = await showIconSelector(
+    showDialog,
+    "Choose Building",
+    [
+      ...new Set(
+        inventory
+          .Entities()
+          .map((s) => s[0])
+          .filter((e) => IsBuilding(e))
+      ),
+    ]
+  );
 
   if (item === "concrete") {
     await showPlaceTruckLineSelector(
       showDialog,
-      uxDispatch,
       inventory,
       regions,
       regionId,
@@ -149,8 +175,10 @@ export async function showPlaceBuildingSelector(
 
 export async function showResearchSelector(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
-  uxDispatch: (a: GameAction) => void,
+  showDialog: (c: GeneralDialogConfig) => Promise<{
+    returnData: string[] | false;
+    uxDispatch: (a: GameAction) => void;
+  }>,
   researchState: ReadonlyResearchState
 ): Promise<void> {
   const result = await showDialog({
@@ -162,8 +190,11 @@ export async function showResearchSelector(
       />
     ),
   });
-  if (result) {
-    const [recipe] = result;
+  if (result.returnData) {
+    const {
+      returnData: [recipe],
+      uxDispatch,
+    } = result;
     console.log("research ", recipe);
     if (recipe) uxDispatch({ type: "ChangeResearch", producerName: recipe });
   }
@@ -171,8 +202,10 @@ export async function showResearchSelector(
 
 export async function showPlaceTruckLineSelector(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
-  uxDispatch: (a: GameAction) => void,
+  showDialog: (c: GeneralDialogConfig) => Promise<{
+    returnData: string[] | false;
+    uxDispatch: (a: GameAction) => void;
+  }>,
   inventory: ReadonlyItemBuffer,
   regions: ImmutableMap<string, ReadonlyRegion>,
   regionId: string,
@@ -189,14 +222,17 @@ export async function showPlaceTruckLineSelector(
       />
     ),
   });
-  if (result) {
-    const [targetRegion, beltType, beltLength] = result;
+  if (result.returnData) {
+    const {
+      returnData: [targetRegion, beltType, beltLength],
+      uxDispatch,
+    } = result;
     if (targetRegion && beltType)
       uxDispatch({
         type: "PlaceTruckLine",
         targetRegion,
-        entity: beltType,
-        beltLength,
+        entity: beltType as "concrete",
+        beltLength: beltLength as unknown as number,
         regionId,
         buildingIdx,
       });
@@ -205,8 +241,10 @@ export async function showPlaceTruckLineSelector(
 
 export async function showClaimRegionSelector(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  showDialog: (c: GeneralDialogConfig) => Promise<any[] | false>,
-  uxDispatch: (a: GameAction) => void,
+  showDialog: (c: GeneralDialogConfig) => Promise<{
+    returnData: string[] | false;
+    uxDispatch: (a: GameAction) => void;
+  }>,
   inventory: ReadonlyItemBuffer,
   regionIds: string[]
 ): Promise<void> {
@@ -220,15 +258,21 @@ export async function showClaimRegionSelector(
       />
     ),
   });
-  if (result) {
-    const [regionId] = result;
+  if (result.returnData) {
+    const {
+      returnData: [regionId],
+      uxDispatch,
+    } = result;
     console.log("claim region ", regionId);
     if (regionId) uxDispatch({ type: "ClaimRegion", regionId });
   }
 }
 
 export async function showHelpCard(
-  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>
+  showDialog: (c: GeneralDialogConfig) => Promise<{
+    returnData: string[] | false;
+    uxDispatch: (a: GameAction) => void;
+  }>
 ): Promise<void> {
   await showDialog({
     title: "Help",
@@ -237,18 +281,28 @@ export async function showHelpCard(
 }
 
 export async function showSaveCard(
-  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>
+  showDialog: (c: GeneralDialogConfig) => Promise<{
+    returnData: string[] | false;
+    uxDispatch: (a: GameAction) => void;
+  }>
 ): Promise<void> {
-  const stateToLoad = await showDialog({
+  const { returnData: stateToLoad, uxDispatch } = await showDialog({
     title: "Save",
     component: (onConfirm) => <SaveCard onConfirm={onConfirm} />,
   });
-  if (!stateToLoad) return;
+  if (!stateToLoad || !stateToLoad[0]) return;
   console.log("Loading ", stateToLoad);
+  uxDispatch({
+    type: "ResetTo",
+    state: parse(stateToLoad[0]),
+  });
 }
 
 export async function showSettingCard(
-  showDialog: (c: GeneralDialogConfig) => Promise<string[] | false>
+  showDialog: (c: GeneralDialogConfig) => Promise<{
+    returnData: string[] | false;
+    uxDispatch: (a: GameAction) => void;
+  }>
 ): Promise<void> {
   await showDialog({
     title: "Setting",

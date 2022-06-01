@@ -57,7 +57,6 @@ export function StorageCard({
           onClick={async () => {
             await showMoveItemToFromInventorySelector(
               generalDialog,
-              uxDispatch,
               "TransferFromInventory",
               inventory.Entities().map(([entity]) => entity),
               regionId,

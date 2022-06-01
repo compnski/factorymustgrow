@@ -9,13 +9,11 @@ import { showResearchSelector } from "./selectors";
 export type InfoHeaderProps = {
   currentRegion: ReadonlyRegion;
   researchState: ReadonlyResearchState;
-  uxDispatch: (a: GameAction) => void;
 };
 
 export const InfoHeader = ({
   currentRegion,
   researchState,
-  uxDispatch,
 }: InfoHeaderProps) => {
   const oreInfo = currentRegion.Ore;
   const infoCards = oreInfo.Entities().map(([Entity, Count]) => (
@@ -42,7 +40,7 @@ export const InfoHeader = ({
       <div
         className="top-info science-info"
         onClick={async () =>
-          await showResearchSelector(generalDialog, uxDispatch, researchState)
+          await showResearchSelector(generalDialog, researchState)
         }
         title="Select Research"
       >

@@ -1,4 +1,5 @@
 import { Building, InserterId } from "./building";
+import { FactoryGameState } from "./factoryGameState";
 import { StateVMAction } from "./state/action";
 
 export type GameAction =
@@ -13,7 +14,8 @@ export type GameAction =
   | ChangeRecipeAction
   | InserterAction
   | LaunchRocketAction
-  | UpdateStateAction;
+  | UpdateStateAction
+  | ResetToAction;
 
 type UpdateStateAction = {
   type: "UpdateState";
@@ -64,6 +66,10 @@ type ProducerAction = {
 };
 type BasicAction = {
   type: "CompleteResearch" | "Reset";
+};
+type ResetToAction = {
+  type: "ResetTo";
+  state: FactoryGameState;
 };
 
 type BuildingAction =

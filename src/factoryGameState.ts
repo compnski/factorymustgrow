@@ -2,7 +2,6 @@ import { Building } from "./building";
 import { ImmutableMap } from "./immutable";
 import { Inserter } from "./inserter";
 import { ReadonlyInventory } from "./inventory";
-import { ReadonlyMainBus } from "./mainbus";
 import { GetRegionInfo } from "./region";
 import { TruckLine, TruckLineDepot } from "./transport";
 import {

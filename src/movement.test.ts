@@ -1,8 +1,4 @@
-import { Building, NewBuildingSlot } from "./building";
 import { ImmutableMap } from "./immutable";
-import { NewInserter } from "./inserter";
-import { NewBusLane, ReadonlyMainBus } from "./mainbus";
-import { PushPullFromMainBus } from "./MainBusMovement";
 import { VMPushToOtherBuilding } from "./movement";
 import {
   Extractor,
@@ -13,12 +9,7 @@ import {
 import { NewLab } from "./research";
 import { NewChest } from "./storage";
 import { AddItemsToReadonlyFixedBuffer } from "./test_utils";
-import {
-  BeltConnection,
-  EntityStack,
-  NewEntityStack,
-  NewMainBus,
-} from "./types";
+import { EntityStack, NewEntityStack } from "./types";
 
 function NewTestFactory(r: string, count = 1): Factory {
   const factory = NewFactoryForRecipe(
