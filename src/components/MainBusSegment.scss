@@ -106,6 +106,10 @@
     top: 50px;
     left: 0;
     margin-top: 10px;
+    &.ghost {
+      opacity: 0.5;
+      pointer-events: none;
+    }
   }
   .belt-connections {
     position: relative;

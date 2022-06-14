@@ -163,7 +163,7 @@ export const BuildingCard = ({
     beltConnections = replaceItem(
       beltConnections,
       ghostConnection.connectionIdx,
-      { ...bc, laneId: ghostConnection.laneId }
+      { ...bc, laneId: ghostConnection.laneId, isGhost: true }
     );
   }
   const isEmpty = building.kind === "Empty";

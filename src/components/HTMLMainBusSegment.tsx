@@ -17,7 +17,7 @@ export function HTMLMainBusSegment({
   mainBus: NewMainBus;
   buildingIdx: number;
   segmentHeight: number;
-  beltConnections?: { laneId?: number }[];
+  beltConnections?: { laneId?: number; isGhost?: boolean }[];
   busLaneClicked?: (laneId: number, entity: string) => void;
   beltConnectionClicked?: (connectionIdx: number) => void;
   beltHandler: BeltHandlerFunc;
@@ -147,7 +147,7 @@ export function HTMLMainBusSegment({
             <div
               key={`${idx}-${b.laneId}`}
               style={style}
-              className="belt-connection"
+              className={`belt-connection ${b.isGhost ? "ghost" : ""}`}
               onDoubleClick={() => beltConnectionClicked(idx)}
             />
           );

@@ -1,13 +1,18 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import { IWithShortcut, withShortcut } from "react-keybind";
 import { InserterIdForBuilding } from "../building";
-import { FactoryGameState, ReadonlyRegion } from "../factoryGameState";
+import {
+  FactoryGameState,
+  ReadonlyBuilding,
+  ReadonlyRegion,
+} from "../factoryGameState";
 import { GameAction } from "../GameAction";
+import { GetRecipe, MaybeGetRecipe } from "../gen/entities";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { availableItems } from "../research";
 import { BeltConnectionAddress } from "../state/address";
 import { Belt, BeltHandlerFunc } from "../types";
-import { showUserError } from "../utils";
+import { BuildingHasInput, BuildingHasOutput, showUserError } from "../utils";
 import { BuildingCard } from "./BuildingCard";
 import { InserterCard } from "./InserterCard";
 import { showSetLaneEntitySelector } from "./selectors";
@@ -53,17 +58,26 @@ const BuildingCardListWithShortcut = ({
         if (shortcut.unregisterShortcut) shortcut.unregisterShortcut(["esc"]);
       };
     }
-  }, []);
+  }, [clearEdits]);
 
   const generalDialog = useGeneralDialog();
 
-  function maybeAddGhostConnection({
-    regionId,
-    buildingIdx,
-    laneId,
-  }: BeltConnectionAddress & { laneId?: number }) {
-    const direction = "FROM_BUS";
-    if (laneId != undefined)
+  function maybeAddGhostConnection(
+    {
+      regionId,
+      buildingIdx,
+      laneId,
+      connectionIdx,
+    }: BeltConnectionAddress & { laneId?: number },
+    belt: Belt | undefined
+  ) {
+    const building = region.BuildingSlots[buildingIdx].Building;
+    if (laneId != undefined && belt?.entity) {
+      const buffer = buildingHasEntity(building, belt.entity);
+      if (!buffer) return;
+
+      const direction = buffer == "input" ? "FROM_BUS" : "TO_BUS";
+
       uxDispatch({
         type: "AddMainBusConnection",
         regionId,
@@ -71,8 +85,8 @@ const BuildingCardListWithShortcut = ({
         laneId,
         direction,
       });
+    }
   }
-
   function actuallyAddRemoveBelts(
     beltState: Belt[],
     ghostBelt: BeltWithOriginal | undefined
@@ -213,6 +227,7 @@ const BuildingCardListWithShortcut = ({
   function clearEdits() {
     setClickInfo(undefined);
     setGhostBelt(undefined);
+    setGhostConnection(undefined);
     setRemovedBelts([]);
     setBeltState(region.Bus.Belts as Belt[]);
   }
@@ -304,7 +319,7 @@ const BuildingCardListWithShortcut = ({
       case "mouseup":
       case "mouseleave":
         if (ghostConnection && existingBelt)
-          maybeAddGhostConnection(ghostConnection);
+          maybeAddGhostConnection(ghostConnection, existingBelt);
         if (ghostConnection) setGhostConnection(undefined);
 
         actuallyAddRemoveBelts(beltState, ghostBelt);
@@ -446,3 +461,12 @@ function extendBelt(
 }
 
 export const BuildingCardList = withShortcut(BuildingCardListWithShortcut);
+
+function buildingHasEntity(
+  building: ReadonlyBuilding,
+  entity: string
+): false | "input" | "output" {
+  if (BuildingHasInput(building, entity)) return "input";
+  if (BuildingHasOutput(building, entity)) return "output";
+  return false;
+}

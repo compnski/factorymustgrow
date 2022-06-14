@@ -143,10 +143,12 @@ export type BeltConnection =
   | {
       laneId: number;
       Inserter: Inserter;
+      isGhost?: boolean;
     }
   | {
       Inserter: Inserter;
       laneId: undefined;
+      isGhost?: boolean;
     };
 
 export type RegionInfo = {
