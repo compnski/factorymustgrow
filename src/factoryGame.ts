@@ -1,6 +1,7 @@
 import { showResearchSelector } from "./components/selectors";
+import { FactoryGameState, ReadonlyBuildingSlot } from "./factoryGameState";
 import { GameAction } from "./GameAction";
-import { GameDispatch, GetRegion } from "./GameDispatch";
+import { GetRegion } from "./GameDispatch";
 import { GetResearch } from "./gen/research";
 import { GeneralDialogConfig } from "./GeneralDialogProvider";
 import { MoveViaInserter } from "./inserter";
@@ -16,7 +17,6 @@ import { IsResearchComplete, Lab, ResearchInLab } from "./research";
 import { DispatchFunc } from "./stateVm";
 import { Chest, UpdateChest } from "./storage";
 import { TruckLineDepot, UpdateTruckLineDepot } from "./transport";
-import { FactoryGameState, ReadonlyBuildingSlot } from "./factoryGameState";
 
 export async function UpdateGameState(
   gameState: FactoryGameState,

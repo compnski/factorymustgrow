@@ -730,7 +730,8 @@ function stateChangeRemoveTruckLine(
 function NewBelt(
   address: MainBusAddress,
   lowerSlotIdx: number,
-  beltDirection: "UP" | "DOWN"
+  beltDirection: "UP" | "DOWN",
+  entity = ""
 ): Belt {
   const { upperSlotIdx, laneId } = address;
   console.log(lowerSlotIdx - upperSlotIdx + 1);
@@ -740,7 +741,7 @@ function NewBelt(
     lowerSlotIdx,
     endDirection: "NONE",
     beltDirection,
-    entity: "",
+    entity,
     internalBeltBuffer: new Array(lowerSlotIdx - upperSlotIdx + 1),
   };
 }
@@ -753,13 +754,24 @@ function stateChangeAddMainBusLane(
   if (!region) throw new Error("Missing region " + action.address.regionId);
   const { laneId, upperSlotIdx } = action.address;
 
+  const existingBelts = region.Bus.Belts.filter(
+    (b) =>
+      b.laneIdx == laneId &&
+      b.lowerSlotIdx >= action.lowerSlotIdx &&
+      b.upperSlotIdx <= upperSlotIdx
+  );
+  const existingEntities = existingBelts.map((b) => b.entity);
+  const entity = existingEntities.length ? existingEntities[0] : undefined;
+
   // remove existing belts
   const Belts = region.Bus.Belts.filter(
     (b) =>
       b.laneIdx != laneId ||
       b.lowerSlotIdx > action.lowerSlotIdx ||
       b.upperSlotIdx < upperSlotIdx
-  ).concat(NewBelt(action.address, action.lowerSlotIdx, action.beltDirection));
+  ).concat(
+    NewBelt(action.address, action.lowerSlotIdx, action.beltDirection, entity)
+  );
   console.log(Belts);
   const newRegion: ReadonlyRegion = {
     ...region,

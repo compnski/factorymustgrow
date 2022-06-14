@@ -13,6 +13,7 @@ export type Belt = {
   endDirection: "LEFT" | "RIGHT" | "NONE";
   entity: string;
   internalBeltBuffer: Array<number>;
+  isGhost?: boolean;
 };
 
 export type BeltHandlerFunc = (

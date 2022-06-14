@@ -1,3 +1,4 @@
+import { SyntheticEvent } from "react";
 import { InserterId } from "../building";
 import { GameAction } from "../GameAction";
 import { Inserter } from "../inserter";
@@ -9,6 +10,7 @@ export type InserterCardProps = {
   inserter: Inserter;
   variant?: "wide" | "small";
   uxDispatch: (a: GameAction) => void;
+  onMouseDown?: (evt: SyntheticEvent<HTMLDivElement, MouseEvent>) => void;
 };
 
 export function InserterCard(props: InserterCardProps) {
@@ -25,6 +27,7 @@ export function InserterCard(props: InserterCardProps) {
   return (
     <div className={`inserter-card ${props.variant || ""}`}>
       <div
+        onMouseDown={props.onMouseDown}
         onClick={() => {
           //
           props.uxDispatch({

@@ -6,8 +6,9 @@ import {
   ReadonlyRegion,
 } from "../factoryGameState";
 import { GameAction } from "../GameAction";
+import { BeltConnectionAddress } from "../state/address";
 import { Belt, BeltHandlerFunc } from "../types";
-import { BuildingHasInput, BuildingHasOutput } from "../utils";
+import { BuildingHasInput, BuildingHasOutput, replaceItem } from "../utils";
 import "./BuildingCard.scss";
 import { EmptyLaneCard } from "./EmptyLaneCard";
 import { HTMLMainBusSegment } from "./HTMLMainBusSegment";
@@ -30,6 +31,12 @@ export type BuildingCardProps = {
   gameState: FactoryGameState;
   beltHandler: BeltHandlerFunc;
   beltState: Belt[];
+  beltInserterMouseDown: (
+    evt: SyntheticEvent<HTMLElement, MouseEvent>,
+    buildingSlotIdx: number,
+    idx: number
+  ) => void;
+  ghostConnection?: BeltConnectionAddress & { laneId?: number };
 };
 
 export const BuildingCard = ({
@@ -49,6 +56,8 @@ export const BuildingCard = ({
   gameState,
   beltHandler,
   beltState,
+  beltInserterMouseDown,
+  ghostConnection,
 }: BuildingCardProps) => {
   // TOOD: Change to use Events
   const building = buildingSlot.Building;
@@ -146,18 +155,33 @@ export const BuildingCard = ({
       />
     );
 
-  const beltInserters = buildingSlot.BeltConnections.map((beltConn, idx) => (
+  let beltConnections = buildingSlot.BeltConnections;
+  if (ghostConnection) {
+    const bc = beltConnections[ghostConnection.connectionIdx];
+
+    // TODO" Set inserter direction when on a valid belt target
+    beltConnections = replaceItem(
+      beltConnections,
+      ghostConnection.connectionIdx,
+      { ...bc, laneId: ghostConnection.laneId }
+    );
+  }
+  const isEmpty = building.kind === "Empty";
+  const canGoUp = !isEmpty && buildingIdx > 0;
+  const canGoDown = !isEmpty && buildingIdx < buildingSlots.length - 1;
+
+  const beltInserters = beltConnections.map((beltConn, idx) => (
     <InserterCard
       key={idx}
       variant="small"
       inserter={beltConn.Inserter}
       inserterId={InserterIdForBelt(regionId, buildingIdx, idx)}
       uxDispatch={uxDispatch}
+      onMouseDown={(evt) =>
+        !isEmpty && beltInserterMouseDown(evt, buildingIdx, idx)
+      }
     />
   ));
-  const isEmpty = building.kind === "Empty";
-  const canGoUp = !isEmpty && buildingIdx > 0;
-  const canGoDown = !isEmpty && buildingIdx < buildingSlots.length - 1;
   return (
     <div className="producer-card-container">
       <div
@@ -215,7 +239,7 @@ export const BuildingCard = ({
         busLaneClicked={busLaneClicked}
         beltConnectionClicked={beltConnectionClicked}
         segmentHeight={136}
-        beltConnections={buildingSlot.BeltConnections}
+        beltConnections={beltConnections}
         buildingIdx={buildingIdx}
         beltHandler={beltHandler}
         beltState={beltState}

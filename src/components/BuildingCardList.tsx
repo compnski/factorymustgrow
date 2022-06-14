@@ -1,9 +1,11 @@
 import { SyntheticEvent, useEffect, useState } from "react";
+import { IWithShortcut, withShortcut } from "react-keybind";
 import { InserterIdForBuilding } from "../building";
 import { FactoryGameState, ReadonlyRegion } from "../factoryGameState";
 import { GameAction } from "../GameAction";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { availableItems } from "../research";
+import { BeltConnectionAddress } from "../state/address";
 import { Belt, BeltHandlerFunc } from "../types";
 import { showUserError } from "../utils";
 import { BuildingCard } from "./BuildingCard";
@@ -18,15 +20,16 @@ type ClickInfo = {
 
 type BeltWithOriginal = Belt & { originalUpperSlotIdx?: number };
 
-export const BuildingCardList = ({
+const BuildingCardListWithShortcut = ({
   region,
   uxDispatch,
+  shortcut,
   gameState,
 }: {
   region: ReadonlyRegion;
   uxDispatch: (a: GameAction) => void;
   gameState: FactoryGameState;
-}) => {
+} & IWithShortcut) => {
   const regionId = region.Id;
   const [dragIdx, setDragIdx] = useState(-1);
   const [beltState, setBeltState] = useState<Belt[]>(
@@ -37,7 +40,38 @@ export const BuildingCardList = ({
   useEffect(() => {
     setBeltState(region.Bus.Belts as Belt[]);
   }, [region.Bus.Belts]);
+
+  useEffect(() => {
+    if (shortcut && shortcut.registerShortcut) {
+      shortcut.registerShortcut(
+        clearEdits,
+        ["escape"],
+        "Escape",
+        "Cancel Action"
+      );
+      return () => {
+        if (shortcut.unregisterShortcut) shortcut.unregisterShortcut(["esc"]);
+      };
+    }
+  }, []);
+
   const generalDialog = useGeneralDialog();
+
+  function maybeAddGhostConnection({
+    regionId,
+    buildingIdx,
+    laneId,
+  }: BeltConnectionAddress & { laneId?: number }) {
+    const direction = "FROM_BUS";
+    if (laneId != undefined)
+      uxDispatch({
+        type: "AddMainBusConnection",
+        regionId,
+        buildingIdx,
+        laneId,
+        direction,
+      });
+  }
 
   function actuallyAddRemoveBelts(
     beltState: Belt[],
@@ -69,14 +103,15 @@ export const BuildingCardList = ({
         lowerSlotIdx: ghostBelt.lowerSlotIdx,
         beltDirection: ghostBelt.beltDirection,
       });
-      // TODO: dialog for entity
-      void showSetLaneEntitySelector(
-        generalDialog,
-        regionId,
-        ghostBelt.laneIdx,
-        ghostBelt.upperSlotIdx,
-        availableItems(gameState.Research)
-      );
+
+      if (!ghostBelt.entity)
+        void showSetLaneEntitySelector(
+          generalDialog,
+          regionId,
+          ghostBelt.laneIdx,
+          ghostBelt.upperSlotIdx,
+          availableItems(gameState.Research)
+        );
     }
   }
 
@@ -149,6 +184,9 @@ export const BuildingCardList = ({
 
   const [clickInfo, setClickInfo] = useState<ClickInfo | undefined>();
   const [ghostBelt, setGhostBelt] = useState<BeltWithOriginal | undefined>();
+  const [ghostConnection, setGhostConnection] = useState<
+    (BeltConnectionAddress & { laneId?: number }) | undefined
+  >();
 
   function findBelt(
     laneId: number,
@@ -176,7 +214,18 @@ export const BuildingCardList = ({
     setClickInfo(undefined);
     setGhostBelt(undefined);
     setRemovedBelts([]);
+    setBeltState(region.Bus.Belts as Belt[]);
   }
+
+  const beltInserterMouseDown = (
+    evt: SyntheticEvent<HTMLElement, MouseEvent>,
+    buildingIdx: number,
+    connectionIdx: number
+  ) => {
+    // TODO: If not empty, if not existing connection
+    // if has input or output
+    setGhostConnection({ regionId, buildingIdx, connectionIdx });
+  };
 
   const beltHandler: BeltHandlerFunc = (
     evt: SyntheticEvent<HTMLDivElement, MouseEvent>,
@@ -254,10 +303,15 @@ export const BuildingCardList = ({
         break;
       case "mouseup":
       case "mouseleave":
+        if (ghostConnection && existingBelt)
+          maybeAddGhostConnection(ghostConnection);
+        if (ghostConnection) setGhostConnection(undefined);
+
         actuallyAddRemoveBelts(beltState, ghostBelt);
         clearEdits();
         break;
       case "mouseenter":
+        if (ghostConnection) setGhostConnection({ ...ghostConnection, laneId });
         if (clickInfo != undefined)
           if (clickInfo.buildingIdx == buildingIdx) setGhostBelt(undefined);
           else {
@@ -277,18 +331,19 @@ export const BuildingCardList = ({
                   )
                 );
               }
-            } else
+            } else {
               setGhostBelt({
                 laneIdx: clickInfo.laneId,
                 upperSlotIdx: Math.min(clickInfo.buildingIdx, buildingIdx),
                 lowerSlotIdx: Math.max(clickInfo.buildingIdx, buildingIdx),
                 endDirection: xDir(evt.nativeEvent, clickInfo),
                 beltDirection,
-                entity: "",
+                entity: ghostBelt ? ghostBelt.entity : "",
                 internalBeltBuffer: new Array(
                   Math.abs(clickInfo.buildingIdx - buildingIdx) + 1
                 ),
               });
+            }
           }
     }
   };
@@ -317,7 +372,15 @@ export const BuildingCardList = ({
           moveDown={() => moveDown(idx)}
           gameState={gameState}
           beltHandler={beltHandler}
-          beltState={ghostBelt ? beltState.concat([ghostBelt]) : beltState}
+          beltState={
+            ghostBelt
+              ? beltState.concat([{ ...ghostBelt, isGhost: true }])
+              : beltState
+          }
+          beltInserterMouseDown={beltInserterMouseDown}
+          ghostConnection={
+            ghostConnection?.buildingIdx == idx ? ghostConnection : undefined
+          }
         />
         {!isLastBuilding && (
           <InserterCard
@@ -376,8 +439,10 @@ function extendBelt(
     lowerSlotIdx,
     endDirection: "NONE", // xDir(evt.nativeEvent, clickInfo), // TODO: Only change if on first/last cell of belt
     beltDirection,
-    entity: "",
+    entity: existingBelt.entity,
     internalBeltBuffer,
     originalUpperSlotIdx: existingBelt.originalUpperSlotIdx,
   };
 }
+
+export const BuildingCardList = withShortcut(BuildingCardListWithShortcut);

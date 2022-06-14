@@ -13,6 +13,10 @@
     display: flex;
     flex-direction: column;
 
+    &.ghost {
+      opacity: 0.5;
+    }
+
     &.flipped {
       .bus-piece.bottom.left {
         margin-left: -8px;

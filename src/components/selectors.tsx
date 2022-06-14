@@ -98,7 +98,7 @@ export async function showSetLaneEntitySelector(
     "Choose Item Filter",
     items
   );
-  if (item)
+  if (item && item != "") {
     uxDispatch({
       type: "SetLaneEntity",
       entity: item,
@@ -106,6 +106,7 @@ export async function showSetLaneEntitySelector(
       upperSlotIdx,
       regionId,
     });
+  }
 }
 
 export async function showChangeProducerRecipeSelector(

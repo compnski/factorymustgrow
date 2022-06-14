@@ -1,4 +1,5 @@
 import { settings } from "../settings";
+import { BeltConnectionAddress } from "../state/address";
 import { Belt, BeltConnection, BeltHandlerFunc, NewMainBus } from "../types";
 import { entityIconLookupByKind } from "../utils";
 import "./MainBusSegment.scss";
@@ -16,7 +17,7 @@ export function HTMLMainBusSegment({
   mainBus: NewMainBus;
   buildingIdx: number;
   segmentHeight: number;
-  beltConnections?: BeltConnection[];
+  beltConnections?: { laneId?: number }[];
   busLaneClicked?: (laneId: number, entity: string) => void;
   beltConnectionClicked?: (connectionIdx: number) => void;
   beltHandler: BeltHandlerFunc;
@@ -110,7 +111,9 @@ export function HTMLMainBusSegment({
             busLaneClicked(laneId, "copper-ore"),
           ]}
           onContextMenu={(e) => beltHandler(e, "cancel", -1, -1)}
-          className={`bus-lane ${flipped ? "flipped" : ""}`}
+          className={`bus-lane ${flipped ? "flipped" : ""} ${
+            belt.isGhost ? "ghost" : ""
+          }`}
           key={`${belt.upperSlotIdx}-${laneId}`}
         >
           {inside}
