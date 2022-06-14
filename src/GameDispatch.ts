@@ -378,37 +378,42 @@ function toggleBeltInserterDirection(
       ],
     mainBusLaneId = beltConn.laneId;
 
-  //   if (mainBusLaneId !== undefined && region.Bus.HasLane(mainBusLaneId)) {
-  //     const busLane = region.Bus.lanes.get(mainBusLaneId);
-  //     // Check if the inserter can be toggled
-  //     // IF so, flip it
-  //     if (i && b && busLane) {
-  //       const canGoLeft = BuildingHasInput(b, busLane.Entities()[0][0]),
-  //         canGoRight = BuildingHasOutput(b, busLane.Entities()[0][0]);
-  //       const newDirection =
-  //         canGoLeft && canGoRight
-  //           ? i.direction === "TO_BUS"
-  //             ? "FROM_BUS"
-  //             : i.direction === "FROM_BUS"
-  //             ? "NONE"
-  //             : "TO_BUS"
-  //           : canGoLeft
-  //           ? i.direction === "NONE"
-  //             ? "FROM_BUS"
-  //             : "NONE"
-  //           : canGoRight
-  //           ? i.direction === "NONE"
-  //             ? "TO_BUS"
-  //             : "NONE"
-  //           : "NONE";
-  //       dispatch({
-  //         kind: "SetProperty",
-  //         address: { ...action, location: "BELT" },
-  //         property: "direction",
-  //         value: newDirection,
-  //       });
-  //     }
-  //   }
+  if (mainBusLaneId !== undefined) {
+    const busLane = region.Bus.Belts.find(
+      (belt) =>
+        belt.laneIdx == beltConn.laneId &&
+        action.buildingIdx >= belt.upperSlotIdx &&
+        action.buildingIdx <= belt.lowerSlotIdx
+    );
+    // Check if the inserter can be toggled
+    // IF so, flip it
+    if (i && b && busLane) {
+      const canGoLeft = BuildingHasInput(b, busLane.entity),
+        canGoRight = BuildingHasOutput(b, busLane.entity);
+      const newDirection =
+        canGoLeft && canGoRight
+          ? i.direction === "TO_BUS"
+            ? "FROM_BUS"
+            : i.direction === "FROM_BUS"
+            ? "NONE"
+            : "TO_BUS"
+          : canGoLeft
+          ? i.direction === "NONE"
+            ? "FROM_BUS"
+            : "NONE"
+          : canGoRight
+          ? i.direction === "NONE"
+            ? "TO_BUS"
+            : "NONE"
+          : "NONE";
+      dispatch({
+        kind: "SetProperty",
+        address: { ...action, location: "BELT" },
+        property: "direction",
+        value: newDirection,
+      });
+    }
+  }
 }
 
 function toggleInserterDirection(
