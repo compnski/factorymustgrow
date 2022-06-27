@@ -294,7 +294,7 @@ function setBuildingProperty(
       (b.inputBuffers as ReadonlyInventory).Data,
       true
     );
-    console.log("resize chest", value);
+
     b = {
       ...b,
       outputBuffers: sharedBuffers,
@@ -353,14 +353,13 @@ function setMainBusProperty(
   const beltIdx = region.Bus.Belts.findIndex(
     (b) => b.laneIdx == laneId && b.upperSlotIdx == upperSlotIdx
   );
-  console.log(beltIdx, laneId, upperSlotIdx);
+
   if (beltIdx < 0) return region;
   const Belt = region.Bus.Belts[beltIdx];
   const b = {
     ...Belt,
     [property]: value,
   };
-  console.log(b);
 
   return {
     ...region,
@@ -734,7 +733,7 @@ function NewBelt(
   entity = ""
 ): Belt {
   const { upperSlotIdx, laneId } = address;
-  console.log(lowerSlotIdx - upperSlotIdx + 1);
+
   return {
     laneIdx: laneId,
     upperSlotIdx,
@@ -753,26 +752,28 @@ function stateChangeAddMainBusLane(
   const region = state.Regions.get(action.address.regionId);
   if (!region) throw new Error("Missing region " + action.address.regionId);
   const { laneId, upperSlotIdx } = action.address;
+  const { lowerSlotIdx } = action;
 
-  const existingBelts = region.Bus.Belts.filter(
-    (b) =>
+  const overlappingBelts: Belt[] = [];
+  const otherBelts: Belt[] = [];
+  region.Bus.Belts.forEach((b) => {
+    if (
       b.laneIdx == laneId &&
-      b.lowerSlotIdx >= action.lowerSlotIdx &&
-      b.upperSlotIdx <= upperSlotIdx
-  );
-  const existingEntities = existingBelts.map((b) => b.entity);
+      ((b.lowerSlotIdx >= upperSlotIdx && b.lowerSlotIdx <= lowerSlotIdx) ||
+        (b.upperSlotIdx >= upperSlotIdx && b.upperSlotIdx <= lowerSlotIdx))
+    )
+      overlappingBelts.push(b);
+    else otherBelts.push(b);
+  });
+
+  const existingEntities = overlappingBelts.map((b) => b.entity);
   const entity = existingEntities.length ? existingEntities[0] : undefined;
 
   // remove existing belts
-  const Belts = region.Bus.Belts.filter(
-    (b) =>
-      b.laneIdx != laneId ||
-      b.lowerSlotIdx > action.lowerSlotIdx ||
-      b.upperSlotIdx < upperSlotIdx
-  ).concat(
+  const Belts = otherBelts.concat(
     NewBelt(action.address, action.lowerSlotIdx, action.beltDirection, entity)
   );
-  console.log(Belts);
+
   const newRegion: ReadonlyRegion = {
     ...region,
     Bus: { ...region.Bus, Belts },
@@ -796,7 +797,7 @@ function stateChangeRemoveMainBusLane(
   const Belts = region.Bus.Belts.filter(
     (b) => b.laneIdx != laneId || b.upperSlotIdx != upperSlotIdx
   );
-  console.log(Belts);
+
   const newRegion: ReadonlyRegion = {
     ...region,
     Bus: { ...region.Bus, Belts },
