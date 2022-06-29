@@ -142,6 +142,10 @@ export const HelpCard = function HelpCard({ onConfirm }: HelpCardProps) {
             uxDispatch={() => false}
             region={helpRegion}
             gameState={helpGameState}
+            beltHandler={() => false}
+            ghostConnection={undefined}
+            beltInserterMouseDown={() => false}
+            beltState={helpRegion.Bus.Belts}
           />
           <HelpOverlay />
         </div>

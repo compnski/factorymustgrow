@@ -13,11 +13,11 @@ export function HTMLMainBusSegment({
 }: {
   buildingIdx: number;
   segmentHeight: number;
-  beltConnections?: { laneId?: number; isGhost?: boolean }[];
+  beltConnections?: readonly { laneId?: number; isGhost?: boolean }[];
   busLaneClicked?: (laneId: number, entity: string) => void;
   beltConnectionClicked?: (connectionIdx: number) => void;
   beltHandler: BeltHandlerFunc;
-  beltState: Belt[];
+  beltState: readonly Belt[];
 }) {
   const lanes = [];
   const entityIconLookup = entityIconLookupByKind("MainBus");

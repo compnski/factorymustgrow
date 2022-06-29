@@ -30,7 +30,7 @@ export type BuildingCardProps = {
   region: ReadonlyRegion;
   gameState: FactoryGameState;
   beltHandler: BeltHandlerFunc;
-  beltState: Belt[];
+  beltState: readonly Belt[];
   beltInserterMouseDown: (
     evt: SyntheticEvent<HTMLElement, MouseEvent>,
     buildingSlotIdx: number,

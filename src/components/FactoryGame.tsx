@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { TicksPerSecond } from "../constants";
 import { UpdateGameState } from "../factoryGame";
 import { ReadonlyResearchState } from "../factoryGameState";
@@ -17,6 +17,10 @@ import { DebugButtonPanel } from "./DebugButtonPanel";
 import "./FactoryGame.scss";
 import { InfoHeader } from "./InfoHeader";
 import { InventoryDisplay } from "./InventoryDisplay";
+import {
+  MainBusController,
+  MainBusControllerChildProps,
+} from "./MainBusController";
 import { RegionTabBar } from "./RegionTabBar";
 import { showHelpCard, showSaveCard, showSettingCard } from "./selectors";
 
@@ -101,11 +105,30 @@ export const FactoryGame = (props: ReturnType<typeof getDispatchFunc>) => {
           />
         </div>
         <div className="scroller">
-          <BuildingCardList
+          <MainBusController
             region={currentRegion}
             uxDispatch={uxDispatch}
             gameState={gameState}
-          />
+          >
+            {({
+              beltHandler,
+              beltState,
+              ghostConnection,
+              beltInserterMouseDown,
+            }: MainBusControllerChildProps) => (
+              <Fragment>
+                <BuildingCardList
+                  region={currentRegion}
+                  uxDispatch={uxDispatch}
+                  gameState={gameState}
+                  beltHandler={beltHandler}
+                  beltState={beltState}
+                  ghostConnection={ghostConnection}
+                  beltInserterMouseDown={beltInserterMouseDown}
+                />
+              </Fragment>
+            )}
+          </MainBusController>
         </div>
         <InventoryDisplay inventory={inventory} />
         <DebugButtonPanel
