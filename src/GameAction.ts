@@ -48,6 +48,7 @@ type LaneAction =
       upperSlotIdx: number;
       lowerSlotIdx: number;
       beltDirection: "UP" | "DOWN";
+      originalUpperSlotIdx?: number;
     };
 type RegionAction = {
   type: "ClaimRegion";

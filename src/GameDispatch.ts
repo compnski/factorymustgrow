@@ -25,6 +25,7 @@ import {
   ReadonlyRegion,
 } from "./factoryGameState";
 import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
+import { cursorTo } from "readline";
 
 export function GetRegion(
   gameState: FactoryGameState,
@@ -57,7 +58,7 @@ export const GameDispatch = (
       break;
 
     case "RemoveLane":
-      removeLane(
+      removeMainBusLane(
         dispatch,
         GetRegion(gameState, action.regionId),
         action,
@@ -66,16 +67,12 @@ export const GameDispatch = (
       break;
 
     case "AddLane":
-      dispatch({
-        kind: "AddMainBusLane",
-        address: {
-          regionId: action.regionId,
-          laneId: action.laneId,
-          upperSlotIdx: action.upperSlotIdx,
-        },
-        lowerSlotIdx: action.lowerSlotIdx,
-        beltDirection: action.beltDirection,
-      });
+      addMainBusLane(
+        dispatch,
+        GetRegion(gameState, action.regionId),
+        gameState,
+        action
+      );
       break;
 
     case "SetLaneEntity":
@@ -264,6 +261,118 @@ function transferToInventory(
     if (!target.address) return moveToInventory(dispatch, action.entity, count);
     moveToInventory(dispatch, action.entity, count, target.address);
   }
+}
+
+function addMainBusLane(
+  dispatch: DispatchFunc,
+  currentRegion: ReadonlyRegion,
+  gameState: FactoryGameState,
+  action: {
+    type: "AddLane";
+    regionId: string;
+    laneId: number;
+    upperSlotIdx: number;
+    lowerSlotIdx: number;
+    beltDirection: "UP" | "DOWN";
+    originalUpperSlotIdx?: number | undefined;
+  }
+) {
+  // check if we changed size, find any belt connections that are now disconnected and remvoe em
+  const originalBelt = currentRegion.Bus.Belts.find(
+    (b) =>
+      b.laneIdx == action.laneId &&
+      b.upperSlotIdx == action.originalUpperSlotIdx
+  );
+  if (originalBelt) {
+    // Iterate over range of the old belt
+    for (
+      let buildingIdx = originalBelt.upperSlotIdx;
+      buildingIdx <= originalBelt.lowerSlotIdx;
+      buildingIdx++
+    ) {
+      // If outside the range of the new belt
+      if (
+        buildingIdx < action.upperSlotIdx ||
+        buildingIdx > action.lowerSlotIdx
+      ) {
+        const buildingSlot = currentRegion.BuildingSlots[buildingIdx];
+        buildingSlot.BeltConnections.forEach((beltConn, beltConnIdx) => {
+          if (beltConn.laneId === action.laneId)
+            removeMainBusConnection(
+              dispatch,
+              {
+                buildingIdx,
+                connectionIdx: beltConnIdx,
+                regionId: currentRegion.Id,
+              },
+              gameState
+            );
+        });
+      }
+    }
+  }
+
+  dispatch({
+    kind: "AddMainBusLane",
+    address: {
+      regionId: action.regionId,
+      laneId: action.laneId,
+      upperSlotIdx: action.upperSlotIdx,
+    },
+    lowerSlotIdx: action.lowerSlotIdx,
+    beltDirection: action.beltDirection,
+  });
+}
+
+function removeMainBusLane(
+  dispatch: DispatchFunc,
+  currentRegion: ReadonlyRegion,
+  action: {
+    type: "RemoveLane";
+    laneId: number;
+    upperSlotIdx: number;
+    lowerSlotIdx: number;
+  },
+  gameState: FactoryGameState
+) {
+  //throw new Error("NYI");
+  dispatch({
+    kind: "RemoveMainBusLane",
+    address: {
+      regionId: currentRegion.Id,
+      laneId: action.laneId,
+      upperSlotIdx: action.upperSlotIdx,
+    },
+  });
+
+  // TODO: Refunds
+
+  // for (const [entity, count] of currentRegion.Bus.Lane(
+  //   action.laneId
+  // ).Entities()) {
+  //   if (count > 0) moveToInventory(dispatch, entity, count);
+  // }
+
+  // Remove attached inserters
+  currentRegion.BuildingSlots.forEach((buildingSlot, buildingSlotIdx) => {
+    if (
+      buildingSlotIdx >= action.upperSlotIdx &&
+      buildingSlotIdx <= action.lowerSlotIdx
+    )
+      buildingSlot.BeltConnections.forEach((beltConn, beltConnIdx) => {
+        if (beltConn.laneId === action.laneId) {
+          removeMainBusConnection(
+            dispatch,
+            {
+              buildingIdx: buildingSlotIdx,
+              connectionIdx: beltConnIdx,
+              regionId: currentRegion.Id,
+            },
+            gameState
+          );
+        }
+      });
+  });
 }
 
 function addMainBusConnection(
@@ -635,57 +744,6 @@ function completeResearch(dispatch: DispatchFunc, gameState: FactoryGameState) {
       researchId: currentResearchId,
       maxCount: r.ProductionRequiredForCompletion,
     });
-}
-
-function removeLane(
-  dispatch: DispatchFunc,
-  currentRegion: ReadonlyRegion,
-  action: {
-    type: "RemoveLane";
-    laneId: number;
-    upperSlotIdx: number;
-    lowerSlotIdx: number;
-  },
-  gameState: FactoryGameState
-) {
-  //throw new Error("NYI");
-  dispatch({
-    kind: "RemoveMainBusLane",
-    address: {
-      regionId: currentRegion.Id,
-      laneId: action.laneId,
-      upperSlotIdx: action.upperSlotIdx,
-    },
-  });
-
-  // TODO: Refunds
-
-  // for (const [entity, count] of currentRegion.Bus.Lane(
-  //   action.laneId
-  // ).Entities()) {
-  //   if (count > 0) moveToInventory(dispatch, entity, count);
-  // }
-
-  // Remove attached inserters
-  currentRegion.BuildingSlots.forEach((buildingSlot, buildingSlotIdx) => {
-    if (
-      buildingSlotIdx >= action.upperSlotIdx &&
-      buildingSlotIdx <= action.lowerSlotIdx
-    )
-      buildingSlot.BeltConnections.forEach((beltConn, beltConnIdx) => {
-        if (beltConn.laneId === action.laneId) {
-          removeMainBusConnection(
-            dispatch,
-            {
-              buildingIdx: buildingSlotIdx,
-              connectionIdx: beltConnIdx,
-              regionId: currentRegion.Id,
-            },
-            gameState
-          );
-        }
-      });
-  });
 }
 
 function PlaceBuilding(

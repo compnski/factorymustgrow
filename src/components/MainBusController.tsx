@@ -132,6 +132,7 @@ export const MainBusController = ({
         upperSlotIdx: ghostBelt.upperSlotIdx,
         lowerSlotIdx: ghostBelt.lowerSlotIdx,
         beltDirection: ghostBelt.beltDirection,
+        originalUpperSlotIdx: ghostBelt.originalUpperSlotIdx,
       });
 
       // TODO: ghostBelt should always have an entity if there was a removed belt
