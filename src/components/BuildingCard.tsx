@@ -46,12 +46,7 @@ export const BuildingCard = ({
   handleDrop,
   moveUp,
   moveDown,
-  region: {
-    Id: regionId,
-    Ore: regionalOre,
-    Bus: regionalBus,
-    BuildingSlots: buildingSlots,
-  },
+  region: { Id: regionId, Ore: regionalOre, BuildingSlots: buildingSlots },
   uxDispatch,
   gameState,
   beltHandler,
@@ -235,7 +230,6 @@ export const BuildingCard = ({
         <div className="output-area">{beltInserters}</div>
       </div>
       <HTMLMainBusSegment
-        mainBus={regionalBus}
         busLaneClicked={busLaneClicked}
         beltConnectionClicked={beltConnectionClicked}
         segmentHeight={136}

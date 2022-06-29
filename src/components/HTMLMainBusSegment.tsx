@@ -1,20 +1,16 @@
 import { settings } from "../settings";
-import { BeltConnectionAddress } from "../state/address";
-import { Belt, BeltConnection, BeltHandlerFunc, NewMainBus } from "../types";
+import { Belt, BeltHandlerFunc } from "../types";
 import { entityIconLookupByKind } from "../utils";
 import "./MainBusSegment.scss";
 
 export function HTMLMainBusSegment({
-  mainBus,
   buildingIdx,
   beltState,
   beltHandler,
-  segmentHeight,
   beltConnections = [],
   busLaneClicked = () => void {},
   beltConnectionClicked = () => void {},
 }: {
-  mainBus: NewMainBus;
   buildingIdx: number;
   segmentHeight: number;
   beltConnections?: { laneId?: number; isGhost?: boolean }[];
@@ -61,10 +57,7 @@ export function HTMLMainBusSegment({
         : belt.endDirection.toLowerCase();
   }
 
-  //for (const [_laneId, lane] of mainBus.lanes.entries()) {
   for (let laneId = 1; laneId <= maxLaneId; laneId++) {
-    //const stack = lane.Entities();
-
     let inside = <></>;
     const belt = beltSegment(laneId);
     if (belt) {
@@ -108,7 +101,7 @@ export function HTMLMainBusSegment({
           }
           onDoubleClick={(e) => [
             console.log(e),
-            busLaneClicked(laneId, "copper-ore"),
+            busLaneClicked(laneId, belt.entity),
           ]}
           onContextMenu={(e) => beltHandler(e, "cancel", -1, -1)}
           className={`bus-lane ${flipped ? "flipped" : ""} ${

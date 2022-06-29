@@ -7,7 +7,6 @@ import {
   ReadonlyRegion,
 } from "../factoryGameState";
 import { GameAction } from "../GameAction";
-import { GetRecipe, MaybeGetRecipe } from "../gen/entities";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { availableItems } from "../research";
 import { BeltConnectionAddress } from "../state/address";
@@ -16,6 +15,7 @@ import { BuildingHasInput, BuildingHasOutput, showUserError } from "../utils";
 import { BuildingCard } from "./BuildingCard";
 import { InserterCard } from "./InserterCard";
 import { showSetLaneEntitySelector } from "./selectors";
+
 type ClickInfo = {
   clientX: number;
   clientY: number;
@@ -23,18 +23,28 @@ type ClickInfo = {
   laneId: number;
 };
 
-type BeltWithOriginal = Belt & { originalUpperSlotIdx?: number };
+type GhostBeltInfo = Pick<
+  Belt,
+  | "laneIdx"
+  | "upperSlotIdx"
+  | "lowerSlotIdx"
+  | "beltDirection"
+  | "entity"
+  | "endDirection"
+> & {
+  originalUpperSlotIdx?: number;
+  draggingFieldName: "upperSlotIdx" | "lowerSlotIdx";
+};
 
-const BuildingCardListWithShortcut = ({
+export const BuildingCardList = ({
   region,
   uxDispatch,
-  shortcut,
   gameState,
 }: {
   region: ReadonlyRegion;
   uxDispatch: (a: GameAction) => void;
   gameState: FactoryGameState;
-} & IWithShortcut) => {
+}) => {
   const regionId = region.Id;
   const [dragIdx, setDragIdx] = useState(-1);
   const [beltState, setBeltState] = useState<Belt[]>(
@@ -45,21 +55,6 @@ const BuildingCardListWithShortcut = ({
   useEffect(() => {
     setBeltState(region.Bus.Belts as Belt[]);
   }, [region.Bus.Belts]);
-
-  /* useEffect(() => {
-   *   if (shortcut && shortcut.registerShortcut) {
-   *     shortcut.registerShortcut(
-   *       clearEdits,
-   *       ["escape"],
-   *       "Escape",
-   *       "Cancel Action"
-   *     );
-   *     return () => {
-   *       if (shortcut.unregisterShortcut) shortcut.unregisterShortcut(["esc"]);
-   *     };
-   *   }
-   * }, [clearEdits]);
-   */
   const generalDialog = useGeneralDialog();
 
   function maybeAddGhostConnection(
@@ -90,13 +85,8 @@ const BuildingCardListWithShortcut = ({
 
   function actuallyAddRemoveBelts(
     beltState: Belt[],
-    ghostBelt: BeltWithOriginal | undefined
+    ghostBelt: GhostBeltInfo | undefined
   ) {
-    /* if (ghostBelt) {
-     *   setBeltState([...beltState, ghostBelt]);
-     *   console.log([...beltState, ghostBelt]);
-     * }
-     */
     if (removedBelts.length && !ghostBelt) {
       console.log("Remove", removedBelts);
       uxDispatch({
@@ -186,21 +176,15 @@ const BuildingCardListWithShortcut = ({
     return;
   };
 
-  function xDir(evt: { clientX: number }, clickInfo: ClickInfo) {
-    return "NONE";
-    const delta = evt.clientX - clickInfo.clientX;
-    return delta > 15 ? "RIGHT" : delta < -15 ? "LEFT" : "NONE";
-  }
-
-  function yDir(evt: { clientY: number }, clickInfo: ClickInfo) {
-    const delta = evt.clientY - clickInfo.clientY;
-    return delta > 0 ? "DOWN" : "UP";
-  }
-
+  // TODO: Store pieces and construct ghost belt
+  // -
   const [clickInfo, setClickInfo] = useState<ClickInfo | undefined>();
-  const [ghostBelt, setGhostBelt] = useState<BeltWithOriginal | undefined>();
   const [ghostConnection, setGhostConnection] = useState<
     (BeltConnectionAddress & { laneId?: number }) | undefined
+  >();
+
+  const [ghostBeltInfo, setGhostBeltInfo] = useState<
+    GhostBeltInfo | undefined
   >();
 
   function findBelt(
@@ -228,7 +212,7 @@ const BuildingCardListWithShortcut = ({
 
   function clearEdits() {
     setClickInfo(undefined);
-    setGhostBelt(undefined);
+    setGhostBeltInfo(undefined);
     setGhostConnection(undefined);
     setRemovedBelts([]);
     setBeltState(region.Bus.Belts as Belt[]);
@@ -256,7 +240,7 @@ const BuildingCardListWithShortcut = ({
     evt.preventDefault();
     if (action == "cancel") {
       setBeltState(region.Bus.Belts as Belt[]);
-      setGhostBelt(undefined);
+      setGhostBeltInfo(undefined);
       return;
     }
 
@@ -267,8 +251,8 @@ const BuildingCardListWithShortcut = ({
 
     if (
       existingBelt &&
-      ghostBelt?.originalUpperSlotIdx &&
-      existingBelt.upperSlotIdx != ghostBelt.originalUpperSlotIdx
+      ghostBeltInfo?.originalUpperSlotIdx &&
+      existingBelt.upperSlotIdx != ghostBeltInfo.originalUpperSlotIdx
     )
       return; //  Don't allow connectiong more than 1 belt at once
 
@@ -309,13 +293,10 @@ const BuildingCardListWithShortcut = ({
                 : existingBelt.upperSlotIdx,
             laneId,
           });
-
-          setGhostBelt({
-            ...existingBelt,
-            originalUpperSlotIdx: existingBelt.upperSlotIdx,
-          });
+          setGhostBeltInfo(toGhostBeltInfo(existingBelt, buildingIdx));
           removeBelt(existingBelt);
         } else {
+          console.log(buildingIdx);
           setClickInfo({
             clientX: evt.nativeEvent.clientX,
             clientY: evt.nativeEvent.clientY,
@@ -330,42 +311,54 @@ const BuildingCardListWithShortcut = ({
           maybeAddGhostConnection(ghostConnection, existingBelt);
         if (ghostConnection) setGhostConnection(undefined);
 
-        actuallyAddRemoveBelts(beltState, ghostBelt);
+        actuallyAddRemoveBelts(beltState, ghostBeltInfo);
         clearEdits();
         break;
       case "mouseenter":
         if (ghostConnection) setGhostConnection({ ...ghostConnection, laneId });
-        if (clickInfo != undefined)
-          if (clickInfo.buildingIdx == buildingIdx) setGhostBelt(undefined);
-          else {
-            const beltDirection = yDir(evt.nativeEvent, clickInfo);
-            if (existingBelt && existingBelt.laneIdx == clickInfo.laneId) {
-              if (existingBelt.beltDirection == beltDirection) {
-                removeBelt(existingBelt);
-                setGhostBelt(
-                  extendBelt(
-                    {
-                      ...existingBelt,
-                      originalUpperSlotIdx: existingBelt.upperSlotIdx,
-                    },
-                    clickInfo,
-                    buildingIdx,
-                    beltDirection
-                  )
-                );
-              }
-            } else {
-              setGhostBelt({
-                laneIdx: clickInfo.laneId,
-                upperSlotIdx: Math.min(clickInfo.buildingIdx, buildingIdx),
-                lowerSlotIdx: Math.max(clickInfo.buildingIdx, buildingIdx),
-                endDirection: xDir(evt.nativeEvent, clickInfo),
-                beltDirection,
-                entity: ghostBelt ? ghostBelt.entity : "",
-                internalBeltBuffer: new Array(0),
+        if (!clickInfo) break;
+        if (!ghostBeltInfo) {
+          console.log({
+            lowerSlotIdx: Math.max(buildingIdx, clickInfo.buildingIdx),
+            upperSlotIdx: Math.max(buildingIdx, clickInfo.buildingIdx),
+          });
+          const beltDirection = yDir(evt.nativeEvent, clickInfo);
+          setGhostBeltInfo({
+            upperSlotIdx: Math.min(buildingIdx, clickInfo.buildingIdx),
+            lowerSlotIdx: Math.max(buildingIdx, clickInfo.buildingIdx),
+            entity: "",
+            laneIdx: laneId,
+            beltDirection,
+            endDirection: "NONE",
+            draggingFieldName:
+              beltDirection == "UP" ? "upperSlotIdx" : "lowerSlotIdx",
+          });
+          break;
+        }
+        if (existingBelt && existingBelt.laneIdx == clickInfo.laneId) {
+          if (existingBelt.beltDirection == ghostBeltInfo.beltDirection) {
+            removeBelt(existingBelt);
+            if (ghostBeltInfo) {
+              setGhostBeltInfo({
+                ...ghostBeltInfo,
+                [ghostBeltInfo.draggingFieldName]: buildingIdx,
+              });
+              console.log({
+                ...ghostBeltInfo,
+                [ghostBeltInfo.draggingFieldName]: buildingIdx,
               });
             }
           }
+        } else {
+          const newGhost: GhostBeltInfo | undefined = {
+            ...ghostBeltInfo,
+            [ghostBeltInfo.draggingFieldName]: buildingIdx,
+          };
+          if (newGhost.lowerSlotIdx == newGhost.upperSlotIdx) {
+            setClickInfo(undefined);
+            setGhostBeltInfo(undefined);
+          } else setGhostBeltInfo(newGhost);
+        }
     }
   };
 
@@ -394,8 +387,14 @@ const BuildingCardListWithShortcut = ({
           gameState={gameState}
           beltHandler={beltHandler}
           beltState={
-            ghostBelt
-              ? beltState.concat([{ ...ghostBelt, isGhost: true }])
+            ghostBeltInfo
+              ? beltState.concat([
+                  {
+                    ...ghostBeltInfo,
+                    isGhost: true,
+                    internalBeltBuffer: new Array(0),
+                  },
+                ])
               : beltState
           }
           beltInserterMouseDown={beltInserterMouseDown}
@@ -427,44 +426,6 @@ const BuildingCardListWithShortcut = ({
   );
 };
 
-// TODO: When extending a belt, dont change direciont, just get longer
-function extendBelt(
-  existingBelt: Belt & { originalUpperSlotIdx: number },
-  clickInfo: ClickInfo,
-  buildingIdx: number,
-  beltDirection: "UP" | "DOWN"
-): Belt & { originalUpperSlotIdx: number } {
-  const upperSlotIdx = Math.min(
-    existingBelt.upperSlotIdx,
-    buildingIdx,
-    clickInfo.buildingIdx
-  );
-  const lowerSlotIdx = Math.max(
-    existingBelt.upperSlotIdx,
-    buildingIdx,
-    clickInfo.buildingIdx
-  );
-  const newLength =
-    lowerSlotIdx -
-    upperSlotIdx -
-    (existingBelt.lowerSlotIdx - existingBelt.upperSlotIdx);
-
-  const newBuffer = newLength > 0 ? new Array(newLength) : new Array(0);
-
-  return {
-    laneIdx: clickInfo.laneId,
-    upperSlotIdx,
-    lowerSlotIdx,
-    endDirection: "NONE", // xDir(evt.nativeEvent, clickInfo), // TODO: Only change if on first/last cell of belt
-    beltDirection,
-    entity: existingBelt.entity,
-    internalBeltBuffer: new Array(0),
-    originalUpperSlotIdx: existingBelt.originalUpperSlotIdx,
-  };
-}
-
-export const BuildingCardList = withShortcut(BuildingCardListWithShortcut);
-
 function buildingHasEntity(
   building: ReadonlyBuilding,
   entity: string
@@ -474,7 +435,33 @@ function buildingHasEntity(
   return false;
 }
 
-function shouldCreateBelt(ghostBelt: BeltWithOriginal, beltState: Belt[]) {
+function shouldCreateBelt(ghostBelt: GhostBeltInfo, beltState: Belt[]) {
   if (ghostBelt.lowerSlotIdx - ghostBelt.upperSlotIdx < 1) return false;
   return true;
+}
+
+/* function xDir(evt: { clientX: number }, clickInfo: ClickInfo) {
+ *   return "NONE";
+ *   const delta = evt.clientX - clickInfo.clientX;
+ *   return delta > 15 ? "RIGHT" : delta < -15 ? "LEFT" : "NONE";
+ * }
+ *  */
+function yDir(evt: { clientY: number }, clickInfo: ClickInfo) {
+  const delta = evt.clientY - clickInfo.clientY;
+  return delta > 0 ? "DOWN" : "UP";
+}
+
+function toGhostBeltInfo(belt: Belt, clickBuildingIdx: number): GhostBeltInfo {
+  const draggingFieldName =
+    belt.upperSlotIdx === clickBuildingIdx ? "upperSlotIdx" : "lowerSlotIdx";
+  return {
+    originalUpperSlotIdx: belt.upperSlotIdx,
+    laneIdx: belt.laneIdx,
+    upperSlotIdx: belt.upperSlotIdx,
+    lowerSlotIdx: belt.lowerSlotIdx,
+    beltDirection: belt.beltDirection,
+    entity: belt.entity,
+    draggingFieldName,
+    endDirection: "NONE",
+  };
 }
