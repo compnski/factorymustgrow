@@ -15,7 +15,7 @@ import { NewExtractor, NewFactory, ProducerTypeFromEntity } from "./production";
 import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
 import { NewLab } from "./research";
 import { DispatchFunc } from "./stateVm";
-import { StateAddress } from "./state/address";
+import { MainBusAddress, StateAddress } from "./state/address";
 import { NewChest } from "./storage";
 import { Producer } from "./types";
 import {
@@ -26,6 +26,7 @@ import {
 } from "./factoryGameState";
 import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
 import { cursorTo } from "readline";
+import { findBelt } from "./MainBusMovement";
 
 export function GetRegion(
   gameState: FactoryGameState,
@@ -278,10 +279,10 @@ function addMainBusLane(
   }
 ) {
   // check if we changed size, find any belt connections that are now disconnected and remvoe em
-  const originalBelt = currentRegion.Bus.Belts.find(
-    (b) =>
-      b.laneIdx == action.laneId &&
-      b.upperSlotIdx == action.originalUpperSlotIdx
+  const originalBelt = findBelt(
+    action.laneId,
+    action.originalUpperSlotIdx || -1,
+    currentRegion.Bus.Belts
   );
   if (originalBelt) {
     // Iterate over range of the old belt

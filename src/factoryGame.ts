@@ -145,12 +145,24 @@ function UpdateGameStateForRegion(
     region = GetRegion(gameState, regionId);
   }
 
+  //AdvanceMainBus()
+  for (const busLane of region.Bus.Belts) {
+    dispatch({
+      kind: "AdvanceMainBusLane",
+      address: {
+        regionId,
+        laneId: busLane.laneIdx,
+        upperSlotIdx: busLane.upperSlotIdx,
+      },
+    });
+  }
+
   region.BuildingSlots.forEach((_, idx) => {
     region = GetRegion(gameState, regionId);
     const slot = region.BuildingSlots[idx];
     const address = { regionId: region.Id, buildingIdx: idx };
     if (!region) throw new Error("Missing region");
-    PushPullFromMainBus(dispatch, slot, region.Bus, address);
+    PushPullFromMainBus(dispatch, idx, slot, region.Bus, address);
     gameState = executeActions(gameState);
   });
   return gameState;

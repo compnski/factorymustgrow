@@ -27,7 +27,8 @@ export type StateVMAction =
   | RemoveMainBusLaneAction
   | AdvanceTruckLineAction
   | PlaceTruckLineAction
-  | RemoveTruckLineAction;
+  | RemoveTruckLineAction
+  | AdvanceMainBusLaneAction;
 
 type ResetAction =
   | { kind: "Reset" }
@@ -99,6 +100,11 @@ export type AddMainBusLaneAction = {
   address: MainBusAddress;
   lowerSlotIdx: number;
   beltDirection: "UP" | "DOWN";
+};
+
+export type AdvanceMainBusLaneAction = {
+  kind: "AdvanceMainBusLane";
+  address: MainBusAddress;
 };
 
 export type RemoveMainBusLaneAction = {

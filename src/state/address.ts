@@ -18,6 +18,7 @@ export type MainBusAddress = {
   regionId: string;
   laneId: number;
   upperSlotIdx: number;
+  buildingIdx?: number;
 };
 
 export type BuildingAddress = {

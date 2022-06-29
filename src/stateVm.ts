@@ -12,6 +12,7 @@ import {
 import { NewBuilding } from "./GameDispatch";
 import { ReadonlyInventory } from "./inventory";
 import { loadStateFromLocalStorage } from "./localstorage";
+import { AdvanceBeltLine } from "./MainBusMovement";
 import { StackCapacity } from "./movement";
 import { Extractor, Factory, UpdateBuildingRecipe } from "./production";
 import { Lab, setLabResearch } from "./research";
@@ -21,6 +22,7 @@ import {
   AddProgressTrackerAction,
   AddRegionAction,
   AddResearchCountAction,
+  AdvanceMainBusLaneAction,
   AdvanceTruckLineAction,
   isPlaceTruckLineDepotAction,
   PlaceBuildingAction,
@@ -165,7 +167,8 @@ function applyStateChangeAction(
       return stateChangeAddMainBusLane(state, action);
     case "RemoveMainBusLane":
       return stateChangeRemoveMainBusLane(state, action);
-
+    case "AdvanceMainBusLane":
+      return stateChangeAdvanceMainBusLane(state, action);
     default:
       throw assertNever(action);
   }
@@ -741,7 +744,7 @@ function NewBelt(
     endDirection: "NONE",
     beltDirection,
     entity,
-    internalBeltBuffer: new Array(lowerSlotIdx - upperSlotIdx + 1),
+    internalBeltBuffer: new Array(lowerSlotIdx - upperSlotIdx + 1).fill(0),
   };
 }
 
@@ -809,13 +812,80 @@ function stateChangeRemoveMainBusLane(
   };
 }
 
+function stateChangeAdvanceMainBusLane(
+  state: FactoryGameState,
+  action: AdvanceMainBusLaneAction
+): FactoryGameState {
+  const region = state.Regions.get(action.address.regionId);
+  if (!region) throw new Error("Missing region " + action.address.regionId);
+  const { laneId, upperSlotIdx } = action.address;
+  const Belts = region.Bus.Belts;
+
+  const beltIdx = Belts.findIndex(
+    (b) => b.laneIdx == laneId && b.upperSlotIdx == upperSlotIdx
+  );
+  if (beltIdx < 0) throw new Error("Cannot find belt " + action.address);
+  const belt = Belts[beltIdx];
+
+  const newBelt = AdvanceBeltLine(belt);
+
+  const newRegion: ReadonlyRegion = {
+    ...region,
+    Bus: { ...region.Bus, Belts: replaceItem(Belts, beltIdx, newBelt) },
+  };
+
+  return {
+    ...state,
+    Regions: state.Regions.set(region.Id, newRegion),
+  };
+}
+
 function addItemsToMainBus(
   address: MainBusAddress,
   state: FactoryGameState,
   entity: string,
   count: number
 ): FactoryGameState {
-  throw new Error("NYI");
+  const region = state.Regions.get(address.regionId);
+  if (!region) throw new Error("Missing region " + address.regionId);
+
+  const { laneId, upperSlotIdx, buildingIdx } = address;
+  if (buildingIdx == undefined) throw new Error("Building idx undefined");
+  const Belts = region.Bus.Belts;
+
+  const beltIdx = Belts.findIndex(
+    (b) => b.laneIdx == laneId && b.upperSlotIdx == upperSlotIdx
+  );
+  if (beltIdx < 0) throw new Error("Cannot find belt " + address);
+  const belt = Belts[beltIdx];
+
+  if (entity != belt.entity)
+    throw new Error(`Entity mismach: Belt has ${belt.entity}, given ${entity}`);
+
+  const newCount = belt.internalBeltBuffer[buildingIdx] + count;
+  // todo: check upper bounds
+  if (newCount < 0) throw new Error("Cannot decrement belt below 0");
+
+  const newBelt: Belt = {
+    ...belt,
+    internalBeltBuffer: replaceItem(
+      belt.internalBeltBuffer,
+      buildingIdx,
+      newCount
+    ),
+  };
+
+  const newRegion: ReadonlyRegion = {
+    ...region,
+    Bus: { ...region.Bus, Belts: replaceItem(Belts, beltIdx, newBelt) },
+  };
+
+  return {
+    ...state,
+    Regions: state.Regions.set(region.Id, newRegion),
+  };
+
+  //throw new Error("NYI");
   // const region = state.Regions.get(address.regionId);
   // if (!region) throw new Error("Missing region");
   // const newRegion = {
