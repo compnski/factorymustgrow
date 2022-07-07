@@ -1,0 +1,8 @@
+#+TITLE: Story
+* Timeline
+ Set XXXX years after Factorio
+* Theme
+Sky is very dark, solar power very low
+* Reveal
+As you launch rocket, realize all the pollution is a problem, get clean tech + money making tech
+Can clean atmosphere to increase solar, thermal gen efficiency
