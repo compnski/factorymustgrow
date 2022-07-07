@@ -12,7 +12,7 @@ import {
 import { NewBuilding } from "./GameDispatch";
 import { ReadonlyInventory } from "./inventory";
 import { loadStateFromLocalStorage } from "./localstorage";
-import { AdvanceBeltLine } from "./MainBusMovement";
+import { AdvanceBeltLine } from "./main_bus";
 import { beltOverlaps, StackCapacity } from "./movement";
 import { Extractor, Factory, UpdateBuildingRecipe } from "./production";
 import { Lab, setLabResearch } from "./research";

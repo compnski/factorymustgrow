@@ -26,7 +26,7 @@ import {
 } from "./factoryGameState";
 import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
 import { cursorTo } from "readline";
-import { findBelt } from "./MainBusMovement";
+import { findBelt } from "./main_bus";
 
 export function GetRegion(
   gameState: FactoryGameState,
