@@ -1,6 +1,6 @@
 import { DispatchFunc } from "./stateVm";
 import { StateAddress } from "./state/address";
-import { EntityStack } from "./types";
+import { Belt, EntityStack } from "./types";
 import { ReadonlyItemBuffer } from "./factoryGameState";
 import { BuildingHasInput, BuildingHasOutput } from "./utils";
 
@@ -127,4 +127,17 @@ export function stackTransfer(
   fromStack.Count -= amountToTransfer;
   toStack.Count += amountToTransfer;
   return amountToTransfer;
+}
+
+export function beltOverlaps({
+  laneIdx,
+  upperSlotIdx,
+  lowerSlotIdx,
+}: Pick<Belt, "upperSlotIdx" | "lowerSlotIdx" | "laneIdx">): (
+  b: Belt
+) => boolean {
+  return (b: Belt) =>
+    b.laneIdx == laneIdx &&
+    ((b.lowerSlotIdx >= upperSlotIdx && b.lowerSlotIdx <= lowerSlotIdx) ||
+      (b.upperSlotIdx >= upperSlotIdx && b.upperSlotIdx <= lowerSlotIdx));
 }

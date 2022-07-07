@@ -13,7 +13,7 @@ import { NewBuilding } from "./GameDispatch";
 import { ReadonlyInventory } from "./inventory";
 import { loadStateFromLocalStorage } from "./localstorage";
 import { AdvanceBeltLine } from "./MainBusMovement";
-import { StackCapacity } from "./movement";
+import { beltOverlaps, StackCapacity } from "./movement";
 import { Extractor, Factory, UpdateBuildingRecipe } from "./production";
 import { Lab, setLabResearch } from "./research";
 import {
@@ -733,6 +733,7 @@ function NewBelt(
   address: MainBusAddress,
   lowerSlotIdx: number,
   beltDirection: "UP" | "DOWN",
+  endDirection: "LEFT" | "RIGHT" | "NONE",
   entity = ""
 ): Belt {
   const { upperSlotIdx, laneId } = address;
@@ -741,7 +742,7 @@ function NewBelt(
     laneIdx: laneId,
     upperSlotIdx,
     lowerSlotIdx,
-    endDirection: "NONE",
+    endDirection,
     beltDirection,
     entity,
     internalBeltBuffer: new Array(lowerSlotIdx - upperSlotIdx + 1).fill(0),
@@ -759,13 +760,13 @@ function stateChangeAddMainBusLane(
 
   const overlappingBelts: Belt[] = [];
   const otherBelts: Belt[] = [];
+  const overlaps = beltOverlaps({
+    upperSlotIdx,
+    lowerSlotIdx,
+    laneIdx: laneId,
+  });
   region.Bus.Belts.forEach((b) => {
-    if (
-      b.laneIdx == laneId &&
-      ((b.lowerSlotIdx >= upperSlotIdx && b.lowerSlotIdx <= lowerSlotIdx) ||
-        (b.upperSlotIdx >= upperSlotIdx && b.upperSlotIdx <= lowerSlotIdx))
-    )
-      overlappingBelts.push(b);
+    if (overlaps(b)) overlappingBelts.push(b);
     else otherBelts.push(b);
   });
 
@@ -774,7 +775,13 @@ function stateChangeAddMainBusLane(
 
   // remove existing belts
   const Belts = otherBelts.concat(
-    NewBelt(action.address, action.lowerSlotIdx, action.beltDirection, entity)
+    NewBelt(
+      action.address,
+      action.lowerSlotIdx,
+      action.beltDirection,
+      action.endDirection,
+      entity
+    )
   );
 
   const newRegion: ReadonlyRegion = {

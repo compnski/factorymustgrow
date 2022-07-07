@@ -276,6 +276,7 @@ function addMainBusLane(
     lowerSlotIdx: number;
     beltDirection: "UP" | "DOWN";
     originalUpperSlotIdx?: number | undefined;
+    endDirection: "LEFT" | "RIGHT" | "NONE";
   }
 ) {
   // check if we changed size, find any belt connections that are now disconnected and remvoe em
@@ -322,6 +323,7 @@ function addMainBusLane(
     },
     lowerSlotIdx: action.lowerSlotIdx,
     beltDirection: action.beltDirection,
+    endDirection: action.endDirection,
   });
 }
 

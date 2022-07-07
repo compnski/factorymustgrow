@@ -100,6 +100,7 @@ export type AddMainBusLaneAction = {
   address: MainBusAddress;
   lowerSlotIdx: number;
   beltDirection: "UP" | "DOWN";
+  endDirection: "LEFT" | "RIGHT" | "NONE";
 };
 
 export type AdvanceMainBusLaneAction = {
