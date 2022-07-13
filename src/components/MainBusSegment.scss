@@ -126,3 +126,22 @@
     transform: translateY($cardHeight) scale(0.4);
   }
 }
+
+.bus-lane {
+  progress {
+    width: 25px;
+    height: 85px;
+    top: 20px;
+    background: none;
+    display: inline-block;
+    position: absolute;
+    z-index: 1;
+  }
+  progress[value]::-webkit-progress-bar {
+    background: transparent;
+  }
+  progress[value]::-webkit-progress-value {
+    background: green;
+    opacity: 0.5;
+  }
+}

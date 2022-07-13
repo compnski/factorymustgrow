@@ -1,3 +1,4 @@
+import { capacityAtBuildingIdx, countAtBuildingIdx } from "../main_bus";
 import { settings } from "../settings";
 import { Belt, BeltHandlerFunc } from "../types";
 import { entityIconLookupByKind } from "../utils";
@@ -63,6 +64,8 @@ export function HTMLMainBusSegment({
     if (belt) {
       const entity = belt.entity;
       const flipped = belt.beltDirection == "UP";
+      const entityMax = 50;
+      const entityCount = countAtBuildingIdx(belt, buildingIdx);
 
       const dir = beltDirection(buildingIdx, belt);
       const top = (
@@ -76,13 +79,13 @@ export function HTMLMainBusSegment({
           </div>
         );
       inside = (
-        <span>
+        <span style={{ position: "relative" }}>
           <span
             className={`icon ${entityIconLookup(entity)} ${
               settings.animatedEnabled ? "animate" : ""
             }`}
           />
-
+          <progress max={entityMax} value={entityCount} />
           {flipped ? [bottom, top] : [top, bottom]}
         </span>
       );

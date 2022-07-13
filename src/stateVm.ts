@@ -12,7 +12,13 @@ import {
 import { NewBuilding } from "./GameDispatch";
 import { ReadonlyInventory } from "./inventory";
 import { loadStateFromLocalStorage } from "./localstorage";
-import { AdvanceBeltLine } from "./main_bus";
+import {
+  AdvanceBeltLine,
+  capacityAtBuildingIdx,
+  countAtBuildingIdx,
+  endBuildingIdx,
+  findBelt,
+} from "./main_bus";
 import { beltOverlaps, StackCapacity } from "./movement";
 import { Extractor, Factory, UpdateBuildingRecipe } from "./production";
 import { Lab, setLabResearch } from "./research";
@@ -826,19 +832,48 @@ function stateChangeAdvanceMainBusLane(
   const region = state.Regions.get(action.address.regionId);
   if (!region) throw new Error("Missing region " + action.address.regionId);
   const { laneId, upperSlotIdx } = action.address;
-  const Belts = region.Bus.Belts;
+  let Belts = region.Bus.Belts;
 
   const beltIdx = Belts.findIndex(
     (b) => b.laneIdx == laneId && b.upperSlotIdx == upperSlotIdx
   );
   if (beltIdx < 0) throw new Error("Cannot find belt " + action.address);
   const belt = Belts[beltIdx];
-
+  const endIdx = endBuildingIdx(belt);
+  const endCount = countAtBuildingIdx(belt, endIdx);
+  if (belt.endDirection != "NONE" && endCount) {
+    // Push to neighbor
+    const neighborLaneId =
+      belt.laneIdx + (belt.endDirection == "LEFT" ? -1 : 1);
+    const [neighborBelt, neighborBeltIdx] = findBelt(
+      neighborLaneId,
+      endIdx,
+      Belts
+    );
+    console.log("NLI", neighborLaneId, endIdx);
+    if (neighborBelt) {
+      const availableSpace = Math.max(
+        15,
+        capacityAtBuildingIdx(neighborBelt, endIdx)
+      );
+      const newNeighborBelt: Belt = addItemsToBelt(
+        neighborBelt,
+        endIdx,
+        availableSpace
+      );
+      console.log("moving ", availableSpace);
+      Belts = replaceItem(Belts, neighborBeltIdx, newNeighborBelt);
+      const newMeBelt: Belt = addItemsToBelt(belt, endIdx, -availableSpace);
+      Belts = replaceItem(Belts, beltIdx, newMeBelt);
+    } else {
+      console.log("no neighbor", belt.entity, belt.laneIdx, belt.upperSlotIdx);
+    }
+  }
   const newBelt = AdvanceBeltLine(belt);
-
+  Belts = replaceItem(Belts, beltIdx, newBelt);
   const newRegion: ReadonlyRegion = {
     ...region,
-    Bus: { ...region.Bus, Belts: replaceItem(Belts, beltIdx, newBelt) },
+    Bus: { ...region.Bus, Belts },
   };
 
   return {
@@ -860,27 +895,13 @@ function addItemsToMainBus(
   if (buildingIdx == undefined) throw new Error("Building idx undefined");
   const Belts = region.Bus.Belts;
 
-  const beltIdx = Belts.findIndex(
-    (b) => b.laneIdx == laneId && b.upperSlotIdx == upperSlotIdx
-  );
-  if (beltIdx < 0) throw new Error("Cannot find belt " + address);
-  const belt = Belts[beltIdx];
+  const [belt, beltIdx] = findBelt(laneId, upperSlotIdx, Belts);
+  if (!belt) throw new Error("Cannot find belt " + address);
 
   if (entity != belt.entity)
     throw new Error(`Entity mismach: Belt has ${belt.entity}, given ${entity}`);
 
-  const newCount = belt.internalBeltBuffer[buildingIdx] + count;
-  // todo: check upper bounds
-  if (newCount < 0) throw new Error("Cannot decrement belt below 0");
-
-  const newBelt: Belt = {
-    ...belt,
-    internalBeltBuffer: replaceItem(
-      belt.internalBeltBuffer,
-      buildingIdx,
-      newCount
-    ),
-  };
+  const newBelt: Belt = addItemsToBelt(belt, buildingIdx, count);
 
   const newRegion: ReadonlyRegion = {
     ...region,
@@ -904,4 +925,17 @@ function addItemsToMainBus(
   //   ...state,
   //   Regions: state.Regions.set(address.regionId, newRegion),
   //  };
+}
+
+function addItemsToBelt(belt: Belt, buildingIdx: number, count: number): Belt {
+  const addIdx = buildingIdx - belt.upperSlotIdx;
+  const newCount = belt.internalBeltBuffer[addIdx] + count;
+  // todo: check upper bounds
+  if (newCount < 0) throw new Error("Cannot decrement belt below 0");
+
+  const newBelt: Belt = {
+    ...belt,
+    internalBeltBuffer: replaceItem(belt.internalBeltBuffer, addIdx, newCount),
+  };
+  return newBelt;
 }

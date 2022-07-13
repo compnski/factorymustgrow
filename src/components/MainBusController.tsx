@@ -115,6 +115,7 @@ export const MainBusController = ({
   ) {
     if (removedBelts.length && !ghostBelt) {
       console.log("Remove", removedBelts);
+      console.trace();
       uxDispatch({
         type: "RemoveLane",
         regionId,
@@ -192,6 +193,7 @@ export const MainBusController = ({
     evt.stopPropagation();
     evt.preventDefault();
     if (action == "cancel") {
+      console.log("cancel");
       setBeltState(region.Bus.Belts as Belt[]);
       setGhostBeltInfo(undefined);
       return;
@@ -227,8 +229,10 @@ export const MainBusController = ({
     // TODO: Deal with entities and entity mismatches
     // TODO: Deal with more than one belt
 
+    //console.log(evt.type, evt);
     switch (evt.type) {
       case "mousedown":
+        if (evt.nativeEvent.button == 2) return; //Cancel
         if (existingBelt) {
           if (
             buildingIdx != existingBelt.lowerSlotIdx &&

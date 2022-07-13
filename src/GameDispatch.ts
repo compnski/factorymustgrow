@@ -280,7 +280,7 @@ function addMainBusLane(
   }
 ) {
   // check if we changed size, find any belt connections that are now disconnected and remvoe em
-  const originalBelt = findBelt(
+  const [originalBelt] = findBelt(
     action.laneId,
     action.originalUpperSlotIdx || -1,
     currentRegion.Bus.Belts
