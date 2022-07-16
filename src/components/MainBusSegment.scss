@@ -130,8 +130,8 @@
 .bus-lane {
   progress {
     width: 25px;
-    height: 85px;
-    top: 20px;
+    height: 135px;
+    top: 0;
     background: none;
     display: inline-block;
     position: absolute;
@@ -141,7 +141,7 @@
     background: transparent;
   }
   progress[value]::-webkit-progress-value {
-    background: green;
-    opacity: 0.5;
+    background: black;
+    opacity: 0.3;
   }
 }

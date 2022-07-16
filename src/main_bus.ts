@@ -40,17 +40,33 @@ export function PushPullFromMainBus(
   address: BuildingAddress
 ) {
   const building = slot.Building;
-  for (const laneConnection of slot.BeltConnections) {
+  for (const [
+    connectionIdx,
+    laneConnection,
+  ] of slot.BeltConnections.entries()) {
     if (laneConnection?.laneId === undefined) continue;
     const maxTransferred = InserterTransferRate(laneConnection.Inserter);
     if (maxTransferred <= 0) continue;
     const [belt] = findBelt(laneConnection.laneId, buildingIdx, mb.Belts);
     if (!belt) {
-      throw new Error(
-        `Missing bus lane ${
-          laneConnection.laneId
-        } from main bus ${JSON.stringify(mb)}`
-      );
+      console.log("Can't find lane");
+      dispatch({
+        kind: "SetProperty",
+        address: {
+          regionId: address.regionId,
+          buildingIdx: address.buildingIdx,
+          location: "BELT",
+          connectionIdx,
+        },
+        property: "direction",
+        value: "NONE",
+      });
+      return;
+      // throw new Error(
+      //   `Missing bus lane ${
+      //     laneConnection.laneId
+      //   } from main bus ${JSON.stringify(mb)}`
+      // );
     }
     if (
       laneConnection.Inserter.direction != "TO_BUS" &&
@@ -70,7 +86,7 @@ export function PushPullFromMainBus(
             buildingIdx,
             upperSlotIdx: belt.upperSlotIdx,
           },
-          { inputBuffers: new bufferForMainBusLane(belt, buildingIdx) },
+          { inputBuffers: new BufferForMainBusLane(belt, buildingIdx) },
           maxTransferred
         );
         break;
@@ -84,7 +100,7 @@ export function PushPullFromMainBus(
             buildingIdx,
             upperSlotIdx: belt.upperSlotIdx,
           },
-          { outputBuffers: new bufferForMainBusLane(belt, buildingIdx) },
+          { outputBuffers: new BufferForMainBusLane(belt, buildingIdx) },
           { ...address, buffer: "input" },
           building,
           maxTransferred
@@ -123,7 +139,7 @@ export function AdvanceBeltLine(belt: Belt): Belt {
       const slot = internalBuffer[idx],
         nextSlot = internalBuffer[idx + 1];
       const remCap = remainingCapacity(nextSlot);
-      const toMove = Math.max(Math.min(remCap, slot), 15);
+      const toMove = Math.min(remCap, slot, 15);
       if (toMove) {
         internalBuffer[idx] -= toMove;
         internalBuffer[idx + 1] += toMove;
@@ -145,7 +161,7 @@ export function AdvanceBeltLine(belt: Belt): Belt {
   return { ...belt, internalBeltBuffer: internalBuffer };
 }
 
-class bufferForMainBusLane {
+export class BufferForMainBusLane {
   Capacity: number;
   belt: Belt;
   buildingIdx: number;
@@ -167,7 +183,7 @@ class bufferForMainBusLane {
   }
   Count(entity: string): number {
     return this.Accepts(entity)
-      ? this.belt.internalBeltBuffer[this.buildingIdx]
+      ? countAtBuildingIdx(this.belt, this.buildingIdx)
       : 0;
   }
   Accepts(entity: string): boolean {

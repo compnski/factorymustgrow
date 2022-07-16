@@ -5,7 +5,7 @@ import { GetRegion } from "./GameDispatch";
 import { GetResearch } from "./gen/research";
 import { GeneralDialogConfig } from "./GeneralDialogProvider";
 import { MoveViaInserter } from "./inserter";
-import { PushPullFromMainBus } from "./main_bus";
+import { findBelt, PushPullFromMainBus } from "./main_bus";
 import { CanPushTo } from "./movement";
 import {
   Extractor,
@@ -155,7 +155,10 @@ function UpdateGameStateForRegion(
         upperSlotIdx: busLane.upperSlotIdx,
       },
     });
+    gameState = executeActions(gameState);
   }
+  gameState = executeActions(gameState);
+  region = GetRegion(gameState, regionId);
 
   region.BuildingSlots.forEach((_, idx) => {
     region = GetRegion(gameState, regionId);

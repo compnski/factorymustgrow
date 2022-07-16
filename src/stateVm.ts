@@ -779,16 +779,25 @@ function stateChangeAddMainBusLane(
   const existingEntities = overlappingBelts.map((b) => b.entity);
   const entity = existingEntities.length ? existingEntities[0] : undefined;
 
-  // remove existing belts
-  const Belts = otherBelts.concat(
-    NewBelt(
-      action.address,
-      action.lowerSlotIdx,
-      action.beltDirection,
-      action.endDirection,
-      entity
-    )
+  const newBelt = NewBelt(
+    action.address,
+    action.lowerSlotIdx,
+    action.beltDirection,
+    action.endDirection,
+    entity
   );
+
+  // remove existing belts
+  const Belts = otherBelts.concat(newBelt);
+
+  overlappingBelts.forEach((b) => {
+    for (let idx = b.upperSlotIdx; idx <= b.lowerSlotIdx; idx++) {
+      if (idx >= newBelt.upperSlotIdx && idx <= newBelt.lowerSlotIdx) {
+        newBelt.internalBeltBuffer[idx - newBelt.upperSlotIdx] =
+          countAtBuildingIdx(b, idx);
+      }
+    }
+  });
 
   const newRegion: ReadonlyRegion = {
     ...region,
@@ -838,9 +847,10 @@ function stateChangeAdvanceMainBusLane(
     (b) => b.laneIdx == laneId && b.upperSlotIdx == upperSlotIdx
   );
   if (beltIdx < 0) throw new Error("Cannot find belt " + action.address);
-  const belt = Belts[beltIdx];
+  let belt = Belts[beltIdx];
   const endIdx = endBuildingIdx(belt);
   const endCount = countAtBuildingIdx(belt, endIdx);
+
   if (belt.endDirection != "NONE" && endCount) {
     // Push to neighbor
     const neighborLaneId =
@@ -850,27 +860,29 @@ function stateChangeAdvanceMainBusLane(
       endIdx,
       Belts
     );
-    console.log("NLI", neighborLaneId, endIdx);
-    if (neighborBelt) {
-      const availableSpace = Math.max(
+    // Move to neighbor
+    if (neighborBelt && neighborBelt.entity == belt.entity) {
+      const availableSpace = Math.min(
         15,
-        capacityAtBuildingIdx(neighborBelt, endIdx)
+        capacityAtBuildingIdx(neighborBelt, endIdx),
+        endCount
       );
       const newNeighborBelt: Belt = addItemsToBelt(
         neighborBelt,
         endIdx,
         availableSpace
       );
-      console.log("moving ", availableSpace);
+
       Belts = replaceItem(Belts, neighborBeltIdx, newNeighborBelt);
-      const newMeBelt: Belt = addItemsToBelt(belt, endIdx, -availableSpace);
-      Belts = replaceItem(Belts, beltIdx, newMeBelt);
+
+      belt = addItemsToBelt(belt, endIdx, -availableSpace);
     } else {
-      console.log("no neighbor", belt.entity, belt.laneIdx, belt.upperSlotIdx);
+      //console.log("no neighbor", belt.entity, belt.laneIdx, belt.upperSlotIdx);
     }
   }
-  const newBelt = AdvanceBeltLine(belt);
-  Belts = replaceItem(Belts, beltIdx, newBelt);
+  belt = AdvanceBeltLine(belt);
+  Belts = replaceItem(Belts, beltIdx, belt);
+
   const newRegion: ReadonlyRegion = {
     ...region,
     Bus: { ...region.Bus, Belts },
