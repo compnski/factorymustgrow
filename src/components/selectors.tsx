@@ -7,7 +7,7 @@ import { GameAction } from "../GameAction";
 import { GetRecipe } from "../gen/entities";
 import { GeneralDialogConfig } from "../GeneralDialogProvider";
 import { ImmutableMap } from "../immutable";
-import { parse } from "../localstorage";
+import { deserializeGameState } from "../localstorage";
 import { IsBuilding } from "../production";
 import { availableRecipes } from "../research";
 import { HelpCard } from "./HelpCard";
@@ -295,7 +295,7 @@ export async function showSaveCard(
   console.log("Loading ", stateToLoad);
   uxDispatch({
     type: "ResetTo",
-    state: parse(stateToLoad[0]),
+    state: deserializeGameState(stateToLoad[0]),
   });
 }
 

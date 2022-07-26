@@ -26,7 +26,7 @@ import {
 } from "./factoryGameState";
 import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
 import { cursorTo } from "readline";
-import { findBelt } from "./main_bus";
+import { countAtBuildingIdx, findBelt } from "./main_bus";
 
 export function GetRegion(
   gameState: FactoryGameState,
@@ -355,13 +355,19 @@ function removeMainBusLane(
   // ).Entities()) {
   //   if (count > 0) moveToInventory(dispatch, entity, count);
   // }
-
+  const [belt] = findBelt(
+    action.laneId,
+    action.upperSlotIdx,
+    currentRegion.Bus.Belts
+  );
+  let entityCount = 0;
   // Remove attached inserters
   currentRegion.BuildingSlots.forEach((buildingSlot, buildingSlotIdx) => {
     if (
       buildingSlotIdx >= action.upperSlotIdx &&
       buildingSlotIdx <= action.lowerSlotIdx
-    )
+    ) {
+      if (belt) entityCount += countAtBuildingIdx(belt, buildingSlotIdx);
       buildingSlot.BeltConnections.forEach((beltConn, beltConnIdx) => {
         if (beltConn.laneId === action.laneId) {
           removeMainBusConnection(
@@ -375,7 +381,9 @@ function removeMainBusLane(
           );
         }
       });
+    }
   });
+  if (belt && entityCount) moveToInventory(dispatch, belt.entity, entityCount);
 }
 
 function addMainBusConnection(

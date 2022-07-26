@@ -102,12 +102,13 @@ const reviver = (key: string, value: any): any => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const serialize = (obj: any): string => JSON.stringify(obj, replacer);
+export const serializeGameState = (obj: any): string =>
+  JSON.stringify(obj, replacer);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const parse = (s: string): any => JSON.parse(s, reviver);
+export const deserializeGameState = (s: string): any => JSON.parse(s, reviver);
 
 export const saveStateToLocalStorage = (gs: FactoryGameState) => {
-  localStorage.setItem("FactoryGameState", serialize(gs));
+  localStorage.setItem("FactoryGameState", serializeGameState(gs));
   localStorage.setItem("FactoryGameStateVersion", CurrentGameStateVersion);
 };
 
@@ -125,7 +126,9 @@ export const loadStateFromLocalStorage = (
   try {
     if (!AcceptableStoredVersion()) return defaultState;
     return (
-      parse(localStorage.getItem("FactoryGameState") || "false") || defaultState
+      deserializeGameState(
+        localStorage.getItem("FactoryGameState") || "false"
+      ) || defaultState
     );
   } catch (e) {
     console.log(e);
