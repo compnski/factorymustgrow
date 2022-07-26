@@ -2,8 +2,8 @@ import { FactoryGameState, initialFactoryGameState } from "./factoryGameState";
 import {
   saveStateToLocalStorage,
   loadStateFromLocalStorage,
-  parse,
-  serialize,
+  deserializeGameState,
+  serializeGameState,
 } from "./localstorage";
 import { ImmutableMap } from "./immutable";
 import { isImmutable, isMap } from "immutable";
@@ -32,9 +32,9 @@ fit("Can serialize various objects", () => {
   ];
 
   for (const { original, expected } of types) {
-    const actual = serialize(original);
+    const actual = serializeGameState(original);
     expect(actual).toStrictEqual(expected);
-    expect(parse(actual)).toStrictEqual(original);
+    expect(deserializeGameState(actual)).toStrictEqual(original);
   }
 });
 
@@ -62,7 +62,7 @@ it("Saves and loads a chest", () => {
     4,
     ImmutableMap([["iron-ore", 10]])
   );
-  const serializedChest = serialize(chest);
-  const deserializedChest = parse(serializedChest);
+  const serializedChest = serializeGameState(chest);
+  const deserializedChest = deserializeGameState(serializedChest);
   expect(deserializedChest).toEqual(chest);
 });

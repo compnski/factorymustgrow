@@ -64,7 +64,7 @@ export async function UpdateGameState(
     console.error("Failed to update game state:", e);
   }
 
-  executeActions(gameState);
+  executeActions({ ...gameState, LastTick: tick });
 }
 
 function UpdateGameStateForRegion(

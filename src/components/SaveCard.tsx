@@ -8,8 +8,14 @@ import {
   CurrentGameStateVersion,
   initialFactoryGameState,
 } from "../factoryGameState";
-import { serialize } from "../localstorage";
+import { serializeGameState } from "../localstorage";
 import { reallyRandomName } from "../namegen";
+import {
+  listSaveGamesInLocalStorage,
+  loadSaveGame,
+  SaveGameMetadata,
+  saveGameToLocalStorage,
+} from "../save_game";
 import "./SaveCard.scss";
 
 export type SavedState = {
@@ -20,7 +26,7 @@ export type SavedState = {
 };
 
 export type SaveCardProps = {
-  onConfirm: (evt: SyntheticEvent, saveName: string) => void;
+  onConfirm: (evt: SyntheticEvent, saveData: string) => void;
 };
 
 export const SaveCard = function SaveCard({ onConfirm }: SaveCardProps) {
@@ -31,6 +37,15 @@ export const SaveCard = function SaveCard({ onConfirm }: SaveCardProps) {
     evt.preventDefault();
     onConfirm(evt, name);
   }
+
+  const [localSaves, setLocalSaves] = useState<
+    Record<string, SaveGameMetadata>
+  >({});
+  const [newSaveName, setNewSaveName] = useState("");
+
+  useEffect(() => {
+    setLocalSaves(listSaveGamesInLocalStorage);
+  }, []);
 
   const [cloudSaveName, setCloudSaveName] = useState<string>(() => {
     try {
@@ -53,6 +68,19 @@ export const SaveCard = function SaveCard({ onConfirm }: SaveCardProps) {
     void fetchCloudSaves(cloudSaveName, setCloudSaves);
   }, [cloudSaveName]);
 
+  function saveGame(name: string) {
+    // TODO: Hack to get game state :/
+    saveGameToLocalStorage(window.GameState(), name);
+  }
+
+  function loadGame(
+    evt: ReactMouseEvent<HTMLLIElement, MouseEvent>,
+    sgmKey: string
+  ) {
+    const gameData = loadSaveGame(sgmKey);
+    if (gameData) onConfirm(evt, gameData);
+  }
+
   return (
     <div className="modal save-card">
       <div className="inner-frame">
@@ -72,10 +100,27 @@ export const SaveCard = function SaveCard({ onConfirm }: SaveCardProps) {
               type="text"
               value={cloudSaveName}
               onChange={(evt) => setCloudSaveName(evt.target.value)}
-            />{" "}
+            />
           </label>
+          <div>
+            <label>
+              <input
+                type="text"
+                value={newSaveName}
+                onChange={(evt) => setNewSaveName(evt.target.value)}
+              />
+            </label>
+            <button onClick={() => saveGame(newSaveName)}>New Save</button>
+          </div>
           <p>States:</p>
           <ul className="stateList">
+            {Object.entries(localSaves).map(([key, sgm]) => (
+              <li key={sgm.createdAtMs} onClick={(evt) => loadGame(evt, key)}>
+                <span>
+                  {sgm.name} - {new Date(sgm.createdAtMs).toString()}
+                </span>
+              </li>
+            ))}
             {cloudSaves.map((stateInfo) => (
               <li
                 key={stateInfo.name}

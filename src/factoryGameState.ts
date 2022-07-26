@@ -65,6 +65,7 @@ export type FactoryGameState = {
   readonly Inventory: ReadonlyInventory;
   readonly Regions: ImmutableMap<string, ReadonlyRegion>;
   readonly TruckLines: ImmutableMap<string, Readonly<TruckLine>>;
+  readonly LastTick: number;
 };
 
 const initialInventorySize = 16;
@@ -100,4 +101,5 @@ export const initialFactoryGameState = () => ({
     ["region0", NewRegionFromInfo(GetRegionInfo("region0"))],
   ]),
   TruckLines: ImmutableMap<string, Readonly<TruckLine>>(),
+  LastTick: 0,
 });

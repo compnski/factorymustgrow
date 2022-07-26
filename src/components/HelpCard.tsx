@@ -118,6 +118,7 @@ const helpGameState: FactoryGameState = {
   Inventory: new ReadonlyInventory(8),
   TruckLines: ImmutableMap(),
   RocketLaunchingAt: 0,
+  LastTick: 0,
 };
 
 export const HelpCard = function HelpCard({ onConfirm }: HelpCardProps) {
