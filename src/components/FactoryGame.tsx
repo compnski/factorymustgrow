@@ -130,7 +130,9 @@ export const FactoryGame = (props: ReturnType<typeof getDispatchFunc>) => {
             )}
           </MainBusController>
         </div>
-        <InventoryDisplay inventory={inventory} />
+        <div className="bg-gray-300 ">
+          <InventoryDisplay inventory={inventory} />
+        </div>
         <DebugButtonPanel
           researchState={researchState}
           uxDispatch={uxDispatch}
