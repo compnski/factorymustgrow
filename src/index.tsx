@@ -1,14 +1,17 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import "./index.css";
+import { createRoot } from "react-dom/client";
 import App from "./App";
+import "./index.css";
+import Planner from "./Planner";
 import reportWebVitals from "./reportWebVitals";
 
 if (window.location.hash === "#reset") {
   localStorage.clear();
   window.location.hash = "";
 }
-import { createRoot } from "react-dom/client";
+
+const mode = window.location.pathname === "/planner" ? "planner" : "game";
+
 const container = document.getElementById("root");
 const root = createRoot(container!);
 root.render(
@@ -18,7 +21,7 @@ root.render(
       rel="stylesheet"
     />
 
-    <App />
+    {mode == "planner" ? <Planner /> : <App />}
   </React.StrictMode>
 );
 

@@ -1,0 +1,7 @@
+.planner .inventory-display {
+  border: none;
+}
+.planner .inventory-slot {
+  border: none;
+  margin-right: 8px;
+}

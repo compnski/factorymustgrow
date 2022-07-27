@@ -129,6 +129,17 @@ export function FillEntityStack(e: EntityStack, n: number): number {
   return 0;
 }
 
+export function MergeEntityStacks(...stacks: EntityStack[]) {
+  const counts: Record<string, number> = {};
+  stacks.forEach(
+    ({ Entity, Count }) => (counts[Entity] = (counts[Entity] || 0) + Count)
+  );
+  return Object.entries(counts).map(([Entity, Count]) => ({
+    Entity,
+    Count,
+  }));
+}
+
 export type Entity = {
   Name: string;
   Icon: string;
