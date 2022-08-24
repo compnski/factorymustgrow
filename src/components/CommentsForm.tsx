@@ -18,6 +18,7 @@ export function CommentsForm(props: CommentsFormProps) {
   const [formOpen, setFormOpen] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [emailText, setEmailText] = useState("");
+  const [error, setError] = useState<string | undefined>();
 
   const handleCheckedChange = () => {
     setChecked(!checked);
@@ -38,20 +39,25 @@ export function CommentsForm(props: CommentsFormProps) {
 
   async function sendFeedback(evt: FormEvent) {
     evt.preventDefault();
-    console.log("sending feedback");
-    const resp = await fetch(backendUrl, {
-      method: "POST",
-      body: JSON.stringify({
-        comment: commentText,
-        state: checked ? props.gameState : {},
-        userName: "",
-        userEmail: emailText,
-        feeling: "N/A",
-      }),
-    });
-    console.log(resp);
-    setCommentText("");
-    setFormOpen(false);
+    setError(undefined);
+    try {
+      console.log("sending feedback");
+      const resp = await fetch(backendUrl, {
+        method: "POST",
+        body: JSON.stringify({
+          comment: commentText,
+          state: checked ? props.gameState : {},
+          userName: "",
+          userEmail: emailText,
+          feeling: "N/A",
+        }),
+      });
+      console.log(resp);
+      setCommentText("");
+      setFormOpen(false);
+    } catch (e) {
+      if (e instanceof Error) setError(`Error: ${e.message}`);
+    }
   }
 
   return (
@@ -61,6 +67,7 @@ export function CommentsForm(props: CommentsFormProps) {
       </div>
       <form className="form" onSubmit={sendFeedback}>
         <textarea
+          className="border border-gray-500 p-1"
           rows={5}
           placeholder="All feedback appreciated!"
           value={commentText}
@@ -76,6 +83,7 @@ export function CommentsForm(props: CommentsFormProps) {
         </label>
         <label>
           <input
+            className="border border-gray-500 p-1"
             name="email"
             type="email"
             placeholder="e-mail if you want a response"
@@ -83,8 +91,11 @@ export function CommentsForm(props: CommentsFormProps) {
             value={emailText}
           />
         </label>
+        {error && <div className="text-red-500 text-sm">{error}</div>}
         <label>
-          <button>Submit!</button>
+          <button className="border border-gray-500 p-2 w-32 bg-gray-300">
+            Submit!
+          </button>
         </label>
       </form>
     </div>

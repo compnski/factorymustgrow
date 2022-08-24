@@ -25,11 +25,18 @@
   }
   .form {
     visibility: hidden;
+    padding: 8px;
+  }
+  textarea,
+  input[type="email"] {
+    font-size: 14px;
+    width: 100%;
   }
 }
 
 .comments-form.open {
-  height: 200px;
+  height: 260px;
+  width: 240px;
   .form {
     visibility: visible;
   }
