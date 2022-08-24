@@ -6,3 +6,12 @@ Sky is very dark, solar power very low
 * Reveal
 As you launch rocket, realize all the pollution is a problem, get clean tech + money making tech
 Can clean atmosphere to increase solar, thermal gen efficiency
+* Story Arc
+** Part 1: Single zone
+*** Goal is to set up shop, start scanning
+*** Produce radar, eventually probes
+*** Ends when you establish your second region base
+** Part 2: Second zone
+*** Need power
+*** Need transport
+***
