@@ -1,6 +1,6 @@
-import { CurrentGameStateVersion, FactoryGameState } from "./factoryGameState";
-import { deserializeGameState, serializeGameState } from "./localstorage";
 import { compressToBase64, decompressFromBase64 } from "lz-string";
+import { CurrentGameStateVersion, FactoryGameState } from "./factoryGameState";
+import { serializeGameState } from "./localstorage";
 
 export type SaveGame = SaveGameMetadata & {
   serializedGameState: string;

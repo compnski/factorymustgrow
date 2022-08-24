@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import { Recipes } from "../../gen/entities";
 import { ReadonlyFixedInventory } from "../../inventory";
-import {
-  EntityStack,
-  MergeEntityStacks,
-  NewEntityStack,
-  Recipe,
-} from "../../types";
+import { EntityStack, MergeEntityStacks, Recipe } from "../../types";
 import { InventoryDisplay } from "../InventoryDisplay";
 
 function canProduce(

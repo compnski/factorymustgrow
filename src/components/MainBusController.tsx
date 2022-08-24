@@ -88,7 +88,6 @@ export const MainBusController = ({
       regionId,
       buildingIdx,
       laneId,
-      connectionIdx,
     }: BeltConnectionAddress & { laneId?: number },
     belt: Belt | undefined
   ) {
@@ -125,7 +124,7 @@ export const MainBusController = ({
       });
     }
 
-    if (ghostBelt && shouldCreateBelt(ghostBelt, beltState)) {
+    if (ghostBelt && shouldCreateBelt(ghostBelt)) {
       uxDispatch({
         type: "AddLane",
         regionId,
@@ -380,10 +379,7 @@ function buildingHasEntity(
   return false;
 }
 
-function shouldCreateBelt(
-  ghostBelt: GhostBeltInfo,
-  beltState: readonly Belt[]
-) {
+function shouldCreateBelt(ghostBelt: GhostBeltInfo) {
   if (ghostBelt.lowerSlotIdx - ghostBelt.upperSlotIdx < 1) return false;
   return true;
 }

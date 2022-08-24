@@ -13,7 +13,8 @@ if (window.location.hash === "#reset") {
 const mode = window.location.pathname === "/planner" ? "planner" : "game";
 
 const container = document.getElementById("root");
-const root = createRoot(container!);
+if (!container) throw new Error("Missing root.");
+const root = createRoot(container);
 root.render(
   <React.StrictMode>
     <link

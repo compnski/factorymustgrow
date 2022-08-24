@@ -6,27 +6,26 @@ import {
   NewEmptyLane,
 } from "./building";
 import { fixInserters } from "./factoryGame";
-import { GameAction, InventoryTransferAction } from "./GameAction";
-import { GetEntity, MaybeGetRecipe } from "./gen/entities";
-import { GetResearch } from "./gen/research";
-import { Inserter } from "./inserter";
-import { CanPushTo, moveToInventory } from "./movement";
-import { NewExtractor, NewFactory, ProducerTypeFromEntity } from "./production";
-import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
-import { NewLab } from "./research";
-import { DispatchFunc } from "./stateVm";
-import { MainBusAddress, StateAddress } from "./state/address";
-import { NewChest } from "./storage";
-import { Producer } from "./types";
 import {
   FactoryGameState,
   ReadonlyBuilding,
   ReadonlyBuildingSlot,
   ReadonlyRegion,
 } from "./factoryGameState";
-import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
-import { cursorTo } from "readline";
+import { GameAction, InventoryTransferAction } from "./GameAction";
+import { GetEntity, MaybeGetRecipe } from "./gen/entities";
+import { GetResearch } from "./gen/research";
+import { Inserter } from "./inserter";
 import { countAtBuildingIdx, findBelt } from "./main_bus";
+import { CanPushTo, moveToInventory } from "./movement";
+import { NewExtractor, NewFactory, ProducerTypeFromEntity } from "./production";
+import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
+import { NewLab } from "./research";
+import { StateAddress } from "./state/address";
+import { DispatchFunc } from "./stateVm";
+import { NewChest } from "./storage";
+import { Producer } from "./types";
+import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
 
 export function GetRegion(
   gameState: FactoryGameState,

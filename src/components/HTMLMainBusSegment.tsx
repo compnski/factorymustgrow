@@ -1,4 +1,4 @@
-import { capacityAtBuildingIdx, countAtBuildingIdx } from "../main_bus";
+import { countAtBuildingIdx } from "../main_bus";
 import { settings } from "../settings";
 import { Belt, BeltHandlerFunc } from "../types";
 import { entityIconLookupByKind } from "../utils";

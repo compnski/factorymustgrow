@@ -1,16 +1,15 @@
 import { Building } from "../building";
+import { FactoryGameState } from "../factoryGameState";
 import { Inserter } from "../inserter";
+import { Belt, BeltConnection, RegionInfo } from "../types";
 import {
   BeltConnectionAddress,
-  InserterAddress,
   BuildingAddress,
-  RegionAddress,
+  InserterAddress,
   MainBusAddress,
   StateAddress,
   TruckLineAddress,
 } from "./address";
-import { Belt, BeltConnection, RegionInfo } from "../types";
-import { FactoryGameState } from "../factoryGameState";
 
 export type StateVMAction =
   | AddResearchCountAction

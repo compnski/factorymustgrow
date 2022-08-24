@@ -1,10 +1,10 @@
-import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
-import { settings, Settings, updateSetting } from "../settings";
+import { SyntheticEvent, useState } from "react";
+import { settings, updateSetting } from "../settings";
 
 export function SettingsCard({
   onConfirm,
 }: {
-  onConfirm: (evt: SyntheticEvent, r: any) => void;
+  onConfirm: (evt: SyntheticEvent, r: unknown) => void;
 }) {
   const [displaySettings, setDisplaySettings] = useState(settings);
 

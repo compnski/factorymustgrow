@@ -5,7 +5,7 @@ import { GetRegion } from "./GameDispatch";
 import { GetResearch } from "./gen/research";
 import { GeneralDialogConfig } from "./GeneralDialogProvider";
 import { MoveViaInserter } from "./inserter";
-import { findBelt, PushPullFromMainBus } from "./main_bus";
+import { PushPullFromMainBus } from "./main_bus";
 import { CanPushTo } from "./movement";
 import {
   Extractor,

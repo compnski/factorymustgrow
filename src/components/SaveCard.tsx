@@ -4,11 +4,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import {
-  CurrentGameStateVersion,
-  initialFactoryGameState,
-} from "../factoryGameState";
-import { serializeGameState } from "../localstorage";
 import { reallyRandomName } from "../namegen";
 import {
   listSaveGamesInLocalStorage,

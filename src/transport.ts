@@ -1,14 +1,14 @@
-import { ReadonlyInventory } from "./inventory";
-import { StackCapacity, stackTransfer } from "./movement";
-import { randomName } from "./namegen";
-import { DispatchFunc } from "./stateVm";
-import { BuildingAddress } from "./state/address";
-import { EntityStack, NewEntityStack } from "./types";
 import {
   FactoryGameState,
   ReadonlyItemBuffer,
   ReadonlyRegion,
 } from "./factoryGameState";
+import { ReadonlyInventory } from "./inventory";
+import { StackCapacity, stackTransfer } from "./movement";
+import { randomName } from "./namegen";
+import { BuildingAddress } from "./state/address";
+import { DispatchFunc } from "./stateVm";
+import { EntityStack, NewEntityStack } from "./types";
 
 export type TruckLineDepot = {
   kind: "TruckLineDepot";

@@ -1,16 +1,15 @@
-import { GameAction } from "../GameAction";
-import { useGeneralDialog } from "../GeneralDialogProvider";
-import { ImmutableMap } from "../immutable";
 import {
   ReadonlyItemBuffer,
   ReadonlyRegion,
   ResearchState,
 } from "../factoryGameState";
+import { useGeneralDialog } from "../GeneralDialogProvider";
+import { ImmutableMap } from "../immutable";
+import { ProducerTypeFromEntity } from "../production";
 import {
   showChangeProducerRecipeSelector,
   showPlaceBuildingSelector,
 } from "./selectors";
-import { ProducerTypeFromEntity } from "../production";
 
 export function EmptyLaneCard(props: {
   regionId: string;

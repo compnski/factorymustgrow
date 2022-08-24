@@ -1,8 +1,5 @@
-import { SyntheticEvent, useEffect, useState } from "react";
-import React from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { IWithShortcut, withShortcut } from "react-keybind";
-import { FactoryGameState } from "./factoryGameState";
-import { DispatchFunc } from "./stateVm";
 import { GameAction } from "./GameAction";
 
 const GeneralDialogContext = React.createContext<{
@@ -13,15 +10,14 @@ const GeneralDialogContext = React.createContext<{
   },
 });
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type GeneralDialogConfig = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   actionCallback?: (arg0: {
     returnData: any | false;
     uxDispatch: (a: GameAction) => void;
   }) => void;
   title: string;
   component?: (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onConfirm: (evt: SyntheticEvent, returnData: any) => any
   ) => JSX.Element;
 };
@@ -57,7 +53,6 @@ const GeneralDialogProviderWithShortcut = ({
     });
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onConfirm = (
     evt: SyntheticEvent | KeyboardEvent | undefined,
     ...returnData: any
@@ -92,17 +87,13 @@ const GeneralDialogProviderWithShortcut = ({
   );
 };
 
-export const useGeneralDialog = (): ((
-  c: GeneralDialogConfig
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-) => Promise<{
+export const useGeneralDialog = (): ((c: GeneralDialogConfig) => Promise<{
   returnData: any[] | false;
   uxDispatch: (a: GameAction) => void;
 }>) => {
   const { openGeneralDialog } = React.useContext(GeneralDialogContext);
 
   const getConfirmation = ({ title, component }: GeneralDialogConfig) =>
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     new Promise<{
       returnData: any[] | false;
       uxDispatch: (a: GameAction) => void;
