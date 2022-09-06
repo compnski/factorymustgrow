@@ -14,7 +14,7 @@ import {
 } from "./factoryGameState";
 import { GameAction, InventoryTransferAction } from "./GameAction";
 import { GetEntity, MaybeGetRecipe } from "./gen/entities";
-import { GetResearch } from "./gen/research";
+import { GetResearch } from "./gen/entities";
 import { Inserter } from "./inserter";
 import { countAtBuildingIdx, findBelt } from "./main_bus";
 import { CanPushTo, moveToInventory } from "./movement";

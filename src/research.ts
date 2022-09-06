@@ -2,7 +2,7 @@ import { ProduceWithTracker } from "./AddProgressTracker";
 import { AvailableResearchList } from "./availableResearch";
 import { ReadonlyItemBuffer, ReadonlyResearchState } from "./factoryGameState";
 import { GetEntity, GetRecipe } from "./gen/entities";
-import { GetResearch } from "./gen/research";
+import { GetResearch } from "./gen/entities";
 import { ReadonlyFixedInventory } from "./inventory";
 import { StackCapacity } from "./movement";
 import { StateVMAction } from "./state/action";

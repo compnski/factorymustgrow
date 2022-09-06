@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Recipes } from "../../gen/entities";
+import { Entities, Recipes, ResearchMap } from "../../gen/entities";
 import { ReadonlyFixedInventory } from "../../inventory";
 import { EntityStack, MergeEntityStacks, Recipe } from "../../types";
 import { InventoryDisplay } from "../InventoryDisplay";
@@ -100,7 +100,9 @@ export function ItemTable() {
       [...Recipes.values()].filter(({ Id }) => !Id.startsWith("test-"))
     );
     setSortedRecipes(r);
-  }, []);
+    console.log(Recipes);
+  }, [Entities, ResearchMap, Recipes]);
+
   const [intervalSec, setIntervalSec] = useState(60);
 
   function recipeRows() {

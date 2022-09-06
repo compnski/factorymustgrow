@@ -1,4 +1,5 @@
 import { Research } from "./types";
+import { Map } from "immutable";
 
 export const TestResearch = {
   Id: "test-research",
@@ -34,7 +35,7 @@ export const TestSlowResearch = {
   Effects: ["Slow Test research capacity: +1"],
 };
 
-export const TestResearchBook = new Map<string, Research>([
+export const TestResearchBook = Map<string, Research>([
   ["test-research", TestResearch],
   ["test-slow-research", TestSlowResearch],
 ]);

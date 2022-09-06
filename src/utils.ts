@@ -1,4 +1,4 @@
-import { GetResearch } from "./gen/research";
+import { GetResearch } from "./gen/entities";
 import { ReadonlyBuilding } from "./factoryGameState";
 
 const seenSet = new Set<string>();
@@ -100,4 +100,10 @@ export function swap<T>(a: T[], lowerIdx: number, upperIdx: number): T[] {
 
 export function replaceItem<T>(a: readonly T[], idx: number, t: T): T[] {
   return [...a.slice(0, idx), t, ...a.slice(idx + 1)];
+}
+
+export function notEmpty<TValue>(
+  value: TValue | null | undefined
+): value is TValue {
+  return value !== null && value !== undefined;
 }

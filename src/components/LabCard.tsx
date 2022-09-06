@@ -1,5 +1,5 @@
 import { GameAction } from "../GameAction";
-import { GetResearch } from "../gen/research";
+import { GetResearch } from "../gen/entities";
 import { useGeneralDialog } from "../GeneralDialogProvider";
 import { ReadonlyFixedInventory } from "../inventory";
 import { NewEntityStack } from "../types";

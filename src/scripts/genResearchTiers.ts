@@ -1,4 +1,4 @@
-import { ResearchMap } from "../gen/research";
+import { ResearchMap } from "../gen/entities";
 
 export function getResearchTiers() {
   const researchTiers = new Map<string, number>();

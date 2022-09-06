@@ -1,15 +1,16 @@
 #+TITLE: Todo
 * In progress
+** Save Game
+*** Multiple save slots
+*** Auto-save locally every X
+*** Cloud-save every Y
+*** Keep most recent Z saves
+**** ideally keep some old, more of recent ones, etc.
+*** Save progress during version upgrades?
+**** Offer to save progress during upgrades if possible
 ** Bugs
-*** MainBus makes fan spin up (SVG animation?) Can disable gpu?
 *** Names sometime still too long "courageous ram"
-*** Plastic production seems hard to scale up, maybe oil issues?
 *** Research dialog overwrites any existing dialog
-*** Better re-arranging? (Maybe with research)
-*** Can't build rocket silo, factory doesn't fit enough resources
-** Drag inserter to belt lines
-** Maybe Fixed Bugs
-*** Losing UI inputs for some reason
 ** Save UI state
 *** Scroll position on page
 *** Last page visited?
@@ -21,9 +22,7 @@
 *** Others?
 ** Factory inventory upgrade -- Hold 2x required materials per factory
 ** Better UI for deleting belt lines
-** Save progress during upgrades?
-*** Offer to save progress during upgrades if possible
-* TruckLine
+** TruckLine
 *** Update belt lines to use Progress Trackers
 *** Only connect directly adjacent regions?
 *** Maybe some way to increase throughput?
@@ -34,7 +33,6 @@
 **** Make Region selector pretty and use hexes?
 *** Change Bus item by clicking
 *** Recipe Display for Producers
-
 ** Inserters
 *** Make sure they are properly taken from inventory when building
 *** Maybe auto-build when creating main bus connection
@@ -49,15 +47,10 @@
 **** Can track in-progress research and pass it to other labs (Spy on each other?)
 
 * Next Ideas
-** MainBus
-*** Drag and drop
-*** Any direction?
-*** End can drop into other lanes
 ** Regions UI
 *** Rename regions
 *** Re-order tab bar
 *** Keep scroll position per-region
-
 ** Blueprints
 *** Somehow store lists of entities that can be rebuilt
 ** Fuel
@@ -78,11 +71,20 @@ Each step of recipe takes some amount of fuel/power
 *** Can't go on main belt
 *** Lay out pipes in some fixed-width area
 *** Connect extrators, factories, pipelines
+*** Remove for v1?
 ** Limits
 *** Main Bus Lanes
 *** Building Slots
 *** Max Building Count?
 *** Power is a natural limit
+*** # Extractors per region
+** Buildings
+*** Multi-heigh buildings!
+*** Space-port could be yuuuge
+*** Modular buildings
+** Alternate Recipes
+** Regional Inventroy
+** Multiple outputs from buildings
 ** Transport
 *** Pipe transport
 Fluids are instantaneous?
@@ -94,7 +96,7 @@ Move large quantities every interval
 *** Pay for building
 **** To add new lane
 **** When extending
-*** Allow belts to have variable height (not top-to-bottom)
+** Better re-arranging? (Maybe with research)
 ** Different Building stats
 *** Different buildings have different speeds / power consumption
 ** Regions
@@ -106,10 +108,10 @@ Move large quantities every interval
 *** Producers basic miner/smelter/assembler
 In case you delete yours
 *** Provides some basic power?
+*** Fixed position? Maybe many slots
 ** Incinerator!
 *** Can give tickets like satisfactory?
 *** Maybe v0 just eats, v1 gives tickets?
-
 * UI
 ** Fix Liquid stack sizes
 ** Tabs
@@ -130,7 +132,6 @@ Maybe store last real time in state, then some progress bar that just ticks as f
 *** Upgrades
 ** Global Entity Limits
 ** Max Capacity Upgrades
-*** 'Explore' with weapons to find new batches?
 * Game Tuning
 ** Upgrades
 *** Costs
@@ -146,22 +147,7 @@ Maybe store last real time in state, then some progress bar that just ticks as f
 *** Get back area of somewhat random space, set of resources based on search criteria.
 e.g. you might look for an area with copper + iron + stone to start, or water + oil for plastic
 *** Local Storage + Import / Export from global. Maybe takes 'train routes' to move
-** "Main Bus" and Resource Movement
-alex: Resources should have to be moved around.
-Try having each Factory feed into the one above/below it, or into a main bus on the right side.
-*** Each factory has input/output buffers
-Some stack size, maybe based on #factories, but maybe not
-*** Each factory has configurable outputs
-**** Can output up/down
-Puts resources into input buffer of other factories
-**** Can output onto belt
-Belt has many lanes, each configured for a given resource
-**** Can pull inputs from main bus
 *** Main bus
 **** Cost belts to add extend the bus
 ***** Can add length to add more factories
 ***** Can add width to add more lanes
-*** Ore Handling
-**** Comes from miners, works like other factories, but no import
-****
-* React router

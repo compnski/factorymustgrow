@@ -42,10 +42,16 @@ function buildHelpRegion() {
       1
     );
 
-  miner.outputBuffers = miner.outputBuffers.AddItems("iron-ore", 10);
-  smelter.outputBuffers = smelter.outputBuffers.AddItems("iron-plate", 10);
+  miner.outputBuffers = miner.outputBuffers.AddItems(
+    miner.outputBuffers.Entities()[0][0],
+    10
+  );
+  smelter.outputBuffers = smelter.outputBuffers.AddItems(
+    smelter.outputBuffers.Entities()[0][0],
+    10
+  );
   assembler.outputBuffers = assembler.outputBuffers.AddItems(
-    "iron-gear-wheel",
+    assembler.outputBuffers.Entities()[0][0],
     10
   );
 

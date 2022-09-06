@@ -2,7 +2,7 @@ import { showResearchSelector } from "./components/selectors";
 import { FactoryGameState, ReadonlyBuildingSlot } from "./factoryGameState";
 import { GameAction } from "./GameAction";
 import { GetRegion } from "./GameDispatch";
-import { GetResearch } from "./gen/research";
+import { GetResearch } from "./gen/entities";
 import { GeneralDialogConfig } from "./GeneralDialogProvider";
 import { MoveViaInserter } from "./inserter";
 import { PushPullFromMainBus } from "./main_bus";

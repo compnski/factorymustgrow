@@ -1,4 +1,4 @@
-import { ResearchMap } from "./gen/research";
+import { ResearchMap } from "./gen/entities";
 
 export const IgnoredResearch: Set<string> = new Set([
   "stone-walls",

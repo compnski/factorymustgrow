@@ -70,10 +70,24 @@ export type BuildingType =
   | "Chest"
   | "Empty";
 
+export type SatisfactoryBuildingType =
+  | "Assembler"
+  | "Smelter"
+  | "OilRefinery"
+  | "Blender"
+  | "Constructor"
+  | "Foundry"
+  | "HadronCollider"
+  | "Manufacturer"
+  | "Packager"
+  | "Depot"
+  | "Chest"
+  | "Empty";
+
 export type Recipe = {
   Icon: string;
   Id: string;
-  ProducerType: BuildingType;
+  ProducerType: BuildingType | SatisfactoryBuildingType;
   DurationSeconds: number;
   Input: EntityStack[];
   Output: EntityStack[];
@@ -148,6 +162,7 @@ export type Entity = {
   Category: string;
   Row: number;
   Col: number;
+  IsBuilding?: boolean;
 };
 
 export type BeltConnection =

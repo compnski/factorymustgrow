@@ -1,6 +1,6 @@
 import { SyntheticEvent, useState } from "react";
 import { AvailableResearchList } from "../availableResearch";
-import { GetResearch, ResearchMap } from "../gen/research";
+import { GetResearch, ResearchMap } from "../gen/entities";
 import { ResearchTier } from "../gen/researchTier";
 import { Icon } from "../gen/svgIcons";
 import { StackCapacity } from "../movement";
