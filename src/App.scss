@@ -1,5 +1,19 @@
 @import "./components/constants";
 
+.bg-logo {
+  background-image: url(./TheFactoryMustGrowBg.jpg);
+  background-repeat: no-repeat;
+}
+
+@font-face {
+  font-family: synkopy;
+  src: url(./Synkopy-Regular.otf);
+}
+
+.font-synkopy {
+  font-family: synkopy;
+}
+
 div {
 }
 

@@ -1,55 +1,26 @@
-import { ErrorBoundary } from "react-error-boundary";
-import { ShortcutProvider } from "react-keybind";
+import bgImage from "./TheFactoryMustGrowBg.jpg";
 import "./App.scss";
-import { ErrorFallback } from "./components/ErrorFallback";
-import { FactoryGame } from "./components/FactoryGame";
-import { GameAction } from "./GameAction";
-import { GameDispatch } from "./GameDispatch";
-import { GeneralDialogProvider } from "./GeneralDialogProvider";
-import "./icons.scss";
-import "./macro_def";
-import { getDispatchFunc } from "./stateVm";
-import "./technology.css";
+
+function introScreen() {
+  return (
+    <div className="w-full h-full">
+      <div className="m-auto bg-logo w-full min-h-screen">
+        <div className="h-96" />
+        <ul className="text-6xl ml-48 text-slate-50 font-synkopy list-disc">
+          <li>Continue</li>
+          <li>New Game</li>
+          <li>Load Game</li>
+          <li>Planner</li>
+          <li>Help</li>
+          <li>Credits</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
 
 function App() {
-  try {
-    const { gameState, dispatch, executeActions } = getDispatchFunc();
-    const uxDispatch = (action: GameAction) => {
-      GameDispatch(dispatch, gameState, action);
-      executeActions(gameState);
-    };
-
-    const resetGame = () => dispatch({ kind: "Reset" });
-
-    return (
-      <ShortcutProvider>
-        <GeneralDialogProvider uxDispatch={uxDispatch}>
-          <div
-            className="App"
-            onClick={(evt) => {
-              if ((evt.target as Element).classList.contains("clickable"))
-                return;
-            }}
-          >
-            <ErrorBoundary
-              FallbackComponent={ErrorFallback}
-              onReset={resetGame}
-            >
-              <FactoryGame
-                gameState={gameState}
-                dispatch={dispatch}
-                executeActions={executeActions}
-              />
-            </ErrorBoundary>
-          </div>
-        </GeneralDialogProvider>
-      </ShortcutProvider>
-    );
-  } catch (e) {
-    return ErrorFallback({
-      error: e as Error,
-      resetErrorBoundary: () => localStorage.clear(),
-    });
-  }
+  return <>{introScreen()}</>;
 }
+
 export default App;
