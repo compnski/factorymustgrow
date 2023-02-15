@@ -28,7 +28,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -o gh -d build",
     "gen": "go run ./src/scripts/genEntities.go src/gen/entities.ts",
     "researchTiers": "ts-node ./src/scripts/genResearchTiers.ts",
     "fromSat": "ts-node ./src/scripts/from_satisfactory.ts",
