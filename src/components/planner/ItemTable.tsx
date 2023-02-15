@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Entities,
-  LoadedVersion,
-  LoadEntitySet,
-  Recipes,
-  ResearchMap,
-} from "../../gen/entities";
+import { LoadedVersion, LoadEntitySet, Recipes } from "../../gen/entities";
 import { ReadonlyFixedInventory } from "../../inventory";
 import { EntityStack, MergeEntityStacks, Recipe } from "../../types";
 import { InventoryDisplay } from "../InventoryDisplay";
