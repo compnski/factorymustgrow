@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
+import { LoadEntitySet } from "./gen/entities";
 import "./index.css";
 import Planner from "./Planner";
 import reportWebVitals from "./reportWebVitals";
@@ -11,6 +12,7 @@ if (window.location.hash === "#reset") {
 }
 
 const mode = window.location.pathname === "/planner" ? "planner" : "game";
+void LoadEntitySet("factorio");
 
 const container = document.getElementById("root");
 if (!container) throw new Error("Missing root.");

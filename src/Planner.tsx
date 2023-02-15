@@ -2,6 +2,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { ShortcutProvider } from "react-keybind";
 import { ErrorFallback } from "./components/ErrorFallback";
 import { ItemTable } from "./components/planner/ItemTable";
+import { LoadEntitySet } from "./gen/entities";
 import "./icons.scss";
 import "./macro_def";
 import "./Planner.css";

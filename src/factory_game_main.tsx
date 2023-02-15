@@ -12,8 +12,7 @@ import "./macro_def";
 import { getDispatchFunc } from "./stateVm";
 import "./technology.css";
 
-//void LoadEntitySet("factorio");
-void LoadEntitySet("satisfactory");
+//void LoadEntitySet("satisfactory");
 function FactoryGameMain() {
   try {
     const { gameState, dispatch, executeActions } = getDispatchFunc();

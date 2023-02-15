@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { Entities, Recipes, ResearchMap } from "../../gen/entities";
+import {
+  Entities,
+  LoadedVersion,
+  LoadEntitySet,
+  Recipes,
+  ResearchMap,
+} from "../../gen/entities";
 import { ReadonlyFixedInventory } from "../../inventory";
 import { EntityStack, MergeEntityStacks, Recipe } from "../../types";
 import { InventoryDisplay } from "../InventoryDisplay";
@@ -96,12 +102,18 @@ export function ItemTable() {
   const [sortedRecipes, setSortedRecipes] = useState<Recipe[]>([]);
 
   useEffect(() => {
+    console.log("update");
+    void updateRecipes();
+  }, []);
+
+  async function updateRecipes() {
+    await LoadEntitySet("factorio");
     const r = topoSortRecipes(
       [...Recipes.values()].filter(({ Id }) => !Id.startsWith("test-"))
     );
     setSortedRecipes(r);
-    console.log(Recipes);
-  }, [Entities, ResearchMap, Recipes]);
+    console.log(Recipes, LoadedVersion);
+  }
 
   const [intervalSec, setIntervalSec] = useState(60);
 

@@ -46,8 +46,10 @@ export async function LoadEntitySet(setName: string) {
   Entities = Map(dataset.EntityMap);
   Recipes = Map(dataset.RecipeMap);
   ResearchMap = Map(dataset.ResearchMap);
+  return { Entities, Recipes, ResearchMap };
 }
 
 export let Entities: Map<string, Entity> = Map(TestEntityList);
 export let Recipes: Map<string, Recipe> = Map(TestRecipeBook);
 export let ResearchMap: Map<string, Research> = Map(TestResearchBook);
+export const LoadedVersion = { test: 1 };
