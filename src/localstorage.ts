@@ -21,6 +21,16 @@ function toType<T>(
   };
 }
 
+interface HasSerializeName {
+  SerializeName: string;
+}
+function isSerializableObject(value: any, searchKind: string) {
+  return (
+    value instanceof Object &&
+    (value as HasSerializeName).SerializeName == searchKind
+  );
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const replacer = (key: string, value: any): any => {
   const logger = (logCondition: boolean, msg: string): true => {
@@ -34,11 +44,11 @@ const replacer = (key: string, value: any): any => {
     case "TruckLines":
       return toType("ImmutableMap", Object.entries(value));
   }
-  return value instanceof Object && value.constructor.name == "DebugInventory"
+  return isSerializableObject(value, "DebugInventory")
     ? {
         dataType: "DebugInventory",
       }
-    : value instanceof Object && value.constructor.name == "ReadonlyInventory"
+    : isSerializableObject(value, "ReadonlyInventory")
     ? logger(false && key == "Inventory", "Not DebugInventory") && {
         dataType: "ReadonlyInventory",
         maxCapacity: value.Capacity,

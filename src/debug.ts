@@ -10,6 +10,7 @@ import { NewEntityStack, NewRegionFromInfo } from "./types";
 export class DebugInventory extends ReadonlyInventory {
   constructor() {
     super(0);
+    this.SerializeName = "DebugInventory" as const;
   }
 
   AddItems(): DebugInventory {

@@ -20,12 +20,14 @@ export class ReadonlyInventory implements ReadonlyItemBuffer {
   readonly immutableSlots: boolean;
   readonly Capacity: number;
   readonly Data: ImmutableMap<string, number>;
+  SerializeName: string;
 
   constructor(
     maxCapacity: number,
     Data?: ImmutableMap<string, number>,
     immutableSlots = false
   ) {
+    this.SerializeName = "ReadonlyInventory" as const;
     this.Capacity = maxCapacity;
     this.Data = Data || ImmutableMap();
     this.immutableSlots = immutableSlots;
