@@ -5,7 +5,6 @@ import { ErrorFallback } from "./components/ErrorFallback";
 import { FactoryGame } from "./components/FactoryGame";
 import { GameAction } from "./GameAction";
 import { GameDispatch } from "./GameDispatch";
-import { LoadEntitySet } from "./gen/entities";
 import { GeneralDialogProvider } from "./GeneralDialogProvider";
 import "./icons.scss";
 import "./macro_def";
@@ -21,7 +20,12 @@ function FactoryGameMain() {
       executeActions(gameState);
     };
 
-    const resetGame = () => dispatch({ kind: "Reset" });
+    const resetGame = () => {
+      console.log("Resetting");
+      localStorage.clear();
+      window.location.reload();
+      //        dispatch({ kind: "Reset" });
+    };
 
     return (
       <ShortcutProvider>
@@ -50,7 +54,11 @@ function FactoryGameMain() {
   } catch (e) {
     return ErrorFallback({
       error: e as Error,
-      resetErrorBoundary: () => localStorage.clear(),
+      resetErrorBoundary: () => {
+        console.log("Resetting");
+        localStorage.clear();
+        window.location.reload();
+      },
     });
   }
 }

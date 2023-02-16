@@ -1,6 +1,8 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App";
+import { createHashRouter, RouterProvider } from "react-router-dom";
+import { IntroScreen } from "./components/IntroScreen";
+import FactoryGameMain from "./factory_game_main";
 import { LoadEntitySet } from "./gen/entities";
 import "./index.css";
 import Planner from "./Planner";
@@ -11,8 +13,23 @@ if (window.location.hash === "#reset") {
   window.location.hash = "";
 }
 
-const mode = window.location.pathname === "/planner" ? "planner" : "game";
-void LoadEntitySet("factorio");
+const router = createHashRouter([
+  {
+    path: "/",
+    element: <IntroScreen />,
+    //    loader: async () => ,
+  },
+  {
+    path: "planner",
+    element: <Planner />,
+    loader: async () => await LoadEntitySet("factorio"),
+  },
+  {
+    path: "game",
+    element: <FactoryGameMain />,
+    loader: async () => await LoadEntitySet("factorio"),
+  },
+]);
 
 const container = document.getElementById("root");
 if (!container) throw new Error("Missing root.");
@@ -23,8 +40,7 @@ root.render(
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"
     />
-
-    {mode == "planner" ? <Planner /> : <App />}
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
 
