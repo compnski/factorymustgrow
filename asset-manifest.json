@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/factorymustgrow/static/css/main.93b285f1.css",
-    "main.js": "/factorymustgrow/static/js/main.e3944045.js",
+    "main.js": "/factorymustgrow/static/js/main.b66252a4.js",
     "static/js/496.7d340b10.chunk.js": "/factorymustgrow/static/js/496.7d340b10.chunk.js",
     "static/media/icons.png": "/factorymustgrow/static/media/icons.e7652a31dd05ace9d1aa.png",
     "static/media/Synkopy-Regular.otf": "/factorymustgrow/static/media/Synkopy-Regular.3c2f12ed693ca52a935c.otf",
@@ -13,11 +13,11 @@
     "static/media/regionmap.svg": "/factorymustgrow/static/media/regionmap.f019a5ac1335964eab5c32d67723a75f.svg",
     "index.html": "/factorymustgrow/index.html",
     "main.93b285f1.css.map": "/factorymustgrow/static/css/main.93b285f1.css.map",
-    "main.e3944045.js.map": "/factorymustgrow/static/js/main.e3944045.js.map",
+    "main.b66252a4.js.map": "/factorymustgrow/static/js/main.b66252a4.js.map",
     "496.7d340b10.chunk.js.map": "/factorymustgrow/static/js/496.7d340b10.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.93b285f1.css",
-    "static/js/main.e3944045.js"
+    "static/js/main.b66252a4.js"
   ]
 }
