@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { createHashRouter, RouterProvider } from "react-router-dom";
-import { IntroScreen } from "./components/IntroScreen";
+import { StartScreen } from "./components/StartScreen";
 import FactoryGameMain from "./factory_game_main";
 import { LoadEntitySet } from "./gen/entities";
 import "./index.css";
@@ -16,7 +16,7 @@ if (window.location.hash === "#reset") {
 const router = createHashRouter([
   {
     path: "/",
-    element: <IntroScreen />,
+    element: <StartScreen />,
     //    loader: async () => ,
   },
   {
