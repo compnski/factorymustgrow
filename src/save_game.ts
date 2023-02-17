@@ -11,6 +11,7 @@ export type SaveGameMetadata = {
   name: string;
   createdAtMs: number;
   kind: "fmg";
+  schemaVersion: 1;
 };
 
 export function listSaveGamesInLocalStorage() {
@@ -53,6 +54,7 @@ function toSaveGame(gs: FactoryGameState, name: string): SaveGame {
     name,
     createdAtMs: Date.now(),
     kind: "fmg",
+    schemaVersion: 1,
   };
 }
 
