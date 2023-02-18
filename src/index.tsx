@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { createHashRouter, RouterProvider } from "react-router-dom";
+import { LoadScreen } from "./components/LoadScreen";
 import { StartScreen } from "./components/StartScreen";
 import FactoryGameMain from "./factory_game_main";
 import { LoadEntitySet } from "./gen/entities";
@@ -27,6 +28,11 @@ const router = createHashRouter([
   {
     path: "game",
     element: <FactoryGameMain />,
+    loader: async () => await LoadEntitySet("factorio"),
+  },
+  {
+    path: "load",
+    element: <LoadScreen />,
     loader: async () => await LoadEntitySet("factorio"),
   },
 ]);

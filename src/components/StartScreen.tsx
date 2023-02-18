@@ -4,7 +4,7 @@ import "../App.scss";
 const Buttons = {
   Continue: "game",
   "New Game": "game",
-  "Load Game": "game",
+  "Load Game": "load",
   Planner: "planner",
   Help: "help",
   Credits: "https://gitlab.com/omgbear/factorymustgrow",
