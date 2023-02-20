@@ -22,13 +22,6 @@
     }
 
     color: #ccc;
-    .stateList li {
-      //display: inline-block;
-      cursor: pointer;
-      &:hover {
-        text-decoration: underline;
-      }
-    }
   }
   .close-icon {
     color: #ccc;

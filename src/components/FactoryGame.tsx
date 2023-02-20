@@ -85,10 +85,7 @@ export const FactoryGame = (props: ReturnType<typeof getDispatchFunc>) => {
             inventory={inventory}
             setCurrentRegionId={setCurrentRegionId}
           />
-          <div
-            onClick={showSaves}
-            className={`help-icon ${settings.cloudSaveEnabled ? "" : "hidden"}`}
-          >
+          <div onClick={showSaves} className={`help-icon `}>
             <span className="material-icons">save_as</span>
           </div>
           <div onClick={showSettings} className="help-icon">

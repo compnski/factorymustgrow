@@ -7,7 +7,7 @@ export type Settings = {
 export const defaultSettings: Settings = {
   animatedEnabled: false,
   debugEnabled: false,
-  cloudSaveEnabled: false,
+  cloudSaveEnabled: true,
 };
 
 export let settings = validateGameSettings(
@@ -25,6 +25,7 @@ function validateGameSettings(arg0: unknown) {
 }
 
 export function updateSetting(key: string, value: boolean): void {
+  console.log(key, value);
   settings = { ...settings, [key]: value };
   localStorage.setItem("gameSettings", JSON.stringify(settings));
   console.log("wrote gameSettings", localStorage.getItem("gameSettings"));

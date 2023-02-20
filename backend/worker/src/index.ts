@@ -8,96 +8,121 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
-const corsHeaders = {
+import { Env, isCommentRequest } from "./types";
+import {
+  deleteState,
+  getManyComments,
+  listStates,
+  loadState,
+  saveComment,
+  saveState,
+} from "./kv";
+import { SaveStateRequestValidator } from "./validators";
+
+const baseHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
+  "Access-Control-Allow-Headers": "*",
+  "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS,DELETE",
   "Access-Control-Max-Age": "86400",
+  "Content-Type": "application/json",
 };
 
-type SaveStateRequest = {
-  stateJson: string;
-  stateName: string;
-  userName: string;
-};
-
-type CommentRequest = {
-  comment: string;
-  state?: object;
-  userName?: string;
-  userEmail?: string;
-  feeling?: string;
-};
-
-function isCommentRequest(b: unknown): b is CommentRequest {
-  return typeof (b as CommentRequest).comment === "string";
-}
-
-function isSaveStateRequest(b: unknown): b is SaveStateRequest {
-  const r = b as SaveStateRequest;
-  return (
-    r.stateJson != undefined &&
-    r.userName != undefined &&
-    r.stateName != undefined
-  );
-}
-
-type Env = {
-  FACTORY_KV: KVNamespace;
-};
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    if (isListSaveRequest(url)) {
-      return serveListSaveRequest(url);
+    if (request.method == "OPTIONS") {
+      const r = new Response(JSON.stringify({ status: "ok" }));
+      setHeaders(r.headers);
+      return r;
     }
 
-    const body = await request.json();
-    if (isCommentRequest(body)) {
-      await saveComment(env, body);
+    if (request.method == "GET" && isListSaveRequest(url)) {
+      return await serveListSaveRequest(url, env);
     }
-    if (isSaveStateRequest(body)) {
-      await saveState(env, body);
+    if (request.method == "GET" && isGetSaveRequest(url)) {
+      return await serveGetSaveRequest(url, env);
     }
-    const r = new Response(JSON.stringify({ status: "ok" }));
-    r.headers.set("Access-Control-Allow-Origin", "*");
-    r.headers.append("Vary", "Origin");
-    return r;
+    if (request.method == "GET" && isListCommentRequest(url)) {
+      return await serveListCommentRequest(url, env);
+    }
+    if (request.method == "DELETE" && isGetSaveRequest(url)) {
+      return await serveDeleteSaveRequest(url, env);
+    }
+    if (request.method == "POST") {
+      const body = await request.json();
+      if (isCommentRequest(body)) {
+        await saveComment(env, body);
+      }
+
+      try {
+        const { value: saveRequest, error } =
+          SaveStateRequestValidator.validate(body);
+        if (error) throw error;
+        if (saveRequest) {
+          await saveState(env, saveRequest);
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+
+      const r = new Response(JSON.stringify({ status: "ok" }));
+      setHeaders(r.headers);
+      return r;
+    }
+    return new Response(null, { status: 404, statusText: "Nothing here" });
   },
 };
 
-async function saveComment(env: Env, body: CommentRequest) {
-  await env.FACTORY_KV.put(commentKey(), JSON.stringify(body));
-}
-
-async function saveState(env: Env, body: SaveStateRequest) {
-  await env.FACTORY_KV.put(newKey(body), body.stateJson);
-}
-
-function commentKey() {
-  return `comments/${new Date()}`;
-}
-
-function newKey({
-  stateName,
-  userName,
-}: Pick<SaveStateRequest, "stateName" | "userName">) {
-  return `${userName}/${stateName}`;
-}
-
 function isListSaveRequest(url: URL) {
-  return url.pathname.endsWith("/states");
+  return url.pathname.endsWith("/saves");
 }
 
-function serveListSaveRequest(url: URL): Response | PromiseLike<Response> {
-  const states = [
-    {
-      name: "Initial",
-      createdAt: new Date(Date.parse("2022-04-29")),
-      stateVersion: "0.2.3",
-    },
-  ];
+async function serveListSaveRequest(url: URL, env: Env): Promise<Response> {
+  const cloudSaveName = url.searchParams.get("cloudSaveName");
+  const states = await listStates(env, cloudSaveName);
   const r = new Response(JSON.stringify(states));
-  r.headers.set("Access-Control-Allow-Origin", "*");
-  r.headers.append("Vary", "Origin");
+  setHeaders(r.headers);
+
   return r;
+}
+
+function isGetSaveRequest(url: URL) {
+  return url.pathname.endsWith("/save");
+}
+
+async function serveGetSaveRequest(url: URL, env: Env): Promise<Response> {
+  const cloudSaveName = url.searchParams.get("cloudSaveName");
+  const saveVersion = url.searchParams.get("saveVersion");
+  const saveGameState = await loadState(env, cloudSaveName, saveVersion);
+
+  const r = new Response(saveGameState);
+  setHeaders(r.headers);
+  return r;
+}
+
+async function serveDeleteSaveRequest(url: URL, env: Env): Promise<Response> {
+  const cloudSaveName = url.searchParams.get("cloudSaveName");
+  const saveVersion = url.searchParams.get("saveVersion");
+  await deleteState(env, cloudSaveName, saveVersion);
+  const r = new Response("ok");
+  setHeaders(r.headers);
+  return r;
+}
+
+function isListCommentRequest(url: URL) {
+  return url.pathname.endsWith("/comments");
+}
+
+async function serveListCommentRequest(url: URL, env: Env): Promise<Response> {
+  const comments = await getManyComments(env);
+  const r = new Response(JSON.stringify(comments, undefined, 2));
+  setHeaders(r.headers);
+  return r;
+}
+
+function setHeaders(headers: Headers) {
+  Object.entries(baseHeaders).forEach(([key, value]) =>
+    headers.set(key, value)
+  );
+  headers.append("Vary", "Origin");
 }

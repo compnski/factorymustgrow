@@ -107,3 +107,7 @@ export function notEmpty<TValue>(
 ): value is TValue {
   return value !== null && value !== undefined;
 }
+
+export async function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

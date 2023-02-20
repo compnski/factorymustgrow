@@ -289,7 +289,9 @@ export async function showSaveCard(
 ): Promise<void> {
   const { returnData: stateToLoad, uxDispatch } = await showDialog({
     title: "Save",
-    component: (onConfirm) => <SaveCard onConfirm={onConfirm} />,
+    component: (onConfirm) => (
+      <SaveCard onConfirm={onConfirm} showSaveButton={true} />
+    ),
   });
   if (!stateToLoad || !stateToLoad[0]) return;
   console.log("Loading ", stateToLoad);
