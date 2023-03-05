@@ -8,6 +8,8 @@ export function LoadScreen() {
     if (!saveData) {
       navigate("/");
     }
+    navigate("/game");
+
     console.log(saveData);
   }
 

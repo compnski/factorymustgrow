@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import "../App.scss";
 
 const Buttons = {
-  Continue: "game",
-  "New Game": "game",
-  "Load Game": "load",
+  Play: "game",
+  // "New Game": "game",
+  //  "Load Game": "load",
   Planner: "planner",
   Help: "help",
   Credits: "https://gitlab.com/omgbear/factorymustgrow",
