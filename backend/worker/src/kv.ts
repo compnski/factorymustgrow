@@ -23,7 +23,7 @@ export async function saveState(env: Env, body: SaveStateRequest) {
       },
     }
   );
-  console.log(ret);
+  console.log(`Saved ${body.cloudSaveName}/${body.saveGame.saveVersion}`);
 }
 
 export async function getManyComments(env: Env): Promise<string[]> {

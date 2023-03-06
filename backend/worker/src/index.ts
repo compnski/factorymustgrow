@@ -39,13 +39,13 @@ export default {
     if (request.method == "GET" && isListSaveRequest(url)) {
       return await serveListSaveRequest(url, env);
     }
-    if (request.method == "GET" && isGetSaveRequest(url)) {
+    if (request.method == "GET" && isSaveRequest(url)) {
       return await serveGetSaveRequest(url, env);
     }
     if (request.method == "GET" && isListCommentRequest(url)) {
       return await serveListCommentRequest(url, env);
     }
-    if (request.method == "DELETE" && isGetSaveRequest(url)) {
+    if (request.method == "DELETE" && isSaveRequest(url)) {
       return await serveDeleteSaveRequest(url, env);
     }
     if (request.method == "POST") {
@@ -53,16 +53,17 @@ export default {
       if (isCommentRequest(body)) {
         await saveComment(env, body);
       }
-
-      try {
-        const { value: saveRequest, error } =
-          SaveStateRequestValidator.validate(body);
-        if (error) throw error;
-        if (saveRequest) {
-          await saveState(env, saveRequest);
+      if (isSaveRequest(url)) {
+        try {
+          const { value: saveRequest, error } =
+            SaveStateRequestValidator.validate(body);
+          if (error) throw error;
+          if (saveRequest) {
+            await saveState(env, saveRequest);
+          }
+        } catch (e) {
+          console.warn(e);
         }
-      } catch (e) {
-        console.warn(e);
       }
 
       const r = new Response(JSON.stringify({ status: "ok" }));
@@ -86,7 +87,7 @@ async function serveListSaveRequest(url: URL, env: Env): Promise<Response> {
   return r;
 }
 
-function isGetSaveRequest(url: URL) {
+function isSaveRequest(url: URL) {
   return url.pathname.endsWith("/save");
 }
 

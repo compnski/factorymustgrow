@@ -47,7 +47,6 @@ export async function loadCloudSaveGame(
 ): Promise<string | undefined> {
   if (!settings.cloudSaveEnabled) throw new Error("Cloud saves disabled");
   const data = await fetchCloudSaveState(cloudSaveName, sgmKey);
-  console.log(data);
   if (data?.serializedGameState)
     return fromSaveGame(data as Pick<SaveGame, "serializedGameState">);
 }
