@@ -82,7 +82,7 @@ export function HTMLMainBusSegment({
         <span style={{ position: "relative" }}>
           <span
             className={`icon ${entityIconLookup(entity)} ${
-              settings.animatedEnabled ? "animate" : ""
+              settings().animatedEnabled ? "animate" : ""
             }`}
           />
           <progress max={entityMax} value={entityCount} />

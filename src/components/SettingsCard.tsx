@@ -6,7 +6,7 @@ export function SettingsCard({
 }: {
   onConfirm: (evt: SyntheticEvent, r: unknown) => void;
 }) {
-  const [displaySettings, setDisplaySettings] = useState(settings);
+  const [displaySettings, setDisplaySettings] = useState(settings());
 
   return (
     <div className="modal save-card">
@@ -23,17 +23,29 @@ export function SettingsCard({
         <div className="inner-content">
           <ul>
             {Object.entries(displaySettings).map(([key, value]) => (
-              <li key={key}>
+              <li key={key} className="my-2">
                 <label>
-                  <input
-                    type="checkbox"
-                    checked={value || false}
-                    onChange={() => {
-                      updateSetting(key, !value);
-                      setDisplaySettings(settings);
-                    }}
-                  />
-                  {key}
+                  {typeof value == "boolean" ? (
+                    <input
+                      type="checkbox"
+                      checked={value || false}
+                      onChange={() => {
+                        setDisplaySettings(updateSetting(key, !value));
+                      }}
+                    />
+                  ) : (
+                    <input
+                      className="text-black p-1"
+                      type="input"
+                      value={value}
+                      onChange={(evt) => {
+                        setDisplaySettings(
+                          updateSetting(key, parseInt(evt.target.value))
+                        );
+                      }}
+                    />
+                  )}
+                  <span className="ml-2">{key}</span>
                 </label>
               </li>
             ))}

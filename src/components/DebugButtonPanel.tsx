@@ -72,7 +72,9 @@ export function DebugButtonPanel({
 
   return (
     <details
-      className={`debug-button-panel ${settings.debugEnabled ? "" : "hidden"}`}
+      className={`debug-button-panel ${
+        settings().debugEnabled ? "" : "hidden"
+      }`}
       open={isOpen}
     >
       <summary onClick={() => setOpen(!isOpen)}>Debug</summary>

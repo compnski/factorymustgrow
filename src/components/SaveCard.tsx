@@ -21,7 +21,12 @@ import { sleep } from "../utils";
 import "./SaveCard.scss";
 
 export type SaveCardProps = {
-  onConfirm: (evt: SyntheticEvent, saveData: string) => void;
+  onConfirm: (
+    evt: SyntheticEvent,
+    saveData:
+      | string
+      | { saveVersion: string; cloudSaveName: string | undefined }
+  ) => void;
   showSaveButton: boolean;
 };
 
@@ -34,7 +39,7 @@ export const SaveCard = function SaveCard({
     Record<string, SaveGameMetadata>
   >({});
   const [newSaveName, setNewSaveName] = useState("");
-  const [displaySettings, setDisplaySettings] = useState(settings);
+  const [displaySettings, setDisplaySettings] = useState(settings());
   const [cloudSaveError, setCloudSaveError] = useState(false);
 
   useEffect(() => {
@@ -73,15 +78,12 @@ export const SaveCard = function SaveCard({
     }
   }
 
-  async function saveGame(evt: SyntheticEvent, name: string) {
-    // TODO: Hack to get game state :/
-    await saveGameToLocalStorage(window.GameState(), name);
-    await saveGameToCloudStorage(cloudSaveName, window.GameState(), name);
-    setLocalSaves(listSaveGamesInLocalStorage);
+  async function saveGameClick(evt: SyntheticEvent, saveVersion: string) {
+    //saveGame(name, cloudSaveName);
+    // TODO: Now that save is async, need to poll for saved gaes?
     setSaved(true);
+    onConfirm(evt, { saveVersion, cloudSaveName });
     await sleep(500);
-    void listCloudSave();
-    onConfirm(evt, "");
   }
 
   function loadLocalSave(
@@ -132,7 +134,7 @@ export const SaveCard = function SaveCard({
       </label>
       <button
         className="ml-2 w-36 border-2 border-grey-300 drop-shadow-md"
-        onClick={(evt) => void saveGame(evt, newSaveName)}
+        onClick={(evt) => void saveGameClick(evt, newSaveName)}
       >
         Create Save Game
       </button>
@@ -144,7 +146,7 @@ export const SaveCard = function SaveCard({
 
   const [deleteIdxKey, setDeleteIdx] = useState<string | undefined>();
 
-  const cloudSaveNameEl = settings.cloudSaveEnabled ? (
+  const cloudSaveNameEl = settings().cloudSaveEnabled ? (
     <div className="mt-4">
       Your 'Cloud Save Name' is the key to your saves.
       <br />
@@ -159,8 +161,6 @@ export const SaveCard = function SaveCard({
       </label>
     </div>
   ) : undefined;
-
-  // TODO: Checkbox to enable cloud saves right here
 
   const saveEl = (
     <>
@@ -190,13 +190,14 @@ export const SaveCard = function SaveCard({
               className="pointer-events-auto cursor-pointer"
               type="checkbox"
               onChange={() => {
-                updateSetting(
-                  "cloudSaveEnabled",
-                  !displaySettings.cloudSaveEnabled
+                setDisplaySettings(
+                  updateSetting(
+                    "cloudSaveEnabled",
+                    !displaySettings.cloudSaveEnabled
+                  )
                 );
-                setDisplaySettings(settings);
               }}
-              checked={settings.cloudSaveEnabled}
+              checked={settings().cloudSaveEnabled}
             />{" "}
             Use Cloud Saves
           </div>

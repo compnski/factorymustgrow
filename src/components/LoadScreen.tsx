@@ -15,9 +15,7 @@ export function LoadScreen() {
 
   return (
     <div className="w-full h-full">
-      <div className="m-auto bg-logo w-full min-h-screen">
-        <SaveCard onConfirm={loadGame} showSaveButton={false} />
-      </div>
+      <div className="m-auto bg-logo w-full min-h-screen"></div>
     </div>
   );
 }

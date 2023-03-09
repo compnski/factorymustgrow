@@ -1,32 +1,58 @@
+import Joi from "joi";
+
 export type Settings = {
   animatedEnabled: boolean;
   debugEnabled: boolean;
   cloudSaveEnabled: boolean;
+  autosaveIntervalMin: number; //0 to disable
+  autosaveCount: number;
 };
 
 export const defaultSettings: Settings = {
   animatedEnabled: false,
   debugEnabled: false,
   cloudSaveEnabled: true,
+  autosaveIntervalMin: 5,
+  autosaveCount: 5,
 };
 
-export let settings = validateGameSettings(
-  JSON.parse(localStorage.getItem("gameSettings") || "{}")
-);
+let _settings: Settings | undefined;
 
-function validateGameSettings(arg0: unknown) {
-  const maybeSettings = arg0 as Settings;
-  Object.entries(defaultSettings).forEach(([k, value]) => {
-    const key = k as keyof Settings;
-    if (typeof maybeSettings[key] != typeof value)
-      maybeSettings[key] = defaultSettings[key];
-  });
-  return maybeSettings;
+export function settings(): Settings {
+  if (_settings) return _settings;
+  const { value, error, warning } = settingsValidator.validate(
+    JSON.parse(localStorage.getItem("gameSettings") || "{}")
+  );
+
+  //  console.log(error, warning);
+  if (!value || error) return defaultSettings;
+  return value;
 }
 
-export function updateSetting(key: string, value: boolean): void {
+export function updateSetting(key: string, value: boolean | number): Settings {
   console.log(key, value);
-  settings = { ...settings, [key]: value };
-  localStorage.setItem("gameSettings", JSON.stringify(settings));
+  const s = { ...settings(), [key]: value };
+  console.log(s);
+  localStorage.setItem("gameSettings", JSON.stringify(s));
   console.log("wrote gameSettings", localStorage.getItem("gameSettings"));
+  _settings = s;
+  return s;
 }
+
+export const settingsValidator = Joi.object<Settings>({
+  animatedEnabled: Joi.boolean()
+    .optional()
+    .default(defaultSettings.animatedEnabled),
+  cloudSaveEnabled: Joi.boolean()
+    .optional()
+    .default(defaultSettings.cloudSaveEnabled),
+  debugEnabled: Joi.boolean().optional().default(defaultSettings.debugEnabled),
+  autosaveIntervalMin: Joi.number()
+    .min(0)
+    .optional()
+    .default(defaultSettings.autosaveIntervalMin),
+  autosaveCount: Joi.number()
+    .min(0)
+    .optional()
+    .default(defaultSettings.autosaveCount),
+}).default(defaultSettings);

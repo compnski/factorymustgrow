@@ -9,22 +9,18 @@ export type GameAction =
   | InventoryTransferAction
   | LaneAction
   | RegionAction
-  | AddBuildingAction
   | DragBuildingAction
   | ChangeRecipeAction
   | InserterAction
   | LaunchRocketAction
   | UpdateStateAction
-  | ResetToAction;
+  | ResetToAction
+  | SaveGameAction;
 
 type UpdateStateAction = {
   type: "UpdateState";
   action: StateVMAction;
 };
-
-type AddBuildingAction = {
-  type: "AddBuilding";
-} & Pick<Building, "kind" | "subkind">;
 
 type LaneAction =
   | {
@@ -69,9 +65,16 @@ type ProducerAction = {
 type BasicAction = {
   type: "CompleteResearch" | "Reset";
 };
+
 type ResetToAction = {
   type: "ResetTo";
   state: FactoryGameState;
+};
+
+type SaveGameAction = {
+  type: "SaveGame";
+  saveVersion: string;
+  cloudSaveName?: string;
 };
 
 type BuildingAction =

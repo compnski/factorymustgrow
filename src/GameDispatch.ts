@@ -21,11 +21,17 @@ import { CanPushTo, moveToInventory } from "./movement";
 import { NewExtractor, NewFactory, ProducerTypeFromEntity } from "./production";
 import { GetRegionInfo, RemainingRegionBuildingCapacity } from "./region";
 import { NewLab } from "./research";
+import { saveGameToCloudStorage, saveGameToLocalStorage } from "./save_game";
 import { StateAddress } from "./state/address";
 import { DispatchFunc } from "./stateVm";
 import { NewChest } from "./storage";
 import { Producer } from "./types";
-import { BuildingHasInput, BuildingHasOutput, showUserError } from "./utils";
+import {
+  assertNever,
+  BuildingHasInput,
+  BuildingHasOutput,
+  showUserError,
+} from "./utils";
 
 export function GetRegion(
   gameState: FactoryGameState,
@@ -185,6 +191,20 @@ export const GameDispatch = (
 
     case "LaunchRocket":
       launchRocket(dispatch, action, gameState);
+      break;
+
+    case "SaveGame":
+      if (action.cloudSaveName)
+        void saveGameToCloudStorage(
+          action.cloudSaveName,
+          gameState,
+          action.saveVersion
+        );
+      void saveGameToLocalStorage(gameState, action.saveVersion);
+      break;
+
+    default:
+      assertNever(action);
   }
 };
 

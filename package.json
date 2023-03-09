@@ -12,6 +12,7 @@
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "immutable": "^4.2.2",
+    "joi": "^17.8.3",
     "lz-string": "^1.4.4",
     "material-design-icons": "^3.0.1",
     "poisson-process": "^1.0.1",
@@ -38,10 +39,17 @@
     "check-types": "npx tsc --noEmit"
   },
   "eslintConfig": {
-    "extends": ["react-app", "react-app/jest"]
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",

@@ -283,7 +283,9 @@ export async function showHelpCard(
 
 export async function showSaveCard(
   showDialog: (c: GeneralDialogConfig) => Promise<{
-    returnData: string[] | false;
+    returnData:
+      | false
+      | (string | { saveVersion: string; cloudSaveName: string | undefined })[];
     uxDispatch: (a: GameAction) => void;
   }>
 ): Promise<void> {
@@ -294,11 +296,20 @@ export async function showSaveCard(
     ),
   });
   if (!stateToLoad || !stateToLoad[0]) return;
-  console.log("Loading ", stateToLoad);
-  uxDispatch({
-    type: "ResetTo",
-    state: deserializeGameState(stateToLoad[0]),
-  });
+  if (typeof stateToLoad[0] == "string") {
+    console.log("Loading ", stateToLoad);
+    uxDispatch({
+      type: "ResetTo",
+      state: deserializeGameState(stateToLoad[0]),
+    });
+  } else {
+    const { saveVersion, cloudSaveName } = stateToLoad[0];
+    uxDispatch({
+      type: "SaveGame",
+      saveVersion,
+      cloudSaveName,
+    });
+  }
 }
 
 export async function showSettingCard(

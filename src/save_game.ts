@@ -45,7 +45,7 @@ export async function loadCloudSaveGame(
   cloudSaveName: string,
   sgmKey: string
 ): Promise<string | undefined> {
-  if (!settings.cloudSaveEnabled) throw new Error("Cloud saves disabled");
+  if (!settings().cloudSaveEnabled) throw new Error("Cloud saves disabled");
   const data = await fetchCloudSaveState(cloudSaveName, sgmKey);
   if (data?.serializedGameState)
     return fromSaveGame(data as Pick<SaveGame, "serializedGameState">);
@@ -74,7 +74,7 @@ export type SavedState = {
 };
 
 export async function listSavedGamesInCloudStorage(cloudSaveName: string) {
-  if (!settings.cloudSaveEnabled) return;
+  if (!settings().cloudSaveEnabled) return;
   const response = await fetch(
     listCloudSaveUrl + `?cloudSaveName=${cloudSaveName}`
   );
@@ -90,7 +90,7 @@ export async function saveGameToCloudStorage(
   gs: FactoryGameState,
   name: string
 ) {
-  if (!settings.cloudSaveEnabled) return;
+  if (!settings().cloudSaveEnabled) return;
 
   const sg = { saveGame: await toSaveGame(gs, name), cloudSaveName };
 
@@ -107,7 +107,7 @@ export async function deleteGameFromCloudStorage(
   cloudSaveName: string,
   saveVersion: string
 ) {
-  if (!settings.cloudSaveEnabled) return;
+  if (!settings().cloudSaveEnabled) return;
   await fetch(
     saveCloudSaveUrl +
       `?cloudSaveName=${cloudSaveName}&saveVersion=${saveVersion}`,
