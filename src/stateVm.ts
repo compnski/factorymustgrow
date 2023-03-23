@@ -469,6 +469,7 @@ function stateChangeSetCurrentResearch(
       };
     }),
   }));
+  // TODO: Refund in-progress science packs
   return {
     ...state,
     Regions,

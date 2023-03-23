@@ -1,4 +1,4 @@
-import { AvailableResearchList } from "./availableResearch";
+import { AvailableResearchList } from "./gen/entities";
 import { GetEntity } from "./gen/entities";
 import { ImmutableMap } from "./immutable";
 import { ReadonlyInventory } from "./inventory";

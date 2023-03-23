@@ -60,7 +60,7 @@ const replacer = (key: string, value: any): any => {
         dataType: "Set",
         value: [...value],
       }
-    : value instanceof Object && value.constructor.name == "ResearchOutput"
+    : isSerializableObject(value, "ResearchOutput")
     ? {
         dataType: "ResearchOutput",
         researchId: value.researchId,

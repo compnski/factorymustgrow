@@ -1,4 +1,5 @@
 import { ResearchMap } from "./gen/entities";
+import { Research } from "./types";
 
 export const IgnoredResearch: Set<string> = new Set([
   "stone-walls",
@@ -64,7 +65,7 @@ export const IgnoredResearch: Set<string> = new Set([
   "toolbelt",
 ]);
 
-export const AvailableResearchList = [...ResearchMap.values()].filter((r) => {
+export function FilterToAvailableResearch(r: Research) {
   if (
     IgnoredResearch.has(r.Id) ||
     [...r.Prereqs].filter((prereq) => IgnoredResearch.has(prereq)).length > 0 ||
@@ -74,4 +75,4 @@ export const AvailableResearchList = [...ResearchMap.values()].filter((r) => {
     return false;
   }
   return true;
-});
+}

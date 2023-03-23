@@ -1,5 +1,5 @@
 import { ProduceWithTracker } from "./AddProgressTracker";
-import { AvailableResearchList } from "./availableResearch";
+import { AvailableResearchList } from "./gen/entities";
 import { ReadonlyItemBuffer, ReadonlyResearchState } from "./factoryGameState";
 import { GetEntity, GetRecipe } from "./gen/entities";
 import { GetResearch } from "./gen/entities";
@@ -35,11 +35,13 @@ export class ResearchOutput implements ReadonlyItemBuffer {
   researchId = "";
   progress = 0;
   maxProgress = 0;
+  SerializeName = "ResearchOutput" as const;
 
   constructor(researchId = "", progress = 0, maxProgress = 0) {
     this.researchId = researchId;
     this.progress = progress;
     this.maxProgress = maxProgress;
+    //this.SerializeName = "ResearchOutput" as const;
   }
 
   SetResearch(
@@ -126,6 +128,7 @@ export function setLabResearch(
       progress,
       maxProgress
     ),
+    progressTrackers: [],
   };
 }
 
