@@ -6,7 +6,7 @@ import {
   NewExtractorForRecipe,
   NewFactoryForRecipe,
 } from "./production";
-import { NewLab } from "./research";
+import { NewLab, setLabResearch } from "./research";
 import { NewChest } from "./storage";
 import { AddItemsToReadonlyFixedBuffer } from "./test_utils";
 import { EntityStack, NewEntityStack } from "./types";
@@ -77,7 +77,7 @@ describe("VMPushToOtherBuilding", () => {
         4,
         ImmutableMap([["automation-science-pack", 10]])
       ),
-      toLab = NewLab(1);
+      toLab = setLabResearch(NewLab(1), "test-research", 1);
 
     TestMovement(fromChest, toLab, 3, {
       outputBuffers: [NewEntityStack("automation-science-pack", -3)],
@@ -91,8 +91,7 @@ describe("VMPushToOtherBuilding", () => {
         4,
         ImmutableMap([["automation-science-pack", 10]])
       ),
-      toLab = NewLab(1);
-
+      toLab = setLabResearch(NewLab(1), "test-research", 1);
     TestMovement(fromChest, toLab, 3, {
       outputBuffers: [],
       inputBuffers: [],
@@ -105,13 +104,18 @@ describe("VMPushToOtherBuilding", () => {
         1,
         ImmutableMap([["automation-science-pack", 10]])
       ),
-      toLab = NewLab(1);
-    toLab.inputBuffers = AddItemsToReadonlyFixedBuffer(toLab.inputBuffers, 199);
+      toLab = setLabResearch(NewLab(1), "test-research", 1);
 
+    toLab.inputBuffers = toLab.inputBuffers.AddItems(
+      "automation-science-pack",
+      199
+    );
+    //    expect(() =>
     TestMovement(fromChest, toLab, 3, {
       outputBuffers: [NewEntityStack("automation-science-pack", -1)],
       inputBuffers: [NewEntityStack("automation-science-pack", 1)],
     });
+    //  ).toThrow("Not enough space");
   });
   // });
 

@@ -38,11 +38,33 @@ export const TestSlowItemEntity = {
   Col: 3,
 };
 
+export const TestAutomationSciencePack = {
+  Name: "Test Automation Science Pack",
+  Id: "automation-science-pack",
+  Icon: "automation-science-pack",
+  StackSize: 200,
+  Category: "intermediate-products",
+  Row: 2,
+  Col: 1,
+};
+
+export const TestLogisticsSciencePack = {
+  Name: "Test Logistics Science Pack",
+  Id: "logistics-science-pack",
+  Icon: "logistics-science-pack",
+  StackSize: 200,
+  Category: "intermediate-products",
+  Row: 2,
+  Col: 2,
+};
+
 export const TestEntityList = new Map<string, Entity>([
   ["test-ore", TestOreEntity],
   ["test-slow-ore", TestSlowOreEntity],
   ["test-item", TestItemEntity],
   ["test-slow-item", TestSlowItemEntity],
+  ["automation-science-pack", TestAutomationSciencePack],
+  ["logistic-science-pack", TestLogisticsSciencePack],
   //   ["test-item-consumer", TestItemConsumerRecipe],
 ]);
 

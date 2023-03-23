@@ -95,6 +95,7 @@ export function LabCard({
           entityIconLookup={entityIconLookupByKind(building.kind)}
           regionId={regionId}
           uxDispatch={uxDispatch}
+          infiniteStackSize={true}
         />
       </div>
     </div>

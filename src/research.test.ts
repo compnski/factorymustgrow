@@ -1,5 +1,11 @@
 import { ImmutableMap } from "./immutable";
-import { Lab, NewLab, ResearchInLab, ResearchOutput } from "./research";
+import {
+  Lab,
+  NewLab,
+  ResearchInLab,
+  ResearchOutput,
+  setLabResearch,
+} from "./research";
 import { BuildingAddress } from "./state/address";
 import { TestResearchBook } from "./test_research_defs";
 import { AddItemsToReadonlyFixedBuffer as AddItemsToFixedBuffer } from "./test_utils";
@@ -31,7 +37,7 @@ describe("Labs", () => {
       if (!r) throw new Error("Failed to find id");
       return r;
     });
-
+    //console.log(expected.recipeId);
     const r = TestResearchBook.get(expected.recipeId);
     expect(lab.RecipeId).toBe(expected.recipeId);
 
@@ -102,7 +108,7 @@ describe("Labs", () => {
   });
 
   it("Produces a single item", () => {
-    const lab = NewLab(1);
+    const lab = setLabResearch(NewLab(1), "test-research", 1);
 
     lab.inputBuffers = AddItemsToFixedBuffer(lab.inputBuffers, 10);
 
@@ -118,8 +124,7 @@ describe("Labs", () => {
   });
 
   it("Requires the correct types of science", () => {
-    const lab = NewLab(1);
-    lab.RecipeId = "test-research";
+    const lab = setLabResearch(NewLab(1), "test-research", 1);
     lab.inputBuffers = lab.inputBuffers.AddItems("automation-science-pack", 1);
 
     TestLab(lab, testResearchState(), {
@@ -131,7 +136,7 @@ describe("Labs", () => {
   });
 
   it("Won't Over-produces", () => {
-    const lab = NewLab(1);
+    const lab = setLabResearch(NewLab(1), "test-research", 1);
     const researchState = testResearchState();
     researchState.Progress = researchState.Progress.set(
       "test-research",
