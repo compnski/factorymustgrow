@@ -9,7 +9,6 @@ import { saveStateToLocalStorage } from "../localstorage";
 import { Macro, setMacroRegionId } from "../macro_def";
 import { useInterval } from "../reactUtils";
 import { ReactComponent as RocketShip } from "../rocket-launch.svg";
-import { settings } from "../settings";
 import { getDispatchFunc } from "../stateVm";
 import { BuildingCardList } from "./BuildingCardList";
 import { CommentsForm } from "./CommentsForm";

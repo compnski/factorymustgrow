@@ -24,7 +24,7 @@ function toType<T>(
 interface HasSerializeName {
   SerializeName: string;
 }
-function isSerializableObject(value: any, searchKind: string) {
+function isSerializableObject(value: unknown, searchKind: string) {
   return (
     value instanceof Object &&
     (value as HasSerializeName).SerializeName == searchKind

@@ -20,7 +20,7 @@ let _settings: Settings | undefined;
 
 export function settings(): Settings {
   if (_settings) return _settings;
-  const { value, error, warning } = settingsValidator.validate(
+  const { value, error } = settingsValidator.validate(
     JSON.parse(localStorage.getItem("gameSettings") || "{}")
   );
 

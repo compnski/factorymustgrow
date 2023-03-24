@@ -70,6 +70,7 @@ export function UpdateTruckLineDepot(
   vmDispatch: DispatchFunc,
   address: BuildingAddress,
   state: FactoryGameState,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tick: number
 ) {
   // TODO: Progress tracker for movement (per lane)

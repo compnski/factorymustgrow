@@ -1,4 +1,3 @@
-import { ResearchMap } from "./gen/entities";
 import { Research } from "./types";
 
 export const IgnoredResearch: Set<string> = new Set([

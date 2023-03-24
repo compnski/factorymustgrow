@@ -13,8 +13,6 @@ import {
   loadCloudSaveGame,
   loadSaveGame,
   SaveGameMetadata,
-  saveGameToCloudStorage,
-  saveGameToLocalStorage,
 } from "../save_game";
 import { settings, updateSetting } from "../settings";
 import { sleep } from "../utils";

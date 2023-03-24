@@ -1,7 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { createHashRouter, Navigate, RouterProvider } from "react-router-dom";
-import { LoadScreen } from "./components/LoadScreen";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import { StartScreen } from "./components/StartScreen";
 import FactoryGameMain from "./factory_game_main";
 import { LoadEntitySet } from "./gen/entities";
@@ -13,14 +12,14 @@ if (window.location.hash === "#reset") {
   localStorage.clear();
   window.location.hash = "";
 }
-
-function newGame() {
-  // TODO: Clear current game
-  // Figure out how to reset w/o clearing local storage
-  //Maybe just clear current game?
-  return <Navigate to="/game" replace={true} />;
-}
-
+/*
+ * function newGame() {
+ *   // TODO: Clear current game
+ *   // Figure out how to reset w/o clearing local storage
+ *   //Maybe just clear current game?
+ *   return <Navigate to="/game" replace={true} />;
+ * }
+ *  */
 const router = createHashRouter([
   {
     path: "/",
