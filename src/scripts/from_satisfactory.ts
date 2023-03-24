@@ -58,7 +58,7 @@ interface SatisfactoryRecipe {
 export function convertToRecipe(filename: string) {
   const contents = readFileSync(filename)
   const data = JSON.parse(contents.toString("utf-8")) as Record<string, SatisfactoryRecipe>
-  return Object.values(data).map((recipe: SatisfactoryRecipe, idx: number) => {
+  return Object.values(data).map((recipe: SatisfactoryRecipe) => {
     const r: Recipe = {
       Icon: toIcon(recipe),
       Id: recipe.className,
@@ -123,7 +123,7 @@ export function convertToResearch(filename: string) {
 }
 
 function toCategory(item: SatisfactoryItem): string {
-  return "Item"
+  return "Item" || item
 }
 
 function toIcon(item: { slug: string }): string {
