@@ -6856,41 +6856,26 @@
       "Id": "logistics",
       "Name": "Logistics",
       "Icon": "logistics-1",
-      "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        }
-      ],
+      "Input": [{ "Entity": "automation-science-pack", "Count": 1 }],
       "ProductionRequiredForCompletion": 20,
       "ProductionPerTick": 0.06666667,
       "DurationSeconds": 15,
       "Row": 1,
-      "Prereqs": {},
-      "Unlocks": [
-        "underground-belt",
-        "splitter"
-      ],
+      "Prereqs": [],
+      "Unlocks": ["underground-belt", "splitter"],
       "Effects": []
     },
     "logistic-science-pack": {
       "Id": "logistic-science-pack",
       "Name": "Logistic science pack",
       "Icon": "logistic-science-pack",
-      "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        }
-      ],
+      "Input": [{ "Entity": "automation-science-pack", "Count": 1 }],
       "ProductionRequiredForCompletion": 75,
       "ProductionPerTick": 0.2,
       "DurationSeconds": 5,
       "Row": 1,
-      "Prereqs": {},
-      "Unlocks": [
-        "logistic-science-pack"
-      ],
+      "Prereqs": [],
+      "Unlocks": ["logistic-science-pack"],
       "Effects": []
     },
     "start": {
@@ -6902,7 +6887,7 @@
       "ProductionPerTick": null,
       "DurationSeconds": 0,
       "Row": 1,
-      "Prereqs": {},
+      "Prereqs": [],
       "Unlocks": [
         "automation-science-pack",
         "boiler",
@@ -6937,79 +6922,51 @@
       "Id": "optics",
       "Name": "Optics",
       "Icon": "optics",
-      "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        }
-      ],
+      "Input": [{ "Entity": "automation-science-pack", "Count": 1 }],
       "ProductionRequiredForCompletion": 10,
       "ProductionPerTick": 0.06666667,
       "DurationSeconds": 15,
       "Row": 1,
-      "Prereqs": {},
-      "Unlocks": [
-        "small-lamp"
-      ],
+      "Prereqs": [],
+      "Unlocks": ["small-lamp"],
       "Effects": []
     },
     "steel-processing": {
       "Id": "steel-processing",
       "Name": "Steel processing",
       "Icon": "steel-processing",
-      "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        }
-      ],
+      "Input": [{ "Entity": "automation-science-pack", "Count": 1 }],
       "ProductionRequiredForCompletion": 50,
       "ProductionPerTick": 0.2,
       "DurationSeconds": 5,
       "Row": 1,
-      "Prereqs": {},
-      "Unlocks": [
-        "steel-plate",
-        "steel-chest"
-      ],
+      "Prereqs": [],
+      "Unlocks": ["steel-plate", "steel-chest"],
       "Effects": []
     },
     "automation": {
       "Id": "automation",
       "Name": "Automation",
       "Icon": "automation-1",
-      "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        }
-      ],
+      "Input": [{ "Entity": "automation-science-pack", "Count": 1 }],
       "ProductionRequiredForCompletion": 10,
       "ProductionPerTick": 0.1,
       "DurationSeconds": 10,
       "Row": 1,
-      "Prereqs": {},
-      "Unlocks": [
-        "assembling-machine-1",
-        "long-handed-inserter"
-      ],
+      "Prereqs": [],
+      "Unlocks": ["assembling-machine-1", "long-handed-inserter"],
       "Effects": []
     },
     "electronics": {
       "Id": "electronics",
       "Name": "Electronics",
       "Icon": "electronics",
-      "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        }
-      ],
+      "Input": [{ "Entity": "automation-science-pack", "Count": 1 }],
       "ProductionRequiredForCompletion": 30,
       "ProductionPerTick": 0.06666667,
       "DurationSeconds": 15,
       "Row": 1,
-      "Prereqs": {},
+      "Prereqs": ["automation"],
       "Unlocks": [],
       "Effects": []
     },
@@ -7017,21 +6974,13 @@
       "Id": "fast-inserter",
       "Name": "Fast inserter",
       "Icon": "fast-inserter",
-      "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        }
-      ],
+      "Input": [{ "Entity": "automation-science-pack", "Count": 1 }],
       "ProductionRequiredForCompletion": 30,
       "ProductionPerTick": 0.06666667,
       "DurationSeconds": 15,
       "Row": 1,
-      "Prereqs": {},
-      "Unlocks": [
-        "fast-inserter",
-        "filter-inserter"
-      ],
+      "Prereqs": ["electronics"],
+      "Unlocks": ["fast-inserter", "filter-inserter"],
       "Effects": []
     },
     "logistics-2": {
@@ -7039,25 +6988,15 @@
       "Name": "Logistics 2",
       "Icon": "logistics-2",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 200,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "fast-transport-belt",
-        "fast-underground-belt",
-        "fast-splitter"
-      ],
+      "Prereqs": ["logistics", "logistic-science-pack"],
+      "Unlocks": ["fast-transport-belt", "fast-underground-belt", "fast-splitter"],
       "Effects": []
     },
     "landfill": {
@@ -7065,23 +7004,15 @@
       "Name": "Landfill",
       "Icon": "landfill",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 50,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "landfill"
-      ],
+      "Prereqs": ["logistic-science-pack"],
+      "Unlocks": ["landfill"],
       "Effects": []
     },
     "engine": {
@@ -7089,23 +7020,15 @@
       "Name": "Engine",
       "Icon": "engine",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 100,
       "ProductionPerTick": 0.06666667,
       "DurationSeconds": 15,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "engine-unit"
-      ],
+      "Prereqs": ["steel-processing", "logistic-science-pack"],
+      "Unlocks": ["engine-unit"],
       "Effects": []
     },
     "automation-2": {
@@ -7113,23 +7036,15 @@
       "Name": "Automation 2",
       "Icon": "automation-2",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 40,
       "ProductionPerTick": 0.06666667,
       "DurationSeconds": 15,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "assembling-machine-2"
-      ],
+      "Prereqs": ["electronics", "steel-processing", "logistic-science-pack"],
+      "Unlocks": ["assembling-machine-2"],
       "Effects": []
     },
     "solar-energy": {
@@ -7137,23 +7052,15 @@
       "Name": "Solar energy",
       "Icon": "solar-energy",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 250,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "solar-panel"
-      ],
+      "Prereqs": ["electronics", "steel-processing", "logistic-science-pack"],
+      "Unlocks": ["solar-panel"],
       "Effects": []
     },
     "toolbelt": {
@@ -7161,47 +7068,31 @@
       "Name": "Toolbelt",
       "Icon": "toolbelt",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 100,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
+      "Prereqs": ["logistic-science-pack"],
       "Unlocks": [],
-      "Effects": [
-        "Character inventory slots: +10"
-      ]
+      "Effects": ["Character inventory slots: +10"]
     },
     "advanced-material-processing": {
       "Id": "advanced-material-processing",
       "Name": "Advanced material processing",
       "Icon": "advanced-material-processing",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 75,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "steel-furnace"
-      ],
+      "Prereqs": ["steel-processing", "logistic-science-pack"],
+      "Unlocks": ["steel-furnace"],
       "Effects": []
     },
     "electric-energy-distribution-1": {
@@ -7209,24 +7100,15 @@
       "Name": "Electric energy distribution 1",
       "Icon": "electric-energy-distribution-1",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 120,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "medium-electric-pole",
-        "big-electric-pole"
-      ],
+      "Prereqs": ["electronics", "steel-processing", "logistic-science-pack"],
+      "Unlocks": ["medium-electric-pole", "big-electric-pole"],
       "Effects": []
     },
     "circuit-network": {
@@ -7234,20 +7116,14 @@
       "Name": "Circuit network",
       "Icon": "circuit-network",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 100,
       "ProductionPerTick": 0.06666667,
       "DurationSeconds": 15,
       "Row": 2,
-      "Prereqs": {},
+      "Prereqs": ["electronics", "logistic-science-pack"],
       "Unlocks": [
         "red-wire",
         "green-wire",
@@ -7264,25 +7140,15 @@
       "Name": "Fluid handling",
       "Icon": "fluid-handling",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 50,
       "ProductionPerTick": 0.06666667,
       "DurationSeconds": 15,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "storage-tank",
-        "pump",
-        "empty-barrel"
-      ],
+      "Prereqs": ["automation-2", "engine"],
+      "Unlocks": ["storage-tank", "pump", "empty-barrel"],
       "Effects": []
     },
     "research-speed-1": {
@@ -7290,50 +7156,31 @@
       "Name": "Lab research speed 1",
       "Icon": "research-speed",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 100,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
+      "Prereqs": ["automation-2"],
       "Unlocks": [],
-      "Effects": [
-        "Lab research speed: +20%"
-      ]
+      "Effects": ["Lab research speed: +20%"]
     },
     "concrete": {
       "Id": "concrete",
       "Name": "Concrete",
       "Icon": "concrete",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 250,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "concrete",
-        "hazard-concrete",
-        "refined-concrete",
-        "refined-hazard-concrete"
-      ],
+      "Prereqs": ["advanced-material-processing", "automation-2"],
+      "Unlocks": ["concrete", "hazard-concrete", "refined-concrete", "refined-hazard-concrete"],
       "Effects": []
     },
     "railway": {
@@ -7341,25 +7188,15 @@
       "Name": "Railway",
       "Icon": "railway",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 75,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "rail",
-        "locomotive",
-        "cargo-wagon"
-      ],
+      "Prereqs": ["engine"],
+      "Unlocks": ["rail", "locomotive", "cargo-wagon"],
       "Effects": []
     },
     "oil-processing": {
@@ -7367,20 +7204,14 @@
       "Name": "Oil processing",
       "Icon": "oil-gathering",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 100,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
+      "Prereqs": ["fluid-handling"],
       "Unlocks": [
         "pumpjack",
         "oil-refinery",
@@ -7389,32 +7220,22 @@
         "solid-fuel-from-petroleum-gas",
         "crude-oil"
       ],
-      "Effects": [
-        "Basic oil processing"
-      ]
+      "Effects": ["Basic oil processing"]
     },
     "automated-rail-transportation": {
       "Id": "automated-rail-transportation",
       "Name": "Automated rail transportation",
       "Icon": "automated-rail-transportation",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 75,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "train-stop"
-      ],
+      "Prereqs": ["railway"],
+      "Unlocks": ["train-stop"],
       "Effects": []
     },
     "fluid-wagon": {
@@ -7422,23 +7243,15 @@
       "Name": "Fluid wagon",
       "Icon": "fluid-wagon",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 200,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "fluid-wagon"
-      ],
+      "Prereqs": ["railway", "fluid-handling"],
+      "Unlocks": ["fluid-wagon"],
       "Effects": []
     },
     "research-speed-2": {
@@ -7446,48 +7259,31 @@
       "Name": "Lab research speed 2",
       "Icon": "research-speed",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 200,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
+      "Prereqs": ["research-speed-1"],
       "Unlocks": [],
-      "Effects": [
-        "Lab research speed: +30%"
-      ]
+      "Effects": ["Lab research speed: +30%"]
     },
     "rail-signals": {
       "Id": "rail-signals",
       "Name": "Rail signals",
       "Icon": "rail-signals",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 100,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "rail-signal",
-        "rail-chain-signal"
-      ],
+      "Prereqs": ["automated-rail-transportation"],
+      "Unlocks": ["rail-signal", "rail-chain-signal"],
       "Effects": []
     },
     "plastics": {
@@ -7495,23 +7291,15 @@
       "Name": "Plastics",
       "Icon": "plastics",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 200,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "plastic-bar"
-      ],
+      "Prereqs": ["oil-processing"],
+      "Unlocks": ["plastic-bar"],
       "Effects": []
     },
     "sulfur-processing": {
@@ -7519,24 +7307,15 @@
       "Name": "Sulfur processing",
       "Icon": "sulfur-processing",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 150,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "sulfuric-acid",
-        "sulfur"
-      ],
+      "Prereqs": ["oil-processing"],
+      "Unlocks": ["sulfuric-acid", "sulfur"],
       "Effects": []
     },
     "flammables": {
@@ -7544,20 +7323,14 @@
       "Name": "Flammables",
       "Icon": "flammables",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 50,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
+      "Prereqs": ["oil-processing"],
       "Unlocks": [],
       "Effects": []
     },
@@ -7566,23 +7339,15 @@
       "Name": "Battery",
       "Icon": "battery",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 150,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "battery"
-      ],
+      "Prereqs": ["sulfur-processing"],
+      "Unlocks": ["battery"],
       "Effects": []
     },
     "advanced-electronics": {
@@ -7590,23 +7355,15 @@
       "Name": "Advanced electronics",
       "Icon": "advanced-electronics",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 200,
       "ProductionPerTick": 0.06666667,
       "DurationSeconds": 15,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "advanced-circuit"
-      ],
+      "Prereqs": ["plastics"],
+      "Unlocks": ["advanced-circuit"],
       "Effects": []
     },
     "stack-inserter": {
@@ -7614,71 +7371,46 @@
       "Name": "Stack inserter",
       "Icon": "stack-inserter",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 150,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "stack-inserter",
-        "stack-filter-inserter"
-      ],
-      "Effects": [
-        "Stack inserter capacity: +1"
-      ]
+      "Prereqs": ["fast-inserter", "advanced-electronics"],
+      "Unlocks": ["stack-inserter", "stack-filter-inserter"],
+      "Effects": ["Stack inserter capacity: +1"]
     },
     "mining-productivity-1": {
       "Id": "mining-productivity-1",
       "Name": "Mining productivity 1",
       "Icon": "mining-productivity",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 250,
       "ProductionPerTick": 0.016666668,
       "DurationSeconds": 60,
       "Row": 2,
-      "Prereqs": {},
+      "Prereqs": ["advanced-electronics"],
       "Unlocks": [],
-      "Effects": [
-        "Mining productivity: +10%"
-      ]
+      "Effects": ["Mining productivity: +10%"]
     },
     "modules": {
       "Id": "modules",
       "Name": "Modules",
       "Icon": "module",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 100,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
+      "Prereqs": ["advanced-electronics"],
       "Unlocks": [],
       "Effects": []
     },
@@ -7687,23 +7419,15 @@
       "Name": "Chemical science pack",
       "Icon": "chemical-science-pack",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 75,
       "ProductionPerTick": 0.1,
       "DurationSeconds": 10,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "chemical-science-pack"
-      ],
+      "Prereqs": ["advanced-electronics", "sulfur-processing"],
+      "Unlocks": ["chemical-science-pack"],
       "Effects": []
     },
     "electric-energy-accumulators": {
@@ -7711,23 +7435,15 @@
       "Name": "Electric energy accumulators",
       "Icon": "electric-energy-acumulators",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 150,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "accumulator"
-      ],
+      "Prereqs": ["electric-energy-distribution-1", "battery"],
+      "Unlocks": ["accumulator"],
       "Effects": []
     },
     "speed-module": {
@@ -7735,23 +7451,15 @@
       "Name": "Speed module",
       "Icon": "speed-module-1",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 50,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "speed-module"
-      ],
+      "Prereqs": ["modules"],
+      "Unlocks": ["speed-module"],
       "Effects": []
     },
     "effectivity-module": {
@@ -7759,23 +7467,15 @@
       "Name": "Efficiency module",
       "Icon": "effectivity-module-1",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 50,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "effectivity-module"
-      ],
+      "Prereqs": ["modules"],
+      "Unlocks": ["effectivity-module"],
       "Effects": []
     },
     "productivity-module": {
@@ -7783,23 +7483,15 @@
       "Name": "Productivity module",
       "Icon": "productivity-module-1",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 50,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
-      "Unlocks": [
-        "productivity-module"
-      ],
+      "Prereqs": ["modules"],
+      "Unlocks": ["productivity-module"],
       "Effects": []
     },
     "inserter-capacity-bonus-1": {
@@ -7807,73 +7499,47 @@
       "Name": "Inserter capacity bonus 1",
       "Icon": "inserter-capacity",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 200,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
+      "Prereqs": ["stack-inserter"],
       "Unlocks": [],
-      "Effects": [
-        "Stack inserter capacity: +1"
-      ]
+      "Effects": ["Stack inserter capacity: +1"]
     },
     "inserter-capacity-bonus-2": {
       "Id": "inserter-capacity-bonus-2",
       "Name": "Inserter capacity bonus 2",
       "Icon": "inserter-capacity",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 250,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 2,
-      "Prereqs": {},
+      "Prereqs": ["inserter-capacity-bonus-1"],
       "Unlocks": [],
-      "Effects": [
-        "Non-stack inserter capacity: +1",
-        "Stack inserter capacity: +1"
-      ]
+      "Effects": ["Non-stack inserter capacity: +1", "Stack inserter capacity: +1"]
     },
     "advanced-oil-processing": {
       "Id": "advanced-oil-processing",
       "Name": "Advanced oil processing",
       "Icon": "oil-processing",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 75,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
+      "Prereqs": ["chemical-science-pack"],
       "Unlocks": [
         "advanced-oil-processing",
         "heavy-oil-cracking",
@@ -7892,27 +7558,16 @@
       "Name": "Advanced material processing 2",
       "Icon": "advanced-material-processing",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 250,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
-      "Unlocks": [
-        "electric-furnace"
-      ],
+      "Prereqs": ["advanced-material-processing", "chemical-science-pack"],
+      "Unlocks": ["electric-furnace"],
       "Effects": []
     },
     "advanced-electronics-2": {
@@ -7920,27 +7575,16 @@
       "Name": "Advanced electronics 2",
       "Icon": "advanced-electronics-2",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 300,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
-      "Unlocks": [
-        "processing-unit"
-      ],
+      "Prereqs": ["chemical-science-pack"],
+      "Unlocks": ["processing-unit"],
       "Effects": []
     },
     "research-speed-3": {
@@ -7948,115 +7592,67 @@
       "Name": "Lab research speed 3",
       "Icon": "research-speed",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 250,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
+      "Prereqs": ["research-speed-2"],
       "Unlocks": [],
-      "Effects": [
-        "Lab research speed: +40%"
-      ]
+      "Effects": ["Lab research speed: +40%"]
     },
     "mining-productivity-2": {
       "Id": "mining-productivity-2",
       "Name": "Mining productivity 2",
       "Icon": "mining-productivity",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 500,
       "ProductionPerTick": 0.016666668,
       "DurationSeconds": 60,
       "Row": 4,
-      "Prereqs": {},
+      "Prereqs": ["mining-productivity-1"],
       "Unlocks": [],
-      "Effects": [
-        "Mining productivity: +10%"
-      ]
+      "Effects": ["Mining productivity: +10%"]
     },
     "uranium-processing": {
       "Id": "uranium-processing",
       "Name": "Uranium processing",
       "Icon": "uranium-processing",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 200,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
-      "Unlocks": [
-        "centrifuge",
-        "uranium-processing",
-        "uranium-fuel-cell"
-      ],
-      "Effects": [
-        "Uranium processing"
-      ]
+      "Prereqs": ["chemical-science-pack", "concrete"],
+      "Unlocks": ["centrifuge", "uranium-processing", "uranium-fuel-cell"],
+      "Effects": ["Uranium processing"]
     },
     "electric-energy-distribution-2": {
       "Id": "electric-energy-distribution-2",
       "Name": "Electric energy distribution 2",
       "Icon": "electric-energy-distribution-2",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 100,
       "ProductionPerTick": 0.022222223,
       "DurationSeconds": 45,
       "Row": 4,
-      "Prereqs": {},
-      "Unlocks": [
-        "substation"
-      ],
+      "Prereqs": ["electric-energy-distribution-1", "chemical-science-pack"],
+      "Unlocks": ["substation"],
       "Effects": []
     },
     "low-density-structure": {
@@ -8064,27 +7660,16 @@
       "Name": "Low density structure",
       "Icon": "low-density-structure",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 300,
       "ProductionPerTick": 0.022222223,
       "DurationSeconds": 45,
       "Row": 4,
-      "Prereqs": {},
-      "Unlocks": [
-        "low-density-structure"
-      ],
+      "Prereqs": ["advanced-material-processing", "chemical-science-pack"],
+      "Unlocks": ["low-density-structure"],
       "Effects": []
     },
     "inserter-capacity-bonus-3": {
@@ -8092,83 +7677,50 @@
       "Name": "Inserter capacity bonus 3",
       "Icon": "inserter-capacity",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 250,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
+      "Prereqs": ["inserter-capacity-bonus-2"],
       "Unlocks": [],
-      "Effects": [
-        "Stack inserter capacity: +1"
-      ]
+      "Effects": ["Stack inserter capacity: +1"]
     },
     "braking-force-1": {
       "Id": "braking-force-1",
       "Name": "Braking force 1",
       "Icon": "braking-force",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 100,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
+      "Prereqs": ["railway", "chemical-science-pack"],
       "Unlocks": [],
-      "Effects": [
-        "Train braking force: +10%"
-      ]
+      "Effects": ["Train braking force: +10%"]
     },
     "lubricant": {
       "Id": "lubricant",
       "Name": "Lubricant",
       "Icon": "lubricant",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 50,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
-      "Unlocks": [
-        "lubricant"
-      ],
+      "Prereqs": ["advanced-oil-processing"],
+      "Unlocks": ["lubricant"],
       "Effects": []
     },
     "braking-force-2": {
@@ -8176,55 +7728,33 @@
       "Name": "Braking force 2",
       "Icon": "braking-force",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 200,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
+      "Prereqs": ["braking-force-1"],
       "Unlocks": [],
-      "Effects": [
-        "Train braking force: +15%"
-      ]
+      "Effects": ["Train braking force: +15%"]
     },
     "rocket-fuel": {
       "Id": "rocket-fuel",
       "Name": "Rocket fuel",
       "Icon": "rocket-fuel",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 300,
       "ProductionPerTick": 0.022222223,
       "DurationSeconds": 45,
       "Row": 4,
-      "Prereqs": {},
-      "Unlocks": [
-        "rocket-fuel"
-      ],
+      "Prereqs": ["flammables", "advanced-oil-processing"],
+      "Unlocks": ["rocket-fuel"],
       "Effects": []
     },
     "nuclear-power": {
@@ -8232,24 +7762,15 @@
       "Name": "Nuclear power",
       "Icon": "nuclear-power",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 800,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
+      "Prereqs": ["uranium-processing"],
       "Unlocks": [
         "nuclear-reactor",
         "heat-exchanger",
@@ -8264,27 +7785,16 @@
       "Name": "Efficiency module 2",
       "Icon": "effectivity-module-2",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 75,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
-      "Unlocks": [
-        "effectivity-module-2"
-      ],
+      "Prereqs": ["effectivity-module", "advanced-electronics-2"],
+      "Unlocks": ["effectivity-module-2"],
       "Effects": []
     },
     "speed-module-2": {
@@ -8292,27 +7802,16 @@
       "Name": "Speed module 2",
       "Icon": "speed-module-2",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 75,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
-      "Unlocks": [
-        "speed-module-2"
-      ],
+      "Prereqs": ["speed-module", "advanced-electronics-2"],
+      "Unlocks": ["speed-module-2"],
       "Effects": []
     },
     "productivity-module-2": {
@@ -8320,27 +7819,16 @@
       "Name": "Productivity module 2",
       "Icon": "productivity-module-2",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 75,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
-      "Unlocks": [
-        "productivity-module-2"
-      ],
+      "Prereqs": ["productivity-module", "advanced-electronics-2"],
+      "Unlocks": ["productivity-module-2"],
       "Effects": []
     },
     "production-science-pack": {
@@ -8348,27 +7836,16 @@
       "Name": "Production science pack",
       "Icon": "production-science-pack",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 100,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
-      "Unlocks": [
-        "production-science-pack"
-      ],
+      "Prereqs": ["productivity-module", "advanced-material-processing-2", "railway"],
+      "Unlocks": ["production-science-pack"],
       "Effects": []
     },
     "research-speed-4": {
@@ -8376,55 +7853,33 @@
       "Name": "Lab research speed 4",
       "Icon": "research-speed",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 500,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
+      "Prereqs": ["research-speed-3"],
       "Unlocks": [],
-      "Effects": [
-        "Lab research speed: +50%"
-      ]
+      "Effects": ["Lab research speed: +50%"]
     },
     "electric-engine": {
       "Id": "electric-engine",
       "Name": "Electric engine",
       "Icon": "electric-engine",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 50,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
-      "Unlocks": [
-        "electric-engine-unit"
-      ],
+      "Prereqs": ["lubricant"],
+      "Unlocks": ["electric-engine-unit"],
       "Effects": []
     },
     "robotics": {
@@ -8432,27 +7887,16 @@
       "Name": "Robotics",
       "Icon": "robotics",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 75,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
-      "Unlocks": [
-        "flying-robot-frame"
-      ],
+      "Prereqs": ["electric-engine", "battery"],
+      "Unlocks": ["flying-robot-frame"],
       "Effects": []
     },
     "utility-science-pack": {
@@ -8460,27 +7904,16 @@
       "Name": "Utility science pack",
       "Icon": "utility-science-pack",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 100,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
-      "Unlocks": [
-        "utility-science-pack"
-      ],
+      "Prereqs": ["robotics", "advanced-electronics-2", "low-density-structure"],
+      "Unlocks": ["utility-science-pack"],
       "Effects": []
     },
     "effect-transmission": {
@@ -8488,31 +7921,17 @@
       "Name": "Effect transmission",
       "Icon": "effect-transmission",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 75,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 5,
-      "Prereqs": {},
-      "Unlocks": [
-        "beacon"
-      ],
+      "Prereqs": ["advanced-electronics-2", "production-science-pack"],
+      "Unlocks": ["beacon"],
       "Effects": []
     },
     "speed-module-3": {
@@ -8520,31 +7939,17 @@
       "Name": "Speed module 3",
       "Icon": "speed-module-3",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 300,
       "ProductionPerTick": 0.016666668,
       "DurationSeconds": 60,
       "Row": 5,
-      "Prereqs": {},
-      "Unlocks": [
-        "speed-module-3"
-      ],
+      "Prereqs": ["speed-module-2", "production-science-pack"],
+      "Unlocks": ["speed-module-3"],
       "Effects": []
     },
     "kovarex-enrichment-process": {
@@ -8552,66 +7957,35 @@
       "Name": "Kovarex enrichment process",
       "Icon": "kovarex-enrichment-process",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 1500,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 5,
-      "Prereqs": {},
-      "Unlocks": [
-        "kovarex-enrichment-process",
-        "nuclear-fuel"
-      ],
-      "Effects": [
-        "Kovarex enrichment process"
-      ]
+      "Prereqs": ["production-science-pack", "uranium-processing", "rocket-fuel"],
+      "Unlocks": ["kovarex-enrichment-process", "nuclear-fuel"],
+      "Effects": ["Kovarex enrichment process"]
     },
     "coal-liquefaction": {
       "Id": "coal-liquefaction",
       "Name": "Coal liquefaction",
       "Icon": "coal-liquefaction",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 200,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 5,
-      "Prereqs": {},
-      "Unlocks": [
-        "coal-liquefaction"
-      ],
+      "Prereqs": ["advanced-oil-processing", "production-science-pack"],
+      "Unlocks": ["coal-liquefaction"],
       "Effects": []
     },
     "inserter-capacity-bonus-4": {
@@ -8619,63 +7993,35 @@
       "Name": "Inserter capacity bonus 4",
       "Icon": "inserter-capacity",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 250,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 5,
-      "Prereqs": {},
+      "Prereqs": ["inserter-capacity-bonus-3"],
       "Unlocks": [],
-      "Effects": [
-        "Stack inserter capacity: +1"
-      ]
+      "Effects": ["Stack inserter capacity: +1"]
     },
     "nuclear-fuel-reprocessing": {
       "Id": "nuclear-fuel-reprocessing",
       "Name": "Nuclear fuel reprocessing",
       "Icon": "nuclear-fuel-reprocessing",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 50,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 5,
-      "Prereqs": {},
-      "Unlocks": [
-        "nuclear-fuel-reprocessing"
-      ],
+      "Prereqs": ["nuclear-power", "production-science-pack"],
+      "Unlocks": ["nuclear-fuel-reprocessing"],
       "Effects": []
     },
     "effectivity-module-3": {
@@ -8683,31 +8029,17 @@
       "Name": "Efficiency module 3",
       "Icon": "effectivity-module-3",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 300,
       "ProductionPerTick": 0.016666668,
       "DurationSeconds": 60,
       "Row": 5,
-      "Prereqs": {},
-      "Unlocks": [
-        "effectivity-module-3"
-      ],
+      "Prereqs": ["effectivity-module-2", "production-science-pack"],
+      "Unlocks": ["effectivity-module-3"],
       "Effects": []
     },
     "research-speed-5": {
@@ -8715,63 +8047,35 @@
       "Name": "Lab research speed 5",
       "Icon": "research-speed",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 500,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 5,
-      "Prereqs": {},
+      "Prereqs": ["research-speed-4"],
       "Unlocks": [],
-      "Effects": [
-        "Lab research speed: +50%"
-      ]
+      "Effects": ["Lab research speed: +50%"]
     },
     "automation-3": {
       "Id": "automation-3",
       "Name": "Automation 3",
       "Icon": "automation-3",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 150,
       "ProductionPerTick": 0.016666668,
       "DurationSeconds": 60,
       "Row": 5,
-      "Prereqs": {},
-      "Unlocks": [
-        "assembling-machine-3"
-      ],
+      "Prereqs": ["speed-module", "production-science-pack"],
+      "Unlocks": ["assembling-machine-3"],
       "Effects": []
     },
     "worker-robots-storage-1": {
@@ -8779,58 +8083,33 @@
       "Name": "Worker robot cargo size 1",
       "Icon": "worker-robots-storage",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 200,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
+      "Prereqs": ["robotics"],
       "Unlocks": [],
-      "Effects": [
-        "Worker robot capacity: +1"
-      ]
+      "Effects": ["Worker robot capacity: +1"]
     },
     "logistic-robotics": {
       "Id": "logistic-robotics",
       "Name": "Logistic robotics",
       "Icon": "logistic-robotics",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 250,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
-      "Unlocks": [
-        "roboport",
-        "logistic-chest-passive-provider",
-        "logistic-chest-storage",
-        "logistic-robot"
-      ],
+      "Prereqs": ["robotics"],
+      "Unlocks": ["roboport", "logistic-chest-passive-provider", "logistic-chest-storage", "logistic-robot"],
       "Effects": [
         "Character logistic requests",
         "Character auto trash filters",
@@ -8842,92 +8121,56 @@
       "Name": "Construction robotics",
       "Icon": "construction-robotics",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 100,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
+      "Prereqs": ["robotics"],
       "Unlocks": [
         "roboport",
         "logistic-chest-passive-provider",
         "logistic-chest-storage",
         "construction-robot"
       ],
-      "Effects": [
-        "Ghost rebuild timeout: +168 hours"
-      ]
+      "Effects": ["Ghost rebuild timeout: +168 hours"]
     },
     "worker-robots-speed-1": {
       "Id": "worker-robots-speed-1",
       "Name": "Worker robot speed 1",
       "Icon": "worker-robots-speed",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 50,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
+      "Prereqs": ["robotics"],
       "Unlocks": [],
-      "Effects": [
-        "Worker robot speed: +35%"
-      ]
+      "Effects": ["Worker robot speed: +35%"]
     },
     "productivity-module-3": {
       "Id": "productivity-module-3",
       "Name": "Productivity module 3",
       "Icon": "productivity-module-3",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 300,
       "ProductionPerTick": 0.016666668,
       "DurationSeconds": 60,
       "Row": 5,
-      "Prereqs": {},
-      "Unlocks": [
-        "productivity-module-3"
-      ],
+      "Prereqs": ["productivity-module-2", "production-science-pack"],
+      "Unlocks": ["productivity-module-3"],
       "Effects": []
     },
     "logistics-3": {
@@ -8935,33 +8178,17 @@
       "Name": "Logistics 3",
       "Icon": "logistics-3",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 300,
       "ProductionPerTick": 0.06666667,
       "DurationSeconds": 15,
       "Row": 5,
-      "Prereqs": {},
-      "Unlocks": [
-        "express-transport-belt",
-        "express-underground-belt",
-        "express-splitter"
-      ],
+      "Prereqs": ["production-science-pack", "lubricant"],
+      "Unlocks": ["express-transport-belt", "express-underground-belt", "express-splitter"],
       "Effects": []
     },
     "braking-force-3": {
@@ -8969,285 +8196,160 @@
       "Name": "Braking force 3",
       "Icon": "braking-force",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 250,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 5,
-      "Prereqs": {},
+      "Prereqs": ["braking-force-2"],
       "Unlocks": [],
-      "Effects": [
-        "Train braking force: +15%"
-      ]
+      "Effects": ["Train braking force: +15%"]
     },
     "braking-force-4": {
       "Id": "braking-force-4",
       "Name": "Braking force 4",
       "Icon": "braking-force",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 350,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 5,
-      "Prereqs": {},
+      "Prereqs": ["braking-force-3"],
       "Unlocks": [],
-      "Effects": [
-        "Train braking force: +15%"
-      ]
+      "Effects": ["Train braking force: +15%"]
     },
     "worker-robots-speed-2": {
       "Id": "worker-robots-speed-2",
       "Name": "Worker robot speed 2",
       "Icon": "worker-robots-speed",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 100,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": {},
+      "Prereqs": ["worker-robots-speed-1"],
       "Unlocks": [],
-      "Effects": [
-        "Worker robot speed: +40%"
-      ]
+      "Effects": ["Worker robot speed: +40%"]
     },
     "inserter-capacity-bonus-5": {
       "Id": "inserter-capacity-bonus-5",
       "Name": "Inserter capacity bonus 5",
       "Icon": "inserter-capacity",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 300,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 5,
-      "Prereqs": {},
+      "Prereqs": ["inserter-capacity-bonus-4"],
       "Unlocks": [],
-      "Effects": [
-        "Stack inserter capacity: +2"
-      ]
+      "Effects": ["Stack inserter capacity: +2"]
     },
     "worker-robots-storage-2": {
       "Id": "worker-robots-storage-2",
       "Name": "Worker robot cargo size 2",
       "Icon": "worker-robots-storage",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 300,
       "ProductionPerTick": 0.016666668,
       "DurationSeconds": 60,
       "Row": 5,
-      "Prereqs": {},
+      "Prereqs": ["worker-robots-storage-1"],
       "Unlocks": [],
-      "Effects": [
-        "Worker robot capacity: +1"
-      ]
+      "Effects": ["Worker robot capacity: +1"]
     },
     "braking-force-5": {
       "Id": "braking-force-5",
       "Name": "Braking force 5",
       "Icon": "braking-force",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 450,
       "ProductionPerTick": 0.028571429,
       "DurationSeconds": 35,
       "Row": 5,
-      "Prereqs": {},
+      "Prereqs": ["braking-force-4"],
       "Unlocks": [],
-      "Effects": [
-        "Train braking force: +15%"
-      ]
+      "Effects": ["Train braking force: +15%"]
     },
     "inserter-capacity-bonus-6": {
       "Id": "inserter-capacity-bonus-6",
       "Name": "Inserter capacity bonus 6",
       "Icon": "inserter-capacity",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 400,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 5,
-      "Prereqs": {},
+      "Prereqs": ["inserter-capacity-bonus-5"],
       "Unlocks": [],
-      "Effects": [
-        "Stack inserter capacity: +2"
-      ]
+      "Effects": ["Stack inserter capacity: +2"]
     },
     "worker-robots-speed-3": {
       "Id": "worker-robots-speed-3",
       "Name": "Worker robot speed 3",
       "Icon": "worker-robots-speed",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "utility-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "utility-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 150,
       "ProductionPerTick": 0.016666668,
       "DurationSeconds": 60,
       "Row": 6,
-      "Prereqs": {},
+      "Prereqs": ["worker-robots-speed-2"],
       "Unlocks": [],
-      "Effects": [
-        "Worker robot speed: +45%"
-      ]
+      "Effects": ["Worker robot speed: +45%"]
     },
     "logistic-system": {
       "Id": "logistic-system",
       "Name": "Logistic system",
       "Icon": "logistic-system",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "utility-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "utility-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 500,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 6,
-      "Prereqs": {},
-      "Unlocks": [
-        "logistic-chest-active-provider",
-        "logistic-chest-requester",
-        "logistic-chest-buffer"
-      ],
+      "Prereqs": ["utility-science-pack", "logistic-robotics"],
+      "Unlocks": ["logistic-chest-active-provider", "logistic-chest-requester", "logistic-chest-buffer"],
       "Effects": []
     },
     "inserter-capacity-bonus-7": {
@@ -9255,68 +8357,36 @@
       "Name": "Inserter capacity bonus 7",
       "Icon": "inserter-capacity",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "utility-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 },
+        { "Entity": "utility-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 600,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 6,
-      "Prereqs": {},
+      "Prereqs": ["inserter-capacity-bonus-6"],
       "Unlocks": [],
-      "Effects": [
-        "Non-stack inserter capacity: +1",
-        "Stack inserter capacity: +2"
-      ]
+      "Effects": ["Non-stack inserter capacity: +1", "Stack inserter capacity: +2"]
     },
     "rocket-control-unit": {
       "Id": "rocket-control-unit",
       "Name": "Rocket control unit",
       "Icon": "rocket-control-unit",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "utility-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "utility-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 300,
       "ProductionPerTick": 0.022222223,
       "DurationSeconds": 45,
       "Row": 6,
-      "Prereqs": {},
-      "Unlocks": [
-        "rocket-control-unit"
-      ],
+      "Prereqs": ["utility-science-pack", "speed-module"],
+      "Unlocks": ["rocket-control-unit"],
       "Effects": []
     },
     "braking-force-6": {
@@ -9324,248 +8394,137 @@
       "Name": "Braking force 6",
       "Icon": "braking-force",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "utility-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 },
+        { "Entity": "utility-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 550,
       "ProductionPerTick": 0.022222223,
       "DurationSeconds": 45,
       "Row": 6,
-      "Prereqs": {},
+      "Prereqs": ["braking-force-5"],
       "Unlocks": [],
-      "Effects": [
-        "Train braking force: +15%"
-      ]
+      "Effects": ["Train braking force: +15%"]
     },
     "mining-productivity-3": {
       "Id": "mining-productivity-3",
       "Name": "Mining productivity 3",
       "Icon": "mining-productivity",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "utility-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 },
+        { "Entity": "utility-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 1000,
       "ProductionPerTick": 0.016666668,
       "DurationSeconds": 60,
       "Row": 6,
-      "Prereqs": {},
+      "Prereqs": ["mining-productivity-2"],
       "Unlocks": [],
-      "Effects": [
-        "Mining productivity: +10%"
-      ]
+      "Effects": ["Mining productivity: +10%"]
     },
     "worker-robots-storage-3": {
       "Id": "worker-robots-storage-3",
       "Name": "Worker robot cargo size 3",
       "Icon": "worker-robots-storage",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "utility-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 },
+        { "Entity": "utility-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 450,
       "ProductionPerTick": 0.016666668,
       "DurationSeconds": 60,
       "Row": 6,
-      "Prereqs": {},
+      "Prereqs": ["worker-robots-storage-2"],
       "Unlocks": [],
-      "Effects": [
-        "Worker robot capacity: +1"
-      ]
+      "Effects": ["Worker robot capacity: +1"]
     },
     "research-speed-6": {
       "Id": "research-speed-6",
       "Name": "Lab research speed 6",
       "Icon": "research-speed",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "utility-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 },
+        { "Entity": "utility-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 500,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 6,
-      "Prereqs": {},
+      "Prereqs": ["research-speed-5"],
       "Unlocks": [],
-      "Effects": [
-        "Lab research speed: +60%"
-      ]
+      "Effects": ["Lab research speed: +60%"]
     },
     "worker-robots-speed-4": {
       "Id": "worker-robots-speed-4",
       "Name": "Worker robot speed 4",
       "Icon": "worker-robots-speed",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "utility-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "utility-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 250,
       "ProductionPerTick": 0.016666668,
       "DurationSeconds": 60,
       "Row": 6,
-      "Prereqs": {},
+      "Prereqs": ["worker-robots-speed-3"],
       "Unlocks": [],
-      "Effects": [
-        "Worker robot speed: +55%"
-      ]
+      "Effects": ["Worker robot speed: +55%"]
     },
     "braking-force-7": {
       "Id": "braking-force-7",
       "Name": "Braking force 7",
       "Icon": "braking-force",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "utility-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 },
+        { "Entity": "utility-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 650,
       "ProductionPerTick": 0.016666668,
       "DurationSeconds": 60,
       "Row": 6,
-      "Prereqs": {},
+      "Prereqs": ["braking-force-6"],
       "Unlocks": [],
-      "Effects": [
-        "Train braking force: +15%"
-      ]
+      "Effects": ["Train braking force: +15%"]
     },
     "rocket-silo": {
       "Id": "rocket-silo",
       "Name": "Rocket silo",
       "Icon": "rocket-silo",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "utility-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 },
+        { "Entity": "utility-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 1000,
       "ProductionPerTick": 0.016666668,
       "DurationSeconds": 60,
       "Row": 6,
-      "Prereqs": {},
-      "Unlocks": [
-        "rocket-silo",
-        "rocket-part"
+      "Prereqs": [
+        "concrete",
+        "speed-module-3",
+        "productivity-module-3",
+        "rocket-fuel",
+        "rocket-control-unit"
       ],
+      "Unlocks": ["rocket-silo", "rocket-part"],
       "Effects": []
     },
     "space-science-pack": {
@@ -9573,37 +8532,18 @@
       "Name": "Space science pack",
       "Icon": "space-science-pack",
       "Input": [
-        {
-          "Entity": "automation-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "logistic-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "chemical-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "production-science-pack",
-          "Count": 1
-        },
-        {
-          "Entity": "utility-science-pack",
-          "Count": 1
-        }
+        { "Entity": "automation-science-pack", "Count": 1 },
+        { "Entity": "logistic-science-pack", "Count": 1 },
+        { "Entity": "chemical-science-pack", "Count": 1 },
+        { "Entity": "production-science-pack", "Count": 1 },
+        { "Entity": "utility-science-pack", "Count": 1 }
       ],
       "ProductionRequiredForCompletion": 2000,
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 6,
-      "Prereqs": {},
-      "Unlocks": [
-        "satellite",
-        "space-science-pack",
-        "raw-fish"
-      ],
+      "Prereqs": ["rocket-silo", "electric-energy-accumulators", "solar-energy"],
+      "Unlocks": ["satellite", "space-science-pack", "raw-fish"],
       "Effects": []
     }
   }
