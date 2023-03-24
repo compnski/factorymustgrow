@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import "../App.scss";
+import { Link } from "react-router-dom"
+import "../App.scss"
 
 const Buttons = {
   Play: "game",
@@ -8,10 +8,10 @@ const Buttons = {
   Planner: "planner",
   Help: "help",
   Credits: "https://gitlab.com/omgbear/factorymustgrow",
-};
+}
 
 const buttonClasses =
-  "backdrop-brightness-50 shadow shadow-orange-800 w-72 p-2 hover:ring-sky-700 hover:ring-2 focus:ring-sky-700 focus:ring-2";
+  "backdrop-brightness-50 shadow shadow-orange-800 w-72 p-2 hover:ring-sky-700 hover:ring-2 focus:ring-sky-700 focus:ring-2"
 
 export function StartScreen() {
   return (
@@ -29,5 +29,5 @@ export function StartScreen() {
         </ul>
       </div>
     </div>
-  );
+  )
 }

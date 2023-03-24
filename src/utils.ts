@@ -1,14 +1,14 @@
-import { GetResearch } from "./gen/entities";
-import { ReadonlyBuilding } from "./factoryGameState";
+import { GetResearch } from "./gen/entities"
+import { ReadonlyBuilding } from "./factoryGameState"
 
-const seenSet = new Set<string>();
+const seenSet = new Set<string>()
 
 export const once = (key: string | number | null, f: () => void) => {
-  const seenKey = new Error().stack + "_" + key;
-  if (seenSet.has(seenKey)) return;
-  seenSet.add(seenKey);
-  f();
-};
+  const seenKey = new Error().stack + "_" + key
+  if (seenSet.has(seenKey)) return
+  seenSet.add(seenKey)
+  f()
+}
 
 const Liquids = new Set([
   "water",
@@ -18,76 +18,66 @@ const Liquids = new Set([
   "lubricant",
   "petroleum-gas",
   "sulfuric-acid",
-]);
+])
 
-export function entityIconLookupByKind(
-  kind: string
-): (entity: string) => string {
+export function entityIconLookupByKind(kind: string): (entity: string) => string {
   switch (kind) {
     case "Lab":
       return (entity: string): string => {
-        if (entity.endsWith("science-pack")) return entity;
-        const research = !entity ? "" : GetResearch(entity);
-        if (research) return "sprite-technology-" + research.Icon;
-        return "sprite-technology-no-science";
-      };
+        if (entity.endsWith("science-pack")) return entity
+        const research = !entity ? "" : GetResearch(entity)
+        if (research) return "sprite-technology-" + research.Icon
+        return "sprite-technology-no-science"
+      }
     case "MainBus":
       return (entity: string) => {
         if (Liquids.has(entity)) {
-          return entity + "-barrel";
+          return entity + "-barrel"
         }
-        return entity;
-      };
+        return entity
+      }
   }
   return function entityLookupInnerFunction(entity: string) {
-    return entity;
-  };
+    return entity
+  }
 }
 
-export function BuildingHasOutput(
-  building?: string | ReadonlyBuilding,
-  entity?: string
-): boolean {
+export function BuildingHasOutput(building?: string | ReadonlyBuilding, entity?: string): boolean {
   if (typeof building === "string") {
-    return building !== "Lab";
+    return building !== "Lab"
   }
   return Boolean(
     entity &&
       building &&
       BuildingHasOutput(building.kind) &&
-      (building.outputBuffers.Accepts(entity) ||
-        building.outputBuffers.Count(entity) > 0)
-  );
+      (building.outputBuffers.Accepts(entity) || building.outputBuffers.Count(entity) > 0)
+  )
 }
 
-export function BuildingHasInput(
-  building?: string | ReadonlyBuilding,
-  entity?: string
-): boolean {
+export function BuildingHasInput(building?: string | ReadonlyBuilding, entity?: string): boolean {
   if (typeof building === "string") {
-    return building !== "Extractor";
+    return building !== "Extractor"
   }
   return Boolean(
     entity &&
       building &&
       BuildingHasInput(building.kind) &&
       building.inputBuffers &&
-      (building.inputBuffers.Accepts(entity) ||
-        building.inputBuffers.Count(entity) > 0)
-  );
+      (building.inputBuffers.Accepts(entity) || building.inputBuffers.Count(entity) > 0)
+  )
 }
 
 export function showUserError(s: string) {
-  console.log("User Error: " + s);
+  console.log("User Error: " + s)
 }
 
 export function assertNever(shouldBeNever: never) {
-  throw new Error("Was not never: " + shouldBeNever);
+  throw new Error("Was not never: " + shouldBeNever)
 }
 
 export function swap<T>(a: T[], lowerIdx: number, upperIdx: number): T[] {
-  const lowerSlot = a[lowerIdx];
-  const upperSlot = a[upperIdx];
+  const lowerSlot = a[lowerIdx]
+  const upperSlot = a[upperIdx]
 
   return [
     ...a.slice(0, lowerIdx),
@@ -95,19 +85,17 @@ export function swap<T>(a: T[], lowerIdx: number, upperIdx: number): T[] {
     ...(upperIdx != lowerIdx + 1 ? a.slice(lowerIdx + 1, upperIdx) : []),
     lowerSlot,
     ...a.slice(upperIdx + 1),
-  ];
+  ]
 }
 
 export function replaceItem<T>(a: readonly T[], idx: number, t: T): T[] {
-  return [...a.slice(0, idx), t, ...a.slice(idx + 1)];
+  return [...a.slice(0, idx), t, ...a.slice(idx + 1)]
 }
 
-export function notEmpty<TValue>(
-  value: TValue | null | undefined
-): value is TValue {
-  return value !== null && value !== undefined;
+export function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
+  return value !== null && value !== undefined
 }
 
 export async function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }

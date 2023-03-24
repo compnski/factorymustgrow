@@ -1,47 +1,46 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { FactoryGameState } from "../factoryGameState";
-import "./CommentsForm.scss";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react"
+import { FactoryGameState } from "../factoryGameState"
+import "./CommentsForm.scss"
 
-const backendUrl =
-  "https://factorymustgrow-production.factorymustgrow.workers.dev";
+const backendUrl = "https://factorymustgrow-production.factorymustgrow.workers.dev"
 
 type CommentsFormProps = {
-  gameState: FactoryGameState;
-};
+  gameState: FactoryGameState
+}
 export function CommentsForm(props: CommentsFormProps) {
   const [checked, setChecked] = useState<boolean>(() => {
-    const saved = localStorage.getItem("sendStateChecked") || "true";
-    const savedValue = JSON.parse(saved) as boolean;
-    return saved == undefined ? true : savedValue;
-  });
+    const saved = localStorage.getItem("sendStateChecked") || "true"
+    const savedValue = JSON.parse(saved) as boolean
+    return saved == undefined ? true : savedValue
+  })
 
-  const [formOpen, setFormOpen] = useState(false);
-  const [commentText, setCommentText] = useState("");
-  const [emailText, setEmailText] = useState("");
-  const [error, setError] = useState<string | undefined>();
+  const [formOpen, setFormOpen] = useState(false)
+  const [commentText, setCommentText] = useState("")
+  const [emailText, setEmailText] = useState("")
+  const [error, setError] = useState<string | undefined>()
 
   const handleCheckedChange = () => {
-    setChecked(!checked);
-  };
+    setChecked(!checked)
+  }
 
   const handleCommentChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
-    setCommentText(evt.target.value);
-  };
+    setCommentText(evt.target.value)
+  }
 
   const handleEmailChange = (evt: ChangeEvent<HTMLInputElement>) => {
-    setEmailText(evt.target.value);
-  };
+    setEmailText(evt.target.value)
+  }
 
   useEffect(() => {
     // storing input name
-    localStorage.setItem("sendStateChecked", JSON.stringify(checked));
-  }, [checked]);
+    localStorage.setItem("sendStateChecked", JSON.stringify(checked))
+  }, [checked])
 
   async function sendFeedback(evt: FormEvent) {
-    evt.preventDefault();
-    setError(undefined);
+    evt.preventDefault()
+    setError(undefined)
     try {
-      console.log("sending feedback");
+      console.log("sending feedback")
       const resp = await fetch(backendUrl, {
         method: "POST",
         body: JSON.stringify({
@@ -51,12 +50,12 @@ export function CommentsForm(props: CommentsFormProps) {
           userEmail: emailText,
           feeling: "N/A",
         }),
-      });
-      console.log(resp);
-      setCommentText("");
-      setFormOpen(false);
+      })
+      console.log(resp)
+      setCommentText("")
+      setFormOpen(false)
     } catch (e) {
-      if (e instanceof Error) setError(`Error: ${e.message}`);
+      if (e instanceof Error) setError(`Error: ${e.message}`)
     }
   }
 
@@ -74,11 +73,7 @@ export function CommentsForm(props: CommentsFormProps) {
           onChange={handleCommentChange}
         />
         <label>
-          <input
-            type="checkbox"
-            checked={checked}
-            onChange={handleCheckedChange}
-          />
+          <input type="checkbox" checked={checked} onChange={handleCheckedChange} />
           Send GameState?
         </label>
         <label>
@@ -93,11 +88,9 @@ export function CommentsForm(props: CommentsFormProps) {
         </label>
         {error && <div className="text-red-500 text-sm">{error}</div>}
         <label>
-          <button className="border border-gray-500 p-2 w-32 bg-gray-300">
-            Submit!
-          </button>
+          <button className="border border-gray-500 p-2 w-32 bg-gray-300">Submit!</button>
         </label>
       </form>
     </div>
-  );
+  )
 }

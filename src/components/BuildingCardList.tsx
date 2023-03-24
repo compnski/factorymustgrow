@@ -1,11 +1,11 @@
-import { SyntheticEvent, useState } from "react";
-import { InserterIdForBuilding } from "../building";
-import { FactoryGameState, ReadonlyRegion } from "../factoryGameState";
-import { GameAction } from "../GameAction";
-import { showUserError } from "../utils";
-import { BuildingCard } from "./BuildingCard";
-import { InserterCard } from "./InserterCard";
-import { MainBusControllerChildProps } from "./MainBusController";
+import { SyntheticEvent, useState } from "react"
+import { InserterIdForBuilding } from "../building"
+import { FactoryGameState, ReadonlyRegion } from "../factoryGameState"
+import { GameAction } from "../GameAction"
+import { showUserError } from "../utils"
+import { BuildingCard } from "./BuildingCard"
+import { InserterCard } from "./InserterCard"
+import { MainBusControllerChildProps } from "./MainBusController"
 
 export const BuildingCardList = ({
   region,
@@ -16,34 +16,33 @@ export const BuildingCardList = ({
   beltState,
   ghostConnection,
 }: {
-  region: ReadonlyRegion;
-  uxDispatch: (a: GameAction) => void;
-  gameState: FactoryGameState;
+  region: ReadonlyRegion
+  uxDispatch: (a: GameAction) => void
+  gameState: FactoryGameState
 } & MainBusControllerChildProps) => {
-  const regionId = region.Id;
-  const [dragIdx, setDragIdx] = useState(-1);
+  const regionId = region.Id
+  const [dragIdx, setDragIdx] = useState(-1)
 
   const handleDrag = (buildingIdx: number) => () => {
-    console.log("drag start");
-    setDragIdx(buildingIdx);
+    console.log("drag start")
+    setDragIdx(buildingIdx)
     //e.preventDefault();
     //e.stopPropagation();
-  };
+  }
 
   // TODO: Drag inserters to belts?
-  const handleDrop =
-    (dropIdx: number, isDropOnLastBuilding: boolean) => (e: SyntheticEvent) => {
-      console.log(dragIdx, dropIdx);
-      uxDispatch({
-        type: "ReorderBuildings",
-        regionId,
-        buildingIdx: dragIdx,
-        dropBuildingIdx: dropIdx,
-        isDropOnLastBuilding,
-      });
-      e.preventDefault();
-      //e.stopPropagation();
-    };
+  const handleDrop = (dropIdx: number, isDropOnLastBuilding: boolean) => (e: SyntheticEvent) => {
+    console.log(dragIdx, dropIdx)
+    uxDispatch({
+      type: "ReorderBuildings",
+      regionId,
+      buildingIdx: dragIdx,
+      dropBuildingIdx: dropIdx,
+      isDropOnLastBuilding,
+    })
+    e.preventDefault()
+    //e.stopPropagation();
+  }
 
   const moveUp = (buildingIdx: number) => {
     for (let i = buildingIdx; i >= 0; i--) {
@@ -54,13 +53,13 @@ export const BuildingCardList = ({
           buildingIdx: buildingIdx,
           dropBuildingIdx: i,
           isDropOnLastBuilding: false,
-        });
-        return;
+        })
+        return
       }
     }
-    showUserError("No empty slot found");
-    return;
-  };
+    showUserError("No empty slot found")
+    return
+  }
 
   const moveDown = (buildingIdx: number) => {
     for (let i = buildingIdx; i < region.BuildingSlots.length; i++) {
@@ -71,13 +70,13 @@ export const BuildingCardList = ({
           buildingIdx: buildingIdx,
           dropBuildingIdx: i,
           isDropOnLastBuilding: false,
-        });
-        return;
+        })
+        return
       }
     }
-    showUserError("No empty slot found");
-    return;
-  };
+    showUserError("No empty slot found")
+    return
+  }
 
   // TODO: Store pieces and construct ghost belt
   // -
@@ -85,7 +84,7 @@ export const BuildingCardList = ({
   const cards = region.BuildingSlots.map((buildingSlot, idx) => {
     const isFirstBuilding = idx === 0,
       isLastBuilding = idx === region.BuildingSlots.length - 1,
-      allowsDrop = buildingSlot.Building.kind === "Empty" || isLastBuilding;
+      allowsDrop = buildingSlot.Building.kind === "Empty" || isLastBuilding
 
     return (
       <div key={idx}>
@@ -108,9 +107,7 @@ export const BuildingCardList = ({
           beltHandler={beltHandler}
           beltState={beltState}
           beltInserterMouseDown={beltInserterMouseDown}
-          ghostConnection={
-            ghostConnection?.buildingIdx == idx ? ghostConnection : undefined
-          }
+          ghostConnection={ghostConnection?.buildingIdx == idx ? ghostConnection : undefined}
         />
         {!isLastBuilding && (
           <InserterCard
@@ -122,8 +119,8 @@ export const BuildingCardList = ({
           />
         )}
       </div>
-    );
-  });
+    )
+  })
 
   return (
     <div
@@ -133,5 +130,5 @@ export const BuildingCardList = ({
     >
       {cards}
     </div>
-  );
-};
+  )
+}

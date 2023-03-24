@@ -1,8 +1,8 @@
-import { DispatchFunc } from "./stateVm";
-import { StateAddress } from "./state/address";
-import { Belt, EntityStack } from "./types";
-import { ReadonlyItemBuffer } from "./factoryGameState";
-import { BuildingHasInput, BuildingHasOutput } from "./utils";
+import { DispatchFunc } from "./stateVm"
+import { StateAddress } from "./state/address"
+import { Belt, EntityStack } from "./types"
+import { ReadonlyItemBuffer } from "./factoryGameState"
+import { BuildingHasInput, BuildingHasOutput } from "./utils"
 
 export function moveToInventory(
   dispatch: DispatchFunc,
@@ -15,14 +15,14 @@ export function moveToInventory(
     address: { inventory: true },
     entity,
     count: count,
-  });
+  })
   if (fromAddress)
     dispatch({
       kind: "AddItemCount",
       address: fromAddress,
       entity,
       count: -count,
-    });
+    })
 }
 
 export function CanPushTo(
@@ -33,15 +33,10 @@ export function CanPushTo(
     BuildingHasInput(to?.kind) &&
       BuildingHasOutput(from?.kind) &&
       to &&
-      from.outputBuffers
-        .Entities()
-        .reduce<boolean>((accum: boolean, [entity]): boolean => {
-          return (
-            ((accum ?? true) && to.inputBuffers.Accepts(entity)) ||
-            to.inputBuffers.Count(entity) > 0
-          );
-        }, true)
-  );
+      from.outputBuffers.Entities().reduce<boolean>((accum: boolean, [entity]): boolean => {
+        return ((accum ?? true) && to.inputBuffers.Accepts(entity)) || to.inputBuffers.Count(entity) > 0
+      }, true)
+  )
 }
 
 export function VMPushToOtherBuilding(
@@ -52,14 +47,14 @@ export function VMPushToOtherBuilding(
   { inputBuffers }: { inputBuffers: ReadonlyItemBuffer },
   maxTransferred: number
 ) {
-  let remainingMaxTransfer = maxTransferred;
+  let remainingMaxTransfer = maxTransferred
   outputBuffers.Entities().forEach(([entity]) => {
     if (inputBuffers.Accepts(entity)) {
       const transferAmount = Math.min(
         remainingMaxTransfer,
         outputBuffers.Count(entity),
         inputBuffers.AvailableSpace(entity)
-      );
+      )
 
       // console.log(
       //   entity,
@@ -71,32 +66,27 @@ export function VMPushToOtherBuilding(
       // );
 
       if (transferAmount) {
-        remainingMaxTransfer -= transferAmount;
+        remainingMaxTransfer -= transferAmount
         dispatch({
           kind: "AddItemCount",
           address: inputAddress,
           entity,
           count: transferAmount,
-        });
+        })
         dispatch({
           kind: "AddItemCount",
           address: outputAddress,
           entity,
           count: -transferAmount,
-        });
+        })
       }
     }
-  });
+  })
 }
 
 export function StackCapacity(stack: EntityStack | undefined): number {
-  if (
-    stack === undefined ||
-    stack.MaxCount === undefined ||
-    stack.MaxCount === Infinity
-  )
-    return Infinity;
-  return Math.max(0, stack.MaxCount - stack.Count);
+  if (stack === undefined || stack.MaxCount === undefined || stack.MaxCount === Infinity) return Infinity
+  return Math.max(0, stack.MaxCount - stack.Count)
 }
 
 export function stackTransfer(
@@ -106,17 +96,13 @@ export function stackTransfer(
   integersOnly = true
 ): number {
   if (toStack.Entity !== "" && toStack.Entity !== fromStack.Entity) {
-    return 0;
+    return 0
   }
-  if (!toStack.Entity) toStack.Entity = fromStack.Entity;
+  if (!toStack.Entity) toStack.Entity = fromStack.Entity
   const availableItems = fromStack.Count,
-    availableSpace = StackCapacity(toStack);
-  let amountToTransfer = Math.min(
-    maxTransferred,
-    availableItems,
-    availableSpace
-  );
-  if (integersOnly) amountToTransfer = Math.floor(amountToTransfer);
+    availableSpace = StackCapacity(toStack)
+  let amountToTransfer = Math.min(maxTransferred, availableItems, availableSpace)
+  if (integersOnly) amountToTransfer = Math.floor(amountToTransfer)
   // if (amountToTransfer > 0)
   //   console.log(
   //     `Transfer ${amountToTransfer} ${fromStack.Entity} from`,
@@ -124,20 +110,18 @@ export function stackTransfer(
   //     "to",
   //     toStack
   //   );
-  fromStack.Count -= amountToTransfer;
-  toStack.Count += amountToTransfer;
-  return amountToTransfer;
+  fromStack.Count -= amountToTransfer
+  toStack.Count += amountToTransfer
+  return amountToTransfer
 }
 
 export function beltOverlaps({
   laneIdx,
   upperSlotIdx,
   lowerSlotIdx,
-}: Pick<Belt, "upperSlotIdx" | "lowerSlotIdx" | "laneIdx">): (
-  b: Belt
-) => boolean {
+}: Pick<Belt, "upperSlotIdx" | "lowerSlotIdx" | "laneIdx">): (b: Belt) => boolean {
   return (b: Belt) =>
     b.laneIdx == laneIdx &&
     ((b.lowerSlotIdx >= upperSlotIdx && b.lowerSlotIdx <= lowerSlotIdx) ||
-      (b.upperSlotIdx >= upperSlotIdx && b.upperSlotIdx <= lowerSlotIdx));
+      (b.upperSlotIdx >= upperSlotIdx && b.upperSlotIdx <= lowerSlotIdx))
 }

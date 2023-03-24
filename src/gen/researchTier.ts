@@ -1,9 +1,9 @@
-import { Map } from "immutable";
+import { Map } from "immutable"
 
 export function ResearchTier(id: string): number {
-  const tier = ResearchTiers.get(id);
-  if (tier === undefined) throw new Error("No tier found for research " + id);
-  return tier;
+  const tier = ResearchTiers.get(id)
+  if (tier === undefined) throw new Error("No tier found for research " + id)
+  return tier
 }
 
 export const ResearchTiers = Map({
@@ -200,4 +200,4 @@ export const ResearchTiers = Map({
   "worker-robots-speed-6": 17,
   "artillery-shell-range-1": 16,
   "refined-flammables-7": 16,
-});
+})

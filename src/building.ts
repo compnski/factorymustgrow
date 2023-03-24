@@ -1,53 +1,46 @@
-import { Inserter, NewInserter } from "./inserter";
-import { ReadonlyInventory } from "./inventory";
-import { Extractor, Factory } from "./production";
-import { Lab } from "./research";
-import { Chest } from "./storage";
-import { TruckLineDepot } from "./transport";
-import { BeltConnection } from "./types";
-import { ReadonlyBuildingSlot, ReadonlyItemBuffer } from "./factoryGameState";
+import { Inserter, NewInserter } from "./inserter"
+import { ReadonlyInventory } from "./inventory"
+import { Extractor, Factory } from "./production"
+import { Lab } from "./research"
+import { Chest } from "./storage"
+import { TruckLineDepot } from "./transport"
+import { BeltConnection } from "./types"
+import { ReadonlyBuildingSlot, ReadonlyItemBuffer } from "./factoryGameState"
 
 export type BuildingSlot = {
-  Building: Building;
-  Inserter: Inserter;
-  BeltConnections: BeltConnection[];
-};
+  Building: Building
+  Inserter: Inserter
+  BeltConnections: BeltConnection[]
+}
 
 export type InserterId =
   | {
-      location: "BUILDING";
-      regionId: string;
-      buildingIdx: number;
+      location: "BUILDING"
+      regionId: string
+      buildingIdx: number
     }
   | {
-      location: "BELT";
-      regionId: string;
-      buildingIdx: number;
-      connectionIdx: number;
-    };
+      location: "BELT"
+      regionId: string
+      buildingIdx: number
+      connectionIdx: number
+    }
 
-export function InserterIdForBuilding(
-  regionId: string,
-  buildingIdx: number
-): InserterId {
+export function InserterIdForBuilding(regionId: string, buildingIdx: number): InserterId {
   return {
     location: "BUILDING",
     regionId,
     buildingIdx,
-  };
+  }
 }
 
-export function InserterIdForBelt(
-  regionId: string,
-  buildingIdx: number,
-  connectionIdx: number
-): InserterId {
+export function InserterIdForBelt(regionId: string, buildingIdx: number, connectionIdx: number): InserterId {
   return {
     location: "BELT",
     regionId,
     buildingIdx,
     connectionIdx,
-  };
+  }
 }
 
 // export function NextEmptySlot(
@@ -57,15 +50,10 @@ export function InserterIdForBelt(
 //   return nextEmpty >= 0 ? nextEmpty : undefined;
 // }
 
-export function findFirstEmptyLane(
-  BuildingSlots: ReadonlyBuildingSlot[],
-  exceptThisIdx?: number
-) {
+export function findFirstEmptyLane(BuildingSlots: ReadonlyBuildingSlot[], exceptThisIdx?: number) {
   return BuildingSlots.findIndex(
-    (bs, idx) =>
-      bs.Building.kind === "Empty" &&
-      (exceptThisIdx == undefined || idx != exceptThisIdx)
-  );
+    (bs, idx) => bs.Building.kind === "Empty" && (exceptThisIdx == undefined || idx != exceptThisIdx)
+  )
 }
 
 export function NewBuildingSlot(
@@ -75,38 +63,30 @@ export function NewBuildingSlot(
 ): BuildingSlot {
   const belts =
     typeof numBeltConnections == "number"
-      ? [...Array(numBeltConnections)].map<BeltConnection>(
-          (): BeltConnection => {
-            return {
-              Inserter: NewInserter(),
-              laneId: undefined,
-            };
+      ? [...Array(numBeltConnections)].map<BeltConnection>((): BeltConnection => {
+          return {
+            Inserter: NewInserter(),
+            laneId: undefined,
           }
-        )
-      : numBeltConnections;
+        })
+      : numBeltConnections
   return {
     Building,
     Inserter: inserter,
     BeltConnections: belts,
-  };
+  }
 }
 
-export type Building =
-  | Factory
-  | Extractor
-  | Lab
-  | TruckLineDepot
-  | Chest
-  | EmptyLane;
+export type Building = Factory | Extractor | Lab | TruckLineDepot | Chest | EmptyLane
 
 export type EmptyLane = {
-  kind: "Empty";
-  subkind: "empty-lane";
-  ProducerType: "Empty";
-  inputBuffers: ReadonlyItemBuffer;
-  outputBuffers: ReadonlyItemBuffer;
-  BuildingCount: number;
-};
+  kind: "Empty"
+  subkind: "empty-lane"
+  ProducerType: "Empty"
+  inputBuffers: ReadonlyItemBuffer
+  outputBuffers: ReadonlyItemBuffer
+  BuildingCount: number
+}
 
 export function NewEmptyLane(): EmptyLane {
   return {
@@ -116,7 +96,7 @@ export function NewEmptyLane(): EmptyLane {
     inputBuffers: new ReadonlyInventory(0),
     outputBuffers: new ReadonlyInventory(0),
     BuildingCount: 0,
-  };
+  }
 }
 
 //| TrainStation;

@@ -6996,11 +6996,7 @@
       "DurationSeconds": 30,
       "Row": 2,
       "Prereqs": ["logistics", "logistic-science-pack"],
-      "Unlocks": [
-        "fast-transport-belt",
-        "fast-underground-belt",
-        "fast-splitter"
-      ],
+      "Unlocks": ["fast-transport-belt", "fast-underground-belt", "fast-splitter"],
       "Effects": []
     },
     "landfill": {
@@ -7184,12 +7180,7 @@
       "DurationSeconds": 30,
       "Row": 2,
       "Prereqs": ["advanced-material-processing", "automation-2"],
-      "Unlocks": [
-        "concrete",
-        "hazard-concrete",
-        "refined-concrete",
-        "refined-hazard-concrete"
-      ],
+      "Unlocks": ["concrete", "hazard-concrete", "refined-concrete", "refined-hazard-concrete"],
       "Effects": []
     },
     "railway": {
@@ -7533,10 +7524,7 @@
       "Row": 2,
       "Prereqs": ["inserter-capacity-bonus-1"],
       "Unlocks": [],
-      "Effects": [
-        "Non-stack inserter capacity: +1",
-        "Stack inserter capacity: +1"
-      ]
+      "Effects": ["Non-stack inserter capacity: +1", "Stack inserter capacity: +1"]
     },
     "advanced-oil-processing": {
       "Id": "advanced-oil-processing",
@@ -7856,11 +7844,7 @@
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": [
-        "productivity-module",
-        "advanced-material-processing-2",
-        "railway"
-      ],
+      "Prereqs": ["productivity-module", "advanced-material-processing-2", "railway"],
       "Unlocks": ["production-science-pack"],
       "Effects": []
     },
@@ -7928,11 +7912,7 @@
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 4,
-      "Prereqs": [
-        "robotics",
-        "advanced-electronics-2",
-        "low-density-structure"
-      ],
+      "Prereqs": ["robotics", "advanced-electronics-2", "low-density-structure"],
       "Unlocks": ["utility-science-pack"],
       "Effects": []
     },
@@ -7986,11 +7966,7 @@
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 5,
-      "Prereqs": [
-        "production-science-pack",
-        "uranium-processing",
-        "rocket-fuel"
-      ],
+      "Prereqs": ["production-science-pack", "uranium-processing", "rocket-fuel"],
       "Unlocks": ["kovarex-enrichment-process", "nuclear-fuel"],
       "Effects": ["Kovarex enrichment process"]
     },
@@ -8133,12 +8109,7 @@
       "DurationSeconds": 30,
       "Row": 4,
       "Prereqs": ["robotics"],
-      "Unlocks": [
-        "roboport",
-        "logistic-chest-passive-provider",
-        "logistic-chest-storage",
-        "logistic-robot"
-      ],
+      "Unlocks": ["roboport", "logistic-chest-passive-provider", "logistic-chest-storage", "logistic-robot"],
       "Effects": [
         "Character logistic requests",
         "Character auto trash filters",
@@ -8217,11 +8188,7 @@
       "DurationSeconds": 15,
       "Row": 5,
       "Prereqs": ["production-science-pack", "lubricant"],
-      "Unlocks": [
-        "express-transport-belt",
-        "express-underground-belt",
-        "express-splitter"
-      ],
+      "Unlocks": ["express-transport-belt", "express-underground-belt", "express-splitter"],
       "Effects": []
     },
     "braking-force-3": {
@@ -8382,11 +8349,7 @@
       "DurationSeconds": 30,
       "Row": 6,
       "Prereqs": ["utility-science-pack", "logistic-robotics"],
-      "Unlocks": [
-        "logistic-chest-active-provider",
-        "logistic-chest-requester",
-        "logistic-chest-buffer"
-      ],
+      "Unlocks": ["logistic-chest-active-provider", "logistic-chest-requester", "logistic-chest-buffer"],
       "Effects": []
     },
     "inserter-capacity-bonus-7": {
@@ -8406,10 +8369,7 @@
       "Row": 6,
       "Prereqs": ["inserter-capacity-bonus-6"],
       "Unlocks": [],
-      "Effects": [
-        "Non-stack inserter capacity: +1",
-        "Stack inserter capacity: +2"
-      ]
+      "Effects": ["Non-stack inserter capacity: +1", "Stack inserter capacity: +2"]
     },
     "rocket-control-unit": {
       "Id": "rocket-control-unit",
@@ -8582,11 +8542,7 @@
       "ProductionPerTick": 0.033333335,
       "DurationSeconds": 30,
       "Row": 6,
-      "Prereqs": [
-        "rocket-silo",
-        "electric-energy-accumulators",
-        "solar-energy"
-      ],
+      "Prereqs": ["rocket-silo", "electric-energy-accumulators", "solar-energy"],
       "Unlocks": ["satellite", "space-science-pack", "raw-fish"],
       "Effects": []
     }

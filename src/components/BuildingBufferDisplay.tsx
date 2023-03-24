@@ -1,6 +1,6 @@
-import { GameAction } from "../GameAction";
-import { ReadonlyItemBuffer } from "../factoryGameState";
-import { InventoryDisplay } from "./InventoryDisplay";
+import { GameAction } from "../GameAction"
+import { ReadonlyItemBuffer } from "../factoryGameState"
+import { InventoryDisplay } from "./InventoryDisplay"
 
 export function BuildingBufferDisplay({
   inputBuffers,
@@ -13,15 +13,15 @@ export function BuildingBufferDisplay({
   debugPrint = false,
   infiniteStackSize = false,
 }: {
-  inputBuffers?: ReadonlyItemBuffer;
-  outputBuffers?: ReadonlyItemBuffer;
-  entityIconLookup?: (entity: string) => string;
-  buildingIdx: number;
-  outputInteractable?: boolean;
-  regionId: string;
-  uxDispatch: (a: GameAction) => void;
-  debugPrint?: boolean;
-  infiniteStackSize?: boolean;
+  inputBuffers?: ReadonlyItemBuffer
+  outputBuffers?: ReadonlyItemBuffer
+  entityIconLookup?: (entity: string) => string
+  buildingIdx: number
+  outputInteractable?: boolean
+  regionId: string
+  uxDispatch: (a: GameAction) => void
+  debugPrint?: boolean
+  infiniteStackSize?: boolean
 }) {
   const addClickHandler = function addClickHandler(entity: string) {
       uxDispatch({
@@ -30,7 +30,7 @@ export function BuildingBufferDisplay({
         buildingIdx,
         otherStackKind: "Building",
         regionId,
-      });
+      })
     },
     remClickHandler = function remClickHandler(entity: string) {
       uxDispatch({
@@ -39,8 +39,8 @@ export function BuildingBufferDisplay({
         buildingIdx,
         otherStackKind: "Building",
         regionId,
-      });
-    };
+      })
+    }
 
   return (
     // TODO: Fix extractor display
@@ -55,9 +55,7 @@ export function BuildingBufferDisplay({
           infiniteStackSize={infiniteStackSize}
         />
       )}
-      {inputBuffers && outputBuffers && (
-        <div className="equals-sign">=&gt;</div>
-      )}
+      {inputBuffers && outputBuffers && <div className="equals-sign">=&gt;</div>}
       {outputBuffers && (
         <InventoryDisplay
           inventory={outputBuffers}
@@ -69,5 +67,5 @@ export function BuildingBufferDisplay({
         />
       )}
     </div>
-  );
+  )
 }

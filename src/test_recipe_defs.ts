@@ -1,4 +1,4 @@
-import { NewEntityStack, Recipe } from "./types";
+import { NewEntityStack, Recipe } from "./types"
 export const TestOreRecipe: Recipe = {
   //Name: "Test Ore",
   Icon: "test-ore",
@@ -8,7 +8,7 @@ export const TestOreRecipe: Recipe = {
   Input: [NewEntityStack("test-ore", 1)],
   Output: [NewEntityStack("test-ore", 1)],
   ProductionPerTick: 1,
-};
+}
 
 export const TestSlowOreRecipe: Recipe = {
   //Name: "Test Slow Ore",
@@ -19,7 +19,7 @@ export const TestSlowOreRecipe: Recipe = {
   Input: [NewEntityStack("test-ore", 1)],
   Output: [NewEntityStack("test-ore", 1)],
   ProductionPerTick: 0.5,
-};
+}
 
 export const TestRecipe: Recipe = {
   //Name: "Test Item",
@@ -30,7 +30,7 @@ export const TestRecipe: Recipe = {
   Input: [NewEntityStack("test-ore", 2), NewEntityStack("test-slow-ore", 3)],
   Output: [NewEntityStack("test-item", 1)],
   ProductionPerTick: 1,
-};
+}
 
 export const TestMultipleOutputCountRecipe: Recipe = {
   //Name: "Test Item",
@@ -41,7 +41,7 @@ export const TestMultipleOutputCountRecipe: Recipe = {
   Input: [NewEntityStack("test-ore", 2)],
   Output: [NewEntityStack("test-item", 2)],
   ProductionPerTick: 1,
-};
+}
 
 export const TestSlowRecipe: Recipe = {
   //Name: "Test Slow Item",
@@ -52,7 +52,7 @@ export const TestSlowRecipe: Recipe = {
   Input: [NewEntityStack("test-ore", 2), NewEntityStack("test-slow-ore", 3)],
   Output: [NewEntityStack("test-item", 1)],
   ProductionPerTick: 0.5,
-};
+}
 
 export const TestItemConsumerRecipe: Recipe = {
   //Name: "Test Item Consumer",
@@ -63,7 +63,7 @@ export const TestItemConsumerRecipe: Recipe = {
   Input: [NewEntityStack("test-item", 2)],
   Output: [NewEntityStack("test-ore", 1)],
   ProductionPerTick: 1,
-};
+}
 
 export const TestRecipeBook = new Map<string, Recipe>([
   ["test-ore", TestOreRecipe],
@@ -72,10 +72,10 @@ export const TestRecipeBook = new Map<string, Recipe>([
   ["test-slow-item", TestSlowRecipe],
   ["test-item-consumer", TestItemConsumerRecipe],
   ["test-multi-count-item", TestMultipleOutputCountRecipe],
-]);
+])
 
 export function GetTestRecipe(name: string): Recipe {
-  const r = TestRecipeBook.get(name);
-  if (!r) throw new Error("Cannot find recipe for " + name);
-  return r;
+  const r = TestRecipeBook.get(name)
+  if (!r) throw new Error("Cannot find recipe for " + name)
+  return r
 }

@@ -1,13 +1,8 @@
-import { NewEntityStack, RegionInfo } from "./types";
-import { ReadonlyRegion } from "./factoryGameState";
+import { NewEntityStack, RegionInfo } from "./types"
+import { ReadonlyRegion } from "./factoryGameState"
 
-export function RemainingRegionBuildingCapacity(
-  region: ReadonlyRegion
-): number {
-  return (
-    region.LaneCount -
-    region.BuildingSlots.filter((b) => b.Building.kind !== "Empty").length
-  );
+export function RemainingRegionBuildingCapacity(region: ReadonlyRegion): number {
+  return region.LaneCount - region.BuildingSlots.filter((b) => b.Building.kind !== "Empty").length
 }
 
 const Regions = new Map<string, RegionInfo>([
@@ -75,10 +70,7 @@ const Regions = new Map<string, RegionInfo>([
       MainBusCount: 6,
       AdjacentTo: ["region0"],
       Cost: [],
-      Provides: [
-        NewEntityStack("iron-ore", 10000),
-        NewEntityStack("copper-ore", 10000),
-      ],
+      Provides: [NewEntityStack("iron-ore", 10000), NewEntityStack("copper-ore", 10000)],
     },
   ],
   [
@@ -90,10 +82,7 @@ const Regions = new Map<string, RegionInfo>([
       MainBusCount: 6,
       AdjacentTo: ["region0"],
       Cost: [],
-      Provides: [
-        NewEntityStack("crude-oil", Infinity),
-        NewEntityStack("water", Infinity),
-      ],
+      Provides: [NewEntityStack("crude-oil", Infinity), NewEntityStack("water", Infinity)],
     },
   ],
   [
@@ -145,10 +134,10 @@ const Regions = new Map<string, RegionInfo>([
       AdjacentTo: [],
     },
   ],
-]);
+])
 
 export function GetRegionInfo(s: string): RegionInfo {
-  const r = Regions.get(s);
-  if (!r) throw new Error("No region info for " + s);
-  return r;
+  const r = Regions.get(s)
+  if (!r) throw new Error("No region info for " + s)
+  return r
 }

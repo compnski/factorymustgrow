@@ -14811,9 +14811,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Protein_Hog_C"
-      ],
+      "Unlocks": ["Recipe_Protein_Hog_C"],
       "Effects": []
     },
     "Research_ACarapace_2_C": {
@@ -14839,10 +14837,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_RebarGun_C",
-        "Recipe_SpikedRebar_C"
-      ],
+      "Unlocks": ["Recipe_RebarGun_C", "Recipe_SpikedRebar_C"],
       "Effects": []
     },
     "Research_AO_DNACapsule_C": {
@@ -14864,10 +14859,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_AlienDNACapsule_C",
-        "Recipe_Biomass_AlienProtein_C"
-      ],
+      "Unlocks": ["Recipe_AlienDNACapsule_C", "Recipe_Biomass_AlienProtein_C"],
       "Effects": []
     },
     "Research_AO_Hatcher_C": {
@@ -14885,9 +14877,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Protein_Crab_C"
-      ],
+      "Unlocks": ["Recipe_Protein_Crab_C"],
       "Effects": []
     },
     "Research_AO_Hog_C": {
@@ -14905,9 +14895,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Protein_Hog_C"
-      ],
+      "Unlocks": ["Recipe_Protein_Hog_C"],
       "Effects": []
     },
     "Research_AO_Spitter_C": {
@@ -14925,9 +14913,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Protein_Spitter_C"
-      ],
+      "Unlocks": ["Recipe_Protein_Spitter_C"],
       "Effects": []
     },
     "Research_AO_Stinger_C": {
@@ -14945,9 +14931,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Protein_Stinger_C"
-      ],
+      "Unlocks": ["Recipe_Protein_Stinger_C"],
       "Effects": []
     },
     "Research_AOrgans_0_C": {
@@ -14965,9 +14949,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Protein_Spitter_C"
-      ],
+      "Unlocks": ["Recipe_Protein_Spitter_C"],
       "Effects": []
     },
     "Research_AOrgans_2_C": {
@@ -14993,9 +14975,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_MedicinalInhalerAlienOrgans_C"
-      ],
+      "Unlocks": ["Recipe_MedicinalInhalerAlienOrgans_C"],
       "Effects": []
     },
     "Research_Caterium_1_C": {
@@ -15013,9 +14993,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_IngotCaterium_C"
-      ],
+      "Unlocks": ["Recipe_IngotCaterium_C"],
       "Effects": []
     },
     "Research_Caterium_2_1_C": {
@@ -15037,9 +15015,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_ZipLine_C"
-      ],
+      "Unlocks": ["Recipe_ZipLine_C"],
       "Effects": []
     },
     "Research_Caterium_2_C": {
@@ -15057,9 +15033,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Quickwire_C"
-      ],
+      "Unlocks": ["Recipe_Quickwire_C"],
       "Effects": []
     },
     "Research_Caterium_3_2_C": {
@@ -15081,9 +15055,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Rebar_Stunshot_C"
-      ],
+      "Unlocks": ["Recipe_Rebar_Stunshot_C"],
       "Effects": []
     },
     "Research_Caterium_4_1_1_C": {
@@ -15105,9 +15077,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_ConveyorAttachmentSplitterSmart_C"
-      ],
+      "Unlocks": ["Recipe_ConveyorAttachmentSplitterSmart_C"],
       "Effects": []
     },
     "Research_Caterium_4_1_2_C": {
@@ -15129,9 +15099,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_PowerSwitch_C"
-      ],
+      "Unlocks": ["Recipe_PowerSwitch_C"],
       "Effects": []
     },
     "Research_Caterium_4_1_C": {
@@ -15153,9 +15121,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_AILimiter_C"
-      ],
+      "Unlocks": ["Recipe_AILimiter_C"],
       "Effects": []
     },
     "Research_Caterium_4_2_C": {
@@ -15173,9 +15139,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_PowerPoleMk2_C"
-      ],
+      "Unlocks": ["Recipe_PowerPoleMk2_C"],
       "Effects": []
     },
     "Research_Caterium_4_3_C": {
@@ -15197,9 +15161,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_BladeRunners_C"
-      ],
+      "Unlocks": ["Recipe_BladeRunners_C"],
       "Effects": []
     },
     "Research_Caterium_5_C": {
@@ -15221,9 +15183,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_HighSpeedConnector_C"
-      ],
+      "Unlocks": ["Recipe_HighSpeedConnector_C"],
       "Effects": []
     },
     "Research_Caterium_6_1_C": {
@@ -15249,9 +15209,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_ComputerSuper_C"
-      ],
+      "Unlocks": ["Recipe_ComputerSuper_C"],
       "Effects": []
     },
     "Research_Caterium_6_2_C": {
@@ -15273,9 +15231,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_PowerPoleMk3_C"
-      ],
+      "Unlocks": ["Recipe_PowerPoleMk3_C"],
       "Effects": []
     },
     "Research_Caterium_6_3_C": {
@@ -15297,9 +15253,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_CartridgeSmart_C"
-      ],
+      "Unlocks": ["Recipe_CartridgeSmart_C"],
       "Effects": []
     },
     "Research_Caterium_7_1_C": {
@@ -15321,9 +15275,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_ConveyorAttachmentSplitterProgrammable_C"
-      ],
+      "Unlocks": ["Recipe_ConveyorAttachmentSplitterProgrammable_C"],
       "Effects": []
     },
     "Research_Caterium_7_2_C": {
@@ -15349,9 +15301,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_GeneratorGeoThermal_C"
-      ],
+      "Unlocks": ["Recipe_GeneratorGeoThermal_C"],
       "Effects": []
     },
     "Research_FlowerPetals_3_C": {
@@ -15369,9 +15319,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_ColorCartridge_C"
-      ],
+      "Unlocks": ["Recipe_ColorCartridge_C"],
       "Effects": []
     },
     "Research_Mycelia_1_C": {
@@ -15389,9 +15337,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Biomass_Mycelia_C"
-      ],
+      "Unlocks": ["Recipe_Biomass_Mycelia_C"],
       "Effects": []
     },
     "Research_Mycelia_2_1_C": {
@@ -15413,9 +15359,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_PolyesterFabric_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_PolyesterFabric_C"],
       "Effects": []
     },
     "Research_Mycelia_2_C": {
@@ -15437,9 +15381,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Fabric_C"
-      ],
+      "Unlocks": ["Recipe_Fabric_C"],
       "Effects": []
     },
     "Research_Mycelia_3_C": {
@@ -15461,9 +15403,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Parachute_C"
-      ],
+      "Unlocks": ["Recipe_Parachute_C"],
       "Effects": []
     },
     "Research_Mycelia_5_C": {
@@ -15485,9 +15425,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_MedicinalInhaler_C"
-      ],
+      "Unlocks": ["Recipe_MedicinalInhaler_C"],
       "Effects": []
     },
     "Research_Mycelia_6_C": {
@@ -15513,9 +15451,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_TherapeuticInhaler_C"
-      ],
+      "Unlocks": ["Recipe_TherapeuticInhaler_C"],
       "Effects": []
     },
     "Research_Mycelia_8_C": {
@@ -15541,9 +15477,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_NobeliskGas_C"
-      ],
+      "Unlocks": ["Recipe_NobeliskGas_C"],
       "Effects": []
     },
     "Research_Nutrients_4_C": {
@@ -15569,9 +15503,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_NutritionalInhaler_C"
-      ],
+      "Unlocks": ["Recipe_NutritionalInhaler_C"],
       "Effects": []
     },
     "Research_PowerSlugs_1_C": {
@@ -15589,9 +15521,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_PowerCrystalShard_1_C"
-      ],
+      "Unlocks": ["Recipe_PowerCrystalShard_1_C"],
       "Effects": []
     },
     "Research_PowerSlugs_4_C": {
@@ -15617,9 +15547,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_PowerCrystalShard_2_C"
-      ],
+      "Unlocks": ["Recipe_PowerCrystalShard_2_C"],
       "Effects": []
     },
     "Research_PowerSlugs_5_C": {
@@ -15645,9 +15573,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_PowerCrystalShard_3_C"
-      ],
+      "Unlocks": ["Recipe_PowerCrystalShard_3_C"],
       "Effects": []
     },
     "Research_Quartz_1_1_C": {
@@ -15665,9 +15591,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_QuartzCrystal_C"
-      ],
+      "Unlocks": ["Recipe_QuartzCrystal_C"],
       "Effects": []
     },
     "Research_Quartz_1_2_C": {
@@ -15685,9 +15609,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Silica_C"
-      ],
+      "Unlocks": ["Recipe_Silica_C"],
       "Effects": []
     },
     "Research_Quartz_2_1_C": {
@@ -15709,9 +15631,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Rebar_Spreadshot_C"
-      ],
+      "Unlocks": ["Recipe_Rebar_Spreadshot_C"],
       "Effects": []
     },
     "Research_Quartz_2_C": {
@@ -15733,9 +15653,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_CrystalOscillator_C"
-      ],
+      "Unlocks": ["Recipe_CrystalOscillator_C"],
       "Effects": []
     },
     "Research_Quartz_3_1_C": {
@@ -15757,9 +15675,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Explorer_C"
-      ],
+      "Unlocks": ["Recipe_Explorer_C"],
       "Effects": []
     },
     "Research_Quartz_3_4_C": {
@@ -15781,9 +15697,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_NobeliskShockwave_C"
-      ],
+      "Unlocks": ["Recipe_NobeliskShockwave_C"],
       "Effects": []
     },
     "Research_Quartz_4_C": {
@@ -15809,9 +15723,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_RadarTower_C"
-      ],
+      "Unlocks": ["Recipe_RadarTower_C"],
       "Effects": []
     },
     "Research_Sulfur_1_C": {
@@ -15833,9 +15745,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Gunpowder_C"
-      ],
+      "Unlocks": ["Recipe_Gunpowder_C"],
       "Effects": []
     },
     "Research_Sulfur_3_1_C": {
@@ -15861,10 +15771,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_NobeliskDetonator_C",
-        "Recipe_Nobelisk_C"
-      ],
+      "Unlocks": ["Recipe_NobeliskDetonator_C", "Recipe_Nobelisk_C"],
       "Effects": []
     },
     "Research_Sulfur_3_C": {
@@ -15886,9 +15793,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_GunpowderMK2_C"
-      ],
+      "Unlocks": ["Recipe_GunpowderMK2_C"],
       "Effects": []
     },
     "Research_Sulfur_4_1_C": {
@@ -15914,10 +15819,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_SpaceRifleMk1_C",
-        "Recipe_Cartridge_C"
-      ],
+      "Unlocks": ["Recipe_SpaceRifleMk1_C", "Recipe_Cartridge_C"],
       "Effects": []
     },
     "Research_Sulfur_4_2_C": {
@@ -15943,9 +15845,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Rebar_Explosive_C"
-      ],
+      "Unlocks": ["Recipe_Rebar_Explosive_C"],
       "Effects": []
     },
     "Research_Sulfur_4_C": {
@@ -15967,9 +15867,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_NobeliskCluster_C"
-      ],
+      "Unlocks": ["Recipe_NobeliskCluster_C"],
       "Effects": []
     },
     "Research_Sulfur_5_1_C": {
@@ -15995,9 +15893,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_NobeliskNuke_C"
-      ],
+      "Unlocks": ["Recipe_NobeliskNuke_C"],
       "Effects": []
     },
     "Research_Sulfur_5_2_C": {
@@ -16023,9 +15919,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_CartridgeChaos_C"
-      ],
+      "Unlocks": ["Recipe_CartridgeChaos_C"],
       "Effects": []
     },
     "Research_Sulfur_CompactedCoal_C": {
@@ -16051,9 +15945,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_EnrichedCoal_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_EnrichedCoal_C"],
       "Effects": []
     },
     "Research_Sulfur_TurboFuel_C": {
@@ -16079,10 +15971,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Turbofuel_C",
-        "Recipe_PackagedTurboFuel_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Turbofuel_C", "Recipe_PackagedTurboFuel_C"],
       "Effects": []
     },
     "Research_XMas_3-2_C": {
@@ -16108,10 +15997,7 @@
       "DurationSeconds": 3,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_SnowDispenser_C",
-        "Recipe_XmasWreath_C"
-      ],
+      "Unlocks": ["Recipe_SnowDispenser_C", "Recipe_XmasWreath_C"],
       "Effects": []
     },
     "ResourceSink_Arrows_FoundationPatterns_C": {
@@ -16180,10 +16066,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_StandaloneWidgetSign_Large_C",
-        "Recipe_StandaloneWidgetSign_Huge_C"
-      ],
+      "Unlocks": ["Recipe_StandaloneWidgetSign_Large_C", "Recipe_StandaloneWidgetSign_Huge_C"],
       "Effects": []
     },
     "ResourceSink_Catwalks_C": {
@@ -16226,9 +16109,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_CeilingLight_C"
-      ],
+      "Unlocks": ["Recipe_CeilingLight_C"],
       "Effects": []
     },
     "ResourceSink_ConcretePillarSet_C": {
@@ -16291,9 +16172,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_FoundationPassthrough_Lift_C"
-      ],
+      "Unlocks": ["Recipe_FoundationPassthrough_Lift_C"],
       "Effects": []
     },
     "ResourceSink_ConveyorWallMount_C": {
@@ -16311,9 +16190,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_ConveyorPoleWall_C"
-      ],
+      "Unlocks": ["Recipe_ConveyorPoleWall_C"],
       "Effects": []
     },
     "ResourceSink_CurvedFoundationPack_C": {
@@ -16356,9 +16233,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Material_Foundation_Asphalt_C"
-      ],
+      "Unlocks": ["Recipe_Material_Foundation_Asphalt_C"],
       "Effects": []
     },
     "ResourceSink_Customizer_ConcreteWallMaterial_C": {
@@ -16376,9 +16251,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Material_Wall_Concrete_C"
-      ],
+      "Unlocks": ["Recipe_Material_Wall_Concrete_C"],
       "Effects": []
     },
     "ResourceSink_Customizer_Concrete_FoundationMaterial_C": {
@@ -16396,9 +16269,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Material_Foundation_Concrete_C"
-      ],
+      "Unlocks": ["Recipe_Material_Foundation_Concrete_C"],
       "Effects": []
     },
     "ResourceSink_Customizer_GlassRoofMaterial_C": {
@@ -16440,9 +16311,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Material_Foundation_GripMetal_C"
-      ],
+      "Unlocks": ["Recipe_Material_Foundation_GripMetal_C"],
       "Effects": []
     },
     "ResourceSink_Customizer_PolishedConcrete_FoundationMaterial_C": {
@@ -16460,9 +16329,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Material_Foundation_PolishedConcrete_C"
-      ],
+      "Unlocks": ["Recipe_Material_Foundation_PolishedConcrete_C"],
       "Effects": []
     },
     "ResourceSink_Customizer_SteelRoofMaterial_C": {
@@ -16504,9 +16371,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Material_Wall_Steel_C"
-      ],
+      "Unlocks": ["Recipe_Material_Wall_Steel_C"],
       "Effects": []
     },
     "ResourceSink_Customizer_TarRoofMaterial_C": {
@@ -16548,9 +16413,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_CyberWagon_C"
-      ],
+      "Unlocks": ["Recipe_CyberWagon_C"],
       "Effects": []
     },
     "ResourceSink_DiagonalRamps_C": {
@@ -16662,10 +16525,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Wall_Door_8x4_01_C",
-        "Recipe_Wall_Door_8x4_03_C"
-      ],
+      "Unlocks": ["Recipe_Wall_Door_8x4_01_C", "Recipe_Wall_Door_8x4_03_C"],
       "Effects": []
     },
     "ResourceSink_DotLines_FoundationPatterns_C": {
@@ -16710,9 +16570,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Concrete_Barrier_01_C"
-      ],
+      "Unlocks": ["Recipe_Concrete_Barrier_01_C"],
       "Effects": []
     },
     "ResourceSink_FactoryCart_C": {
@@ -16730,9 +16588,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_FactoryCart_C"
-      ],
+      "Unlocks": ["Recipe_FactoryCart_C"],
       "Effects": []
     },
     "ResourceSink_FactoryFence_C": {
@@ -16750,9 +16606,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Railing_01_C"
-      ],
+      "Unlocks": ["Recipe_Railing_01_C"],
       "Effects": []
     },
     "ResourceSink_FactoryRailing_C": {
@@ -16770,9 +16624,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Fence_01_C"
-      ],
+      "Unlocks": ["Recipe_Fence_01_C"],
       "Effects": []
     },
     "ResourceSink_FoudationPillar_C": {
@@ -16813,11 +16665,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_RampDouble_8x1_C",
-        "Recipe_RampDouble_C",
-        "Recipe_Ramp_8x8x8_C"
-      ],
+      "Unlocks": ["Recipe_RampDouble_8x1_C", "Recipe_RampDouble_C", "Recipe_Ramp_8x8x8_C"],
       "Effects": []
     },
     "ResourceSink_FramePillarSet_C": {
@@ -16858,10 +16706,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Wall_Window_Thin_8x4_01_C",
-        "Recipe_Wall_Window_Thin_8x4_02_C"
-      ],
+      "Unlocks": ["Recipe_Wall_Window_Thin_8x4_01_C", "Recipe_Wall_Window_Thin_8x4_02_C"],
       "Effects": []
     },
     "ResourceSink_FrameworkFoundations_C": {
@@ -16931,10 +16776,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Wall_Gate_8x4_01_C",
-        "Recipe_Gate_Automated_8x4_C"
-      ],
+      "Unlocks": ["Recipe_Wall_Gate_8x4_01_C", "Recipe_Gate_Automated_8x4_C"],
       "Effects": []
     },
     "ResourceSink_GoldenCart_C": {
@@ -16952,9 +16794,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_GoldenCart_C"
-      ],
+      "Unlocks": ["Recipe_GoldenCart_C"],
       "Effects": []
     },
     "ResourceSink_HazardBoxSkin_C": {
@@ -16972,9 +16812,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_StorageHazard_C"
-      ],
+      "Unlocks": ["Recipe_StorageHazard_C"],
       "Effects": []
     },
     "ResourceSink_HyperTubeFloorHole_C": {
@@ -16992,9 +16830,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_FoundationPassthrough_Hypertube_C"
-      ],
+      "Unlocks": ["Recipe_FoundationPassthrough_Hypertube_C"],
       "Effects": []
     },
     "ResourceSink_HyperTubeWallAttachements_C": {
@@ -17012,10 +16848,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_HyperTubeWallSupport_C",
-        "Recipe_HyperTubeWallHole_C"
-      ],
+      "Unlocks": ["Recipe_HyperTubeWallSupport_C", "Recipe_HyperTubeWallHole_C"],
       "Effects": []
     },
     "ResourceSink_IconsFactory_FoundationPatterns_C": {
@@ -17159,9 +16992,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Ladder_C"
-      ],
+      "Unlocks": ["Recipe_Ladder_C"],
       "Effects": []
     },
     "ResourceSink_LightControlPanel_C": {
@@ -17179,9 +17010,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_LightsControlPanel_C"
-      ],
+      "Unlocks": ["Recipe_LightsControlPanel_C"],
       "Effects": []
     },
     "ResourceSink_LightTower_C": {
@@ -17199,10 +17028,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_FloodlightPole_C",
-        "Recipe_FloodlightWall_C"
-      ],
+      "Unlocks": ["Recipe_FloodlightPole_C", "Recipe_FloodlightWall_C"],
       "Effects": []
     },
     "ResourceSink_MedicalBoxSkin_C": {
@@ -17220,9 +17046,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_StorageMedkit_C"
-      ],
+      "Unlocks": ["Recipe_StorageMedkit_C"],
       "Effects": []
     },
     "ResourceSink_Number_FoundationPatterns_C": {
@@ -17297,9 +17121,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_FoundationPassthrough_Pipe_C"
-      ],
+      "Unlocks": ["Recipe_FoundationPassthrough_Pipe_C"],
       "Effects": []
     },
     "ResourceSink_PipelineWallAttachments_C": {
@@ -17317,10 +17139,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_PipeSupportWall_C",
-        "Recipe_PipeSupportWallHole_C"
-      ],
+      "Unlocks": ["Recipe_PipeSupportWall_C", "Recipe_PipeSupportWallHole_C"],
       "Effects": []
     },
     "ResourceSink_Roofs_Basic_C": {
@@ -17361,10 +17180,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Stairs_Left_01_C",
-        "Recipe_Stairs_Right_01_C"
-      ],
+      "Unlocks": ["Recipe_Stairs_Left_01_C", "Recipe_Stairs_Right_01_C"],
       "Effects": []
     },
     "ResourceSink_StreetLight_C": {
@@ -17382,9 +17198,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_StreetLight_C"
-      ],
+      "Unlocks": ["Recipe_StreetLight_C"],
       "Effects": []
     },
     "ResourceSink_Tilted_Walls_C": {
@@ -17449,10 +17263,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_PowerPoleWallMk2_C",
-        "Recipe_PowerPoleWallDoubleMk2_C"
-      ],
+      "Unlocks": ["Recipe_PowerPoleWallMk2_C", "Recipe_PowerPoleWallDoubleMk2_C"],
       "Effects": []
     },
     "ResourceSink_WallPowerPolesMK3_C": {
@@ -17470,10 +17281,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_PowerPoleWallMk3_C",
-        "Recipe_PowerPoleWallDoubleMk3_C"
-      ],
+      "Unlocks": ["Recipe_PowerPoleWallMk3_C", "Recipe_PowerPoleWallDoubleMk3_C"],
       "Effects": []
     },
     "ResourceSink_WallPowerPoles_C": {
@@ -17491,10 +17299,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_PowerPoleWall_C",
-        "Recipe_PowerPoleWallDouble_C"
-      ],
+      "Unlocks": ["Recipe_PowerPoleWall_C", "Recipe_PowerPoleWallDouble_C"],
       "Effects": []
     },
     "ResourceSink_WindowedWalls_C": {
@@ -17633,12 +17438,7 @@
       "DurationSeconds": 180,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Mam_C",
-        "Recipe_ObjectScanner_C",
-        "Recipe_StoragePlayer_C",
-        "Recipe_Beacon_C"
-      ],
+      "Unlocks": ["Recipe_Mam_C", "Recipe_ObjectScanner_C", "Recipe_StoragePlayer_C", "Recipe_Beacon_C"],
       "Effects": []
     },
     "Schematic_2-1_C": {
@@ -17700,10 +17500,7 @@
       "DurationSeconds": 180,
       "Row": 2,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Chainsaw_C",
-        "Recipe_Biofuel_C"
-      ],
+      "Unlocks": ["Recipe_Chainsaw_C", "Recipe_Biofuel_C"],
       "Effects": []
     },
     "Schematic_2-3_C": {
@@ -17729,10 +17526,7 @@
       "DurationSeconds": 240,
       "Row": 2,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_JumpPadAdjustable_C",
-        "Recipe_UJellyLandingPad_C"
-      ],
+      "Unlocks": ["Recipe_JumpPadAdjustable_C", "Recipe_UJellyLandingPad_C"],
       "Effects": []
     },
     "Schematic_2-5_C": {
@@ -17762,11 +17556,7 @@
       "DurationSeconds": 300,
       "Row": 2,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_ResourceSink_C",
-        "Recipe_ResourceSinkShop_C",
-        "Recipe_ColorCartridge_C"
-      ],
+      "Unlocks": ["Recipe_ResourceSink_C", "Recipe_ResourceSinkShop_C", "Recipe_ColorCartridge_C"],
       "Effects": []
     },
     "Schematic_3-1_C": {
@@ -17830,11 +17620,7 @@
       "DurationSeconds": 360,
       "Row": 2,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_ConveyorBeltMk2_C",
-        "Recipe_ConveyorPoleStackable_C",
-        "Recipe_ConveyorLiftMk2_C"
-      ],
+      "Unlocks": ["Recipe_ConveyorBeltMk2_C", "Recipe_ConveyorPoleStackable_C", "Recipe_ConveyorLiftMk2_C"],
       "Effects": []
     },
     "Schematic_3-3_C": {
@@ -17864,10 +17650,7 @@
       "DurationSeconds": 240,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Tractor_C",
-        "Recipe_TruckStation_C"
-      ],
+      "Unlocks": ["Recipe_Tractor_C", "Recipe_TruckStation_C"],
       "Effects": []
     },
     "Schematic_3-4_C": {
@@ -17970,9 +17753,7 @@
       "DurationSeconds": 180,
       "Row": 4,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_XenoBasher_C"
-      ],
+      "Unlocks": ["Recipe_XenoBasher_C"],
       "Effects": []
     },
     "Schematic_4-4_C": {
@@ -18180,11 +17961,7 @@
       "DurationSeconds": 900,
       "Row": 6,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_GeneratorFuel_C",
-        "Recipe_ConveyorBeltMk4_C",
-        "Recipe_ConveyorLiftMk4_C"
-      ],
+      "Unlocks": ["Recipe_GeneratorFuel_C", "Recipe_ConveyorBeltMk4_C", "Recipe_ConveyorLiftMk4_C"],
       "Effects": []
     },
     "Schematic_6-2_C": {
@@ -18214,9 +17991,7 @@
       "DurationSeconds": 300,
       "Row": 6,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_JetPack_C"
-      ],
+      "Unlocks": ["Recipe_JetPack_C"],
       "Effects": []
     },
     "Schematic_6-3_C": {
@@ -18283,10 +18058,7 @@
       "DurationSeconds": 300,
       "Row": 5,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Gasmask_C",
-        "Recipe_FilterGasMask_C"
-      ],
+      "Unlocks": ["Recipe_Gasmask_C", "Recipe_FilterGasMask_C"],
       "Effects": []
     },
     "Schematic_6-5_C": {
@@ -18316,10 +18088,7 @@
       "DurationSeconds": 600,
       "Row": 6,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_PipelineMK2_C",
-        "Recipe_PipelinePumpMK2_C"
-      ],
+      "Unlocks": ["Recipe_PipelineMK2_C", "Recipe_PipelinePumpMK2_C"],
       "Effects": []
     },
     "Schematic_7-1_C": {
@@ -18384,10 +18153,7 @@
       "DurationSeconds": 60,
       "Row": 7,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_ConveyorBeltMk5_C",
-        "Recipe_ConveyorLiftMk5_C"
-      ],
+      "Unlocks": ["Recipe_ConveyorBeltMk5_C", "Recipe_ConveyorLiftMk5_C"],
       "Effects": []
     },
     "Schematic_7-3_C": {
@@ -18413,10 +18179,7 @@
       "DurationSeconds": 300,
       "Row": 7,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_HazmatSuit_C",
-        "Recipe_FilterHazmat_C"
-      ],
+      "Unlocks": ["Recipe_HazmatSuit_C", "Recipe_FilterHazmat_C"],
       "Effects": []
     },
     "Schematic_7-4_C": {
@@ -18558,9 +18321,7 @@
       "DurationSeconds": 300,
       "Row": 7,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Hoverpack_C"
-      ],
+      "Unlocks": ["Recipe_Hoverpack_C"],
       "Effects": []
     },
     "Schematic_8-4_C": {
@@ -18586,11 +18347,7 @@
       "DurationSeconds": 300,
       "Row": 8,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_MotorTurbo_C",
-        "Recipe_MinerMk3_C",
-        "Recipe_SpaceElevatorPart_8_C"
-      ],
+      "Unlocks": ["Recipe_MotorTurbo_C", "Recipe_MinerMk3_C", "Recipe_SpaceElevatorPart_8_C"],
       "Effects": []
     },
     "Schematic_8-5_C": {
@@ -18644,9 +18401,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_AdheredIronPlate_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_AdheredIronPlate_C"],
       "Effects": []
     },
     "Schematic_Alternate_AlcladCasing_C": {
@@ -18659,9 +18414,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_AlcladCasing_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_AlcladCasing_C"],
       "Effects": []
     },
     "Schematic_Alternate_AutomatedMiner_C": {
@@ -18674,9 +18427,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_AutomatedMiner_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_AutomatedMiner_C"],
       "Effects": []
     },
     "Schematic_Alternate_Beacon1_C": {
@@ -18689,9 +18440,7 @@
       "DurationSeconds": 1,
       "Row": 4,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Beacon_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Beacon_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_BoltedFrame_C": {
@@ -18704,9 +18453,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_BoltedFrame_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_BoltedFrame_C"],
       "Effects": []
     },
     "Schematic_Alternate_Cable1_C": {
@@ -18719,9 +18466,7 @@
       "DurationSeconds": 1,
       "Row": 5,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Cable_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Cable_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_Cable2_C": {
@@ -18734,9 +18479,7 @@
       "DurationSeconds": 1,
       "Row": 5,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Cable_2_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Cable_2_C"],
       "Effects": []
     },
     "Schematic_Alternate_CircuitBoard1_C": {
@@ -18749,9 +18492,7 @@
       "DurationSeconds": 1,
       "Row": 5,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_CircuitBoard_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_CircuitBoard_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_CircuitBoard2_C": {
@@ -18764,9 +18505,7 @@
       "DurationSeconds": 1,
       "Row": 5,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_CircuitBoard_2_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_CircuitBoard_2_C"],
       "Effects": []
     },
     "Schematic_Alternate_ClassicBattery_C": {
@@ -18779,9 +18518,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_ClassicBattery_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_ClassicBattery_C"],
       "Effects": []
     },
     "Schematic_Alternate_Coal1_C": {
@@ -18794,9 +18531,7 @@
       "DurationSeconds": 1,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Coal_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Coal_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_Coal2_C": {
@@ -18809,9 +18544,7 @@
       "DurationSeconds": 1,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Coal_2_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Coal_2_C"],
       "Effects": []
     },
     "Schematic_Alternate_CoatedCable_C": {
@@ -18824,9 +18557,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_CoatedCable_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_CoatedCable_C"],
       "Effects": []
     },
     "Schematic_Alternate_CoatedIronCanister_C": {
@@ -18839,9 +18570,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_CoatedIronCanister_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_CoatedIronCanister_C"],
       "Effects": []
     },
     "Schematic_Alternate_CoatedIronPlate_C": {
@@ -18854,9 +18583,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_CoatedIronPlate_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_CoatedIronPlate_C"],
       "Effects": []
     },
     "Schematic_Alternate_CokeSteelIngot_C": {
@@ -18869,9 +18596,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_CokeSteelIngot_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_CokeSteelIngot_C"],
       "Effects": []
     },
     "Schematic_Alternate_Computer1_C": {
@@ -18884,9 +18609,7 @@
       "DurationSeconds": 1,
       "Row": 5,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Computer_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Computer_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_Computer2_C": {
@@ -18899,9 +18622,7 @@
       "DurationSeconds": 1,
       "Row": 5,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Computer_2_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Computer_2_C"],
       "Effects": []
     },
     "Schematic_Alternate_Concrete_C": {
@@ -18914,9 +18635,7 @@
       "DurationSeconds": 1,
       "Row": 4,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Concrete_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Concrete_C"],
       "Effects": []
     },
     "Schematic_Alternate_CoolingDevice_C": {
@@ -18929,9 +18648,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_CoolingDevice_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_CoolingDevice_C"],
       "Effects": []
     },
     "Schematic_Alternate_CopperAlloyIngot_C": {
@@ -18944,9 +18661,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_CopperAlloyIngot_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_CopperAlloyIngot_C"],
       "Effects": []
     },
     "Schematic_Alternate_CopperRotor_C": {
@@ -18959,9 +18674,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_CopperRotor_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_CopperRotor_C"],
       "Effects": []
     },
     "Schematic_Alternate_CrystalOscillator_C": {
@@ -18974,9 +18687,7 @@
       "DurationSeconds": 1,
       "Row": 5,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_CrystalOscillator_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_CrystalOscillator_C"],
       "Effects": []
     },
     "Schematic_Alternate_DilutedFuel_C": {
@@ -18989,9 +18700,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_DilutedFuel_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_DilutedFuel_C"],
       "Effects": []
     },
     "Schematic_Alternate_DilutedPackagedFuel_C": {
@@ -19004,9 +18713,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_DilutedPackagedFuel_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_DilutedPackagedFuel_C"],
       "Effects": []
     },
     "Schematic_Alternate_ElectricMotor_C": {
@@ -19019,9 +18726,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_ElectricMotor_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_ElectricMotor_C"],
       "Effects": []
     },
     "Schematic_Alternate_ElectroAluminumScrap_C": {
@@ -19034,9 +18739,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_ElectroAluminumScrap_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_ElectroAluminumScrap_C"],
       "Effects": []
     },
     "Schematic_Alternate_ElectrodeCircuitBoard_C": {
@@ -19049,9 +18752,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_ElectrodeCircuitBoard_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_ElectrodeCircuitBoard_C"],
       "Effects": []
     },
     "Schematic_Alternate_ElectromagneticControlRod1_C": {
@@ -19064,9 +18765,7 @@
       "DurationSeconds": 1,
       "Row": 7,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_ElectromagneticControlRod_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_ElectromagneticControlRod_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_EnrichedCoal_C": {
@@ -19096,9 +18795,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_FertileUranium_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_FertileUranium_C"],
       "Effects": []
     },
     "Schematic_Alternate_FlexibleFramework_C": {
@@ -19111,9 +18808,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_FlexibleFramework_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_FlexibleFramework_C"],
       "Effects": []
     },
     "Schematic_Alternate_FusedWire_C": {
@@ -19126,9 +18821,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_FusedWire_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_FusedWire_C"],
       "Effects": []
     },
     "Schematic_Alternate_Gunpowder1_C": {
@@ -19141,9 +18834,7 @@
       "DurationSeconds": 1,
       "Row": 4,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Gunpowder_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Gunpowder_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_HeatFusedFrame_C": {
@@ -19156,9 +18847,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_HeatFusedFrame_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_HeatFusedFrame_C"],
       "Effects": []
     },
     "Schematic_Alternate_HeatSink1_C": {
@@ -19171,9 +18860,7 @@
       "DurationSeconds": 1,
       "Row": 7,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_HeatSink_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_HeatSink_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_HeavyFlexibleFrame_C": {
@@ -19186,9 +18873,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_HeavyFlexibleFrame_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_HeavyFlexibleFrame_C"],
       "Effects": []
     },
     "Schematic_Alternate_HeavyModularFrame_C": {
@@ -19201,9 +18886,7 @@
       "DurationSeconds": 1,
       "Row": 4,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_ModularFrameHeavy_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_ModularFrameHeavy_C"],
       "Effects": []
     },
     "Schematic_Alternate_HeavyOilResidue_C": {
@@ -19216,9 +18899,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_HeavyOilResidue_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_HeavyOilResidue_C"],
       "Effects": []
     },
     "Schematic_Alternate_HighSpeedConnector_C": {
@@ -19231,9 +18912,7 @@
       "DurationSeconds": 1,
       "Row": 5,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_HighSpeedConnector_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_HighSpeedConnector_C"],
       "Effects": []
     },
     "Schematic_Alternate_HighSpeedWiring_C": {
@@ -19246,9 +18925,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_HighSpeedWiring_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_HighSpeedWiring_C"],
       "Effects": []
     },
     "Schematic_Alternate_IngotIron_C": {
@@ -19261,9 +18938,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_IngotIron_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_IngotIron_C"],
       "Effects": []
     },
     "Schematic_Alternate_IngotSteel1_C": {
@@ -19276,9 +18951,7 @@
       "DurationSeconds": 1,
       "Row": 4,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_IngotSteel_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_IngotSteel_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_IngotSteel2_C": {
@@ -19291,9 +18964,7 @@
       "DurationSeconds": 1,
       "Row": 4,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_IngotSteel_2_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_IngotSteel_2_C"],
       "Effects": []
     },
     "Schematic_Alternate_InstantPlutoniumCell_C": {
@@ -19306,9 +18977,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_InstantPlutoniumCell_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_InstantPlutoniumCell_C"],
       "Effects": []
     },
     "Schematic_Alternate_InstantScrap_C": {
@@ -19321,9 +18990,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_InstantScrap_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_InstantScrap_C"],
       "Effects": []
     },
     "Schematic_Alternate_ModularFrame_C": {
@@ -19336,9 +19003,7 @@
       "DurationSeconds": 1,
       "Row": 4,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_ModularFrame_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_ModularFrame_C"],
       "Effects": []
     },
     "Schematic_Alternate_Motor1_C": {
@@ -19351,9 +19016,7 @@
       "DurationSeconds": 1,
       "Row": 4,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Motor_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Motor_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_NuclearFuelRod1_C": {
@@ -19366,9 +19029,7 @@
       "DurationSeconds": 1,
       "Row": 7,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_NuclearFuelRod_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_NuclearFuelRod_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_OCSupercomputer_C": {
@@ -19381,9 +19042,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_OCSupercomputer_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_OCSupercomputer_C"],
       "Effects": []
     },
     "Schematic_Alternate_Plastic1_C": {
@@ -19396,9 +19055,7 @@
       "DurationSeconds": 1,
       "Row": 5,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Plastic_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Plastic_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_PlasticSmartPlating_C": {
@@ -19411,9 +19068,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_PlasticSmartPlating_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_PlasticSmartPlating_C"],
       "Effects": []
     },
     "Schematic_Alternate_PlutoniumFuelUnit_C": {
@@ -19426,9 +19081,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_PlutoniumFuelUnit_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_PlutoniumFuelUnit_C"],
       "Effects": []
     },
     "Schematic_Alternate_PolymerResin_C": {
@@ -19441,9 +19094,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_PolymerResin_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_PolymerResin_C"],
       "Effects": []
     },
     "Schematic_Alternate_PureAluminumIngot_C": {
@@ -19456,9 +19107,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_PureAluminumIngot_C"
-      ],
+      "Unlocks": ["Recipe_PureAluminumIngot_C"],
       "Effects": []
     },
     "Schematic_Alternate_PureCateriumIngot_C": {
@@ -19471,9 +19120,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_PureCateriumIngot_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_PureCateriumIngot_C"],
       "Effects": []
     },
     "Schematic_Alternate_PureCopperIngot_C": {
@@ -19486,9 +19133,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_PureCopperIngot_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_PureCopperIngot_C"],
       "Effects": []
     },
     "Schematic_Alternate_PureIronIngot_C": {
@@ -19501,9 +19146,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_PureIronIngot_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_PureIronIngot_C"],
       "Effects": []
     },
     "Schematic_Alternate_PureQuartzCrystal_C": {
@@ -19516,9 +19159,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_PureQuartzCrystal_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_PureQuartzCrystal_C"],
       "Effects": []
     },
     "Schematic_Alternate_Quickwire_C": {
@@ -19531,9 +19172,7 @@
       "DurationSeconds": 1,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Quickwire_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Quickwire_C"],
       "Effects": []
     },
     "Schematic_Alternate_RadioControlSystem_C": {
@@ -19546,9 +19185,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_RadioControlSystem_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_RadioControlSystem_C"],
       "Effects": []
     },
     "Schematic_Alternate_RadioControlUnit1_C": {
@@ -19561,9 +19198,7 @@
       "DurationSeconds": 1,
       "Row": 7,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_RadioControlUnit_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_RadioControlUnit_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_RecycledRubber_C": {
@@ -19576,9 +19211,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_RecycledRubber_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_RecycledRubber_C"],
       "Effects": []
     },
     "Schematic_Alternate_ReinforcedIronPlate1_C": {
@@ -19591,9 +19224,7 @@
       "DurationSeconds": 1,
       "Row": 2,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_ReinforcedIronPlate_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_ReinforcedIronPlate_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_ReinforcedIronPlate2_C": {
@@ -19606,9 +19237,7 @@
       "DurationSeconds": 1,
       "Row": 2,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_ReinforcedIronPlate_2_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_ReinforcedIronPlate_2_C"],
       "Effects": []
     },
     "Schematic_Alternate_ReinforcedSteelPlate_C": {
@@ -19621,9 +19250,7 @@
       "DurationSeconds": 1,
       "Row": 4,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_EncasedIndustrialBeam_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_EncasedIndustrialBeam_C"],
       "Effects": []
     },
     "Schematic_Alternate_Rotor_C": {
@@ -19636,9 +19263,7 @@
       "DurationSeconds": 1,
       "Row": 4,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Rotor_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Rotor_C"],
       "Effects": []
     },
     "Schematic_Alternate_RubberConcrete_C": {
@@ -19651,9 +19276,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_RubberConcrete_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_RubberConcrete_C"],
       "Effects": []
     },
     "Schematic_Alternate_Screw2_C": {
@@ -19666,9 +19289,7 @@
       "DurationSeconds": 1,
       "Row": 4,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Screw_2_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Screw_2_C"],
       "Effects": []
     },
     "Schematic_Alternate_Screw_C": {
@@ -19681,9 +19302,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Screw_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Screw_C"],
       "Effects": []
     },
     "Schematic_Alternate_Silica_C": {
@@ -19696,9 +19315,7 @@
       "DurationSeconds": 1,
       "Row": 4,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Silica_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Silica_C"],
       "Effects": []
     },
     "Schematic_Alternate_SloppyAlumina_C": {
@@ -19711,9 +19328,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_SloppyAlumina_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_SloppyAlumina_C"],
       "Effects": []
     },
     "Schematic_Alternate_Stator_C": {
@@ -19726,9 +19341,7 @@
       "DurationSeconds": 1,
       "Row": 4,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Stator_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Stator_C"],
       "Effects": []
     },
     "Schematic_Alternate_SteamedCopperSheet_C": {
@@ -19741,9 +19354,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_SteamedCopperSheet_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_SteamedCopperSheet_C"],
       "Effects": []
     },
     "Schematic_Alternate_SteelCanister_C": {
@@ -19756,9 +19367,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_SteelCanister_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_SteelCanister_C"],
       "Effects": []
     },
     "Schematic_Alternate_SteelCoatedPlate_C": {
@@ -19771,9 +19380,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_SteelCoatedPlate_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_SteelCoatedPlate_C"],
       "Effects": []
     },
     "Schematic_Alternate_SteelRod_C": {
@@ -19786,9 +19393,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_SteelRod_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_SteelRod_C"],
       "Effects": []
     },
     "Schematic_Alternate_SuperStateComputer_C": {
@@ -19801,9 +19406,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_SuperStateComputer_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_SuperStateComputer_C"],
       "Effects": []
     },
     "Schematic_Alternate_TurboBlendFuel_C": {
@@ -19867,9 +19470,7 @@
       "DurationSeconds": 1,
       "Row": 7,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_TurboMotor_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_TurboMotor_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_TurboPressureMotor_C": {
@@ -19882,9 +19483,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_TurboPressureMotor_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_TurboPressureMotor_C"],
       "Effects": []
     },
     "Schematic_Alternate_UraniumCell1_C": {
@@ -19897,9 +19496,7 @@
       "DurationSeconds": 1,
       "Row": 7,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_UraniumCell_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_UraniumCell_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_WetConcrete_C": {
@@ -19912,9 +19509,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_WetConcrete_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_WetConcrete_C"],
       "Effects": []
     },
     "Schematic_Alternate_Wire1_C": {
@@ -19927,9 +19522,7 @@
       "DurationSeconds": 1,
       "Row": 1,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Wire_1_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Wire_1_C"],
       "Effects": []
     },
     "Schematic_Alternate_Wire2_C": {
@@ -19942,9 +19535,7 @@
       "DurationSeconds": 1,
       "Row": 3,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Alternate_Wire_2_C"
-      ],
+      "Unlocks": ["Recipe_Alternate_Wire_2_C"],
       "Effects": []
     },
     "Schematic_Tutorial1_5_C": {
@@ -19990,10 +19581,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_Workshop_C",
-        "Recipe_PortableMiner_C"
-      ],
+      "Unlocks": ["Recipe_Workshop_C", "Recipe_PortableMiner_C"],
       "Effects": []
     },
     "Schematic_Tutorial2_C": {
@@ -20051,10 +19639,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_ConveyorPole_C",
-        "Recipe_ConveyorBeltMk1_C"
-      ],
+      "Unlocks": ["Recipe_ConveyorPole_C", "Recipe_ConveyorBeltMk1_C"],
       "Effects": []
     },
     "Schematic_Tutorial4_C": {
@@ -20080,10 +19665,7 @@
       "DurationSeconds": 1,
       "Row": 0,
       "Prereqs": {},
-      "Unlocks": [
-        "Recipe_MinerMk1_C",
-        "Recipe_StorageContainerMk1_C"
-      ],
+      "Unlocks": ["Recipe_MinerMk1_C", "Recipe_StorageContainerMk1_C"],
       "Effects": []
     },
     "Schematic_Tutorial5_C": {

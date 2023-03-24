@@ -1,4 +1,4 @@
-import { Research } from "./types";
+import { Research } from "./types"
 
 export const IgnoredResearch: Set<string> = new Set([
   "stone-walls",
@@ -62,7 +62,7 @@ export const IgnoredResearch: Set<string> = new Set([
   // Not yet
   "logistics-2",
   "toolbelt",
-]);
+])
 
 export function FilterToAvailableResearch(r: Research) {
   if (
@@ -71,7 +71,7 @@ export function FilterToAvailableResearch(r: Research) {
     r.Icon === "worker-robots-speed" ||
     r.Icon === "worker-robots-storage"
   ) {
-    return false;
+    return false
   }
-  return true;
+  return true
 }

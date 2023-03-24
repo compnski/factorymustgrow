@@ -1,4 +1,4 @@
-import { Entity } from "./types";
+import { Entity } from "./types"
 
 export const TestOreEntity = {
   Name: "Test Ore",
@@ -8,7 +8,7 @@ export const TestOreEntity = {
   Category: "fluids",
   Row: 1,
   Col: 2,
-};
+}
 export const TestSlowOreEntity = {
   Name: "Test Slow Ore",
   Id: "test-slow-ore",
@@ -17,7 +17,7 @@ export const TestSlowOreEntity = {
   Category: "fluids",
   Row: 1,
   Col: 3,
-};
+}
 
 export const TestItemEntity = {
   Name: "Test Item",
@@ -27,7 +27,7 @@ export const TestItemEntity = {
   Category: "fluids",
   Row: 1,
   Col: 2,
-};
+}
 export const TestSlowItemEntity = {
   Name: "Test Slow Item",
   Id: "test-slow-item",
@@ -36,7 +36,7 @@ export const TestSlowItemEntity = {
   Category: "fluids",
   Row: 1,
   Col: 3,
-};
+}
 
 export const TestAutomationSciencePack = {
   Name: "Test Automation Science Pack",
@@ -46,7 +46,7 @@ export const TestAutomationSciencePack = {
   Category: "intermediate-products",
   Row: 2,
   Col: 1,
-};
+}
 
 export const TestLogisticsSciencePack = {
   Name: "Test Logistics Science Pack",
@@ -56,7 +56,7 @@ export const TestLogisticsSciencePack = {
   Category: "intermediate-products",
   Row: 2,
   Col: 2,
-};
+}
 
 export const TestEntityList = new Map<string, Entity>([
   ["test-ore", TestOreEntity],
@@ -66,10 +66,10 @@ export const TestEntityList = new Map<string, Entity>([
   ["automation-science-pack", TestAutomationSciencePack],
   ["logistic-science-pack", TestLogisticsSciencePack],
   //   ["test-item-consumer", TestItemConsumerRecipe],
-]);
+])
 
 export function GetTestEntity(name: string): Entity {
-  const e = TestEntityList.get(name);
-  if (!e) throw new Error("Cannot find entity for " + name);
-  return e;
+  const e = TestEntityList.get(name)
+  if (!e) throw new Error("Cannot find entity for " + name)
+  return e
 }

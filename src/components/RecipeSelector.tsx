@@ -1,12 +1,12 @@
-import { SyntheticEvent } from "react";
+import { SyntheticEvent } from "react"
 
 export type RecipeSelectorProps = {
-  onConfirm: (evt: SyntheticEvent, recipe: string) => void;
+  onConfirm: (evt: SyntheticEvent, recipe: string) => void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  recipes: { map(f: (r: string) => any): any };
-  title: string;
-  entityIconLookup?: (entity: string) => string;
-};
+  recipes: { map(f: (r: string) => any): any }
+  title: string
+  entityIconLookup?: (entity: string) => string
+}
 
 export const RecipeSelector = ({
   recipes,
@@ -22,20 +22,17 @@ export const RecipeSelector = ({
         className={`clickable icon ${entityIconLookup(r)}`}
         onClick={(evt) => onConfirm(evt, r)}
       />
-    );
-  });
+    )
+  })
   return (
     (
       <div className="recipe-selector modal">
-        <span
-          className="material-icons close-icon clickable"
-          onClick={(evt) => onConfirm(evt, "")}
-        >
+        <span className="material-icons close-icon clickable" onClick={(evt) => onConfirm(evt, "")}>
           close
         </span>
         <span className="title">{title}</span>
         <div className="recipe-list">{recipeIcons}</div>
       </div>
     ) || <> </>
-  );
-};
+  )
+}

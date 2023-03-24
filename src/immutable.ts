@@ -1,4 +1,4 @@
-import { Map } from "immutable";
+import { Map } from "immutable"
 
 // function Map<K, V>(collection?: Iterable<[K, V]>): ImmutableMap<K, V>;
 // function Map<V>(obj: { [key: string]: V }): ImmutableMap<string, V>;
@@ -13,4 +13,4 @@ import { Map } from "immutable";
 //   return m;
 // }
 
-export { Map as ImmutableMap }; //, ImmutableMap as ImmutableMapType };
+export { Map as ImmutableMap } //, ImmutableMap as ImmutableMapType };

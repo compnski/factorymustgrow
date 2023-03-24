@@ -51,7 +51,7 @@ const adjectives = [
   "doubtful",
   "drab",
   "dull",
-];
+]
 
 const animals = [
   "koi",
@@ -183,18 +183,16 @@ const animals = [
   "bear",
   "cat",
   "dog",
-];
+]
 
 function randomElement<T>(items: T[]): T {
-  return items[Math.floor(Math.random() * items.length)];
+  return items[Math.floor(Math.random() * items.length)]
 }
 
 export function randomName(): string {
-  return `${randomElement(adjectives)} ${randomElement(animals)}`;
+  return `${randomElement(adjectives)} ${randomElement(animals)}`
 }
 
 export function reallyRandomName(): string {
-  return `${randomElement(adjectives)} ${randomElement(
-    adjectives
-  )} ${randomElement(animals)}`;
+  return `${randomElement(adjectives)} ${randomElement(adjectives)} ${randomElement(animals)}`
 }

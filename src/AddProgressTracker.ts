@@ -1,18 +1,18 @@
 // Factory
 
-import { moveToInventory } from "./movement";
-import { productionRunsForInput } from "./productionUtils";
-import { StateVMAction } from "./state/action";
-import { BuildingAddress, StateAddress } from "./state/address";
-import { EntityStack } from "./types";
-import { ReadonlyItemBuffer } from "./factoryGameState";
+import { moveToInventory } from "./movement"
+import { productionRunsForInput } from "./productionUtils"
+import { StateVMAction } from "./state/action"
+import { BuildingAddress, StateAddress } from "./state/address"
+import { EntityStack } from "./types"
+import { ReadonlyItemBuffer } from "./factoryGameState"
 
 export function AddProgressTrackers(
   dispatch: (a: StateVMAction) => void,
   address: BuildingAddress,
   producer: {
-    progressTrackers: Readonly<number[]>;
-    BuildingCount: number;
+    progressTrackers: Readonly<number[]>
+    BuildingCount: number
   },
   currentTick: number,
   count: number
@@ -20,7 +20,7 @@ export function AddProgressTrackers(
   const trackersToAdd = Math.max(
     0,
     Math.min(count, producer.BuildingCount - producer.progressTrackers.length)
-  );
+  )
 
   if (trackersToAdd)
     dispatch({
@@ -28,27 +28,27 @@ export function AddProgressTrackers(
       count: trackersToAdd,
       address,
       currentTick,
-    });
+    })
 
-  return trackersToAdd;
+  return trackersToAdd
 }
 
 export function RemoveProgressTracker(
   dispatch: (a: StateVMAction) => void,
   address: BuildingAddress,
   producer: {
-    progressTrackers: Readonly<number[]>;
+    progressTrackers: Readonly<number[]>
   }
 ): number {
-  if (producer.progressTrackers.length === 0) return 0;
+  if (producer.progressTrackers.length === 0) return 0
 
   dispatch({
     kind: "AddProgressTrackers",
     count: -1,
     address,
     currentTick: 0,
-  });
-  return 1;
+  })
+  return 1
 }
 
 export function TickProgressTracker(
@@ -59,17 +59,13 @@ export function TickProgressTracker(
   progressLength: number,
   maxRemoved: number
 ): number {
-  let toRemoveCount = 0;
-  for (
-    let idx = 0;
-    idx < Math.min(producer.progressTrackers.length, maxRemoved);
-    idx++
-  ) {
-    const startedAt = producer.progressTrackers[idx];
+  let toRemoveCount = 0
+  for (let idx = 0; idx < Math.min(producer.progressTrackers.length, maxRemoved); idx++) {
+    const startedAt = producer.progressTrackers[idx]
     if (currentTick >= startedAt + progressLength) {
-      toRemoveCount++;
+      toRemoveCount++
     } else {
-      break;
+      break
     }
   }
 
@@ -79,45 +75,42 @@ export function TickProgressTracker(
       count: -toRemoveCount,
       address,
       currentTick,
-    });
+    })
 
-  return toRemoveCount;
+  return toRemoveCount
 }
 
 interface ProgressTrackers {
-  progressTrackers: number[];
-  kind: string;
+  progressTrackers: number[]
+  kind: string
 }
-export function HasProgressTrackers(b: { kind: string }): b is ProgressTrackers;
-export function HasProgressTrackers(b: {
-  progressTrackers?: number[];
-  kind: string;
-}): b is ProgressTrackers {
-  return b.progressTrackers !== undefined;
+export function HasProgressTrackers(b: { kind: string }): b is ProgressTrackers
+export function HasProgressTrackers(b: { progressTrackers?: number[]; kind: string }): b is ProgressTrackers {
+  return b.progressTrackers !== undefined
 }
 
 type trackerProps = {
-  dispatch: (a: StateVMAction) => void;
-  currentTick: number;
-  buildingAddress: BuildingAddress;
+  dispatch: (a: StateVMAction) => void
+  currentTick: number
+  buildingAddress: BuildingAddress
   recipe: {
-    Input: EntityStack[];
-    Output: EntityStack[];
-    DurationSeconds: number;
-  };
+    Input: EntityStack[]
+    Output: EntityStack[]
+    DurationSeconds: number
+  }
   building: {
-    progressTrackers: Readonly<number[]>;
-    BuildingCount: number;
-    inputBuffers?: ReadonlyItemBuffer;
-    outputBuffers?: ReadonlyItemBuffer;
-  };
+    progressTrackers: Readonly<number[]>
+    BuildingCount: number
+    inputBuffers?: ReadonlyItemBuffer
+    outputBuffers?: ReadonlyItemBuffer
+  }
 
-  maxTriggersAdded?: number;
-  outputAddress?: StateAddress;
-  outputBuffers?: ReadonlyItemBuffer;
-  inputAddress?: StateAddress;
-  inputBuffers?: ReadonlyItemBuffer;
-};
+  maxTriggersAdded?: number
+  outputAddress?: StateAddress
+  outputBuffers?: ReadonlyItemBuffer
+  inputAddress?: StateAddress
+  inputBuffers?: ReadonlyItemBuffer
+}
 
 export function CancelProgressTracker({
   dispatch,
@@ -125,15 +118,15 @@ export function CancelProgressTracker({
   building,
   buildingAddress,
 }: Pick<trackerProps, "dispatch" | "recipe" | "building" | "buildingAddress">) {
-  const trackerCount = building.progressTrackers.length;
+  const trackerCount = building.progressTrackers.length
   dispatch({
     kind: "AddProgressTrackers",
     count: -trackerCount,
     address: buildingAddress,
     currentTick: 0,
-  });
+  })
   for (const input of recipe.Input) {
-    moveToInventory(dispatch, input.Entity, input.Count * trackerCount);
+    moveToInventory(dispatch, input.Entity, input.Count * trackerCount)
   }
 }
 
@@ -149,18 +142,18 @@ export function ProduceWithTracker({
   outputAddress,
   outputBuffers,
 }: trackerProps) {
-  const ib = inputAddress ? inputBuffers : building.inputBuffers;
-  if (!ib) throw new Error("Missing input");
+  const ib = inputAddress ? inputBuffers : building.inputBuffers
+  if (!ib) throw new Error("Missing input")
 
-  const ob = outputAddress ? outputBuffers : building.outputBuffers;
-  if (!ob) throw new Error("Missing output");
+  const ob = outputAddress ? outputBuffers : building.outputBuffers
+  if (!ob) throw new Error("Missing output")
 
   // Check empty factories
   const emptyFactoriesToStart = Math.min(
     productionRunsForInput(ib, recipe.Input),
     Math.max(building.BuildingCount - building.progressTrackers.length, 0),
     maxTriggersAdded
-  );
+  )
 
   const addedTrackers = AddProgressTrackers(
     dispatch,
@@ -168,7 +161,7 @@ export function ProduceWithTracker({
     building,
     currentTick,
     emptyFactoriesToStart
-  );
+  )
 
   if (addedTrackers) {
     // Consume resources
@@ -177,20 +170,15 @@ export function ProduceWithTracker({
         kind: "AddItemCount",
         entity: input.Entity,
         count: -input.Count * addedTrackers,
-        address: inputAddress
-          ? inputAddress
-          : { ...buildingAddress, buffer: "input" },
-      });
+        address: inputAddress ? inputAddress : { ...buildingAddress, buffer: "input" },
+      })
     }
   }
 
   const availableInventorySpace = recipe.Output.reduce((accum, entityStack) => {
-    const spaceInOutputStack = ob.AvailableSpace(entityStack.Entity);
-    return Math.min(
-      accum,
-      Math.floor(spaceInOutputStack / recipe.Output[0].Count)
-    );
-  }, Infinity);
+    const spaceInOutputStack = ob.AvailableSpace(entityStack.Entity)
+    return Math.min(accum, Math.floor(spaceInOutputStack / recipe.Output[0].Count))
+  }, Infinity)
 
   const actualProduction = TickProgressTracker(
     dispatch,
@@ -199,19 +187,17 @@ export function ProduceWithTracker({
     currentTick,
     recipe.DurationSeconds * 1000,
     availableInventorySpace
-  );
+  )
 
-  if (!actualProduction) return 0;
+  if (!actualProduction) return 0
   recipe.Output.forEach((outputStack) => {
     dispatch({
       // TODO: Use SetItem once it exists?
       kind: "AddItemCount",
-      address: outputAddress
-        ? outputAddress
-        : { ...buildingAddress, buffer: "output" },
+      address: outputAddress ? outputAddress : { ...buildingAddress, buffer: "output" },
       entity: outputStack.Entity,
       count: outputStack.Count * actualProduction,
-    });
-  });
-  return actualProduction;
+    })
+  })
+  return actualProduction
 }

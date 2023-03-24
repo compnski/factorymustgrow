@@ -1,13 +1,13 @@
-import { FactoryGameState, initialFactoryGameState } from "./factoryGameState";
+import { FactoryGameState, initialFactoryGameState } from "./factoryGameState"
 import {
   saveStateToLocalStorage,
   loadStateFromLocalStorage,
   deserializeGameState,
   serializeGameState,
-} from "./localstorage";
-import { ImmutableMap } from "./immutable";
-import { isImmutable, isMap } from "immutable";
-import { NewChest } from "./storage";
+} from "./localstorage"
+import { ImmutableMap } from "./immutable"
+import { isImmutable, isMap } from "immutable"
+import { NewChest } from "./storage"
 
 fit("Can serialize various objects", () => {
   const types = [
@@ -17,8 +17,7 @@ fit("Can serialize various objects", () => {
     },
     {
       original: { Progress: ImmutableMap([["person", { name: "jason" }]]) },
-      expected:
-        '{"Progress":{"dataType":"ImmutableMap","value":[["person",{"name":"jason"}]]}}',
+      expected: '{"Progress":{"dataType":"ImmutableMap","value":[["person",{"name":"jason"}]]}}',
     },
     // {
     //   original: NewChest(
@@ -29,21 +28,19 @@ fit("Can serialize various objects", () => {
     //   expected:
     //     '{"Progress":{"dataType":"ImmutableMap","value":[["person",{"name":"jason"}]]}}',
     // },
-  ];
+  ]
 
   for (const { original, expected } of types) {
-    const actual = serializeGameState(original);
-    expect(actual).toStrictEqual(expected);
-    expect(deserializeGameState(actual)).toStrictEqual(original);
+    const actual = serializeGameState(original)
+    expect(actual).toStrictEqual(expected)
+    expect(deserializeGameState(actual)).toStrictEqual(original)
   }
-});
+})
 
 it("Saves a serialized state to local storage", () => {
-  saveStateToLocalStorage(initialFactoryGameState());
-  expect(loadStateFromLocalStorage({} as FactoryGameState)).toStrictEqual(
-    initialFactoryGameState()
-  );
-});
+  saveStateToLocalStorage(initialFactoryGameState())
+  expect(loadStateFromLocalStorage({} as FactoryGameState)).toStrictEqual(initialFactoryGameState())
+})
 
 // it("Saves a mainBus to local storage", () => {
 //   const state = initialFactoryGameState();
@@ -57,12 +54,8 @@ it("Saves a serialized state to local storage", () => {
 // });
 
 it("Saves and loads a chest", () => {
-  const chest = NewChest(
-    { subkind: "iron-chest" },
-    4,
-    ImmutableMap([["iron-ore", 10]])
-  );
-  const serializedChest = serializeGameState(chest);
-  const deserializedChest = deserializeGameState(serializedChest);
-  expect(deserializedChest).toEqual(chest);
-});
+  const chest = NewChest({ subkind: "iron-chest" }, 4, ImmutableMap([["iron-ore", 10]]))
+  const serializedChest = serializeGameState(chest)
+  const deserializedChest = deserializeGameState(serializedChest)
+  expect(deserializedChest).toEqual(chest)
+})

@@ -1,22 +1,17 @@
-import { showResearchSelector } from "./components/selectors";
-import { FactoryGameState, ReadonlyBuildingSlot } from "./factoryGameState";
-import { GameAction } from "./GameAction";
-import { GetRegion } from "./GameDispatch";
-import { GetResearch } from "./gen/entities";
-import { GeneralDialogConfig } from "./GeneralDialogProvider";
-import { MoveViaInserter } from "./inserter";
-import { PushPullFromMainBus } from "./main_bus";
-import { CanPushTo } from "./movement";
-import {
-  Extractor,
-  Factory,
-  ProduceFromExtractor,
-  ProduceFromFactory,
-} from "./production";
-import { IsResearchComplete, Lab, ResearchInLab } from "./research";
-import { DispatchFunc } from "./stateVm";
-import { Chest, UpdateChest } from "./storage";
-import { TruckLineDepot, UpdateTruckLineDepot } from "./transport";
+import { showResearchSelector } from "./components/selectors"
+import { FactoryGameState, ReadonlyBuildingSlot } from "./factoryGameState"
+import { GameAction } from "./GameAction"
+import { GetRegion } from "./GameDispatch"
+import { GetResearch } from "./gen/entities"
+import { GeneralDialogConfig } from "./GeneralDialogProvider"
+import { MoveViaInserter } from "./inserter"
+import { PushPullFromMainBus } from "./main_bus"
+import { CanPushTo } from "./movement"
+import { Extractor, Factory, ProduceFromExtractor, ProduceFromFactory } from "./production"
+import { IsResearchComplete, Lab, ResearchInLab } from "./research"
+import { DispatchFunc } from "./stateVm"
+import { Chest, UpdateChest } from "./storage"
+import { TruckLineDepot, UpdateTruckLineDepot } from "./transport"
 
 export async function UpdateGameState(
   gameState: FactoryGameState,
@@ -24,17 +19,14 @@ export async function UpdateGameState(
     dispatch,
     executeActions,
   }: {
-    dispatch: DispatchFunc;
-    executeActions: (
-      gameState: FactoryGameState,
-      dontExposeState?: boolean
-    ) => FactoryGameState;
+    dispatch: DispatchFunc
+    executeActions: (gameState: FactoryGameState, dontExposeState?: boolean) => FactoryGameState
   },
   tick: number,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   generalDialog: (arg0: GeneralDialogConfig) => Promise<{
-    returnData: string[] | false;
-    uxDispatch: (a: GameAction) => void;
+    returnData: string[] | false
+    uxDispatch: (a: GameAction) => void
   }>
 ) {
   try {
@@ -42,7 +34,7 @@ export async function UpdateGameState(
       dispatch({
         kind: "AdvanceTruckLine",
         address: { truckLineId: currentTruckLine.truckLineId },
-      });
+      })
     }
     for (const [regionId] of gameState.Regions) {
       gameState = UpdateGameStateForRegion(
@@ -51,20 +43,20 @@ export async function UpdateGameState(
         (gs: FactoryGameState) => executeActions(gs, true),
         gameState,
         regionId
-      );
+      )
     }
     // Check Research Completion
     if (IsResearchComplete(gameState.Research)) {
-      console.log("Research Complete!");
-      dispatch({ kind: "SetCurrentResearch", researchId: "" });
-      void showResearchSelector(generalDialog, gameState.Research);
+      console.log("Research Complete!")
+      dispatch({ kind: "SetCurrentResearch", researchId: "" })
+      void showResearchSelector(generalDialog, gameState.Research)
     }
   } catch (e) {
     //TODO Show error dialog
-    console.error("Failed to update game state:", e);
+    console.error("Failed to update game state:", e)
   }
 
-  executeActions({ ...gameState, LastTick: tick });
+  executeActions({ ...gameState, LastTick: tick })
 }
 
 function UpdateGameStateForRegion(
@@ -74,62 +66,40 @@ function UpdateGameStateForRegion(
   gs: FactoryGameState,
   regionId: string
 ): FactoryGameState {
-  let gameState = gs;
-  let region = GetRegion(gs, regionId);
-  if (!region) throw new Error("Missing region: " + regionId);
+  let gameState = gs
+  let region = GetRegion(gs, regionId)
+  if (!region) throw new Error("Missing region: " + regionId)
   // Reset rocket 10s after launch
-  if (
-    gameState.RocketLaunchingAt > 0 &&
-    tick - gameState.RocketLaunchingAt > 10000
-  ) {
+  if (gameState.RocketLaunchingAt > 0 && tick - gameState.RocketLaunchingAt > 10000) {
     dispatch({
       kind: "SetProperty",
       address: "global",
       property: "RocketLaunchingAt",
       value: 0,
-    });
+    })
   }
 
-  fixInserters(dispatch, region);
+  fixInserters(dispatch, region)
 
   for (const idx of region.BuildingSlots.keys()) {
-    const slot = region.BuildingSlots[idx];
-    const address = { regionId: region.Id, buildingIdx: idx };
-    const building = slot.Building;
+    const slot = region.BuildingSlots[idx]
+    const address = { regionId: region.Id, buildingIdx: idx }
+    const building = slot.Building
     switch (building.kind) {
       case "Factory":
-        ProduceFromFactory(building as Factory, dispatch, address, tick);
-        break;
+        ProduceFromFactory(building as Factory, dispatch, address, tick)
+        break
       case "Extractor":
-        ProduceFromExtractor(
-          building as Extractor,
-          region,
-          dispatch,
-          address,
-          tick
-        );
-        break;
+        ProduceFromExtractor(building as Extractor, region, dispatch, address, tick)
+        break
       case "Lab":
-        ResearchInLab(
-          tick,
-          address,
-          building as Lab,
-          gameState.Research,
-          dispatch,
-          GetResearch
-        );
-        break;
+        ResearchInLab(tick, address, building as Lab, gameState.Research, dispatch, GetResearch)
+        break
       case "Chest":
-        UpdateChest(dispatch, building as Chest, address, tick);
-        break;
+        UpdateChest(dispatch, building as Chest, address, tick)
+        break
       case "TruckLineDepot":
-        UpdateTruckLineDepot(
-          building as TruckLineDepot,
-          dispatch,
-          address,
-          gameState,
-          tick
-        );
+        UpdateTruckLineDepot(building as TruckLineDepot, dispatch, address, gameState, tick)
     }
 
     if (idx < region.BuildingSlots.length - 1)
@@ -140,9 +110,9 @@ function UpdateGameStateForRegion(
         idx,
         region.BuildingSlots[idx].Building,
         region.BuildingSlots[idx + 1].Building
-      );
-    gameState = executeActions(gameState);
-    region = GetRegion(gameState, regionId);
+      )
+    gameState = executeActions(gameState)
+    region = GetRegion(gameState, regionId)
   }
 
   //AdvanceMainBus()
@@ -154,21 +124,21 @@ function UpdateGameStateForRegion(
         laneId: busLane.laneIdx,
         upperSlotIdx: busLane.upperSlotIdx,
       },
-    });
-    gameState = executeActions(gameState);
+    })
+    gameState = executeActions(gameState)
   }
-  gameState = executeActions(gameState);
-  region = GetRegion(gameState, regionId);
+  gameState = executeActions(gameState)
+  region = GetRegion(gameState, regionId)
 
   region.BuildingSlots.forEach((_, idx) => {
-    region = GetRegion(gameState, regionId);
-    const slot = region.BuildingSlots[idx];
-    const address = { regionId: region.Id, buildingIdx: idx };
-    if (!region) throw new Error("Missing region");
-    PushPullFromMainBus(dispatch, idx, slot, region.Bus, address);
-    gameState = executeActions(gameState);
-  });
-  return gameState;
+    region = GetRegion(gameState, regionId)
+    const slot = region.BuildingSlots[idx]
+    const address = { regionId: region.Id, buildingIdx: idx }
+    if (!region) throw new Error("Missing region")
+    PushPullFromMainBus(dispatch, idx, slot, region.Bus, address)
+    gameState = executeActions(gameState)
+  })
+  return gameState
 }
 
 export function fixInserters(
@@ -177,18 +147,12 @@ export function fixInserters(
 ) {
   // TODO: Fix Inserters
   region.BuildingSlots.forEach((slot, idx) => {
-    const i = slot.Inserter;
+    const i = slot.Inserter
     if (
       (i.direction === "DOWN" &&
-        !CanPushTo(
-          region.BuildingSlots[idx].Building,
-          region.BuildingSlots[idx + 1].Building
-        )) ||
+        !CanPushTo(region.BuildingSlots[idx].Building, region.BuildingSlots[idx + 1].Building)) ||
       (i.direction === "UP" &&
-        !CanPushTo(
-          region.BuildingSlots[idx + 1].Building,
-          region.BuildingSlots[idx].Building
-        ))
+        !CanPushTo(region.BuildingSlots[idx + 1].Building, region.BuildingSlots[idx].Building))
     )
       dispatch({
         kind: "SetProperty",
@@ -199,6 +163,6 @@ export function fixInserters(
         },
         property: "direction",
         value: "NONE",
-      });
-  });
+      })
+  })
 }

@@ -1,10 +1,10 @@
-import { findFirstEmptyLane } from "./building";
-import { DebugInventory, DebugResearch } from "./debug";
-import { GameDispatch } from "./GameDispatch";
-import { DispatchFunc } from "./stateVm";
-import { FactoryGameState, ReadonlyRegion } from "./factoryGameState";
+import { findFirstEmptyLane } from "./building"
+import { DebugInventory, DebugResearch } from "./debug"
+import { GameDispatch } from "./GameDispatch"
+import { DispatchFunc } from "./stateVm"
+import { FactoryGameState, ReadonlyRegion } from "./factoryGameState"
 
-export type MacroName = "redsci" | "allresearch" | "allitems";
+export type MacroName = "redsci" | "allresearch" | "allitems"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function Macro(
@@ -15,13 +15,13 @@ export function Macro(
   return (name: MacroName) => {
     switch (name) {
       case "allresearch":
-        return doAllResearch(reducer);
+        return doAllResearch(reducer)
       case "allitems":
-        return giveAllItems(reducer);
+        return giveAllItems(reducer)
       case "redsci":
-        return buildRedSci(reducer, gameState, regionId);
+        return buildRedSci(reducer, gameState, regionId)
     }
-  };
+  }
 }
 
 function doAllResearch(reducer: DispatchFunc) {
@@ -30,7 +30,7 @@ function doAllResearch(reducer: DispatchFunc) {
     address: "global",
     property: "Research",
     value: DebugResearch,
-  });
+  })
 }
 function giveAllItems(reducer: DispatchFunc) {
   reducer({
@@ -38,16 +38,12 @@ function giveAllItems(reducer: DispatchFunc) {
     address: "global",
     property: "Inventory",
     value: new DebugInventory(),
-  });
+  })
 }
 
-function buildRedSci(
-  reducer: DispatchFunc,
-  gameState: FactoryGameState,
-  regionId: string
-) {
-  const currentRegion = gameState.Regions.get(regionId);
-  if (!currentRegion) throw new Error("No region");
+function buildRedSci(reducer: DispatchFunc, gameState: FactoryGameState, regionId: string) {
+  const currentRegion = gameState.Regions.get(regionId)
+  if (!currentRegion) throw new Error("No region")
   addProducers(reducer, gameState, currentRegion, [
     { kind: "electric-mining-drill", recipe: "iron-ore", connect: { below } },
     { kind: "stone-furnace", recipe: "iron-plate", connect: { below } },
@@ -59,13 +55,13 @@ function buildRedSci(
     { kind: "assembling-machine-1", recipe: "automation-science-pack" },
     { kind: "stone-furnace", recipe: "copper-plate", connect: { above } },
     { kind: "electric-mining-drill", recipe: "copper-ore", connect: { above } },
-  ]);
-  return null;
+  ])
+  return null
 }
 
-let regionId = "region0";
+let regionId = "region0"
 export function setMacroRegionId(r: string) {
-  regionId = r;
+  regionId = r
 }
 
 function addProducers(
@@ -73,38 +69,38 @@ function addProducers(
   gameState: FactoryGameState,
   currentRegion: ReadonlyRegion,
   producerList: {
-    kind: string;
-    recipe: string;
+    kind: string
+    recipe: string
     connect?: {
-      above?: boolean;
-      below?: boolean;
-      belt?: string[];
-    };
+      above?: boolean
+      below?: boolean
+      belt?: string[]
+    }
   }[]
 ) {
   const upperToggles: number[] = [],
-    lowerToggles: number[] = [];
-  let buildingIdx = findFirstEmptyLane(currentRegion.BuildingSlots);
+    lowerToggles: number[] = []
+  let buildingIdx = findFirstEmptyLane(currentRegion.BuildingSlots)
   producerList.forEach(({ recipe, kind, connect = {} }) => {
     GameDispatch(dispatch, gameState, {
       type: "TransferToInventory",
       entity: kind,
       otherStackKind: "Void",
       count: 1,
-    });
+    })
     GameDispatch(dispatch, gameState, {
       type: "TransferToInventory",
       entity: "inserter",
       otherStackKind: "Void",
       count: 1,
-    });
+    })
 
     GameDispatch(dispatch, gameState, {
       type: "PlaceBuilding",
       regionId,
       entity: kind,
       buildingIdx,
-    });
+    })
 
     // let nextBuildingIdx =
     //   findFirstEmptyLane(currentRegion.BuildingSlots, nextBuildingIdx) || 0;
@@ -119,18 +115,18 @@ function addProducers(
         buildingIdx: buildingIdx - 1,
         regionId,
         location: "BUILDING",
-      });
+      })
 
     GameDispatch(dispatch, gameState, {
       type: "ChangeRecipe",
       regionId,
       buildingIdx: buildingIdx,
       recipeId: recipe,
-    });
-    if (connect.above) upperToggles.push(buildingIdx);
-    if (connect.below) lowerToggles.push(buildingIdx);
-    buildingIdx++;
-  });
+    })
+    if (connect.above) upperToggles.push(buildingIdx)
+    if (connect.below) lowerToggles.push(buildingIdx)
+    buildingIdx++
+  })
 
   lowerToggles.forEach((buildingIdx) => {
     GameDispatch(dispatch, gameState, {
@@ -138,8 +134,8 @@ function addProducers(
       regionId,
       buildingIdx: buildingIdx,
       location: "BUILDING",
-    });
-  });
+    })
+  })
 
   upperToggles.forEach((buildingIdx) => {
     GameDispatch(dispatch, gameState, {
@@ -147,8 +143,8 @@ function addProducers(
       regionId,
       buildingIdx: buildingIdx - 1,
       location: "BUILDING",
-    });
-  });
+    })
+  })
 }
 const above = true,
-  below = true;
+  below = true

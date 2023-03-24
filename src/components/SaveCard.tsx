@@ -1,10 +1,5 @@
-import {
-  MouseEvent as ReactMouseEvent,
-  SyntheticEvent,
-  useEffect,
-  useState,
-} from "react";
-import { reallyRandomName } from "../namegen";
+import { MouseEvent as ReactMouseEvent, SyntheticEvent, useEffect, useState } from "react"
+import { reallyRandomName } from "../namegen"
 import {
   deleteGameFromCloudStorage,
   deleteGameFromLocalStorage,
@@ -13,110 +8,97 @@ import {
   loadCloudSaveGame,
   loadSaveGame,
   SaveGameMetadata,
-} from "../save_game";
-import { settings, updateSetting } from "../settings";
-import { sleep } from "../utils";
-import "./SaveCard.scss";
+} from "../save_game"
+import { settings, updateSetting } from "../settings"
+import { sleep } from "../utils"
+import "./SaveCard.scss"
 
 export type SaveCardProps = {
   onConfirm: (
     evt: SyntheticEvent,
-    saveData:
-      | string
-      | { saveVersion: string; cloudSaveName: string | undefined }
-  ) => void;
-  showSaveButton: boolean;
-};
+    saveData: string | { saveVersion: string; cloudSaveName: string | undefined }
+  ) => void
+  showSaveButton: boolean
+}
 
 // TODO: Combine saves using gameStateHash
-export const SaveCard = function SaveCard({
-  onConfirm,
-  showSaveButton,
-}: SaveCardProps) {
-  const [localSaves, setLocalSaves] = useState<
-    Record<string, SaveGameMetadata>
-  >({});
-  const [newSaveName, setNewSaveName] = useState("");
-  const [displaySettings, setDisplaySettings] = useState(settings());
-  const [cloudSaveError, setCloudSaveError] = useState(false);
+export const SaveCard = function SaveCard({ onConfirm, showSaveButton }: SaveCardProps) {
+  const [localSaves, setLocalSaves] = useState<Record<string, SaveGameMetadata>>({})
+  const [newSaveName, setNewSaveName] = useState("")
+  const [displaySettings, setDisplaySettings] = useState(settings())
+  const [cloudSaveError, setCloudSaveError] = useState(false)
 
   useEffect(() => {
-    setLocalSaves(listSaveGamesInLocalStorage);
-  }, []);
+    setLocalSaves(listSaveGamesInLocalStorage)
+  }, [])
 
   const [cloudSaveName, setCloudSaveName] = useState<string>(() => {
     try {
-      const saved = localStorage.getItem("cloudSaveName") || "";
-      const savedValue = (JSON.parse(saved) as string) || "";
-      return savedValue == "" ? reallyRandomName() : savedValue;
+      const saved = localStorage.getItem("cloudSaveName") || ""
+      const savedValue = (JSON.parse(saved) as string) || ""
+      return savedValue == "" ? reallyRandomName() : savedValue
     } catch (e) {
-      return reallyRandomName();
+      return reallyRandomName()
     }
-  });
+  })
 
   useEffect(() => {
-    localStorage.setItem("cloudSaveName", JSON.stringify(cloudSaveName));
-  }, [cloudSaveName]);
+    localStorage.setItem("cloudSaveName", JSON.stringify(cloudSaveName))
+  }, [cloudSaveName])
 
-  const [cloudSaves, setCloudSaves] = useState<SaveGameMetadata[]>([]);
-  const [saved, setSaved] = useState(false);
+  const [cloudSaves, setCloudSaves] = useState<SaveGameMetadata[]>([])
+  const [saved, setSaved] = useState(false)
 
   useEffect(() => {
     // TODO: Debounce
-    void listCloudSave();
-  }, [cloudSaveName, displaySettings]);
+    void listCloudSave()
+  }, [cloudSaveName, displaySettings])
 
   async function listCloudSave() {
     try {
-      const saves = await listSavedGamesInCloudStorage(cloudSaveName);
-      if (saves) setCloudSaves(saves);
-      setCloudSaveError(false);
+      const saves = await listSavedGamesInCloudStorage(cloudSaveName)
+      if (saves) setCloudSaves(saves)
+      setCloudSaveError(false)
     } catch (e) {
-      setCloudSaveError(true);
+      setCloudSaveError(true)
     }
   }
 
   async function saveGameClick(evt: SyntheticEvent, saveVersion: string) {
     //saveGame(name, cloudSaveName);
     // TODO: Now that save is async, need to poll for saved gaes?
-    setSaved(true);
-    onConfirm(evt, { saveVersion, cloudSaveName });
-    await sleep(500);
+    setSaved(true)
+    onConfirm(evt, { saveVersion, cloudSaveName })
+    await sleep(500)
   }
 
-  function loadLocalSave(
-    evt: ReactMouseEvent<HTMLLIElement, MouseEvent>,
-    sgmKey: string
-  ) {
-    const gameData = loadSaveGame(sgmKey);
-    if (gameData) onConfirm(evt, gameData);
+  function loadLocalSave(evt: ReactMouseEvent<HTMLLIElement, MouseEvent>, sgmKey: string) {
+    const gameData = loadSaveGame(sgmKey)
+    if (gameData) onConfirm(evt, gameData)
   }
 
-  async function loadCloudSave(
-    evt: ReactMouseEvent<HTMLLIElement, MouseEvent>,
-    saveName: string
-  ) {
+  async function loadCloudSave(evt: ReactMouseEvent<HTMLLIElement, MouseEvent>, saveName: string) {
     try {
-      const gameData = await loadCloudSaveGame(cloudSaveName, saveName);
-      if (gameData) onConfirm(evt, gameData);
+      const gameData = await loadCloudSaveGame(cloudSaveName, saveName)
+      if (gameData) onConfirm(evt, gameData)
     } catch (e) {
-      console.error(e);
-      alert("Failed to load cloud save!");
+      console.error(e)
+      alert("Failed to load cloud save!")
     }
   }
 
   async function deleteCloudSave(evt: SyntheticEvent, saveName: string) {
-    evt.stopPropagation();
-    await deleteGameFromCloudStorage(cloudSaveName, saveName);
-    setDeleteIdx(undefined);
-    void listCloudSave();
+    evt.stopPropagation()
+    await deleteGameFromCloudStorage(cloudSaveName, saveName)
+    setDeleteIdx(undefined)
+    void listCloudSave()
   }
 
   function deleteLocalSave(evt: SyntheticEvent, sgmKey: string) {
-    evt.stopPropagation();
-    deleteGameFromLocalStorage(sgmKey);
-    setDeleteIdx(undefined);
-    setLocalSaves(listSaveGamesInLocalStorage);
+    evt.stopPropagation()
+    deleteGameFromLocalStorage(sgmKey)
+    setDeleteIdx(undefined)
+    setLocalSaves(listSaveGamesInLocalStorage)
   }
 
   const saveGameArea = showSaveButton ? (
@@ -137,12 +119,12 @@ export const SaveCard = function SaveCard({
         Create Save Game
       </button>
     </div>
-  ) : undefined;
+  ) : undefined
 
   const buttonClasses =
-    "flex backdrop-brightness-50 shadow shadow-orange-800 w-96 p-2 hover:ring-sky-700 hover:ring-2 focus:ring-sky-700 focus:ring-2";
+    "flex backdrop-brightness-50 shadow shadow-orange-800 w-96 p-2 hover:ring-sky-700 hover:ring-2 focus:ring-sky-700 focus:ring-2"
 
-  const [deleteIdxKey, setDeleteIdx] = useState<string | undefined>();
+  const [deleteIdxKey, setDeleteIdx] = useState<string | undefined>()
 
   const cloudSaveNameEl = settings().cloudSaveEnabled ? (
     <div className="mt-4">
@@ -158,7 +140,7 @@ export const SaveCard = function SaveCard({
         />
       </label>
     </div>
-  ) : undefined;
+  ) : undefined
 
   const saveEl = (
     <>
@@ -169,10 +151,7 @@ export const SaveCard = function SaveCard({
             cloudSaveError ? (
               <span>
                 Saves only to local storage.
-                <span
-                  style={{ fontSize: 16 }}
-                  className="material-icons text-red-400 align-top ml-2 mr-1"
-                >
+                <span style={{ fontSize: 16 }} className="material-icons text-red-400 align-top ml-2 mr-1">
                   cloud_off
                 </span>
                 Cloud save unreachable.
@@ -188,12 +167,7 @@ export const SaveCard = function SaveCard({
               className="pointer-events-auto cursor-pointer"
               type="checkbox"
               onChange={() => {
-                setDisplaySettings(
-                  updateSetting(
-                    "cloudSaveEnabled",
-                    !displaySettings.cloudSaveEnabled
-                  )
-                );
+                setDisplaySettings(updateSetting("cloudSaveEnabled", !displaySettings.cloudSaveEnabled))
               }}
               checked={settings().cloudSaveEnabled}
             />{" "}
@@ -205,7 +179,7 @@ export const SaveCard = function SaveCard({
         {saveGameArea}
         <ul className="stateList select-none cursor-pointer align-middle leading-none">
           {Object.entries(localSaves).map(([key, sgm], idx) => {
-            const idxKey = `local-${idx}`;
+            const idxKey = `local-${idx}`
             return (
               <li key={idxKey} onClick={(evt) => loadLocalSave(evt, key)}>
                 <div className={buttonClasses + " group"}>
@@ -214,8 +188,8 @@ export const SaveCard = function SaveCard({
                   </span>
                   <span
                     onClick={(evt) => {
-                      setDeleteIdx(idxKey);
-                      evt.stopPropagation();
+                      setDeleteIdx(idxKey)
+                      evt.stopPropagation()
                     }}
                     className="material-icons group-hover:visible invisible"
                   >
@@ -223,73 +197,52 @@ export const SaveCard = function SaveCard({
                   </span>
 
                   {deleteIdxKey == idxKey && (
-                    <span onClick={(evt) => deleteLocalSave(evt, key)}>
-                      Delete?
-                    </span>
+                    <span onClick={(evt) => deleteLocalSave(evt, key)}>Delete?</span>
                   )}
                 </div>
               </li>
-            );
+            )
           })}
           {cloudSaves?.map((stateInfo, idx) => {
-            const idxKey = `cloud-${idx}`;
+            const idxKey = `cloud-${idx}`
             return (
-              <li
-                key={idxKey}
-                onClick={(evt) =>
-                  void loadCloudSave(evt, stateInfo.saveVersion)
-                }
-              >
+              <li key={idxKey} onClick={(evt) => void loadCloudSave(evt, stateInfo.saveVersion)}>
                 <div className={buttonClasses + " group"}>
                   <span>
                     <span className="material-icons">cloud</span>
-                    {stateInfo.saveVersion} -{" "}
-                    {new Date(stateInfo.createdAtMs).toString()}{" "}
+                    {stateInfo.saveVersion} - {new Date(stateInfo.createdAtMs).toString()}{" "}
                   </span>
                   <span
                     onClick={(evt) => {
-                      setDeleteIdx(idxKey);
-                      evt.stopPropagation();
+                      setDeleteIdx(idxKey)
+                      evt.stopPropagation()
                     }}
                     className="material-icons group-hover:visible invisible"
                   >
                     delete
                   </span>
                   {deleteIdxKey == idxKey && (
-                    <span
-                      onClick={(evt) =>
-                        deleteCloudSave(evt, stateInfo.saveVersion)
-                      }
-                    >
-                      Delete?
-                    </span>
+                    <span onClick={(evt) => deleteCloudSave(evt, stateInfo.saveVersion)}>Delete?</span>
                   )}
                 </div>
               </li>
-            );
+            )
           })}
         </ul>
         {cloudSaveNameEl}
       </div>
     </>
-  );
+  )
 
   return (
     <div className="modal save-card">
       <div className="inner-frame">
-        <span
-          className="material-icons close-icon clickable"
-          onClick={(evt) => onConfirm(evt, "")}
-        >
+        <span className="material-icons close-icon clickable" onClick={(evt) => onConfirm(evt, "")}>
           close
         </span>
 
-        {saved ? (
-          <div className="text-3xl text-white text-center">Saved!</div>
-        ) : (
-          saveEl
-        )}
+        {saved ? <div className="text-3xl text-white text-center">Saved!</div> : saveEl}
       </div>
     </div>
-  );
-};
+  )
+}

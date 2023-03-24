@@ -1,43 +1,39 @@
-import { SyntheticEvent, useState } from "react";
-import { InserterIdForBelt } from "../building";
-import {
-  FactoryGameState,
-  ReadonlyBuildingSlot,
-  ReadonlyRegion,
-} from "../factoryGameState";
-import { GameAction } from "../GameAction";
-import { BeltConnectionAddress } from "../state/address";
-import { Belt, BeltHandlerFunc } from "../types";
-import { BuildingHasInput, BuildingHasOutput, replaceItem } from "../utils";
-import "./BuildingCard.scss";
-import { EmptyLaneCard } from "./EmptyLaneCard";
-import { HTMLMainBusSegment } from "./HTMLMainBusSegment";
-import { InserterCard } from "./InserterCard";
-import { LabCard } from "./LabCard";
-import { ProducerCard } from "./ProducerCard";
-import { RocketSiloCard } from "./RocketSiloCard";
-import { StorageCard } from "./StorageCard";
-import { TruckLineCard } from "./TruckLineCard";
+import { SyntheticEvent, useState } from "react"
+import { InserterIdForBelt } from "../building"
+import { FactoryGameState, ReadonlyBuildingSlot, ReadonlyRegion } from "../factoryGameState"
+import { GameAction } from "../GameAction"
+import { BeltConnectionAddress } from "../state/address"
+import { Belt, BeltHandlerFunc } from "../types"
+import { BuildingHasInput, BuildingHasOutput, replaceItem } from "../utils"
+import "./BuildingCard.scss"
+import { EmptyLaneCard } from "./EmptyLaneCard"
+import { HTMLMainBusSegment } from "./HTMLMainBusSegment"
+import { InserterCard } from "./InserterCard"
+import { LabCard } from "./LabCard"
+import { ProducerCard } from "./ProducerCard"
+import { RocketSiloCard } from "./RocketSiloCard"
+import { StorageCard } from "./StorageCard"
+import { TruckLineCard } from "./TruckLineCard"
 
 export type BuildingCardProps = {
-  buildingSlot: ReadonlyBuildingSlot;
-  buildingIdx: number;
-  uxDispatch: (a: GameAction) => void;
-  handleDrag: (evt: SyntheticEvent) => void;
-  handleDrop: undefined | ((evt: SyntheticEvent) => void);
-  moveUp: (evt: SyntheticEvent) => void;
-  moveDown: (evt: SyntheticEvent) => void;
-  region: ReadonlyRegion;
-  gameState: FactoryGameState;
-  beltHandler: BeltHandlerFunc;
-  beltState: readonly Belt[];
+  buildingSlot: ReadonlyBuildingSlot
+  buildingIdx: number
+  uxDispatch: (a: GameAction) => void
+  handleDrag: (evt: SyntheticEvent) => void
+  handleDrop: undefined | ((evt: SyntheticEvent) => void)
+  moveUp: (evt: SyntheticEvent) => void
+  moveDown: (evt: SyntheticEvent) => void
+  region: ReadonlyRegion
+  gameState: FactoryGameState
+  beltHandler: BeltHandlerFunc
+  beltState: readonly Belt[]
   beltInserterMouseDown: (
     evt: SyntheticEvent<HTMLElement, MouseEvent>,
     buildingSlotIdx: number,
     idx: number
-  ) => void;
-  ghostConnection?: BeltConnectionAddress & { laneId?: number };
-};
+  ) => void
+  ghostConnection?: BeltConnectionAddress & { laneId?: number }
+}
 
 export const BuildingCard = ({
   buildingSlot,
@@ -55,7 +51,7 @@ export const BuildingCard = ({
   ghostConnection,
 }: BuildingCardProps) => {
   // TOOD: Change to use Events
-  const building = buildingSlot.Building;
+  const building = buildingSlot.Building
   const busLaneClicked = (laneId: number, entity: string) => {
     if (BuildingHasOutput(building, entity)) {
       uxDispatch({
@@ -64,7 +60,7 @@ export const BuildingCard = ({
         buildingIdx: buildingIdx,
         laneId,
         direction: "TO_BUS",
-      });
+      })
     } else if (BuildingHasInput(building, entity)) {
       uxDispatch({
         type: "AddMainBusConnection",
@@ -72,9 +68,9 @@ export const BuildingCard = ({
         buildingIdx: buildingIdx,
         laneId,
         direction: "FROM_BUS",
-      });
+      })
     }
-  };
+  }
 
   const beltConnectionClicked = (connectionIdx: number) => {
     uxDispatch({
@@ -82,23 +78,23 @@ export const BuildingCard = ({
       regionId,
       buildingIdx: buildingIdx,
       connectionIdx,
-    });
-  };
-  const [dragging, setDragging] = useState(false);
+    })
+  }
+  const [dragging, setDragging] = useState(false)
 
   const handleDragOver = (e: SyntheticEvent) => {
     //console.log("drag over");
-    e.preventDefault();
-    e.stopPropagation();
-  };
+    e.preventDefault()
+    e.stopPropagation()
+  }
 
   const removeBuilding = () => {
     uxDispatch({
       type: "RemoveBuilding",
       regionId,
       buildingIdx: buildingIdx,
-    });
-  };
+    })
+  }
   const card =
     building.kind === "TruckLineDepot" ? (
       <TruckLineCard
@@ -148,22 +144,22 @@ export const BuildingCard = ({
         researchState={gameState.Research}
         uxDispatch={uxDispatch}
       />
-    );
+    )
 
-  let beltConnections = buildingSlot.BeltConnections;
+  let beltConnections = buildingSlot.BeltConnections
   if (ghostConnection) {
-    const bc = beltConnections[ghostConnection.connectionIdx];
+    const bc = beltConnections[ghostConnection.connectionIdx]
 
     // TODO" Set inserter direction when on a valid belt target
-    beltConnections = replaceItem(
-      beltConnections,
-      ghostConnection.connectionIdx,
-      { ...bc, laneId: ghostConnection.laneId, isGhost: true }
-    );
+    beltConnections = replaceItem(beltConnections, ghostConnection.connectionIdx, {
+      ...bc,
+      laneId: ghostConnection.laneId,
+      isGhost: true,
+    })
   }
-  const isEmpty = building.kind === "Empty";
-  const canGoUp = !isEmpty && buildingIdx > 0;
-  const canGoDown = !isEmpty && buildingIdx < buildingSlots.length - 1;
+  const isEmpty = building.kind === "Empty"
+  const canGoUp = !isEmpty && buildingIdx > 0
+  const canGoDown = !isEmpty && buildingIdx < buildingSlots.length - 1
 
   const beltInserters = beltConnections.map((beltConn, idx) => (
     <InserterCard
@@ -172,11 +168,9 @@ export const BuildingCard = ({
       inserter={beltConn.Inserter}
       inserterId={InserterIdForBelt(regionId, buildingIdx, idx)}
       uxDispatch={uxDispatch}
-      onMouseDown={(evt) =>
-        !isEmpty && beltInserterMouseDown(evt, buildingIdx, idx)
-      }
+      onMouseDown={(evt) => !isEmpty && beltInserterMouseDown(evt, buildingIdx, idx)}
     />
-  ));
+  ))
   return (
     <div className="producer-card-container">
       <div
@@ -197,30 +191,20 @@ export const BuildingCard = ({
         >
           <span
             onClick={moveUp}
-            className={`material-icons arrow ${
-              canGoUp ? "cursor-pointer" : "disabled"
-            }`}
+            className={`material-icons arrow ${canGoUp ? "cursor-pointer" : "disabled"}`}
           >
             arrow_upward
           </span>
-          <span
-            className={`material-icons ${isEmpty ? "disabled" : "cursor-grab"}`}
-          >
-            reorder
-          </span>
+          <span className={`material-icons ${isEmpty ? "disabled" : "cursor-grab"}`}>reorder</span>
           <span
             onClick={moveDown}
-            className={`material-icons arrow  ${
-              canGoDown ? "cursor-pointer" : "disabled"
-            }`}
+            className={`material-icons arrow  ${canGoDown ? "cursor-pointer" : "disabled"}`}
           >
             arrow_downward
           </span>
           <span
             onDoubleClick={removeBuilding}
-            className={`material-icons ${
-              isEmpty ? "disabled" : "cursor-pointer"
-            }`}
+            className={`material-icons ${isEmpty ? "disabled" : "cursor-pointer"}`}
           >
             close
           </span>
@@ -239,5 +223,5 @@ export const BuildingCard = ({
         beltState={beltState}
       />
     </div>
-  );
-};
+  )
+}

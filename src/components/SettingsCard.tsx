@@ -1,20 +1,13 @@
-import { SyntheticEvent, useState } from "react";
-import { settings, updateSetting } from "../settings";
+import { SyntheticEvent, useState } from "react"
+import { settings, updateSetting } from "../settings"
 
-export function SettingsCard({
-  onConfirm,
-}: {
-  onConfirm: (evt: SyntheticEvent, r: unknown) => void;
-}) {
-  const [displaySettings, setDisplaySettings] = useState(settings());
+export function SettingsCard({ onConfirm }: { onConfirm: (evt: SyntheticEvent, r: unknown) => void }) {
+  const [displaySettings, setDisplaySettings] = useState(settings())
 
   return (
     <div className="modal save-card">
       <div className="inner-frame">
-        <span
-          className="material-icons close-icon clickable"
-          onClick={(evt) => onConfirm(evt, "")}
-        >
+        <span className="material-icons close-icon clickable" onClick={(evt) => onConfirm(evt, "")}>
           close
         </span>
         <div className="help-text">
@@ -30,7 +23,7 @@ export function SettingsCard({
                       type="checkbox"
                       checked={value || false}
                       onChange={() => {
-                        setDisplaySettings(updateSetting(key, !value));
+                        setDisplaySettings(updateSetting(key, !value))
                       }}
                     />
                   ) : (
@@ -39,9 +32,7 @@ export function SettingsCard({
                       type="input"
                       value={value}
                       onChange={(evt) => {
-                        setDisplaySettings(
-                          updateSetting(key, parseInt(evt.target.value))
-                        );
+                        setDisplaySettings(updateSetting(key, parseInt(evt.target.value)))
                       }}
                     />
                   )}
@@ -53,5 +44,5 @@ export function SettingsCard({
         </div>
       </div>
     </div>
-  );
+  )
 }

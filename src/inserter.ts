@@ -1,13 +1,13 @@
-import { VMPushToOtherBuilding } from "./movement";
-import { StateVMAction } from "./state/action";
-import { ReadonlyBuilding } from "./factoryGameState";
+import { VMPushToOtherBuilding } from "./movement"
+import { StateVMAction } from "./state/action"
+import { ReadonlyBuilding } from "./factoryGameState"
 
 export type Inserter = {
-  kind: "Inserter";
-  subkind: "inserter" | "fast-inserter" | "stack-inserter";
-  BuildingCount: number;
-  direction: "UP" | "DOWN" | "TO_BUS" | "FROM_BUS" | "NONE";
-};
+  kind: "Inserter"
+  subkind: "inserter" | "fast-inserter" | "stack-inserter"
+  BuildingCount: number
+  direction: "UP" | "DOWN" | "TO_BUS" | "FROM_BUS" | "NONE"
+}
 
 export function NewInserter(
   count = 0,
@@ -19,11 +19,11 @@ export function NewInserter(
     subkind,
     BuildingCount: count,
     direction: direction,
-  };
+  }
 }
 
 export function InserterTransferRate(i: Inserter): number {
-  return (i.direction !== "NONE" && i.BuildingCount) || 0;
+  return (i.direction !== "NONE" && i.BuildingCount) || 0
 }
 
 export function MoveViaInserter(
@@ -43,7 +43,7 @@ export function MoveViaInserter(
         { regionId, buildingIdx: currentBuildingSlot + 1, buffer: "input" },
         nextBuilding,
         InserterTransferRate(i)
-      );
+      )
     } else if (i.direction === "UP") {
       VMPushToOtherBuilding(
         dispatch,
@@ -52,7 +52,7 @@ export function MoveViaInserter(
         { regionId, buildingIdx: currentBuildingSlot, buffer: "input" },
         currentBuilding,
         InserterTransferRate(i)
-      );
+      )
     }
   }
 }

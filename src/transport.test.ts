@@ -1,4 +1,4 @@
-import { NewTruckLine } from "./transport";
+import { NewTruckLine } from "./transport"
 
 // var nextTestRegionId = 1;
 // var testRegions = new Map<string, Region>();
@@ -14,11 +14,11 @@ import { NewTruckLine } from "./transport";
 
 describe("TruckLine", () => {
   it("Initializes properly", function () {
-    const truckLine = NewTruckLine("123", "concrete", 3);
+    const truckLine = NewTruckLine("123", "concrete", 3)
 
-    expect(truckLine.length).toBe(3);
-    expect(truckLine.truckLineId).toBe("123");
-  });
+    expect(truckLine.length).toBe(3)
+    expect(truckLine.truckLineId).toBe("123")
+  })
 
   // it("Transports items of one type across regions", function () {
   //   //
@@ -104,5 +104,5 @@ describe("TruckLine", () => {
   //     toDepot.outputBuffers.Remove(NewEntityStack("copper-ore", 0, 50))
   //   ).toBe(4);
   // });
-  it.todo("Coaleceses item stacks");
-});
+  it.todo("Coaleceses item stacks")
+})

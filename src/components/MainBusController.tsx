@@ -1,47 +1,38 @@
-import { SyntheticEvent, useEffect, useState } from "react";
-import {
-  FactoryGameState,
-  ReadonlyBuilding,
-  ReadonlyRegion,
-} from "../factoryGameState";
-import { GameAction } from "../GameAction";
-import { useGeneralDialog } from "../GeneralDialogProvider";
-import { availableItems } from "../research";
-import { BeltConnectionAddress } from "../state/address";
-import { Belt, BeltHandlerFunc } from "../types";
-import { BuildingHasInput, BuildingHasOutput } from "../utils";
-import { showSetLaneEntitySelector } from "./selectors";
+import { SyntheticEvent, useEffect, useState } from "react"
+import { FactoryGameState, ReadonlyBuilding, ReadonlyRegion } from "../factoryGameState"
+import { GameAction } from "../GameAction"
+import { useGeneralDialog } from "../GeneralDialogProvider"
+import { availableItems } from "../research"
+import { BeltConnectionAddress } from "../state/address"
+import { Belt, BeltHandlerFunc } from "../types"
+import { BuildingHasInput, BuildingHasOutput } from "../utils"
+import { showSetLaneEntitySelector } from "./selectors"
 
 type ClickInfo = {
-  clientX: number;
-  clientY: number;
-  buildingIdx: number;
-  laneId: number;
-};
+  clientX: number
+  clientY: number
+  buildingIdx: number
+  laneId: number
+}
 
 type GhostBeltInfo = Pick<
   Belt,
-  | "laneIdx"
-  | "upperSlotIdx"
-  | "lowerSlotIdx"
-  | "beltDirection"
-  | "entity"
-  | "endDirection"
+  "laneIdx" | "upperSlotIdx" | "lowerSlotIdx" | "beltDirection" | "entity" | "endDirection"
 > & {
-  originalUpperSlotIdx?: number;
-  draggingFieldName: "upperSlotIdx" | "lowerSlotIdx";
-};
+  originalUpperSlotIdx?: number
+  draggingFieldName: "upperSlotIdx" | "lowerSlotIdx"
+}
 
 export type MainBusControllerChildProps = {
-  beltState: readonly Belt[];
-  beltHandler: BeltHandlerFunc;
-  ghostConnection: (BeltConnectionAddress & { laneId?: number }) | undefined;
+  beltState: readonly Belt[]
+  beltHandler: BeltHandlerFunc
+  ghostConnection: (BeltConnectionAddress & { laneId?: number }) | undefined
   beltInserterMouseDown: (
     evt: SyntheticEvent<HTMLElement, MouseEvent>,
     buildingIdx: number,
     connectionIdx: number
-  ) => void;
-};
+  ) => void
+}
 
 export const MainBusController = ({
   region,
@@ -49,54 +40,46 @@ export const MainBusController = ({
   gameState,
   children,
 }: {
-  region: ReadonlyRegion;
-  uxDispatch: (a: GameAction) => void;
-  gameState: FactoryGameState;
-  children: (arg0: MainBusControllerChildProps) => JSX.Element;
+  region: ReadonlyRegion
+  uxDispatch: (a: GameAction) => void
+  gameState: FactoryGameState
+  children: (arg0: MainBusControllerChildProps) => JSX.Element
 }) => {
-  const regionId = region.Id;
-  const generalDialog = useGeneralDialog();
+  const regionId = region.Id
+  const generalDialog = useGeneralDialog()
 
-  const [beltState, setBeltState] = useState<readonly Belt[]>(
-    region.Bus.Belts as readonly Belt[]
-  );
-  const [clickInfo, setClickInfo] = useState<ClickInfo | undefined>();
+  const [beltState, setBeltState] = useState<readonly Belt[]>(region.Bus.Belts as readonly Belt[])
+  const [clickInfo, setClickInfo] = useState<ClickInfo | undefined>()
 
   const [ghostConnection, setGhostConnection] = useState<
     (BeltConnectionAddress & { laneId?: number }) | undefined
-  >();
-  const [ghostBeltInfo, setGhostBeltInfo] = useState<
-    GhostBeltInfo | undefined
-  >();
+  >()
+  const [ghostBeltInfo, setGhostBeltInfo] = useState<GhostBeltInfo | undefined>()
   // TODO: remove and calculate?
-  const [removedBelts, setRemovedBelts] = useState<readonly Belt[]>([]);
+  const [removedBelts, setRemovedBelts] = useState<readonly Belt[]>([])
 
   useEffect(() => {
-    setBeltState(region.Bus.Belts as Belt[]);
-  }, [region.Bus.Belts]);
+    setBeltState(region.Bus.Belts as Belt[])
+  }, [region.Bus.Belts])
 
   function clearEdits() {
-    setClickInfo(undefined);
-    setGhostBeltInfo(undefined);
-    setGhostConnection(undefined);
-    setRemovedBelts([]);
-    setBeltState(region.Bus.Belts as Belt[]);
+    setClickInfo(undefined)
+    setGhostBeltInfo(undefined)
+    setGhostConnection(undefined)
+    setRemovedBelts([])
+    setBeltState(region.Bus.Belts as Belt[])
   }
 
   function maybeAddGhostConnection(
-    {
-      regionId,
-      buildingIdx,
-      laneId,
-    }: BeltConnectionAddress & { laneId?: number },
+    { regionId, buildingIdx, laneId }: BeltConnectionAddress & { laneId?: number },
     belt: Belt | undefined
   ) {
-    const building = region.BuildingSlots[buildingIdx].Building;
+    const building = region.BuildingSlots[buildingIdx].Building
     if (laneId != undefined && belt?.entity) {
-      const buffer = buildingHasEntity(building, belt.entity);
-      if (!buffer) return;
+      const buffer = buildingHasEntity(building, belt.entity)
+      if (!buffer) return
 
-      const direction = buffer == "input" ? "FROM_BUS" : "TO_BUS";
+      const direction = buffer == "input" ? "FROM_BUS" : "TO_BUS"
 
       uxDispatch({
         type: "AddMainBusConnection",
@@ -104,24 +87,21 @@ export const MainBusController = ({
         buildingIdx,
         laneId,
         direction,
-      });
+      })
     }
   }
 
-  function actuallyAddRemoveBelts(
-    beltState: readonly Belt[],
-    ghostBelt: GhostBeltInfo | undefined
-  ) {
+  function actuallyAddRemoveBelts(beltState: readonly Belt[], ghostBelt: GhostBeltInfo | undefined) {
     if (removedBelts.length && !ghostBelt) {
-      console.log("Remove", removedBelts);
-      console.trace();
+      console.log("Remove", removedBelts)
+      console.trace()
       uxDispatch({
         type: "RemoveLane",
         regionId,
         laneId: removedBelts[0].laneIdx,
         upperSlotIdx: removedBelts[0].upperSlotIdx,
         lowerSlotIdx: removedBelts[0].lowerSlotIdx,
-      });
+      })
     }
 
     if (ghostBelt && shouldCreateBelt(ghostBelt)) {
@@ -134,7 +114,7 @@ export const MainBusController = ({
         beltDirection: ghostBelt.beltDirection,
         originalUpperSlotIdx: ghostBelt.originalUpperSlotIdx,
         endDirection: ghostBelt.endDirection,
-      });
+      })
 
       // TODO: ghostBelt should always have an entity if there was a removed belt
       if (!ghostBelt.entity && !removedBelts.at(0)?.entity)
@@ -144,31 +124,23 @@ export const MainBusController = ({
           ghostBelt.laneIdx,
           ghostBelt.upperSlotIdx,
           availableItems(gameState.Research)
-        );
+        )
     }
   }
 
-  function findBelt(
-    laneId: number,
-    beltStartingLaneIdx: number
-  ): Belt | undefined {
-    return beltState.find(
-      (b) => b.laneIdx == laneId && b.upperSlotIdx == beltStartingLaneIdx
-    );
+  function findBelt(laneId: number, beltStartingLaneIdx: number): Belt | undefined {
+    return beltState.find((b) => b.laneIdx == laneId && b.upperSlotIdx == beltStartingLaneIdx)
   }
 
   function removeBelt(existingBelt: Belt) {
-    setRemovedBelts(removedBelts.concat(existingBelt));
+    setRemovedBelts(removedBelts.concat(existingBelt))
     setBeltState(
       beltState.filter((b) => {
-        const z = !(
-          b.laneIdx == existingBelt.laneIdx &&
-          b.upperSlotIdx == existingBelt.upperSlotIdx
-        );
-        console.log(b, z);
-        return z;
+        const z = !(b.laneIdx == existingBelt.laneIdx && b.upperSlotIdx == existingBelt.upperSlotIdx)
+        console.log(b, z)
+        return z
       })
-    );
+    )
   }
 
   const beltInserterMouseDown = (
@@ -178,8 +150,8 @@ export const MainBusController = ({
   ) => {
     // TODO: If not empty, if not existing connection
     // if has input or output
-    setGhostConnection({ regionId, buildingIdx, connectionIdx });
-  };
+    setGhostConnection({ regionId, buildingIdx, connectionIdx })
+  }
 
   const beltHandler: BeltHandlerFunc = (
     evt: SyntheticEvent<HTMLDivElement, MouseEvent>,
@@ -189,26 +161,23 @@ export const MainBusController = ({
     buildingIdx: number,
     beltStartingLaneIdx?: number
   ) => {
-    evt.stopPropagation();
-    evt.preventDefault();
+    evt.stopPropagation()
+    evt.preventDefault()
     if (action == "cancel") {
-      console.log("cancel");
-      setBeltState(region.Bus.Belts as Belt[]);
-      setGhostBeltInfo(undefined);
-      return;
+      console.log("cancel")
+      setBeltState(region.Bus.Belts as Belt[])
+      setGhostBeltInfo(undefined)
+      return
     }
 
-    const existingBelt =
-      beltStartingLaneIdx != undefined
-        ? findBelt(laneId, beltStartingLaneIdx)
-        : undefined;
+    const existingBelt = beltStartingLaneIdx != undefined ? findBelt(laneId, beltStartingLaneIdx) : undefined
 
     if (
       existingBelt &&
       ghostBeltInfo?.originalUpperSlotIdx &&
       existingBelt.upperSlotIdx != ghostBeltInfo.originalUpperSlotIdx
     )
-      return; //  Don't allow connectiong more than 1 belt at once
+      return //  Don't allow connectiong more than 1 belt at once
 
     //    console.log(action, laneId, buildingIdx);
     //    console.log(evt.type);
@@ -231,59 +200,53 @@ export const MainBusController = ({
     //console.log(evt.type, evt);
     switch (evt.type) {
       case "mousedown":
-        if (evt.nativeEvent.button == 2) return; //Cancel
+        if (evt.nativeEvent.button == 2) return //Cancel
         if (existingBelt) {
-          if (
-            buildingIdx != existingBelt.lowerSlotIdx &&
-            buildingIdx != existingBelt.upperSlotIdx
-          ) {
-            break;
+          if (buildingIdx != existingBelt.lowerSlotIdx && buildingIdx != existingBelt.upperSlotIdx) {
+            break
           }
           setClickInfo({
             clientX: evt.nativeEvent.clientX,
             clientY: evt.nativeEvent.clientY,
             buildingIdx:
-              existingBelt.beltDirection == "UP"
-                ? existingBelt.lowerSlotIdx
-                : existingBelt.upperSlotIdx,
+              existingBelt.beltDirection == "UP" ? existingBelt.lowerSlotIdx : existingBelt.upperSlotIdx,
             laneId,
-          });
+          })
           setGhostBeltInfo(
             toGhostBeltInfo(
               existingBelt,
               buildingIdx,
               xDir(evt.nativeEvent, clickInfo) // TODO: Use existing unless dragging from end
             )
-          );
-          removeBelt(existingBelt);
+          )
+          removeBelt(existingBelt)
         } else {
-          console.log(buildingIdx);
+          console.log(buildingIdx)
           setClickInfo({
             clientX: evt.nativeEvent.clientX,
             clientY: evt.nativeEvent.clientY,
             buildingIdx,
             laneId,
-          });
+          })
         }
-        break;
+        break
       case "mouseup":
       case "mouseleave":
-        if (ghostConnection && existingBelt)
-          maybeAddGhostConnection(ghostConnection, existingBelt);
-        if (ghostConnection) setGhostConnection(undefined);
+        if (ghostConnection && existingBelt) maybeAddGhostConnection(ghostConnection, existingBelt)
+        if (ghostConnection) setGhostConnection(undefined)
 
-        actuallyAddRemoveBelts(beltState, ghostBeltInfo);
-        clearEdits();
-        break;
+        actuallyAddRemoveBelts(beltState, ghostBeltInfo)
+        clearEdits()
+        break
       case "mouseenter":
-        if (ghostConnection) setGhostConnection({ ...ghostConnection, laneId });
-        if (!clickInfo) break;
+        if (ghostConnection) setGhostConnection({ ...ghostConnection, laneId })
+        if (!clickInfo) break
         if (!ghostBeltInfo) {
           console.log({
             lowerSlotIdx: Math.max(buildingIdx, clickInfo.buildingIdx),
             upperSlotIdx: Math.max(buildingIdx, clickInfo.buildingIdx),
-          });
-          const beltDirection = yDir(evt.nativeEvent, clickInfo);
+          })
+          const beltDirection = yDir(evt.nativeEvent, clickInfo)
           setGhostBeltInfo({
             upperSlotIdx: Math.min(buildingIdx, clickInfo.buildingIdx),
             lowerSlotIdx: Math.max(buildingIdx, clickInfo.buildingIdx),
@@ -291,25 +254,24 @@ export const MainBusController = ({
             laneIdx: laneId,
             beltDirection,
             endDirection: xDir(evt.nativeEvent, clickInfo),
-            draggingFieldName:
-              beltDirection == "UP" ? "upperSlotIdx" : "lowerSlotIdx",
-          });
-          break;
+            draggingFieldName: beltDirection == "UP" ? "upperSlotIdx" : "lowerSlotIdx",
+          })
+          break
         }
         if (existingBelt && existingBelt.laneIdx == clickInfo.laneId) {
           if (existingBelt.beltDirection == ghostBeltInfo.beltDirection) {
-            removeBelt(existingBelt);
+            removeBelt(existingBelt)
             if (ghostBeltInfo) {
               setGhostBeltInfo({
                 ...ghostBeltInfo,
                 endDirection: xDir(evt.nativeEvent, clickInfo),
                 [ghostBeltInfo.draggingFieldName]: buildingIdx,
-              });
+              })
               console.log({
                 ...ghostBeltInfo,
                 endDirection: xDir(evt.nativeEvent, clickInfo),
                 [ghostBeltInfo.draggingFieldName]: buildingIdx,
-              });
+              })
             }
           }
         } else {
@@ -317,26 +279,22 @@ export const MainBusController = ({
             ...ghostBeltInfo,
 
             [ghostBeltInfo.draggingFieldName]: buildingIdx,
-          };
+          }
           if (draggingFromEnd(ghostBeltInfo)) {
-            newGhost.endDirection = xDir(evt.nativeEvent, clickInfo);
+            newGhost.endDirection = xDir(evt.nativeEvent, clickInfo)
           }
           if (newGhost.lowerSlotIdx == newGhost.upperSlotIdx) {
-            setClickInfo(undefined);
-            setGhostBeltInfo(undefined);
-          } else setGhostBeltInfo(newGhost);
+            setClickInfo(undefined)
+            setGhostBeltInfo(undefined)
+          } else setGhostBeltInfo(newGhost)
         }
     }
-  };
+  }
 
   const beltStateProp = ghostBeltInfo
     ? beltState
         .filter(
-          (b) =>
-            !(
-              b.laneIdx == ghostBeltInfo.laneIdx &&
-              b.upperSlotIdx == ghostBeltInfo.originalUpperSlotIdx
-            )
+          (b) => !(b.laneIdx == ghostBeltInfo.laneIdx && b.upperSlotIdx == ghostBeltInfo.originalUpperSlotIdx)
         )
         .concat([
           {
@@ -345,7 +303,7 @@ export const MainBusController = ({
             internalBeltBuffer: new Array(0),
           },
         ])
-    : beltState;
+    : beltState
 
   return (
     <>
@@ -356,43 +314,36 @@ export const MainBusController = ({
         beltInserterMouseDown,
       })}
     </>
-  );
-};
-
-function draggingFromEnd(
-  ghostBeltInfo: Pick<GhostBeltInfo, "beltDirection" | "draggingFieldName">
-) {
-  return (
-    (ghostBeltInfo.draggingFieldName == "upperSlotIdx" &&
-      ghostBeltInfo.beltDirection == "UP") ||
-    (ghostBeltInfo.draggingFieldName == "lowerSlotIdx" &&
-      ghostBeltInfo.beltDirection == "DOWN")
-  );
+  )
 }
 
-function buildingHasEntity(
-  building: ReadonlyBuilding,
-  entity: string
-): false | "input" | "output" {
-  if (BuildingHasInput(building, entity)) return "input";
-  if (BuildingHasOutput(building, entity)) return "output";
-  return false;
+function draggingFromEnd(ghostBeltInfo: Pick<GhostBeltInfo, "beltDirection" | "draggingFieldName">) {
+  return (
+    (ghostBeltInfo.draggingFieldName == "upperSlotIdx" && ghostBeltInfo.beltDirection == "UP") ||
+    (ghostBeltInfo.draggingFieldName == "lowerSlotIdx" && ghostBeltInfo.beltDirection == "DOWN")
+  )
+}
+
+function buildingHasEntity(building: ReadonlyBuilding, entity: string): false | "input" | "output" {
+  if (BuildingHasInput(building, entity)) return "input"
+  if (BuildingHasOutput(building, entity)) return "output"
+  return false
 }
 
 function shouldCreateBelt(ghostBelt: GhostBeltInfo) {
-  if (ghostBelt.lowerSlotIdx - ghostBelt.upperSlotIdx < 1) return false;
-  return true;
+  if (ghostBelt.lowerSlotIdx - ghostBelt.upperSlotIdx < 1) return false
+  return true
 }
 
 function xDir(evt: { clientX: number }, clickInfo: ClickInfo | undefined) {
-  if (!clickInfo) return "NONE";
-  const delta = evt.clientX - clickInfo.clientX;
-  return delta > 15 ? "RIGHT" : delta < -15 ? "LEFT" : "NONE";
+  if (!clickInfo) return "NONE"
+  const delta = evt.clientX - clickInfo.clientX
+  return delta > 15 ? "RIGHT" : delta < -15 ? "LEFT" : "NONE"
 }
 
 function yDir(evt: { clientY: number }, clickInfo: ClickInfo) {
-  const delta = evt.clientY - clickInfo.clientY;
-  return delta > 0 ? "DOWN" : "UP";
+  const delta = evt.clientY - clickInfo.clientY
+  return delta > 0 ? "DOWN" : "UP"
 }
 
 function toGhostBeltInfo(
@@ -400,8 +351,7 @@ function toGhostBeltInfo(
   clickBuildingIdx: number,
   endDirection: "NONE" | "LEFT" | "RIGHT"
 ): GhostBeltInfo {
-  const draggingFieldName =
-    belt.upperSlotIdx === clickBuildingIdx ? "upperSlotIdx" : "lowerSlotIdx";
+  const draggingFieldName = belt.upperSlotIdx === clickBuildingIdx ? "upperSlotIdx" : "lowerSlotIdx"
   return {
     originalUpperSlotIdx: belt.upperSlotIdx,
     laneIdx: belt.laneIdx,
@@ -417,5 +367,5 @@ function toGhostBeltInfo(
     })
       ? endDirection
       : belt.endDirection,
-  };
+  }
 }

@@ -1,4 +1,4 @@
-import { Entity, Recipe } from "./types";
+import { Entity, Recipe } from "./types"
 
 export const Assembler: Entity = {
   Name: "Assembler",
@@ -6,7 +6,7 @@ export const Assembler: Entity = {
   StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
-};
+}
 
 export const YellowBelt: Entity = {
   Name: "Yellow Belt",
@@ -14,7 +14,7 @@ export const YellowBelt: Entity = {
   StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
-};
+}
 
 export const Miner: Entity = {
   Name: "Miner",
@@ -22,7 +22,7 @@ export const Miner: Entity = {
   StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
-};
+}
 
 export const IronOre: Entity = {
   Name: "Iron Ore",
@@ -30,7 +30,7 @@ export const IronOre: Entity = {
   StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
-};
+}
 
 export const CopperOre: Entity = {
   Name: "Copper Ore",
@@ -38,7 +38,7 @@ export const CopperOre: Entity = {
   StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
-};
+}
 
 export const CopperPlate: Entity = {
   Name: "Copper Plate",
@@ -46,7 +46,7 @@ export const CopperPlate: Entity = {
   StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
-};
+}
 
 export const CopperWire: Entity = {
   Name: "Copper Wire",
@@ -54,7 +54,7 @@ export const CopperWire: Entity = {
   StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
-};
+}
 
 export const StoneFurnace: Entity = {
   Name: "Stone Furnace",
@@ -62,7 +62,7 @@ export const StoneFurnace: Entity = {
   StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
-};
+}
 
 export const Stone: Entity = {
   Name: "Stone",
@@ -70,7 +70,7 @@ export const Stone: Entity = {
   StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
-};
+}
 
 export const IronPlate: Entity = {
   Name: "Iron Plate",
@@ -78,7 +78,7 @@ export const IronPlate: Entity = {
   StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
-};
+}
 
 export const IronChest: Entity = {
   Name: "Iron Chest",
@@ -86,7 +86,7 @@ export const IronChest: Entity = {
   StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
-};
+}
 
 export const Gear: Entity = {
   Name: "Gear",
@@ -94,7 +94,7 @@ export const Gear: Entity = {
   StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
-};
+}
 
 export const GreenChip: Entity = {
   Name: "Green Chip",
@@ -102,7 +102,7 @@ export const GreenChip: Entity = {
   StackSize: 50,
   StorageUpgradeType: "Solid",
   ResearchUpgradeItems: [],
-};
+}
 
 export const StoneRecipe: Recipe = {
   Name: "Stone",
@@ -116,7 +116,7 @@ export const StoneRecipe: Recipe = {
       Count: 1,
     },
   ],
-};
+}
 
 export const StoneFurnaceRecipe: Recipe = {
   Name: "Stone Furnace",
@@ -135,7 +135,7 @@ export const StoneFurnaceRecipe: Recipe = {
       Count: 1,
     },
   ],
-};
+}
 
 export const IronOreRecipe: Recipe = {
   Name: "Iron Ore",
@@ -149,7 +149,7 @@ export const IronOreRecipe: Recipe = {
       Count: 1,
     },
   ],
-};
+}
 
 export const IronPlateRecipe: Recipe = {
   Name: "Iron Plate",
@@ -168,7 +168,7 @@ export const IronPlateRecipe: Recipe = {
       Count: 1,
     },
   ],
-};
+}
 
 export const CopperOreRecipe: Recipe = {
   Name: "Copper Ore",
@@ -182,7 +182,7 @@ export const CopperOreRecipe: Recipe = {
       Count: 1,
     },
   ],
-};
+}
 
 export const CopperPlateRecipe: Recipe = {
   Name: "Copper Plate",
@@ -201,7 +201,7 @@ export const CopperPlateRecipe: Recipe = {
       Count: 1,
     },
   ],
-};
+}
 
 export const GearRecipe: Recipe = {
   Name: "Gear",
@@ -220,7 +220,7 @@ export const GearRecipe: Recipe = {
       Count: 1,
     },
   ],
-};
+}
 
 export const IronChestRecipe: Recipe = {
   Name: "Iron Chest",
@@ -239,7 +239,7 @@ export const IronChestRecipe: Recipe = {
       Count: 1,
     },
   ],
-};
+}
 
 export const CopperWireRecipe: Recipe = {
   Name: "Copper Wire",
@@ -258,7 +258,7 @@ export const CopperWireRecipe: Recipe = {
       Count: 2,
     },
   ],
-};
+}
 
 export const GreenChipRecipe: Recipe = {
   Name: "Green Chip",
@@ -281,7 +281,7 @@ export const GreenChipRecipe: Recipe = {
       Count: 1,
     },
   ],
-};
+}
 
 export const MinerRecipe: Recipe = {
   Name: "Miner",
@@ -308,7 +308,7 @@ export const MinerRecipe: Recipe = {
       Count: 1,
     },
   ],
-};
+}
 
 export const AssemblerRecipe: Recipe = {
   Name: "Assembler",
@@ -335,4 +335,4 @@ export const AssemblerRecipe: Recipe = {
       Count: 1,
     },
   ],
-};
+}

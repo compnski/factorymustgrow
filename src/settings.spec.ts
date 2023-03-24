@@ -1,8 +1,8 @@
-import { defaultSettings, settingsValidator } from "./settings";
+import { defaultSettings, settingsValidator } from "./settings"
 
 describe("Settings", () => {
   it("defaults", async () => {
-    const { value } = settingsValidator.validate({});
-    expect(value).toEqual(defaultSettings);
-  });
-});
+    const { value } = settingsValidator.validate({})
+    expect(value).toEqual(defaultSettings)
+  })
+})

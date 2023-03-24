@@ -1,22 +1,19 @@
-import { GameAction } from "../GameAction";
-import { ButtonPanel } from "./ButtonPanel";
-import { showMoveItemToFromInventorySelector } from "./selectors";
-import { useGeneralDialog } from "../GeneralDialogProvider";
-import { useState } from "react";
-import { availableItems } from "../research";
-import { ReadonlyResearchState } from "../factoryGameState";
-import { DebugInventory, DebugResearch } from "../debug";
-import { settings } from "../settings";
+import { GameAction } from "../GameAction"
+import { ButtonPanel } from "./ButtonPanel"
+import { showMoveItemToFromInventorySelector } from "./selectors"
+import { useGeneralDialog } from "../GeneralDialogProvider"
+import { useState } from "react"
+import { availableItems } from "../research"
+import { ReadonlyResearchState } from "../factoryGameState"
+import { DebugInventory, DebugResearch } from "../debug"
+import { settings } from "../settings"
 
 export type DebugButtonPanelProps = {
-  researchState: ReadonlyResearchState;
-  uxDispatch: (a: GameAction) => void;
-};
+  researchState: ReadonlyResearchState
+  uxDispatch: (a: GameAction) => void
+}
 
-export function DebugButtonPanel({
-  researchState,
-  uxDispatch,
-}: DebugButtonPanelProps) {
+export function DebugButtonPanel({ researchState, uxDispatch }: DebugButtonPanelProps) {
   const generalDialog = useGeneralDialog(),
     autoOpenDebug = window.location.hash.includes("debug"),
     [isOpen, setOpen] = useState<boolean>(autoOpenDebug),
@@ -25,7 +22,7 @@ export function DebugButtonPanel({
         clickHandler: () => {
           uxDispatch({
             type: "CompleteResearch",
-          });
+          })
         },
 
         title: "Complete Current Research",
@@ -51,7 +48,7 @@ export function DebugButtonPanel({
               property: "Inventory",
               value: new DebugInventory(),
             },
-          });
+          })
         },
       },
       {
@@ -65,18 +62,13 @@ export function DebugButtonPanel({
               property: "Research",
               value: DebugResearch,
             },
-          });
+          })
         },
       },
-    ];
+    ]
 
   return (
-    <details
-      className={`debug-button-panel ${
-        settings().debugEnabled ? "" : "hidden"
-      }`}
-      open={isOpen}
-    >
+    <details className={`debug-button-panel ${settings().debugEnabled ? "" : "hidden"}`} open={isOpen}>
       <summary onClick={() => setOpen(!isOpen)}>Debug</summary>
       <div className="button-box">
         <ButtonPanel buttons={factoryButtons} />
@@ -92,5 +84,5 @@ export function DebugButtonPanel({
         </div>
       </div>
     </details>
-  );
+  )
 }

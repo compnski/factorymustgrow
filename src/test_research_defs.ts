@@ -1,5 +1,5 @@
-import { Research } from "./types";
-import { Map } from "immutable";
+import { Research } from "./types"
+import { Map } from "immutable"
 
 export const TestResearch = {
   Id: "test-research",
@@ -16,7 +16,7 @@ export const TestResearch = {
   Prereqs: new Set(["fast-inserter", "logistics-2", "advanced-electronics"]),
   Unlocks: ["test-research", "stack-filter-inserter"],
   Effects: ["Test research capacity: +1"],
-};
+}
 
 export const TestSlowResearch = {
   Id: "test-slow-research",
@@ -33,9 +33,9 @@ export const TestSlowResearch = {
   Prereqs: new Set(["fast-inserter", "logistics-2", "advanced-electronics"]),
   Unlocks: ["test-slow-research", "slow-stack-filter-inserter"],
   Effects: ["Slow Test research capacity: +1"],
-};
+}
 
 export const TestResearchBook = Map<string, Research>([
   ["test-research", TestResearch],
   ["test-slow-research", TestSlowResearch],
-]);
+])

@@ -1,32 +1,19 @@
-import { ImmutableMap } from "./immutable";
-import { VMPushToOtherBuilding } from "./movement";
-import {
-  Extractor,
-  Factory,
-  NewExtractorForRecipe,
-  NewFactoryForRecipe,
-} from "./production";
-import { NewLab, setLabResearch } from "./research";
-import { NewChest } from "./storage";
-import { AddItemsToReadonlyFixedBuffer } from "./test_utils";
-import { EntityStack, NewEntityStack } from "./types";
+import { ImmutableMap } from "./immutable"
+import { VMPushToOtherBuilding } from "./movement"
+import { Extractor, Factory, NewExtractorForRecipe, NewFactoryForRecipe } from "./production"
+import { NewLab, setLabResearch } from "./research"
+import { NewChest } from "./storage"
+import { AddItemsToReadonlyFixedBuffer } from "./test_utils"
+import { EntityStack, NewEntityStack } from "./types"
 
 function NewTestFactory(r: string, count = 1): Factory {
-  const factory = NewFactoryForRecipe(
-    { subkind: "assembling-machine-1" },
-    r,
-    count
-  );
-  return factory;
+  const factory = NewFactoryForRecipe({ subkind: "assembling-machine-1" }, r, count)
+  return factory
 }
 
 function NewTestExtractor(r: string, count = 1): Extractor {
-  const factory = NewExtractorForRecipe(
-    { subkind: "burner-mining-drill" },
-    r,
-    count
-  );
-  return factory;
+  const factory = NewExtractorForRecipe({ subkind: "burner-mining-drill" }, r, count)
+  return factory
 }
 
 describe("VMPushToOtherBuilding", () => {
@@ -35,11 +22,11 @@ describe("VMPushToOtherBuilding", () => {
     to: any,
     maxMoved: number,
     expected: {
-      outputBuffers: EntityStack[];
-      inputBuffers: EntityStack[];
+      outputBuffers: EntityStack[]
+      inputBuffers: EntityStack[]
     }
   ) {
-    const vmDispatch = jest.fn();
+    const vmDispatch = jest.fn()
     //vmDispatch.mockImplementation((d) => console.log(d));
     VMPushToOtherBuilding(
       vmDispatch,
@@ -48,7 +35,7 @@ describe("VMPushToOtherBuilding", () => {
       { regionId: "testRegion", buildingIdx: 1, buffer: "input" },
       to,
       maxMoved
-    );
+    )
 
     // Expect AddItem to inputBuffers
     for (const expectedInput of expected.inputBuffers) {
@@ -57,7 +44,7 @@ describe("VMPushToOtherBuilding", () => {
         count: expectedInput.Count,
         entity: expectedInput.Entity,
         kind: "AddItemCount",
-      });
+      })
     }
 
     // Expect AddItem to outputBuffers
@@ -67,56 +54,41 @@ describe("VMPushToOtherBuilding", () => {
         count: expectedOutput.Count,
         entity: expectedOutput.Entity,
         kind: "AddItemCount",
-      });
+      })
     }
   }
 
   it("Moves between Chest to Lab", () => {
-    const fromChest = NewChest(
-        { subkind: "iron-chest" },
-        4,
-        ImmutableMap([["automation-science-pack", 10]])
-      ),
-      toLab = setLabResearch(NewLab(1), "test-research", 1);
+    const fromChest = NewChest({ subkind: "iron-chest" }, 4, ImmutableMap([["automation-science-pack", 10]])),
+      toLab = setLabResearch(NewLab(1), "test-research", 1)
 
     TestMovement(fromChest, toLab, 3, {
       outputBuffers: [NewEntityStack("automation-science-pack", -3)],
       inputBuffers: [NewEntityStack("automation-science-pack", 3)],
-    });
-  });
+    })
+  })
 
   it("Won't move more than exists from Chest to Lab", () => {
-    const fromChest = NewChest(
-        { subkind: "iron-chest" },
-        4,
-        ImmutableMap([["automation-science-pack", 10]])
-      ),
-      toLab = setLabResearch(NewLab(1), "test-research", 1);
+    const fromChest = NewChest({ subkind: "iron-chest" }, 4, ImmutableMap([["automation-science-pack", 10]])),
+      toLab = setLabResearch(NewLab(1), "test-research", 1)
     TestMovement(fromChest, toLab, 3, {
       outputBuffers: [],
       inputBuffers: [],
-    });
-  });
+    })
+  })
 
   it("Won't move more than fits from Chest to Lab", () => {
-    const fromChest = NewChest(
-        { subkind: "iron-chest" },
-        1,
-        ImmutableMap([["automation-science-pack", 10]])
-      ),
-      toLab = setLabResearch(NewLab(1), "test-research", 1);
+    const fromChest = NewChest({ subkind: "iron-chest" }, 1, ImmutableMap([["automation-science-pack", 10]])),
+      toLab = setLabResearch(NewLab(1), "test-research", 1)
 
-    toLab.inputBuffers = toLab.inputBuffers.AddItems(
-      "automation-science-pack",
-      199
-    );
+    toLab.inputBuffers = toLab.inputBuffers.AddItems("automation-science-pack", 199)
     //    expect(() =>
     TestMovement(fromChest, toLab, 3, {
       outputBuffers: [NewEntityStack("automation-science-pack", -1)],
       inputBuffers: [NewEntityStack("automation-science-pack", 1)],
-    });
+    })
     //  ).toThrow("Not enough space");
-  });
+  })
   // });
 
   // describe("PushToOtherProducer", () => {
@@ -148,67 +120,52 @@ describe("VMPushToOtherBuilding", () => {
 
   it("Moves between Extractor and Factory", () => {
     const extractor = NewTestExtractor("test-ore", 1),
-      factory = NewTestFactory("test-item", 1);
-    extractor.outputBuffers = AddItemsToReadonlyFixedBuffer(
-      extractor.outputBuffers,
-      5
-    );
+      factory = NewTestFactory("test-item", 1)
+    extractor.outputBuffers = AddItemsToReadonlyFixedBuffer(extractor.outputBuffers, 5)
 
     TestMovement(extractor, factory, 3, {
       outputBuffers: [NewEntityStack("test-ore", -3)],
       inputBuffers: [NewEntityStack("test-ore", 3)],
-    });
-  });
+    })
+  })
 
   it("Moves between Factory and Factory", () => {
     const fromFactory = NewTestFactory("test-item", 1),
-      toFactory = NewTestFactory("test-item-consumer", 1);
-    fromFactory.outputBuffers = AddItemsToReadonlyFixedBuffer(
-      fromFactory.outputBuffers,
-      5
-    );
+      toFactory = NewTestFactory("test-item-consumer", 1)
+    fromFactory.outputBuffers = AddItemsToReadonlyFixedBuffer(fromFactory.outputBuffers, 5)
 
     TestMovement(fromFactory, toFactory, 3, {
       outputBuffers: [NewEntityStack("test-item", -3)],
       inputBuffers: [NewEntityStack("test-item", 3)],
-    });
-  });
+    })
+  })
 
   it("Moves uncapped amounts between Factory and Factory", () => {
     const fromFactory = NewTestFactory("test-item", 1),
-      toFactory = NewTestFactory("test-item-consumer", 1);
-    fromFactory.outputBuffers = AddItemsToReadonlyFixedBuffer(
-      fromFactory.outputBuffers,
-      5
-    );
+      toFactory = NewTestFactory("test-item-consumer", 1)
+    fromFactory.outputBuffers = AddItemsToReadonlyFixedBuffer(fromFactory.outputBuffers, 5)
 
     TestMovement(fromFactory, toFactory, Infinity, {
       outputBuffers: [NewEntityStack("test-item", -5)],
       inputBuffers: [NewEntityStack("test-item", 5)],
-    });
-  });
+    })
+  })
 
   it("Won't overflow target input", () => {
     const fromFactory = NewTestFactory("test-item", 1),
-      toFactory = NewTestFactory("test-item-consumer", 1);
-    fromFactory.outputBuffers = AddItemsToReadonlyFixedBuffer(
-      fromFactory.outputBuffers,
-      50
-    );
-    toFactory.outputBuffers = AddItemsToReadonlyFixedBuffer(
-      toFactory.inputBuffers,
-      5
-    );
+      toFactory = NewTestFactory("test-item-consumer", 1)
+    fromFactory.outputBuffers = AddItemsToReadonlyFixedBuffer(fromFactory.outputBuffers, 50)
+    toFactory.outputBuffers = AddItemsToReadonlyFixedBuffer(toFactory.inputBuffers, 5)
 
     TestMovement(fromFactory, toFactory, Infinity, {
       outputBuffers: [],
       inputBuffers: [],
-    });
-  });
+    })
+  })
 
-  it.todo("Errors if no relevant input buffer ");
-  it.todo("Only pushes up to #producer count");
-});
+  it.todo("Errors if no relevant input buffer ")
+  it.todo("Only pushes up to #producer count")
+})
 
 describe("PushPullFromMainBus", () => {
   // function TestMovement(
@@ -313,8 +270,8 @@ describe("PushPullFromMainBus", () => {
   //     outputBuffers: [],
   //   });
   // });
-});
+})
 
-it.todo("Moves to above neighbor");
-it.todo("Moves to below neighbor");
-it.todo("Moves to both neighbors");
+it.todo("Moves to above neighbor")
+it.todo("Moves to below neighbor")
+it.todo("Moves to both neighbors")
