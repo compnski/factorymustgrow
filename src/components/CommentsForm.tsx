@@ -2,7 +2,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 import { FactoryGameState } from "../factoryGameState"
 import "./CommentsForm.scss"
 
-const backendUrl = "https://factorymustgrow-production.factorymustgrow.workers.dev"
+const backendUrl = "https://factorymustgrow.factorymustgrow.workers.dev"
 
 type CommentsFormProps = {
   gameState: FactoryGameState

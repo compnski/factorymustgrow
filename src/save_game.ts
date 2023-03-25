@@ -3,7 +3,7 @@ import { CurrentGameStateVersion, FactoryGameState } from "./factoryGameState"
 import { serializeGameState } from "./localstorage"
 import { settings } from "./settings"
 
-const prodHost = "https://factorymustgrow-production.factorymustgrow.workers.dev"
+const prodHost = "https://factorymustgrow.factorymustgrow.workers.dev"
 const devHost = "http://127.0.0.1:8787"
 const host = process.env.NODE_ENV == "development" ? devHost : prodHost
 
